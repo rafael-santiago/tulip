@@ -1,0 +1,55 @@
+include ~/toolsets/gcc/gcc-app.hsl
+include ~/toolsets/common/utils/lang/c/dependency_scanner.hsl
+
+var src type list;
+var inc type list;
+var cflags type list;
+var lib type list;
+var ldflags type list;
+var appname type string;
+var deps type string;
+
+project tulip : toolset "gcc-c-app" : dependencies $deps : $src, $inc, $cflags, $lib, $ldflags, $appname ;
+
+function get_app_name() : result type string {
+    if (hefesto.sys.os_name() != "windows") {
+        result "tulip";
+    }
+    result "tulip.exe";
+}
+
+function get_codes() : result type list {
+    var codes type list;
+    var submodules type list;
+    var s type int;
+    $deps = get_c_cpp_deps();
+    $codes.ls(".*\\.c$");
+    $submodules = hefesto.sys.get_option("sub-modules");
+    $s = 0;
+    while ($s < $submodules.count()) {
+        if (hefesto.sys.cd($submodules.item($s))) {
+            $deps = $deps + get_c_cpp_deps();
+            $codes.ls(".*\\.c$");
+        } else {
+            hefesto.sys.echo("ERROR: unable to access the sub-directory \"" + $submodules.item($s) + "\".\n");
+            hefesto.project.abort(1);
+        }
+        hefesto.sys.cd("..");
+        $s = $s + 1;
+    }
+    result $codes;
+}
+
+tulip.prologue() {
+    $src = get_codes();
+    $inc = hefesto.sys.get_option("includes");
+    $appname = get_app_name();
+}
+
+tulip.epilogue() {
+    if (hefesto.sys.last_forge_result() == 0) {
+        hefesto.sys.echo("\n___\n*** SUCCESS.\n");
+    } else {
+        hefesto.sys.echo("\n___\n~~~ FAILURE.\n");
+    }
+}

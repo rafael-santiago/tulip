@@ -1,0 +1,4 @@
+.Forgefile*
+.gitignore
+*.o
+bin/*
