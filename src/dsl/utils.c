@@ -37,7 +37,7 @@ static ssize_t get_tlp_tag_index(const char *buf);
 int is_single_note(const char *buf) {
     const char *bp = buf;
     const char *strings = "654321";
-    size_t offset = 0; //  WARN(Santiago): Nasty trick to support bass tabs, 7 strings guitars in the future.
+    size_t offset = 0; //  WARN(Santiago): Nasty trick to support bass tabs, 7-string guitars in the future.
     char string[2] = "";
     if (bp == NULL) {
         return 0;
