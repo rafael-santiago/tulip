@@ -22,6 +22,8 @@ function get_codes() : result type list {
     var codes type list;
     var submodules type list;
     var s type int;
+    var oldcwd type string;
+    $oldcwd = hefesto.sys.pwd();
     $deps = get_c_cpp_deps();
     $codes.ls(".*\\.c$");
     $submodules = hefesto.sys.get_option("sub-modules");
@@ -34,7 +36,7 @@ function get_codes() : result type list {
             hefesto.sys.echo("ERROR: unable to access the sub-directory \"" + $submodules.item($s) + "\".\n");
             hefesto.project.abort(1);
         }
-        hefesto.sys.cd("..");
+        hefesto.sys.cd($oldcwd);
         $s = $s + 1;
     }
     result $codes;

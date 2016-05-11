@@ -1,7 +1,8 @@
-#ifndef TULIP_TYPES_H
-#define TULIP_TYPES_H 1
+#ifndef TULIP_BASE_TYPES_H
+#define TULIP_BASE_TYPES_H 1
 
 typedef enum _tulip_command_t {
+    kTlpNone           = 0x00000000,
     kTlpMute           = 0x00000001,
     kTlpLetRing        = 0x00000002,
     kTlpChord          = 0x00000004,
@@ -15,12 +16,13 @@ typedef enum _tulip_command_t {
     kTlpVibratoWBar    = 0x00000400,
     kTlpTunning        = 0x00000800,
     kTlpLiteral        = 0x00001000,
-    kTlpSingleNote     = 0x00002000
+    kTlpSingleNote     = 0x00002000,
+    kTlpNoteSep        = 0x00004000
 }tulip_command_t;
 
 typedef struct _tulip_technique_stack_ctx {
-    tulip_command_t techique_code;
-    struct _tulip_tecnique_stack_ctx *next;
+    tulip_command_t technique_code;
+    struct _tulip_technique_stack_ctx *next;
 }tulip_technique_stack_ctx;
 
 typedef struct _tulip_single_note_ctx {
