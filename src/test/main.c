@@ -85,12 +85,13 @@ CUTE_TEST_CASE(dsl_strutils_tests)
     CUTE_ASSERT(is_valid_string("\"Hey Beavis, I'm an \"outlaw string, huh.\"") == 0);
     CUTE_ASSERT(is_valid_string("\"Hey Beavis, now I'm a \\\"by the book\\\" string, huh.\"") == 1);
     CUTE_ASSERT(expand_string(NULL) == NULL);
-    string = expand_string("\"\t\n\r\"\"");
-    CUTE_ASSERT(string != NULL && strlen(string) == 4 && string[0] == '\t' &&
+    string = expand_string("\"\t\n\r\".\"");
+    CUTE_ASSERT(string != NULL && strlen(string) == 5 && string[0] == '\t' &&
                                                          string[1] == '\n' &&
                                                          string[2] == '\r' &&
                                                          string[3] == '"'  &&
-                                                         string[4] == 0);
+                                                         string[4] == '.'  &&
+                                                         string[5] == 0);
     free(string);
 CUTE_TEST_CASE_END
 
