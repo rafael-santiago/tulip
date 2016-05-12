@@ -22,7 +22,9 @@
 
 #define is_slideup(c) ( (c) == '\\' )
 
-#define is_note(c) ( isdigit(c) )
+//#define is_note(c) ( (c) != '0' && isdigit(c) )
+
+#define is_note(c) ( ( (c) >= '1' && (c) <= '6' ) )
 
 #define is_string_delim(c) ( (c) == '"' )
 

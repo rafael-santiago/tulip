@@ -4,7 +4,7 @@
 #define new_technique_stack_ctx(t) ( (t) = (tulip_technique_stack_ctx *) getseg(sizeof(tulip_technique_stack_ctx)),\
                                      (t)->technique_code = kTlpNone, (t)->next = NULL )
 
-tulip_technique_stack_ctx *push_technique_to_techique_stack_ctx(tulip_technique_stack_ctx *stack, tulip_command_t technique) {
+tulip_technique_stack_ctx *push_technique_to_technique_stack_ctx(tulip_technique_stack_ctx *stack, tulip_command_t technique) {
     tulip_technique_stack_ctx *top = NULL;
     new_technique_stack_ctx(top);
     top->technique_code = technique;
@@ -12,7 +12,7 @@ tulip_technique_stack_ctx *push_technique_to_techique_stack_ctx(tulip_technique_
     return top;
 }
 
-tulip_technique_stack_ctx *pop_technique_from_techique_stack_ctx(tulip_technique_stack_ctx *stack) {
+tulip_technique_stack_ctx *pop_technique_from_technique_stack_ctx(tulip_technique_stack_ctx *stack) {
     tulip_technique_stack_ctx *top = NULL;
     if (stack == NULL) {
         return NULL;

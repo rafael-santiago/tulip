@@ -13,7 +13,7 @@ int is_valid_string(const char *buf) {
     }
     bp_end = bp + strlen(buf) - 1;
     bp++;
-    while (bp == bp_end) {
+    while (bp != bp_end) {
         switch (*bp) {
             case '\\':
                     bp++;
