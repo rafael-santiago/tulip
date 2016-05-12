@@ -2,12 +2,27 @@
 #define TULIP_DSL_UTILS_H 1
 
 #include <base/types.h>
+#include <ctype.h>
 
 #define is_technique_block_begin(c) ( (c) == '{' )
 
 #define is_technique_block_end(c) ( (c) == '}' )
 
 #define is_technique_tag_announce(c) ( (c) == '.' )
+
+#define is_sep(c) ( (c) == '-' )
+
+#define is_hammeron(c) ( (c) == 'h' )
+
+#define is_pulloff(c) ( (c) == 'p' )
+
+#define is_vibrato(c) ( (c) == '~' )
+
+#define is_slidedown(c) ( (c) == '/' )
+
+#define is_slideup(c) ( (c) == '\\' )
+
+#define is_note(c) ( isdigit(c) )
 
 #define is_string_delim(c) ( (c) == '"' )
 

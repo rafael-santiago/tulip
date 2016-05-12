@@ -1,0 +1,87 @@
+include ~/toolsets/gcc/gcc-app.hsl
+
+var src type list;
+var inc type list;
+var cflags type list;
+var lib type list;
+var ldflags type list;
+var appname type string;
+
+project tulip-tests : toolset "gcc-c-app" : $src, $inc, $cflags, $lib, $ldflags, $appname ;
+
+tulip-tests.prologue() {
+    forge_libcutest();
+    $ldflags = hefesto.sys.get_option("ldflags");
+    if (hefesto.sys.os_name() == "linux") {
+        $ldflags.add_item("-ldl");
+    } else if (hefesto.sys.os_name() == "freebsd") {
+        $ldflags.add_item("-lexecinfo");
+    }
+    $ldflags = get_master_project_objects($ldflags);
+    $lib = hefesto.sys.get_option("libraries");
+    $inc = hefesto.sys.get_option("includes");
+    $cflags = hefesto.sys.get_option("cflags");
+    $appname = get_appname();
+    $src.ls(".*\\.c$");
+}
+
+tulip-tests.epilogue() {
+    var exit_code type int;
+    $exit_code = 1;
+    if (hefesto.sys.last_forge_result() == 0) {
+        $exit_code = runtests();
+    }
+    hefesto.sys.exit($exit_code);
+}
+
+function forge_libcutest() : result type none {
+    var oldcwd type string;
+    $oldcwd = hefesto.sys.pwd();
+    hefesto.sys.cd("cutest/src");
+    hefesto.sys.forge("cutest", "Forgefile.hsl", "--obj-output-dir=o --bin-output-dir=lib");
+    hefesto.sys.cd($oldcwd);
+    if (hefesto.sys.last_forge_result() != 0) {
+        hefesto.project.abort(1);
+    }
+}
+
+function runtests() : result type int {
+    result hefesto.sys.run(hefesto.sys.make_path("bin", get_appname()));
+}
+
+function get_appname() : result type string {
+    if (hefesto.sys.os_name() == "windows") {
+        result "tests.exe";
+    }
+    result "tests";
+}
+
+function get_master_project_objects(ldflags type list) : result type list {
+    var master_project_obj_dir type list;
+    var m type int;
+    var oldcwd type string;
+    $master_project_obj_dir = hefesto.sys.get_option("master-project-obj-dir");
+    if ($master_project_obj_dir.count() > 0) {
+        $oldcwd = hefesto.sys.pwd();
+        $m = 0;
+        while ($m < $master_project_obj_dir.count()) {
+            if (hefesto.sys.cd($master_project_obj_dir.item($m))) {
+                $ldflags.ls(".*\\.o$");
+                hefesto.sys.cd($oldcwd);
+            }
+            $m = $m + 1;
+        }
+        $m = 0;
+        while ($m < $ldflags.count()) {
+            var citem type string;
+            $citem = $ldflags.item($m);
+            if ($citem.match(".*main\\.o$") == 1) {
+                $ldflags.del_item($citem);
+                break;
+            }
+            $m = $m + 1;
+        }
+    }
+    result $ldflags;
+}
+

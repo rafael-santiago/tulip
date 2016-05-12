@@ -1,4 +1,3 @@
 .Forgefile*
-.gitignore
 *.o
 bin/*

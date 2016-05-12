@@ -42,6 +42,15 @@ function get_codes() : result type list {
     result $codes;
 }
 
+function runtests() : result type int {
+    var oldcwd type string;
+    $oldcwd = hefesto.sys.pwd();
+    hefesto.sys.cd("test");
+    hefesto.sys.forge("tulip-tests", "Forgefile.hsl", "--obj-output-dir=o --bin-output-dir=bin --master-project-obj-dir=../o --includes=cutest/src --ldflags=-lcutest --libraries=cutest/src/lib");
+    hefesto.sys.cd($oldcwd);
+    result hefesto.sys.last_forge_result();
+}
+
 tulip.prologue() {
     $src = get_codes();
     $inc = hefesto.sys.get_option("includes");
@@ -50,7 +59,9 @@ tulip.prologue() {
 
 tulip.epilogue() {
     if (hefesto.sys.last_forge_result() == 0) {
-        hefesto.sys.echo("\n___\n*** SUCCESS.\n");
+        if (runtests() == 0) {
+            hefesto.sys.echo("\n___\n*** SUCCESS.\n");
+        }
     } else {
         hefesto.sys.echo("\n___\n~~~ FAILURE.\n");
     }
