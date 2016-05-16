@@ -3,6 +3,7 @@
 #include <base/ctx.h>
 #include <dsl/utils.h>
 #include <dsl/str/strutils.h>
+#include <dsl/parser/parser.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -46,6 +47,10 @@ CUTE_TEST_CASE(basic_dsl_utils_tests)
         {        ".literal",        kTlpLiteral, 0 },
         {              "34",     kTlpSingleNote, 0 },
         {               "-",        kTlpNoteSep, 0 },
+        {               ";",      kTlpSavePoint, 0 },
+        {               "|",         kTlpSepBar, 0 },
+        {               "b",           kTlpBend, 0 },
+        {               "r",    kTlpReleaseBend, 0 },
         {          "(null)",           kTlpNone, 0 }
     };
     size_t e_results_nr = sizeof(e_results) / sizeof(e_results[0]), e = 0;
@@ -96,10 +101,83 @@ CUTE_TEST_CASE(dsl_strutils_tests)
     free(string);
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(dsl_parser_skip_string_chunk_tests)
+    const char *string = "\"This is my \\\"string\\\"\".";
+    const char *sp = skip_string_chunk(string);
+    CUTE_ASSERT(sp != NULL && strcmp(sp, ".") == 0);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(dsl_parser_get_next_tlp_technique_block_begin_tests)
+    const char *buf = ".chord{30-20-10}";
+    const char *exp_res = buf + 6;
+    const char *begin = get_next_tlp_technique_block_begin(buf);
+    CUTE_ASSERT(begin != NULL && begin == exp_res);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(dsl_parser_get_next_tlp_technique_block_end_tests)
+    const char *buf = "{.chord{57-49}}";
+    const char *buf_end = buf + strlen(buf) - 1;
+    const char *end = get_next_tlp_technique_block_end(buf);
+    CUTE_ASSERT(end != NULL && end == buf_end);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(dsl_parser_get_next_tlp_technique_block_size_tests)
+    const char *codebuf = ".mute{.chord{57-49}}";
+    size_t expected_size = 14;
+    CUTE_ASSERT(get_next_tlp_technique_block_size(codebuf) == expected_size);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(dsl_parser_get_codebuf_from_filepath_tests)
+    const char *codebuf = "302-200-100-;-.chord{501-400-201-202}";
+    const char *ldbuf = NULL;
+    FILE *fp = fopen("test.tlp", "wb");
+    CUTE_ASSERT(fp != NULL);
+    fwrite(codebuf, 1, strlen(codebuf), fp);
+    fclose(fp);
+    ldbuf = get_codebuf_from_filepath("test.tlp");
+    remove("test.tlp");
+    CUTE_ASSERT(ldbuf != NULL);
+    CUTE_ASSERT(strcmp(ldbuf, codebuf) == 0);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(dsl_parser_get_next_tlp_command_tests)
+    const char *next = NULL;
+    next = get_next_tlp_command("200-301~-200h202~");
+    CUTE_ASSERT(next != NULL && *next == '2');
+    next = get_next_tlp_command("  -301~-200h202~");
+    CUTE_ASSERT(next != NULL && *next == '-');
+    next = get_next_tlp_command("~-200h202~");
+    CUTE_ASSERT(next != NULL && *next == '~');
+    next = get_next_tlp_command("h202~");
+    CUTE_ASSERT(next != NULL && *next == 'h');
+    next = get_next_tlp_command("  ~");
+    CUTE_ASSERT(next != NULL && *next == '~');
+    next = get_next_tlp_command("  .letring{.chord{200-202}}");
+    CUTE_ASSERT(next != NULL && *next == '.');
+    next = get_next_tlp_command(" ;");
+    CUTE_ASSERT(next != NULL && *next == ';');
+    next = get_next_tlp_command("  p200");
+    CUTE_ASSERT(next != NULL && *next == 'p');
+    next = get_next_tlp_command("  \\63");
+    CUTE_ASSERT(next != NULL && *next == '\\');
+    next = get_next_tlp_command("  /605");
+    CUTE_ASSERT(next != NULL && *next == '/');
+    next = get_next_tlp_command("  |-200");
+    CUTE_ASSERT(next != NULL && *next == '|');
+    next = get_next_tlp_command("  b-200");
+    CUTE_ASSERT(next != NULL && *next == 'b');
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(tulip_tests)
     CUTE_RUN_TEST(tulip_technique_stack_ctx_tests);
     CUTE_RUN_TEST(basic_dsl_utils_tests);
     CUTE_RUN_TEST(dsl_strutils_tests);
+    CUTE_RUN_TEST(dsl_parser_skip_string_chunk_tests);
+    CUTE_RUN_TEST(dsl_parser_get_next_tlp_technique_block_begin_tests);
+    CUTE_RUN_TEST(dsl_parser_get_next_tlp_technique_block_end_tests);
+    CUTE_RUN_TEST(dsl_parser_get_next_tlp_technique_block_size_tests);
+    CUTE_RUN_TEST(dsl_parser_get_codebuf_from_filepath_tests);
+    CUTE_RUN_TEST(dsl_parser_get_next_tlp_command_tests);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulip_tests);

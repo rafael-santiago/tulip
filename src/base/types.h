@@ -17,7 +17,11 @@ typedef enum _tulip_command_t {
     kTlpTunning        = 0x00000800,
     kTlpLiteral        = 0x00001000,
     kTlpSingleNote     = 0x00002000,
-    kTlpNoteSep        = 0x00004000
+    kTlpNoteSep        = 0x00004000,
+    kTlpSepBar         = 0x00008000,
+    kTlpSavePoint      = 0x00010000,
+    kTlpBend           = 0x00020000,
+    kTlpReleaseBend    = 0x00040000
 }tulip_command_t;
 
 typedef struct _tulip_technique_stack_ctx {

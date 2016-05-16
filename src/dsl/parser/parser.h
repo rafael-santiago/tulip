@@ -1,10 +1,18 @@
 #ifndef TULIP_DSL_PARSER_PARSER_H
 #define TULIP_DSL_PARSER_PARSER_H 1
 
+#include <stdlib.h>
+
 char *get_codebuf_from_filepath(const char *filepath);
 
 const char *get_next_tlp_command(const char *codebuf);
 
-const char *get_next_tlp_technique_block(const char *codebuf);
+const char *get_next_tlp_technique_block_begin(const char *codebuf);
+
+const char *get_next_tlp_technique_block_end(const char *codebuf);
+
+const char *skip_string_chunk(const char *codebuf);
+
+size_t get_next_tlp_technique_block_size(const char *codebuf);
 
 #endif

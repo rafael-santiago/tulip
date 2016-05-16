@@ -22,13 +22,21 @@
 
 #define is_slideup(c) ( (c) == '\\' )
 
-//#define is_note(c) ( (c) != '0' && isdigit(c) )
-
 #define is_note(c) ( ( (c) >= '1' && (c) <= '6' ) )
 
 #define is_string_delim(c) ( (c) == '"' )
 
 #define is_string_escaper(c) ( (c) == '\\' )
+
+#define is_blank(c) ( (c) == ' ' || (c) == '\t' || (c) == '\r' || (c) == '\n' )
+
+#define is_save_point(c) ( (c) == ';' )
+
+#define is_sep_bar(c) ( (c) == '|' )
+
+#define is_bend(c) ( (c) == 'b' )
+
+#define is_release_bend(c) ( (c) == 'r' )
 
 tulip_command_t get_cmd_code_from_cmd_tag(const char *buf);
 

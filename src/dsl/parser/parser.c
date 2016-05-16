@@ -57,12 +57,79 @@ const char *get_next_tlp_command(const char *codebuf) {
                                      !is_pulloff(*codebuf) &&
                                      !is_vibrato(*codebuf) &&
                                      !is_slidedown(*codebuf) &&
-                                     !is_slideup(*codebuf)) {
+                                     !is_slideup(*codebuf) &&
+                                     !is_sep_bar(*codebuf) &&
+                                     !is_save_point(*codebuf) &&
+                                     !is_bend(*codebuf) &&
+                                     !is_release_bend(*codebuf)) {
         codebuf++;
     }
     return codebuf;
 }
 
-const char *get_next_tlp_technique_block(const char *codebuf) {
-    return NULL;
+const char *get_next_tlp_technique_block_begin(const char *codebuf) {
+    const char *cp = codebuf;
+    const char *cp_end = NULL;
+    if (cp == NULL) {
+        return NULL;
+    }
+    cp_end = cp + strlen(cp);
+    while (cp != cp_end && !is_technique_block_begin(*cp)) {
+        cp++;
+    }
+    return (cp != cp_end) ? cp : NULL;
+}
+
+const char *get_next_tlp_technique_block_end(const char *codebuf) {
+    const char *cp = get_next_tlp_technique_block_begin(codebuf);
+    const char *cp_end = NULL;
+    int o = 1;
+    if (cp == NULL || !is_technique_block_begin(*cp)) {
+        return NULL;
+    }
+    cp_end = cp + strlen(cp);
+    cp++;
+    while (cp != cp_end && o > 0) {
+        if (is_technique_block_begin(*cp)) {
+            o++;
+        } else if (is_technique_block_end(*cp)) {
+            o--;
+            if (o == 0) {
+                continue;
+            }
+        } else if (is_string_delim(*cp)) {
+            cp = skip_string_chunk(cp);
+        }
+        cp++;
+    }
+    return (cp != cp_end) ? cp : NULL;
+}
+
+const char *skip_string_chunk(const char *codebuf) {
+    const char *cp = codebuf;
+    const char *cp_end = NULL;
+    if (cp == NULL) {
+        return NULL;
+    }
+    if (!is_string_delim(*cp)) {
+        return cp;
+    }
+    cp_end = cp + strlen(cp);
+    cp++;
+    while (cp != cp_end && !is_string_delim(*cp)) {
+        if (is_string_escaper(*cp)) {
+            cp++;
+        }
+        cp++;
+    }
+    if (cp != cp_end) {
+        cp++;
+    }
+    return (cp != cp_end) ? cp : NULL;
+}
+
+size_t get_next_tlp_technique_block_size(const char *codebuf) {
+    const char *begin = get_next_tlp_technique_block_begin(codebuf);
+    const char *end = get_next_tlp_technique_block_end(codebuf);
+    return (begin != NULL && end != NULL) ? end - begin : 0;
 }
