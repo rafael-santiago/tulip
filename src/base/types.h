@@ -21,7 +21,8 @@ typedef enum _tulip_command_t {
     kTlpSepBar         = 0x00008000,
     kTlpSavePoint      = 0x00010000,
     kTlpBend           = 0x00020000,
-    kTlpReleaseBend    = 0x00040000
+    kTlpReleaseBend    = 0x00040000,
+    kTlpBlockEnd       = 0x00080000
 }tulip_command_t;
 
 typedef struct _tulip_technique_stack_ctx {
@@ -30,9 +31,10 @@ typedef struct _tulip_technique_stack_ctx {
 }tulip_technique_stack_ctx;
 
 typedef struct _tulip_single_note_ctx {
-    unsigned int techniques;
+    tulip_command_t techniques;
     char buf[255];
-    struct _tulip_single_note_ctx *next;
+    int line_nr;
+    struct _tulip_single_note_ctx *last, *next;
 }tulip_single_note_ctx;
 
 typedef enum _tulip_bool_prefs_map {

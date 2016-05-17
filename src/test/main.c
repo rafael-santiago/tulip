@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-CUTE_TEST_CASE(tulip_technique_stack_ctx_tests)
+CUTE_TEST_CASE(base_tulip_technique_stack_ctx_tests)
     tulip_technique_stack_ctx *stack = NULL, *top = NULL;
     stack = push_technique_to_technique_stack_ctx(stack, kTlpChord);
     stack = push_technique_to_technique_stack_ctx(stack, kTlpMute);
@@ -24,7 +24,7 @@ CUTE_TEST_CASE(tulip_technique_stack_ctx_tests)
     free_technique_stack_ctx(stack);
 CUTE_TEST_CASE_END
 
-CUTE_TEST_CASE(basic_dsl_utils_tests)
+CUTE_TEST_CASE(dsl_basic_dsl_utils_tests)
     //  INFO(Santiago): it tests the basic aspects of the DSL.
     struct expected_results {
         const char *tech;
@@ -168,9 +168,80 @@ CUTE_TEST_CASE(dsl_parser_get_next_tlp_command_tests)
     CUTE_ASSERT(next != NULL && *next == 'b');
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(dsl_parser_set_curr_code_line_number_tests)
+    CUTE_ASSERT(get_curr_code_line_number() == 0);
+    set_curr_code_line_number(255);
+    CUTE_ASSERT(get_curr_code_line_number() == 255);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(dsl_parser_get_curr_code_line_number_tests)
+        const char *codebuf = "\n\n.chord{10-20-30}";
+        const char *next = NULL;
+        set_curr_code_line_number(1);
+        next = get_next_tlp_command(codebuf);
+        CUTE_ASSERT(next != NULL);
+        CUTE_ASSERT(get_curr_code_line_number() == 3);
+        codebuf = "\n\n\"\n\n\\n\"-";
+        set_curr_code_line_number(1);
+        next = get_next_tlp_command(codebuf);
+        CUTE_ASSERT(get_curr_code_line_number() == 5);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(base_tulip_single_note_ctx_tests)
+    tulip_single_note_ctx *song = NULL;
+    song = add_note_to_tulip_single_note_ctx(song, kTlpChord, "53-42-30-21-10");
+    CUTE_ASSERT(song != NULL);
+    CUTE_ASSERT(song->next == NULL);
+    CUTE_ASSERT(song->last == NULL);
+    CUTE_ASSERT(song->techniques == kTlpChord);
+    CUTE_ASSERT(strcmp(song->buf, "53-42-30-21-10") == 0);
+    song = add_note_to_tulip_single_note_ctx(song, kTlpChord | kTlpLetRing, "53-42-30-21-10");
+    CUTE_ASSERT(song->next != NULL);
+    CUTE_ASSERT(song->last == NULL);
+    CUTE_ASSERT(song->next->next == NULL);
+    CUTE_ASSERT(song->next->last == song);
+    CUTE_ASSERT(song->next->techniques == kTlpChord | kTlpLetRing);
+    CUTE_ASSERT(strcmp(song->next->buf, "53-42-30-21-10") == 0);
+    free_tulip_single_note_ctx(song);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(dsl_utils_tlp_cmd_code_to_plain_index_tests)
+    struct test_vector {
+        tulip_command_t code;
+        size_t index;
+    };
+    struct test_vector values[] = {
+        {           kTlpMute,  0 },
+        {        kTlpLetRing,  1 },
+        {          kTlpChord,  2 },
+        {           kTlpBeat,  3 },
+        { kTlpTremoloPicking,  4 },
+        {        kTlpVibrato,  5 },
+        {      kTlpSlideDown,  6 },
+        {        kTlpSlideUp,  7 },
+        {       kTlpHammerOn,  8 },
+        {        kTlpPullOff,  9 },
+        {    kTlpVibratoWBar, 10 },
+        {        kTlpTunning, 11 },
+        {        kTlpLiteral, 12 },
+        {     kTlpSingleNote, 13 },
+        {        kTlpNoteSep, 14 },
+        {         kTlpSepBar, 15 },
+        {      kTlpSavePoint, 16 },
+        {           kTlpBend, 17 },
+        {    kTlpReleaseBend, 18 },
+        {       kTlpBlockEnd, 19 }
+    };
+    size_t values_nr = sizeof(values) / sizeof(values[0]), v;
+    for (v = 0; v < values_nr; v++) {
+        CUTE_ASSERT(tlp_cmd_code_to_plain_index(values[v].code) == values[v].index);
+    }
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(tulip_tests)
-    CUTE_RUN_TEST(tulip_technique_stack_ctx_tests);
-    CUTE_RUN_TEST(basic_dsl_utils_tests);
+    CUTE_RUN_TEST(base_tulip_technique_stack_ctx_tests);
+    CUTE_RUN_TEST(base_tulip_single_note_ctx_tests);
+    CUTE_RUN_TEST(dsl_basic_dsl_utils_tests);
     CUTE_RUN_TEST(dsl_strutils_tests);
     CUTE_RUN_TEST(dsl_parser_skip_string_chunk_tests);
     CUTE_RUN_TEST(dsl_parser_get_next_tlp_technique_block_begin_tests);
@@ -178,6 +249,9 @@ CUTE_TEST_CASE(tulip_tests)
     CUTE_RUN_TEST(dsl_parser_get_next_tlp_technique_block_size_tests);
     CUTE_RUN_TEST(dsl_parser_get_codebuf_from_filepath_tests);
     CUTE_RUN_TEST(dsl_parser_get_next_tlp_command_tests);
+    CUTE_RUN_TEST(dsl_parser_set_curr_code_line_number_tests);
+    CUTE_RUN_TEST(dsl_parser_get_curr_code_line_number_tests);
+    CUTE_RUN_TEST(dsl_utils_tlp_cmd_code_to_plain_index_tests);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulip_tests);

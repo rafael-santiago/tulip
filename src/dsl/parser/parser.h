@@ -15,4 +15,8 @@ const char *skip_string_chunk(const char *codebuf);
 
 size_t get_next_tlp_technique_block_size(const char *codebuf);
 
+void set_curr_code_line_number(const int line_nr);
+
+int get_curr_code_line_number();
+
 #endif

@@ -3,6 +3,7 @@
 
 #include <base/types.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 #define is_technique_block_begin(c) ( (c) == '{' )
 
@@ -43,5 +44,7 @@ tulip_command_t get_cmd_code_from_cmd_tag(const char *buf);
 int is_single_note(const char *buf);
 
 int is_sustained_technique(const char *buf);
+
+size_t tlp_cmd_code_to_plain_index(const tulip_command_t code);
 
 #endif

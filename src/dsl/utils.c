@@ -38,6 +38,46 @@ static const size_t g_tlp_tag_map_nr = sizeof(g_tlp_tag_map) / sizeof(g_tlp_tag_
 
 static ssize_t get_tlp_tag_index(const char *buf);
 
+size_t tlp_cmd_code_to_plain_index(const tulip_command_t code) {
+    int carry = 0;
+    int index = 0;
+    if ((code & 0x0000000f) != 0) {
+        carry = 0;
+    } else if ((code & 0x000000f0) != 0) {
+        carry = 4;
+    } else if ((code & 0x00000f00) != 0) {
+        carry = 8;
+    } else if ((code & 0x0000f000) != 0) {
+        carry = 12;
+    } else if ((code & 0x000f0000) != 0) {
+        carry = 16;
+    } else if ((code & 0x00f00000) != 0) {
+        carry = 20;
+    } else if ((code & 0x0f000000) != 0) {
+        carry = 24;
+    } else if ((code & 0xf0000000) != 0) {
+        carry = 28;
+    }
+    switch (code >> carry) {
+        case 0x01:
+            index = 0;
+            break;
+
+        case 0x02:
+            index = 1;
+            break;
+
+        case 0x04:
+            index = 2;
+            break;
+
+        case 0x08:
+            index = 3;
+            break;
+    }
+    return (index + carry);
+}
+
 int is_single_note(const char *buf) {
     const char *bp = buf;
     const char *strings = "654321";
@@ -75,7 +115,7 @@ static ssize_t get_tlp_tag_index(const char *buf) {
         return -1;
     }
     for (t = 0; t < g_tlp_tag_map_nr; t++) {
-        if (strcmp(g_tlp_tag_map[t].tag, buf) == 0) {
+        if (strstr(g_tlp_tag_map[t].tag, buf) == g_tlp_tag_map[t].tag) {
             return t;
         }
     }

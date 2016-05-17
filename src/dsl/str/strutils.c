@@ -69,5 +69,6 @@ char *expand_string(const char *buf) {
             *sp = *bp;
         }
     }
+    *sp = 0;
     return string;
 }

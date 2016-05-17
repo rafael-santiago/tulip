@@ -4,6 +4,16 @@
 #include <stdio.h>
 #include <string.h>
 
+static int g_curr_line_nr = 0;
+
+void set_curr_code_line_number(const int line_nr) {
+    g_curr_line_nr = line_nr;
+}
+
+int get_curr_code_line_number() {
+    return g_curr_line_nr;
+}
+
 long get_filesize(FILE *fp) {
     long fsize = 0;
     if (fp == NULL) {
@@ -62,6 +72,9 @@ const char *get_next_tlp_command(const char *codebuf) {
                                      !is_save_point(*codebuf) &&
                                      !is_bend(*codebuf) &&
                                      !is_release_bend(*codebuf)) {
+        if (*codebuf == '\n') {
+            g_curr_line_nr++;
+        }
         codebuf++;
     }
     return codebuf;
@@ -83,7 +96,7 @@ const char *get_next_tlp_technique_block_begin(const char *codebuf) {
 const char *get_next_tlp_technique_block_end(const char *codebuf) {
     const char *cp = get_next_tlp_technique_block_begin(codebuf);
     const char *cp_end = NULL;
-    int o = 1;
+    int o = 1, temp = 0;
     if (cp == NULL || !is_technique_block_begin(*cp)) {
         return NULL;
     }
@@ -98,7 +111,9 @@ const char *get_next_tlp_technique_block_end(const char *codebuf) {
                 continue;
             }
         } else if (is_string_delim(*cp)) {
+            temp = get_curr_code_line_number(); // INFO(Santiago): dirty trick prologue.
             cp = skip_string_chunk(cp);
+            set_curr_code_line_number(temp); // INFO(Santiago): dirty trick epilogue.
         }
         cp++;
     }
@@ -119,6 +134,9 @@ const char *skip_string_chunk(const char *codebuf) {
     while (cp != cp_end && !is_string_delim(*cp)) {
         if (is_string_escaper(*cp)) {
             cp++;
+        }
+        if (*cp == '\n') {
+            g_curr_line_nr++;
         }
         cp++;
     }

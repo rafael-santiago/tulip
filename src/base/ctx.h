@@ -13,4 +13,8 @@ tulip_command_t top_of_technique_stack_ctx(const tulip_technique_stack_ctx *stac
 
 void free_technique_stack_ctx(tulip_technique_stack_ctx *stack);
 
+tulip_single_note_ctx *add_note_to_tulip_single_note_ctx(tulip_single_note_ctx *song, tulip_command_t techniques, const char *buf);
+
+void free_tulip_single_note_ctx(tulip_single_note_ctx *song);
+
 #endif
