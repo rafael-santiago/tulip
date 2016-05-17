@@ -10,10 +10,10 @@ about the design and choices can be found in the ``User Manual``.
 
 ## The *BNF*
 
-Basically this is the possible productions that you should be able to produce with this Language. The following *BNF data*
-it is not so well normalized but I think that it is possible to produce a parser or at least avoid reading the ``User Manual``
-in order to learn how to produce some ``Tulip code``, if you have some formal knowledge about compilers, of course. Otherwise
-do not waste your time freaking out your brain, it is better to move on to the ``User Manual`` and forget about this.
+Basically here is the possible productions that you should be able to do. The following *BNF data* it is not so well
+normalized but I think that it is possible to produce a parser or at least avoid reading the ``User Manual`` in order to learn
+how to produce some ``Tulip code``, if you have some formal knowledge about compilers, of course. Otherwise do not waste your
+time freaking out your brain, it is better to move on to the ``User Manual`` and forget about this.
 
         <tlp-code>                ::=  <note> | <sep> | <save-point> | <tag-announce> <tag-code>
         <note>                    ::= <string-number> <fret-number>
@@ -54,8 +54,8 @@ do not waste your time freaking out your brain, it is better to move on to the `
 
 As you can see it is a pretty compact Language. Parsing this is very straightforward.
 
-Excepting the ``chord`` tag any other should support fully recursion. What means allow an internal definition of ``<tlp-code>``
-as the tag's production.
+Excepting the tags ``chord``, ``tunning`` and ``literal`` any other should support fully recursion. What means allow an more
+internal definition of ``<tlp-code>`` as the tag's production.
 
 The production ``<note-cipher>`` does not disallow the usage of a lower-case cipher in order to express a lower string tunning.
 Nevertheless I think that use it is ugly as hell.
