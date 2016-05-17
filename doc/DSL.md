@@ -13,7 +13,8 @@ about the design and choices can be found in the ``User Manual``.
 Basically here is the possible productions that you should be able to do. The following *BNF data* it is not so well
 normalized but I think that it is possible to produce a parser or at least avoid reading the ``User Manual`` in order to learn
 how to produce some ``Tulip code``, if you have some formal knowledge about compilers, of course. Otherwise do not waste your
-time freaking out your brain, it is better to move on to the ``User Manual`` and forget about this.
+time freaking out your brain, it is better to move on to the [User Manual](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md)
+and forget this.
 
         <tlp-code>                ::=  <note> | <sep> | <save-point> | <tag-announce> <tag-code>
         <note>                    ::= <string-number> <fret-number>
