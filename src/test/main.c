@@ -32,26 +32,29 @@ CUTE_TEST_CASE(dsl_basic_dsl_utils_tests)
         int sustain;
     };
     struct expected_results e_results[] = {
-        {           ".mute",           kTlpMute, 1 },
-        {        ".letring",        kTlpLetRing, 1 },
-        {          ".chord",          kTlpChord, 1 },
-        {           ".beat",           kTlpBeat, 1 },
-        { ".tremolopicking", kTlpTremoloPicking, 1 },
-        {    ".vibratowbar",    kTlpVibratoWBar, 1 },
-        {               "~",        kTlpVibrato, 0 },
-        {               "/",      kTlpSlideDown, 0 },
-        {              "\\",        kTlpSlideUp, 0 },
-        {               "h",       kTlpHammerOn, 0 },
-        {               "p",        kTlpPullOff, 0 },
-        {        ".tunning",        kTlpTunning, 0 },
-        {        ".literal",        kTlpLiteral, 0 },
-        {              "34",     kTlpSingleNote, 0 },
-        {               "-",        kTlpNoteSep, 0 },
-        {               ";",      kTlpSavePoint, 0 },
-        {               "|",         kTlpSepBar, 0 },
-        {               "b",           kTlpBend, 0 },
-        {               "r",    kTlpReleaseBend, 0 },
-        {          "(null)",           kTlpNone, 0 }
+        {           ".mute",               kTlpMute, 1 },
+        {        ".letring",            kTlpLetRing, 1 },
+        {          ".chord",              kTlpChord, 1 },
+        {           ".beat",               kTlpBeat, 1 },
+        { ".tremolopicking",     kTlpTremoloPicking, 1 },
+        {    ".vibratowbar",        kTlpVibratoWBar, 1 },
+        {               "~",            kTlpVibrato, 0 },
+        {               "/",          kTlpSlideDown, 0 },
+        {              "\\",            kTlpSlideUp, 0 },
+        {               "h",           kTlpHammerOn, 0 },
+        {               "p",            kTlpPullOff, 0 },
+        {        ".tunning",            kTlpTunning, 0 },
+        {        ".literal",            kTlpLiteral, 0 },
+        {              "34",         kTlpSingleNote, 0 },
+        {               "-",            kTlpNoteSep, 0 },
+        {               ";",          kTlpSavePoint, 0 },
+        {               "|",             kTlpSepBar, 0 },
+        {               "b",               kTlpBend, 0 },
+        {               "r",        kTlpReleaseBend, 0 },
+        {               "T",            kTlpTapping, 0 },
+        {               "*",    kTlpNaturalHarmonic, 0 },
+        {               "v", kTlpArtificialHarmonic, 0 },
+        {          "(null)",               kTlpNone, 0 }
     };
     size_t e_results_nr = sizeof(e_results) / sizeof(e_results[0]), e = 0;
     CUTE_ASSERT(is_technique_block_begin('{') == 1);
@@ -78,6 +81,18 @@ CUTE_TEST_CASE(dsl_basic_dsl_utils_tests)
     CUTE_ASSERT(is_single_note("309") == 1);
     CUTE_ASSERT(is_single_note("25") == 1);
     CUTE_ASSERT(is_single_note("206") == 1);
+    CUTE_ASSERT(is_single_note("1X") == 1);
+    CUTE_ASSERT(is_single_note("2X") == 1);
+    CUTE_ASSERT(is_single_note("3X") == 1);
+    CUTE_ASSERT(is_single_note("4X") == 1);
+    CUTE_ASSERT(is_single_note("5X") == 1);
+    CUTE_ASSERT(is_single_note("6X") == 1);
+    CUTE_ASSERT(is_single_note("1:") == 1);
+    CUTE_ASSERT(is_single_note("2:") == 1);
+    CUTE_ASSERT(is_single_note("3:") == 1);
+    CUTE_ASSERT(is_single_note("4:") == 1);
+    CUTE_ASSERT(is_single_note("5:") == 1);
+    CUTE_ASSERT(is_single_note("6:") == 1);
     for (e = 0; e < e_results_nr; e++) {
         CUTE_ASSERT(get_cmd_code_from_cmd_tag(e_results[e].tech) == e_results[e].cmd);
         CUTE_ASSERT(is_sustained_technique(e_results[e].tech) == e_results[e].sustain);
@@ -211,26 +226,29 @@ CUTE_TEST_CASE(dsl_utils_tlp_cmd_code_to_plain_index_tests)
         size_t index;
     };
     struct test_vector values[] = {
-        {           kTlpMute,  0 },
-        {        kTlpLetRing,  1 },
-        {          kTlpChord,  2 },
-        {           kTlpBeat,  3 },
-        { kTlpTremoloPicking,  4 },
-        {        kTlpVibrato,  5 },
-        {      kTlpSlideDown,  6 },
-        {        kTlpSlideUp,  7 },
-        {       kTlpHammerOn,  8 },
-        {        kTlpPullOff,  9 },
-        {    kTlpVibratoWBar, 10 },
-        {        kTlpTunning, 11 },
-        {        kTlpLiteral, 12 },
-        {     kTlpSingleNote, 13 },
-        {        kTlpNoteSep, 14 },
-        {         kTlpSepBar, 15 },
-        {      kTlpSavePoint, 16 },
-        {           kTlpBend, 17 },
-        {    kTlpReleaseBend, 18 },
-        {       kTlpBlockEnd, 19 }
+        {               kTlpMute,  0 },
+        {            kTlpLetRing,  1 },
+        {              kTlpChord,  2 },
+        {               kTlpBeat,  3 },
+        {     kTlpTremoloPicking,  4 },
+        {            kTlpVibrato,  5 },
+        {          kTlpSlideDown,  6 },
+        {            kTlpSlideUp,  7 },
+        {           kTlpHammerOn,  8 },
+        {            kTlpPullOff,  9 },
+        {        kTlpVibratoWBar, 10 },
+        {            kTlpTunning, 11 },
+        {            kTlpLiteral, 12 },
+        {         kTlpSingleNote, 13 },
+        {            kTlpNoteSep, 14 },
+        {             kTlpSepBar, 15 },
+        {          kTlpSavePoint, 16 },
+        {               kTlpBend, 17 },
+        {        kTlpReleaseBend, 18 },
+        {           kTlpBlockEnd, 19 },
+        {            kTlpTapping, 20 },
+        {    kTlpNaturalHarmonic, 21 },
+        { kTlpArtificialHarmonic, 22 }
     };
     size_t values_nr = sizeof(values) / sizeof(values[0]), v;
     for (v = 0; v < values_nr; v++) {

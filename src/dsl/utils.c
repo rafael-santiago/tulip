@@ -31,7 +31,10 @@ static struct tulip_command_table_ctx g_tlp_tag_map[] = {
     tulip_register_code_tag(kTlpSepBar, "|", 0),
     tulip_register_code_tag(kTlpSavePoint, ";", 0),
     tulip_register_code_tag(kTlpBend, "b", 0),
-    tulip_register_code_tag(kTlpReleaseBend, "r", 0)
+    tulip_register_code_tag(kTlpReleaseBend, "r", 0),
+    tulip_register_code_tag(kTlpTapping, "T", 0),
+    tulip_register_code_tag(kTlpNaturalHarmonic, "*", 0),
+    tulip_register_code_tag(kTlpArtificialHarmonic, "v", 0)
 };
 
 static const size_t g_tlp_tag_map_nr = sizeof(g_tlp_tag_map) / sizeof(g_tlp_tag_map[0]);
@@ -86,6 +89,9 @@ int is_single_note(const char *buf) {
     if (bp == NULL) {
         return 0;
     }
+    if (strlen(buf) < 2) {
+        return 0;
+    }
     string[0] = *bp;
     string[1] = 0;
     if (strstr(strings + offset, string) == NULL) {
@@ -95,9 +101,12 @@ int is_single_note(const char *buf) {
     if (*bp == 0) {
         return 0;
     }
+    if ((*(bp) == 'X' || *(bp) == ':') && *(bp + 1) == 0) {
+        return 1;
+    }
     while (*bp != 0) {
         if (!isdigit(*bp)) {
-            return 1;
+            return 0;
         }
         bp++;
     }

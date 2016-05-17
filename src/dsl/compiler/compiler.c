@@ -6,15 +6,16 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-//  INFO(Santiago): This must be the standard behavior of a verifier...
+//  INFO(Santiago): This must be the general standard behavior of a verifier...
 //
 //            - Verify the current code chunk;
 //
-//            - If it is fine the code chunk must be loaded into the passed (tulip_single_note_ctx *) and (**next)
-//              must point to the next unverified chunk. The return is always 1;
+//            - If it is fine the code chunk must be loaded into the passed (tulip_single_note_ctx *) set [or as the musicians
+//              like to call: "song"] and (**next) must point to the next unverified chunk. The return is always 1;
 //
 //            - Otherwise if it has some error we need to return 0 and let the caller handle this;
 //
+//  It has been done in order to save one compiler pass.
 
 struct tlp_command_verifiers_ctx {
     int (*verifier)(const char *buf, tulip_single_note_ctx **song, char **next);
@@ -58,7 +59,7 @@ static void tlperr_s(char *buf, const char *error_message, ...) {
     int arg_i = 0;
     va_list args;
     if (buf != NULL && error_message != NULL) {
-        sprintf(buf, "ERROR: LINE: %d: ", get_curr_code_line_number());
+        sprintf(buf, "tulip ERROR: LINE: %d: ", get_curr_code_line_number());
     }
     ep_end = ep + strlen(ep);
     va_start(args, error_message);
