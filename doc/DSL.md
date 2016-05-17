@@ -3,7 +3,7 @@
 Well, I created this tiny ``DSL`` in ``2005`` based on my personal preferences about ``music transcribing`` but I have never
 formalized anything about this.
 
-Here you can find some more technical information about this ``DSL``.
+Here you can find some more technical information about.
 
 The Language is a mix of an ancient music notation with some tablature notation and still some tag recursion. The details
 about the design and choices can be found in the ``User Manual``.
