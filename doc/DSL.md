@@ -43,7 +43,7 @@ time freaking out your brain, it is better to move on to the ``User Manual`` and
         <string>                  ::= """ (<US-ASCII-SET> | <string-escape-codes>)+ """
         <string-escape-codes>     ::= ("\n" | "\r" | "\n" | "\t" | "\\" | "\"")+
         <chord-tag-code>          ::= "chord" <tag-begin> <chord-stmt-list> <tag-end>
-        <chord-stmt-list>         ::= (<note><sep>)+
+        <chord-stmt-list>         ::= (<note><sep>)+ | <note>
         <note-cipher>             ::= "C"  | "D"  | "E"  | "F"  | "G"  | "A"  | "B"  | "C#" | "D#" |
                                       "F#" | "G#" | "A#" | "Db" | "Eb" | "Gb" | "Ab" | "Bb" | "c"  |
                                       "d"  | "e"  | "f"  | "g"  | "a"  | "b"  | "c#" | "d#" | "e#" |
