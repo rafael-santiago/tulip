@@ -1,9 +1,7 @@
 # The Tulip Language
 
 Well, I created this tiny ``DSL`` in ``2005`` based on my personal preferences about ``music transcribing`` but I have never
-formalized anything about this.
-
-Here you can find some more technical information about.
+formalized anything about this. Here you can find some more technical information.
 
 The Language is a mix of an ancient music notation with some tablature notation and still some tag recursion. The details
 about the design and choices can be found in the ``User Manual``.
@@ -55,8 +53,8 @@ and forget this.
 
 As you can see it is a pretty compact Language. Parsing this is very straightforward.
 
-Excepting the tags ``chord``, ``tunning`` and ``literal`` any other should support fully recursion. What means allow an more
+Excepting the tags ``chord``, ``tunning`` and ``literal`` any other should support fully recursion. What means allow a more
 internal definition of ``<tlp-code>`` as the tag's production.
 
 The production ``<note-cipher>`` does not disallow the usage of a lower-case cipher in order to express a lower string tunning.
-Nevertheless I think that use it is ugly as hell.
+Nevertheless I think that use this is ugly as hell.
