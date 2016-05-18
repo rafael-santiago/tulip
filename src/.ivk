@@ -1,1 +1,1 @@
---forgefiles=Forgefile.hsl --Forgefile-projects=tulip --obj-output-dir=o --bin-output-dir=../bin --sub-modules=base,dsl,dsl/str,dsl/parser,dsl/compiler --includes=.
+--forgefiles=Forgefile.hsl --Forgefile-projects=tulip --obj-output-dir=o --bin-output-dir=../bin --sub-modules=base,dsl,dsl/str,dsl/parser,dsl/compiler,dsl/compiler/verifiers --includes=.

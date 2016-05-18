@@ -1,10 +1,13 @@
 #include <dsl/compiler/compiler.h>
 #include <dsl/parser/parser.h>
 #include <dsl/utils.h>
+#include <base/ctx.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
+
+tulip_technique_stack_ctx *g_techniques = NULL;
 
 //  INFO(Santiago): This must be the general standard behavior of a verifier...
 //
@@ -18,7 +21,7 @@
 //  It has been done in order to save one compiler pass.
 
 struct tlp_command_verifiers_ctx {
-    int (*verifier)(const char *buf, tulip_single_note_ctx **song, char **next);
+    int (*verifier)(const char *buf, char *error_message, tulip_single_note_ctx **song, char **next);
 };
 
 #define tlp_compiler_register_cmd_verifier(c, v) { v } //  INFO(Santiago): "c" is just for making the things clearer.
@@ -48,9 +51,7 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
 
 size_t g_tlp_cmd_verifiers_nr = sizeof(g_tlp_cmd_verifiers) / sizeof(g_tlp_cmd_verifiers[0]);
 
-static void tlperr_s(char *buf, const char *error_message, ...);
-
-static void tlperr_s(char *buf, const char *error_message, ...) {
+void tlperr_s(char *buf, const char *error_message, ...) {
     char *bp = buf;
     const char *ep = error_message;
     const char *ep_end = NULL;
@@ -58,9 +59,10 @@ static void tlperr_s(char *buf, const char *error_message, ...) {
     char arg_c = 0, *arg_s = NULL;
     int arg_i = 0;
     va_list args;
-    if (buf != NULL && error_message != NULL) {
-        sprintf(buf, "tulip ERROR: LINE: %d: ", get_curr_code_line_number());
+    if (buf == NULL || error_message == NULL) {
+        return;
     }
+    sprintf(buf, "tulip ERROR: LINE: %d: ", get_curr_code_line_number());
     ep_end = ep + strlen(ep);
     va_start(args, error_message);
     while (ep != ep_end) {
@@ -106,11 +108,28 @@ tulip_single_note_ctx *compile_tulip_codebuf(const char *codebuf, char *message_
     while (cp != cp_end) {
         cp = get_next_tlp_command(cp);
         if ((curr_command = get_cmd_code_from_cmd_tag(cp)) == kTlpNone) {
-            if (message_buf != NULL) {
-                tlperr_s(message_buf, "Unknown sequence: %c", *cp);
-            }
+            tlperr_s(message_buf, "Unknown sequence: %c", *cp);
         }
     }
     return song;
 }
 
+tulip_command_t get_used_techniques() {
+    tulip_command_t techniques = kTlpNone;
+    tulip_technique_stack_ctx *tp = NULL;
+    if (g_techniques == NULL) {
+        return kTlpNone;
+    }
+    for (tp = g_techniques; tp != NULL; tp = tp->next) {
+        techniques |= tp->technique_code;
+    }
+    return techniques;
+}
+
+void push_technique(const tulip_command_t technique) {
+    g_techniques = push_technique_to_technique_stack_ctx(g_techniques, technique);
+}
+
+void pop_technique() {
+    g_techniques = pop_technique_from_technique_stack_ctx(g_techniques);
+}

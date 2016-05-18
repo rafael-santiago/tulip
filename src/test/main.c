@@ -87,12 +87,12 @@ CUTE_TEST_CASE(dsl_basic_dsl_utils_tests)
     CUTE_ASSERT(is_single_note("4X") == 1);
     CUTE_ASSERT(is_single_note("5X") == 1);
     CUTE_ASSERT(is_single_note("6X") == 1);
-    CUTE_ASSERT(is_single_note("1:") == 1);
-    CUTE_ASSERT(is_single_note("2:") == 1);
-    CUTE_ASSERT(is_single_note("3:") == 1);
-    CUTE_ASSERT(is_single_note("4:") == 1);
-    CUTE_ASSERT(is_single_note("5:") == 1);
-    CUTE_ASSERT(is_single_note("6:") == 1);
+    CUTE_ASSERT(is_single_note("1:h") == 1);
+    CUTE_ASSERT(is_single_note("2:-") == 1);
+    CUTE_ASSERT(is_single_note("3:b") == 1);
+    CUTE_ASSERT(is_single_note("4:r") == 1);
+    CUTE_ASSERT(is_single_note("5:p") == 1);
+    CUTE_ASSERT(is_single_note("6:*") == 1);
     for (e = 0; e < e_results_nr; e++) {
         CUTE_ASSERT(get_cmd_code_from_cmd_tag(e_results[e].tech) == e_results[e].cmd);
         CUTE_ASSERT(is_sustained_technique(e_results[e].tech) == e_results[e].sustain);

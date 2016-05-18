@@ -101,7 +101,14 @@ int is_single_note(const char *buf) {
     if (*bp == 0) {
         return 0;
     }
-    if ((*(bp) == 'X' || *(bp) == ':') && *(bp + 1) == 0) {
+    if ((*(bp) == 'X' || *(bp) == ':')) {
+        if (*bp == 'X' && *(bp + 1) == 0) {
+            return 1;
+        }
+        bp++;
+        if (!is_note_sep(*bp)) {
+            return 0;
+        }
         return 1;
     }
     while (*bp != 0) {
