@@ -1,4 +1,5 @@
 #include <dsl/compiler/compiler.h>
+#include <dsl/compiler/verifiers/chord.h>
 #include <dsl/parser/parser.h>
 #include <dsl/utils.h>
 #include <base/ctx.h>
@@ -30,7 +31,7 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpMute, NULL),
     tlp_compiler_register_cmd_verifier(kTlpLetRing, NULL),
     tlp_compiler_register_cmd_verifier(kTlpChord, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpBeat, NULL),
+    tlp_compiler_register_cmd_verifier(kTlpBeat, chord_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpTremoloPicking, NULL),
     tlp_compiler_register_cmd_verifier(kTlpVibrato, NULL),
     tlp_compiler_register_cmd_verifier(kTlpSlideDown, NULL),

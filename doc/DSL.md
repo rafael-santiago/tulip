@@ -14,7 +14,7 @@ how to produce some ``Tulip code``, if you have some formal knowledge about comp
 time freaking out your brain, it is better to move on to the [User Manual](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md)
 and forget this.
 
-        <tlp-code>                ::=  (<note> | <sep> | <save-point> | <tag-announce> <tag-code>)(<tlp-code)* | (<tlp-code>)*
+        <tlp-code>                ::= (<note> | <sep> | <save-point> | <tag-announce> <tag-code>)(<tlp-code)* | (<tlp-code>)*
         <note>                    ::= <string-number> <fret-number>
         <string-number>           ::= "1" | "2" | "3" | "4" | "5" | "6"
         <fret-number>             ::= (<number> | ":"<sep>)
@@ -45,13 +45,13 @@ and forget this.
         <chord-stmt-list>         ::= (<note><sep>)+ | <note>
         <note-cipher>             ::= "C"  | "D"  | "E"  | "F"  | "G"  | "A"  | "B"  | "C#" | "D#" |
                                       "F#" | "G#" | "A#" | "Db" | "Eb" | "Gb" | "Ab" | "Bb" | "c"  |
-                                      "d"  | "e"  | "f"  | "g"  | "a"  | "b"  | "c#" | "d#" | "e#" |
-                                      "f#" | "g#" | "db" | "eb" | "gb" | "ab" | "bb"
+                                      "d"  | "e"  | "f"  | "g"  | "a"  | "b"  | "c#" | "d#" | "f#" |
+                                      "g#" | "db" | "eb" | "gb" | "ab" | "bb"
         <tag-begin>               ::= "{"
         <tag-end>                 ::= "}"
         <recursive-tag-stmt-list> ::= <tag-begin> <tlp-code> <tag-end>
 
-As you can see it is a pretty compact Language. Parsing this is very straightforward.
+As you can see it is a pretty compact Language. Parse this is very straightforward.
 
 Excepting the tags ``chord``, ``tunning`` and ``literal`` any other should support fully recursion. What means allow a more
 internal definition of ``<tlp-code>`` as the tag's production.
