@@ -1,5 +1,18 @@
 #include <dsl/compiler/compiler.h>
 #include <dsl/compiler/verifiers/chord.h>
+#include <dsl/compiler/verifiers/literal.h>
+#include <dsl/compiler/verifiers/vibrato.h>
+#include <dsl/compiler/verifiers/slidedown.h>
+#include <dsl/compiler/verifiers/slideup.h>
+#include <dsl/compiler/verifiers/hammeron.h>
+#include <dsl/compiler/verifiers/pulloff.h>
+#include <dsl/compiler/verifiers/notesep.h>
+#include <dsl/compiler/verifiers/sepbar.h>
+#include <dsl/compiler/verifiers/savepoint.h>
+#include <dsl/compiler/verifiers/bend.h>
+#include <dsl/compiler/verifiers/releasebend.h>
+#include <dsl/compiler/verifiers/singlenote.h>
+#include <dsl/compiler/verifiers/blockend.h>
 #include <dsl/parser/parser.h>
 #include <dsl/utils.h>
 #include <base/ctx.h>
@@ -22,7 +35,7 @@ tulip_technique_stack_ctx *g_techniques = NULL;
 //  It has been done in order to save one compiler pass.
 
 struct tlp_command_verifiers_ctx {
-    int (*verifier)(const char *buf, char *error_message, tulip_single_note_ctx **song, char **next);
+    int (*verifier)(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next);
 };
 
 #define tlp_compiler_register_cmd_verifier(c, v) { v } //  INFO(Santiago): "c" is just for making the things clearer.
@@ -30,24 +43,24 @@ struct tlp_command_verifiers_ctx {
 static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpMute, NULL),
     tlp_compiler_register_cmd_verifier(kTlpLetRing, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpChord, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpBeat, chord_tag_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpChord, chord_tag_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpBeat, NULL),
     tlp_compiler_register_cmd_verifier(kTlpTremoloPicking, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpVibrato, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpSlideDown, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpSlideUp, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpHammerOn, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpPullOff, NULL),
+    tlp_compiler_register_cmd_verifier(kTlpVibrato, vibrato_sep_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpSlideDown, slidedown_sep_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpSlideUp, slideup_sep_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpHammerOn, hammeron_sep_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpPullOff, pulloff_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpVibratoWBar, NULL),
     tlp_compiler_register_cmd_verifier(kTlpTunning, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpLiteral, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpSingleNote, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpNoteSep, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpSepBar, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpSavePoint, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpBend, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpReleaseBend, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpBlockEnd, NULL)
+    tlp_compiler_register_cmd_verifier(kTlpLiteral, literal_tag_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpSingleNote, singlenote_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpNoteSep, notesep_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpSepBar, sepbar_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpSavePoint, savepoint_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpBend, bend_sep_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpReleaseBend, releasebend_sep_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpBlockEnd, blockend_verifier)
 };
 
 size_t g_tlp_cmd_verifiers_nr = sizeof(g_tlp_cmd_verifiers) / sizeof(g_tlp_cmd_verifiers[0]);

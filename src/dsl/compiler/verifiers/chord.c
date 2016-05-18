@@ -5,7 +5,7 @@
 #include <dsl/parser/parser.h>
 #include <ctype.h>
 
-int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, char **next) {
+int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next) {
     const char *bp = NULL;
     const char *bp_end = NULL;
     char note[255] = "", *np, *np_end = NULL;
@@ -27,7 +27,7 @@ int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
     push_technique(kTlpChord);
     np = &note[0];
     np_end = np + sizeof(note);
-    while (bp != bp_end) {
+    while (bp < bp_end) {
         //  WARN(Santiago): This tag disallow recursion so here we do not need to worry about
         //                  block ending or new tag announcement.
         if (np == np_end) {
@@ -65,6 +65,7 @@ int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
     }
     if (is_technique_block_end(*bp)) {
         pop_technique();
+        (*next) = bp + 1;
     }
     return 1;
 }

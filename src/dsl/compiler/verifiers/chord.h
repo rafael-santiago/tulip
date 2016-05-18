@@ -3,6 +3,6 @@
 
 #include <base/types.h>
 
-int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, char **next);
+int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next);
 
 #endif
