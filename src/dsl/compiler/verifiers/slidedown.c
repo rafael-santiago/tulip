@@ -1,3 +1,10 @@
+/*
+ *                           Copyright (C) 2005-2016 by Rafael Santiago
+ *
+ * This is a free software. You can redistribute it and/or modify under
+ * the terms of the GNU General Public License version 2.
+ *
+ */
 #include <dsl/compiler/verifiers/slidedown.h>
 #include <dsl/compiler/compiler.h>
 #include <dsl/utils.h>

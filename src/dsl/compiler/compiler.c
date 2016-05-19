@@ -1,3 +1,10 @@
+/*
+ *                           Copyright (C) 2005-2016 by Rafael Santiago
+ *
+ * This is a free software. You can redistribute it and/or modify under
+ * the terms of the GNU General Public License version 2.
+ *
+ */
 #include <dsl/compiler/compiler.h>
 #include <dsl/compiler/verifiers/chord.h>
 #include <dsl/compiler/verifiers/literal.h>
@@ -119,6 +126,7 @@ void tlperr_s(char *buf, const char *error_message, ...) {
         strcat(buf, temp);
         ep++;
     }
+    strcat(buf, "\n");
     va_end(args);
 }
 
@@ -137,7 +145,7 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
     while (cp != cp_end) {
         cp = get_next_tlp_command(cp);
         if ((curr_command = get_cmd_code_from_cmd_tag(cp)) == kTlpNone) {
-            tlperr_s(message_buf, "Unknown sequence: %c", *cp);
+            tlperr_s(message_buf, "Unknown sequence: %s", cp);
         }
         if (verify_curr_command(curr_command, cp, message_buf, song, &cp) == 0) {
             free_tulip_single_note_ctx((*song));
