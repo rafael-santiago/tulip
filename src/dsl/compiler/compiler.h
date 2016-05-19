@@ -3,7 +3,7 @@
 
 #include <base/types.h>
 
-tulip_single_note_ctx *compile_tulip_codebuf(const char *codebuf, char *message_buf);
+int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_note_ctx **song);
 
 void tlperr_s(char *buf, const char *error_message, ...);
 

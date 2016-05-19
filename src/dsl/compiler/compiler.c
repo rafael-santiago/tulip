@@ -15,6 +15,10 @@
 #include <dsl/compiler/verifiers/blockend.h>
 #include <dsl/compiler/verifiers/tunning.h>
 #include <dsl/compiler/verifiers/letring.h>
+#include <dsl/compiler/verifiers/mute.h>
+#include <dsl/compiler/verifiers/beat.h>
+#include <dsl/compiler/verifiers/tremolopicking.h>
+#include <dsl/compiler/verifiers/vibratowbar.h>
 #include <dsl/parser/parser.h>
 #include <dsl/utils.h>
 #include <base/ctx.h>
@@ -43,17 +47,17 @@ struct tlp_command_verifiers_ctx {
 #define tlp_compiler_register_cmd_verifier(c, v) { v } //  INFO(Santiago): "c" is just for making the things clearer.
 
 static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
-    tlp_compiler_register_cmd_verifier(kTlpMute, NULL),
+    tlp_compiler_register_cmd_verifier(kTlpMute, mute_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpLetRing, letring_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpChord, chord_tag_verifier),
-    tlp_compiler_register_cmd_verifier(kTlpBeat, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpTremoloPicking, NULL),
+    tlp_compiler_register_cmd_verifier(kTlpBeat, beat_tag_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpTremoloPicking, tremolopicking_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpVibrato, vibrato_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSlideDown, slidedown_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSlideUp, slideup_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpHammerOn, hammeron_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpPullOff, pulloff_sep_verifier),
-    tlp_compiler_register_cmd_verifier(kTlpVibratoWBar, NULL),
+    tlp_compiler_register_cmd_verifier(kTlpVibratoWBar, vibratowbar_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpTunning, tunning_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpLiteral, literal_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSingleNote, singlenote_verifier),
@@ -110,24 +114,25 @@ void tlperr_s(char *buf, const char *error_message, ...) {
     va_end(args);
 }
 
-tulip_single_note_ctx *compile_tulip_codebuf(const char *codebuf, char *message_buf) {
+int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_note_ctx **song) {
     const char *next = NULL;
     const char *cp = codebuf;
     const char *cp_end = NULL;
-    tulip_single_note_ctx *song = NULL;
+    tulip_single_note_ctx *sp = NULL;
     tulip_command_t curr_command = kTlpNone;
     if (cp == NULL) {
-        return NULL;
+        return 0;
     }
     cp_end = cp + strlen(codebuf);
     set_curr_code_line_number(1);
+    sp = *song;
     while (cp != cp_end) {
         cp = get_next_tlp_command(cp);
         if ((curr_command = get_cmd_code_from_cmd_tag(cp)) == kTlpNone) {
             tlperr_s(message_buf, "Unknown sequence: %c", *cp);
         }
     }
-    return song;
+    return 1;
 }
 
 tulip_command_t get_used_techniques() {
