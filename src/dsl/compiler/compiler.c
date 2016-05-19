@@ -168,6 +168,7 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
             if (!is_empty_technique_stack_ctx(g_techniques)) {
                 tlperr_s(message_buf, "The code has some unterminated tag, please check and try again.");
                 free_tulip_single_note_ctx((*song));
+                compilation_status = 0;
             }
         }
     }
