@@ -77,6 +77,8 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
 
 size_t g_tlp_cmd_verifiers_nr = sizeof(g_tlp_cmd_verifiers) / sizeof(g_tlp_cmd_verifiers[0]);
 
+static int verify_curr_command(const tulip_command_t cmd, const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next);
+
 void tlperr_s(char *buf, const char *error_message, ...) {
     char *bp = buf;
     const char *ep = error_message;
@@ -137,8 +139,16 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
         if ((curr_command = get_cmd_code_from_cmd_tag(cp)) == kTlpNone) {
             tlperr_s(message_buf, "Unknown sequence: %c", *cp);
         }
+        if (verify_curr_command(curr_command, cp, message_buf, song, &cp) == 0) {
+            free_tulip_single_note_ctx((*song));
+            return 0;
+        }
     }
     return 1;
+}
+
+static int verify_curr_command(const tulip_command_t cmd, const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next) {
+    return g_tlp_cmd_verifiers[tlp_cmd_code_to_plain_index(cmd)].verifier(buf, error_message, song, next);
 }
 
 tulip_command_t get_used_techniques() {
