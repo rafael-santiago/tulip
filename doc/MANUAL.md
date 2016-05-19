@@ -89,14 +89,14 @@ that transcribe my drafts to ``Tulip``'s ``DSL`` is pretty confortable besides t
 the tablature improvements. If you transcribe/adapt things you should know that we are constantly evoluting your work.
 Because we are always evoluting and learning.
 
-Contradicting myself in the picture below you can see a part of a adaptation from a solo of a ``Albert King``'s song in a
+Contradicting myself in the picture below you can see a part of a adaptation from a solo of a ``Albert King``'s song on a
 napkin that I did recently these days:
 
 ![Sample of my mess direct from my desk](https://github.com/rafael-santiago/tulip/blob/master/etc/draft.jpg)
 
 As you can see I like to use arrows to express bending cases and the symbol ``~`` to vibrato cases and also the way how the
-chords are expressed in this kind of notation. But in ``Tulip`` things are a little bit more structured. Nevertheless this
-is the base for the Language implemented here in this tiny weekend project.
+chords are expressed in this kind of notation. But in ``Tulip`` these things are a little bit more structured. Nevertheless
+this is the base for the Language implemented here in this tiny weekend project.
 
 ### Understanding my versioning
 
