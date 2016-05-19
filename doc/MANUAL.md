@@ -11,9 +11,9 @@ software. If you are in a rush try to jump to "The Tulip system" section.
 
 ## My motivations
 
-I have been playing (or at least trying) guitar since my twelve years old, during these years I had only two teachers.
+I have been playing (or at least trying) the guitar since my twelve years old, during these years I had only two teachers.
 When I started my studies the ``Standard Music Notation`` was unknown to me. The curious thing about these two teachers
-was the choice of the same alternative music notation based in numbers. I said "curious" because since I learned this I have
+was the choice of the same alternative music notation based on numbers. I said "curious" because since I learned this I have
 not met anyone abroad whom know this same "numeric notation".
 
 In fact this kind of notation is quite old. In my formal studies, with my first teacher, I used a book from ``1966``
@@ -52,7 +52,7 @@ When we have intervals or chords we should write these numbers in a way of fract
 The hammer-ons, pull-offs can be noted using a simple arc between the parts.
 
 Let's take a look at the **Table 1** in order to review your new knowledges about a new simple notation that you just have been
-learned.
+learned ;)
 
 **Table 1**: Notes from the fretbord to numbers.
 
@@ -76,18 +76,18 @@ in this weird way.
 
 Beware that if you search the term ``Numeric cipher`` you will reach subjects dealing with ``Cryptography``.
 I am saying it because I am hooked on this too but here I am translating freely from Portuguese what in this case means
-``Cifra Numérica``. The term "Numeric Cipher" deals with ``Music`` here in my country.
+``Cifra Numérica``... The term "Numeric Cipher" deals with ``Music`` here in my country.
 
 ### "The paper stack blues"
 
-I like to transcribe/adapt songs as exercise and for fun issues too. I am in this "bussiness" since my
+I like to transcribe/adapt songs as an exercise and for fun issues too. I am in this "bussiness" since my
 teenagerhood. As a result during these years I produced huge stacks of paper. One of my motivations to create ``Tulip``
 (still in ``2005``) was a effort in order to stop with this mess. The thurth is that I did not stop pushing papers to
-my dirty huge stack but I would say that I stopped with my sloppiness. Today I am stacking ``notebooks`` ;)
+my dirty little stack but I would say that I stopped with my sloppiness. Today I am stacking ``notebooks`` ;)
 
-Even today I use pencil and paper and after I create a ``Tulip code`` for this. This is my basic workflow on it. The fact is
+Even today I use pencil and paper and so I create a ``Tulip code`` for. This is my basic workflow on it. The fact is
 that transcribe my drafts to ``Tulip``'s ``DSL`` is pretty confortable besides the fact that I can versioning it and control
-the tablature improvements. If you transcribe/adapt things you should know that we are constantly evoluting your work.
+the transcription improvements. If you transcribe/adapt things you should know that we are constantly evoluting our work.
 Because we are always evoluting and learning.
 
 Contradicting myself in the picture below you can see a part of an adaptation from an ``Albert King``'s solo on a
@@ -95,9 +95,9 @@ napkin that I did recently these days:
 
 ![Sample of my mess direct from my desk](https://github.com/rafael-santiago/tulip/blob/master/etc/draft.jpg)
 
-As you can see I like to use arrows to express bending cases and the symbol ``~`` to vibrato cases and also the way how the
-chords are expressed in this kind of notation. But in ``Tulip`` these things are a little bit more structured. Nevertheless
-this is the base for the Language discussed here.
+According to the shown figure is possible to see that I like to use arrows to express bending cases and the symbol ``~``
+to vibrato cases and also the way how the chords are expressed in this kind of notation. But in ``Tulip`` these things are
+a little bit more structured. Nevertheless this is the base for the Language discussed here.
 
 ### Understanding my versioning
 
@@ -105,10 +105,10 @@ I use this software since ``2005`` when I had written its first version. Here in
 reincarnation of this idea. The main differences that I would highlight are some changes in the ``DSL``,
 the processors addition and a new user's manual. The code was re-written from the scratch too.
 
-Since ``2005`` I had done two major improvements on this project. So the first version (``v1``) brought the basic language
+Since ``2005`` I had done two major improvements on this project. So the first version (``v1``) brought the basic Language
 definition and its text output producing. After I added a tiny ``MIDI`` processor which was able to filter the main ideas from
 a input song and translating it as a ``Tulip code``. I called it ``v2``. What I could learned from ``v2`` is that parse ``MIDI``
-files is painful, people do not follow any standard, we have sub-standards inside the main standard and it is such a mess.
+files is painful, people do not follow any standard... We have sub-standards inside the main standard and it is such a mess.
 The current version is ``v3``. This version brings a ``postscript`` and ``PDF`` processor in addition to the standard
 ``plain-text`` processor. The ``MIDI`` processor is still not integrated in ``v3``. Maybe ``v4``.
 
@@ -135,7 +135,7 @@ For this part I am considering that you have a previous knowledge about the "num
 at the previous section called ``The numeric notation``. A previous knowledge about tablatures is essential too.
 
 The presented ``DSL`` has strong influences from ``TeX/LaTeX`` specially when talking about recursion in order to compose
-combined playing techniques. Do not worrying if you do not know anything about ``TeX/LaTeX`` or ``typesetting``. It is not
+combined playing techniques. Do not worrying if you do not know anything about ``TeX/LaTeX`` or even ``typesetting``. It is not
 needed here.
 
 From now on, sometimes I will refer to the implemented ``DSL`` as ``tlp``.
