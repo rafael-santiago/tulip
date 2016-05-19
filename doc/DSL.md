@@ -14,7 +14,8 @@ how to produce some ``Tulip code``, if you have some formal knowledge about comp
 time freaking out your brain, it is better to move on to the [User Manual](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md)
 and forget this.
 
-        <tlp-code>                ::= (<note> | <sep> | <save-point> | <tag-announce> <tag-code>)(<tlp-code)* | (<tlp-code>)*
+        <tlp-code>                ::= (<note> | <sep> | <save-point> | <tag-announce> <tag-code>)(<tlp-code)* |
+                                      (<tlp-code>)*
         <note>                    ::= <string-number> <fret-number>
         <string-number>           ::= "1" | "2" | "3" | "4" | "5" | "6"
         <fret-number>             ::= (<number> | ":"<sep>)
