@@ -19,6 +19,9 @@
 #include <dsl/compiler/verifiers/beat.h>
 #include <dsl/compiler/verifiers/tremolopicking.h>
 #include <dsl/compiler/verifiers/vibratowbar.h>
+#include <dsl/compiler/verifiers/tapping.h>
+#include <dsl/compiler/verifiers/naturalharmonic.h>
+#include <dsl/compiler/verifiers/artificialharmonic.h>
 #include <dsl/parser/parser.h>
 #include <dsl/utils.h>
 #include <base/ctx.h>
@@ -66,7 +69,10 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpSavePoint, savepoint_verifier),
     tlp_compiler_register_cmd_verifier(kTlpBend, bend_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpReleaseBend, releasebend_sep_verifier),
-    tlp_compiler_register_cmd_verifier(kTlpBlockEnd, blockend_verifier)
+    tlp_compiler_register_cmd_verifier(kTlpBlockEnd, blockend_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpTapping, tapping_sep_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpNaturalHarmonic, naturalharmonic_sep_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpArtificialHarmonic, artificialharmonic_sep_verifier)
 };
 
 size_t g_tlp_cmd_verifiers_nr = sizeof(g_tlp_cmd_verifiers) / sizeof(g_tlp_cmd_verifiers[0]);
