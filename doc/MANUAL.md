@@ -92,7 +92,7 @@ Because we are always evoluting and learning.
 Contradicting myself in the picture below you can see a part of a adaptation from a solo of a ``Albert King``'s song in a
 napkin that I did recently these days:
 
-![Sample of my mess direct from my desk](https://github.com/rafael-santiago/tulip/blob/master/draft.jpg)
+![Sample of my mess direct from my desk](https://github.com/rafael-santiago/tulip/blob/master/etc/draft.jpg)
 
 As you can see I like to use arrows to express bending cases and the symbol ``~`` to vibrato cases and also the way how the
 chords are expressed in this kind of notation. But in ``Tulip`` things are a little bit more structured. Nevertheless this
