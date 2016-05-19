@@ -143,7 +143,9 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
         return 0;
     }
     cp_end = cp + strlen(codebuf);
-    set_curr_code_line_number(1);
+    if (cltmp == 0) {
+        set_curr_code_line_number(1);
+    }
     sp = *song;
     while (cp != cp_end && compilation_status != 0) {
         cp = get_next_tlp_command(cp);
