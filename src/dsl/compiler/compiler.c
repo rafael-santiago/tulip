@@ -134,25 +134,42 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
     const char *next = NULL;
     const char *cp = codebuf;
     const char *cp_end = NULL;
+    static int callstack_level = 0;
+    int cltmp = callstack_level++;
     tulip_single_note_ctx *sp = NULL;
     tulip_command_t curr_command = kTlpNone;
+    int compilation_status = 1;
     if (cp == NULL) {
         return 0;
     }
     cp_end = cp + strlen(codebuf);
     set_curr_code_line_number(1);
     sp = *song;
-    while (cp != cp_end) {
+    while (cp != cp_end && compilation_status != 0) {
         cp = get_next_tlp_command(cp);
         if ((curr_command = get_cmd_code_from_cmd_tag(cp)) == kTlpNone) {
             tlperr_s(message_buf, "Unknown sequence: %s", cp);
+            compilation_status = 0;
+            continue;
         }
         if (verify_curr_command(curr_command, cp, message_buf, song, &cp) == 0) {
-            free_tulip_single_note_ctx((*song));
-            return 0;
+            if ((*song) != NULL) {
+                free_tulip_single_note_ctx((*song));
+                (*song) = NULL;
+            }
+            compilation_status = 0;
         }
     }
-    return 1;
+    if (cltmp == 0) {
+        callstack_level = 0;
+        if ((*song) != NULL) { //  INFO(Santiago): A.k.a "compilation_status == 1".
+            if (!is_empty_technique_stack_ctx(g_techniques)) {
+                tlperr_s(message_buf, "The code has some unterminated tag, please check and try again.");
+                free_tulip_single_note_ctx((*song));
+            }
+        }
+    }
+    return compilation_status;
 }
 
 static int verify_curr_command(const tulip_command_t cmd, const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next) {
