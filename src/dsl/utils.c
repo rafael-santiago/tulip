@@ -148,3 +148,20 @@ tulip_command_t get_cmd_code_from_cmd_tag(const char *buf) {
     }
     return kTlpNone;
 }
+
+int is_valid_note_cipher(const char *cipher) {
+    const char *ciphers[] = {
+        "C" , "D" , "E" , "F" , "G" , "A" , "B" , "C#", "D#",
+        "F#", "G#", "A#", "Db", "Eb", "Gb", "Ab", "Bb", "c" ,
+        "d" , "e" , "f" , "g" , "a" , "b" , "c#", "d#", "f#",
+        "g#", "db", "eb", "gb", "ab", "bb"
+    };
+    const size_t cipher_nr = sizeof(ciphers) / sizeof(ciphers[0]);
+    size_t c;
+    for (c = 0; c < cipher_nr; c++) {
+        if (strcmp(cipher, ciphers[c]) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}

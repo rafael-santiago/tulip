@@ -59,4 +59,6 @@ int is_sustained_technique(const char *buf);
 
 size_t tlp_cmd_code_to_plain_index(const tulip_command_t code);
 
+int is_valid_note_cipher(const char *cipher);
+
 #endif

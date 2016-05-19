@@ -13,6 +13,8 @@
 #include <dsl/compiler/verifiers/releasebend.h>
 #include <dsl/compiler/verifiers/singlenote.h>
 #include <dsl/compiler/verifiers/blockend.h>
+#include <dsl/compiler/verifiers/tunning.h>
+#include <dsl/compiler/verifiers/letring.h>
 #include <dsl/parser/parser.h>
 #include <dsl/utils.h>
 #include <base/ctx.h>
@@ -42,7 +44,7 @@ struct tlp_command_verifiers_ctx {
 
 static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpMute, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpLetRing, NULL),
+    tlp_compiler_register_cmd_verifier(kTlpLetRing, letring_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpChord, chord_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpBeat, NULL),
     tlp_compiler_register_cmd_verifier(kTlpTremoloPicking, NULL),
@@ -52,7 +54,7 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpHammerOn, hammeron_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpPullOff, pulloff_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpVibratoWBar, NULL),
-    tlp_compiler_register_cmd_verifier(kTlpTunning, NULL),
+    tlp_compiler_register_cmd_verifier(kTlpTunning, tunning_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpLiteral, literal_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSingleNote, singlenote_verifier),
     tlp_compiler_register_cmd_verifier(kTlpNoteSep, notesep_verifier),

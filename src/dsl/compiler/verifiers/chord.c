@@ -63,9 +63,6 @@ int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
         }
         bp++;
     }
-    if (is_technique_block_end(*bp)) {
-        pop_technique();
-        (*next) = bp + 1;
-    }
+    (*next) = bp;
     return 1;
 }
