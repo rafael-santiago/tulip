@@ -122,7 +122,7 @@ Here is a nice slogan:
 
 >"Keep it simple stupid"
 
-I must confess that I can see beauty in this way of thinking.
+I must confess that I can see beauty on this way of thinking.
 
 ## The Tulip system
 
