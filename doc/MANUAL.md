@@ -46,7 +46,7 @@ Piece of cake, right?
 
 However in the fret number case we have some particularities. Some people when hits the 10th fret just numbered it as
 ``10`` and others numbered it as ``00``, fret number eleven as ``01``, fiften as ``05`` and so on. I use this second one and
-as a effect the ``Tulip`` implements this.
+as a effect this is what ``Tulip`` implements.
 
 When we have intervals or chords we should write these numbers in a way of fractions. A kind of this: "53/42/30/21/10".
 The hammer-ons, pull-offs can be noted using a simple arc between the parts.
@@ -75,23 +75,25 @@ Maybe the usage of ``00`` for fret ten can confuse you at the beginning but with
 in this weird way.
 
 Beware that if you search the term ``Numeric cipher`` you will reach subjects dealing with ``Cryptography``.
-I am saying it because I am hooked on this too but here I am translating freely from Portuguese what in this case means
+I am saying it because I am hooked on this subject too but here I am translating freely from Portuguese what in this case means
 ``Cifra Numérica``... The term "Numeric Cipher" deals with ``Music`` here in my country.
 
 ### "The paper stack blues"
 
-I like to transcribe/adapt songs as an exercise and for fun issues too. I am in this "bussiness" since my
+I like to transcribe/adapt songs as an exercise and for fun issues too. I am in this "business" since my
 teenagerhood. As a result during these years I produced huge stacks of paper. One of my motivations to create ``Tulip``
-(still in ``2005``) was a effort in order to stop with this mess. The thurth is that I did not stop pushing papers to
-my dirty little stack but I would say that I stopped with my sloppiness. Today I am stacking ``notebooks`` ;)
+(still in ``2005``) was an effort in order to stop with this mess. The thurth is that I did not stop pushing papers to
+my dirty little stack but I would say that I stopped with my sloppiness. Now I am stacking ``notebooks`` ;)
 
 Even today I use pencil and paper and so I create a ``Tulip code`` for. This is my basic workflow on it. The fact is
 that transcribe my drafts to ``Tulip``'s ``DSL`` is pretty confortable besides the fact that I can versioning it and control
 the transcription improvements. If you transcribe/adapt things you should know that we are constantly evoluting our work.
 Because we are always evoluting and learning.
 
-Contradicting myself in the picture below you can see a part of an adaptation from an ``Albert King``'s solo on a
-napkin that I did recently these days:
+Contradicting myself in the **Figure 1** below you can see a part of an adaptation from an ``Albert King``'s solo on a
+napkin that I recently did these days:
+
+**Figure 1**: A short solo transcription depicted on a napkin.
 
 ![Sample of my mess direct from my desk](https://github.com/rafael-santiago/tulip/blob/master/etc/draft.jpg)
 
@@ -107,12 +109,12 @@ the processors addition and a new user's manual. The code was re-written from th
 
 Since ``2005`` I had done two major improvements on this project. So the first version (``v1``) brought the basic Language
 definition and its text output producing. After I added a tiny ``MIDI`` processor which was able to filter the main ideas from
-a input song and translating it as a ``Tulip code``. I called it ``v2``. What I could learned from ``v2`` is that parse ``MIDI``
+an input song and translating it as a ``Tulip code``. I called it ``v2``. What I could learned from ``v2`` is that parse ``MIDI``
 files is painful, people do not follow any standard... We have sub-standards inside the main standard and it is such a mess.
-The current version is ``v3``. This version brings a ``postscript`` and ``PDF`` processor in addition to the standard
+Now the current version is ``v3``. This version brings a ``postscript`` and ``PDF`` processor in addition to the standard
 ``plain-text`` processor. The ``MIDI`` processor is still not integrated in ``v3``. Maybe ``v4``.
 
-Here the main idea of versioning is:
+Here the main versioning idea is:
 
 >We have got some important change? Yes, ``v(n + 1)``.
 
