@@ -31,6 +31,7 @@ int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
         return 0;
     }
     bp++;
+    (*next) = bp;
     bp_end = get_next_tlp_technique_block_end(buf);
     push_technique(kTlpChord);
     np = &note[0];
@@ -72,6 +73,5 @@ int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
         bp++;
     }
     (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpChord, NULL);
-    (*next) = bp;
     return 1;
 }

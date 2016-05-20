@@ -18,7 +18,6 @@ int blockend_verifier(const char *buf, char *error_message, tulip_single_note_ct
         return 0;
     }
     pop_technique();
-    (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpBlockEnd, NULL);
     (*next) = buf + 1;
     return 1;
 }

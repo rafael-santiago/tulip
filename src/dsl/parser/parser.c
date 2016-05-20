@@ -62,16 +62,9 @@ const char *get_next_tlp_command(const char *codebuf) {
     }
     while (codebuf != codebuf_end && !is_note(*codebuf) &&
                                      !is_technique_tag_announce(*codebuf) &&
-                                     !is_sep(*codebuf) &&
-                                     !is_hammeron(*codebuf) &&
-                                     !is_pulloff(*codebuf) &&
-                                     !is_vibrato(*codebuf) &&
-                                     !is_slidedown(*codebuf) &&
-                                     !is_slideup(*codebuf) &&
+                                     !is_note_sep(*codebuf) &&
                                      !is_sep_bar(*codebuf) &&
                                      !is_save_point(*codebuf) &&
-                                     !is_bend(*codebuf) &&
-                                     !is_release_bend(*codebuf) &&
                                      !is_technique_block_end(*codebuf)) {
         if (*codebuf == '\n') {
             g_curr_line_nr++;

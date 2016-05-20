@@ -289,7 +289,19 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
         {                     ";-3a", 0},
         {                        "b", 1},
         {                     "b33b", 1},
-        {                      "b3b", 0}
+        {                      "b3b", 0},
+        {                        "r", 1},
+        {                     "r33r", 1},
+        {                      "r4r", 0},
+        {                        "*", 1},
+        {                      "*3a", 0},
+        {                        "T", 1},
+        {                      "T3T", 0},
+        {                        "v", 1},
+        {                      "v3a", 0},
+        {                        "~", 1},
+        {                      "~3a", 0},
+        {                      "~4~", 0}
     };
     tulip_single_note_ctx *song = NULL;
     char errbuf[255] = "";
@@ -298,7 +310,6 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
     int result = 0;
     for (t = 0; t < tlpcodes_nr; t++) {
         result = compile_tulip_codebuf(tlpcodes[t].codebuf, errbuf, &song);
-        printf("%s\n", errbuf);
         CUTE_ASSERT(result == tlpcodes[t].valid);
         if (tlpcodes[t].valid) {
             CUTE_ASSERT(song != NULL);
