@@ -90,7 +90,7 @@ that transcribe my drafts to ``Tulip``'s ``DSL`` is pretty confortable besides t
 the transcription improvements. If you transcribe/adapt things you should know that we are constantly evoluting our work.
 Because we are always evoluting and learning.
 
-Contradicting myself in the **Figure 1** below you can see a part of an adaptation from an ``Albert King``'s solo on a
+Contradicting myself in the **Figure 1** you can see a part of an adaptation from an ``Albert King``'s solo on a
 napkin that I recently did these days:
 
 **Figure 1**: A short solo transcription depicted on a napkin.
