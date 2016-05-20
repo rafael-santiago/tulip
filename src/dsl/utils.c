@@ -41,7 +41,8 @@ static struct tulip_command_table_ctx g_tlp_tag_map[] = {
     tulip_register_code_tag(kTlpReleaseBend, "r", 0),
     tulip_register_code_tag(kTlpTapping, "T", 0),
     tulip_register_code_tag(kTlpNaturalHarmonic, "*", 0),
-    tulip_register_code_tag(kTlpArtificialHarmonic, "v", 0)
+    tulip_register_code_tag(kTlpArtificialHarmonic, "v", 0),
+    tulip_register_code_tag(kTlpBlockEnd, "}", 0)
 };
 
 static const size_t g_tlp_tag_map_nr = sizeof(g_tlp_tag_map) / sizeof(g_tlp_tag_map[0]);
@@ -93,6 +94,7 @@ int is_single_note(const char *buf) {
     const char *strings = "654321";
     size_t offset = 0; //  WARN(Santiago): Nasty trick to support bass tabs, 7-string guitars in the future.
     char string[2] = "";
+    int fret = 0;
     if (bp == NULL) {
         return 0;
     }
@@ -120,7 +122,12 @@ int is_single_note(const char *buf) {
     }
     while (*bp != 0) {
         if (!isdigit(*bp)) {
+            if (fret > 0 && is_note_sep(*bp)) {
+                return 1;
+            }
             return 0;
+        } else {
+            fret++;
         }
         bp++;
     }
@@ -138,7 +145,7 @@ static ssize_t get_tlp_tag_index(const char *buf) {
         return -1;
     }
     for (t = 0; t < g_tlp_tag_map_nr; t++) {
-        if (strstr(g_tlp_tag_map[t].tag, buf) == g_tlp_tag_map[t].tag) {
+        if (strstr(buf, g_tlp_tag_map[t].tag) == buf) {
             return t;
         }
     }

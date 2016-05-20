@@ -11,6 +11,7 @@
 #include <dsl/utils.h>
 #include <dsl/str/strutils.h>
 #include <dsl/parser/parser.h>
+#include <dsl/compiler/compiler.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -100,6 +101,8 @@ CUTE_TEST_CASE(dsl_basic_dsl_utils_tests)
     CUTE_ASSERT(is_single_note("4:r") == 1);
     CUTE_ASSERT(is_single_note("5:p") == 1);
     CUTE_ASSERT(is_single_note("6:*") == 1);
+    CUTE_ASSERT(is_single_note("33b") == 1);
+    CUTE_ASSERT(is_single_note("3b") == 0);
     for (e = 0; e < e_results_nr; e++) {
         CUTE_ASSERT(get_cmd_code_from_cmd_tag(e_results[e].tech) == e_results[e].cmd);
         CUTE_ASSERT(is_sustained_technique(e_results[e].tech) == e_results[e].sustain);
@@ -263,6 +266,50 @@ CUTE_TEST_CASE(dsl_utils_tlp_cmd_code_to_plain_index_tests)
     }
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
+    struct tlpcode_test_vector {
+        const char *codebuf;
+        int valid;
+    };
+    struct tlpcode_test_vector tlpcodes[] = {
+        {".chord{60-52-42-31-20-10}", 1},
+        {".chord 60-52-42-31-20-10}", 0},
+        {                       "30", 1},
+        {                       "3a", 0},
+        {                        "h", 1},
+        {                      "h3q", 0},
+        {                        "p", 1},
+        {                      "p4#", 0},
+        {                        "-", 1},
+        {                      "-3a", 0},
+        {                        "|", 1},
+        {                      "|3B", 0},
+        {                      "-|-", 1},
+        {                        ";", 1},
+        {                     ";-3a", 0},
+        {                        "b", 1},
+        {                     "b33b", 1},
+        {                      "b3b", 0}
+    };
+    tulip_single_note_ctx *song = NULL;
+    char errbuf[255] = "";
+    size_t tlpcodes_nr = sizeof(tlpcodes) / sizeof(tlpcodes[0]);
+    size_t t;
+    int result = 0;
+    for (t = 0; t < tlpcodes_nr; t++) {
+        result = compile_tulip_codebuf(tlpcodes[t].codebuf, errbuf, &song);
+        printf("%s\n", errbuf);
+        CUTE_ASSERT(result == tlpcodes[t].valid);
+        if (tlpcodes[t].valid) {
+            CUTE_ASSERT(song != NULL);
+            free_tulip_single_note_ctx(song);
+            song = NULL;
+        } else {
+            CUTE_ASSERT(song == NULL);
+        }
+    }
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(tulip_tests)
     CUTE_RUN_TEST(base_tulip_technique_stack_ctx_tests);
     CUTE_RUN_TEST(base_tulip_single_note_ctx_tests);
@@ -277,6 +324,7 @@ CUTE_TEST_CASE(tulip_tests)
     CUTE_RUN_TEST(dsl_parser_set_curr_code_line_number_tests);
     CUTE_RUN_TEST(dsl_parser_get_curr_code_line_number_tests);
     CUTE_RUN_TEST(dsl_utils_tlp_cmd_code_to_plain_index_tests);
+    CUTE_RUN_TEST(dsl_compiler_compile_tulip_codebuf);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulip_tests);

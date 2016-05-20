@@ -24,7 +24,7 @@ int singlenote_verifier(const char *buf, char *error_message, tulip_single_note_
         return 0;
     }
     bp = buf;
-    bp = bp + strlen(buf);
+    bp_end = bp + strlen(buf);
     np = &note[0];
     np_end = np + sizeof(note);
     while (!is_note_sep(*bp) && bp != bp_end) {

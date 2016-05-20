@@ -142,24 +142,28 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
     if (cp == NULL) {
         return 0;
     }
-    cp_end = cp + strlen(codebuf);
+    cp_end = cp + strlen(cp);
     if (cltmp == 0) {
         set_curr_code_line_number(1);
     }
     sp = *song;
     while (cp != cp_end && compilation_status != 0) {
         cp = get_next_tlp_command(cp);
+//        printf("*** %s\n", cp);
+        if (cp == cp_end) {
+            continue;
+        }
         if ((curr_command = get_cmd_code_from_cmd_tag(cp)) == kTlpNone) {
             tlperr_s(message_buf, "Unknown sequence: %s", cp);
             compilation_status = 0;
-            continue;
+        } else {
+         compilation_status = verify_curr_command(curr_command, cp, message_buf, song, &cp);
         }
-        if (verify_curr_command(curr_command, cp, message_buf, song, &cp) == 0) {
+        if (compilation_status == 0) {
             if ((*song) != NULL) {
                 free_tulip_single_note_ctx((*song));
                 (*song) = NULL;
             }
-            compilation_status = 0;
         }
     }
     if (cltmp == 0) {
@@ -171,6 +175,9 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
                 free_technique_stack_ctx(g_techniques);
                 g_techniques = NULL;
                 compilation_status = 0;
+            }
+            if (compilation_status) {
+                sprintf(message_buf, "tulip INFO: compilation success.\n");
             }
         }
     }
