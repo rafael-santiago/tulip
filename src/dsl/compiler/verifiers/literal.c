@@ -32,15 +32,20 @@ int literal_tag_verifier(const char *buf, char *error_message, tulip_single_note
     }
     bp = get_next_tlp_technique_block_begin(buf);
     bp_end = get_next_tlp_technique_block_end(buf);
+    if (bp_end == NULL) {
+        tlperr_s(error_message, "Unterminated .literal tag.");
+        return 0;
+    }
+    push_technique(kTlpLiteral);
     string = (char *) getseg(bp_end - bp + 1);
     memset(string, 0, bp_end - bp + 1);
-    memcpy(string, bp, bp_end - bp);
+    memcpy(string, bp + 1, bp_end - bp - 1);
     if (!is_valid_string(string)) {
         tlperr_s(error_message, "Invalid string: %s", string);
         is_ok = 0;
     } else {
         (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpLiteral, string);
-        (*next) = bp_end + 1;
+        (*next) = bp_end;
     }
     free(string);
     return is_ok;

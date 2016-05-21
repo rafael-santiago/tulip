@@ -39,7 +39,7 @@ tulip*
 emmettbrown@DELOREAN:~/internet/github.com/src/tulip/src# echo EUREKA
 EUREKA
 *** system TIP: You should read the documentation before returning naked and ashamed from the outdoors.
-emmettbrown@DELOREAN:~/internet/github.com/src/tulip/src#
+emmettbrown@DELOREAN:~/internet/github.com/src/tulip/src# _
 ```
 
 Yes, the ``Tulip``'s binary should be inside ``../bin`` sub-directory and you should visit the sub-directory ``doc`` before

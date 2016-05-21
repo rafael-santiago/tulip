@@ -107,7 +107,14 @@ const char *get_next_tlp_technique_block_end(const char *codebuf) {
         } else if (is_string_delim(*cp)) {
             temp = get_curr_code_line_number(); // INFO(Santiago): dirty trick prologue.
             cp = skip_string_chunk(cp);
+            if (cp == NULL) {
+                return NULL;
+            }
+            if (is_technique_block_end(*cp)) {
+                o--;
+            }
             set_curr_code_line_number(temp); // INFO(Santiago): dirty trick epilogue.
+            continue;
         }
         cp++;
     }

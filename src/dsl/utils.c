@@ -122,7 +122,7 @@ int is_single_note(const char *buf) {
     }
     while (*bp != 0) {
         if (!isdigit(*bp)) {
-            if (fret > 0 && (is_note_sep(*bp) || is_technique_block_end(*bp))) {
+            if (fret > 0 && (is_note_sep(*bp) || is_technique_block_end(*bp) || is_blank(*bp))) {
                 return 1;
             }
             return 0;

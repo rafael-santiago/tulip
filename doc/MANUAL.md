@@ -93,7 +93,7 @@ Because we are always evoluting and learning.
 Contradicting myself in the **Figure 1** you can see a part of an adaptation from an ``Albert King``'s solo on a
 napkin that I recently did these days:
 
-**Figure 1**: A short solo transcription depicted on a napkin.
+**Figure 1**: A short solo transcription written down on a napkin.
 
 ![Sample of my mess direct from my desk](https://github.com/rafael-santiago/tulip/blob/master/etc/draft.jpg)
 
