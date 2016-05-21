@@ -110,8 +110,11 @@ int is_single_note(const char *buf) {
     if (*bp == 0) {
         return 0;
     }
-    if ((*(bp) == 'X' || *(bp) == ':')) {
+    if ((*(bp) == 'X' || *(bp) == ':') || *(bp) == '?') {
         if (*bp == 'X' && *(bp + 1) == 0) {
+            return 1;
+        }
+        if (*bp == '?' && *(bp + 1) == 0) {
             return 1;
         }
         bp++;

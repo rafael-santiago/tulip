@@ -52,7 +52,7 @@ int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
             if (!is_single_note(note)) {
                 tlperr_s(error_message, "Invalid note : \"%s\".", note);
             }
-            sp = add_note_to_tulip_single_note_ctx(sp, get_used_techniques(), note);
+            //sp = add_note_to_tulip_single_note_ctx(sp, get_used_techniques(), note);
             np = &note[0];
         } else if (isdigit(*bp) || is_string_jmp(*bp)) {
             *np = *bp;
