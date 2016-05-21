@@ -54,6 +54,8 @@ struct tlp_command_verifiers_ctx {
     int (*verifier)(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next);
 };
 
+#define verify_curr_command(c, b, e, s, n) ( g_tlp_cmd_verifiers[tlp_cmd_code_to_plain_index((c))].verifier((b), (e), (s), (n)) )
+
 #define tlp_compiler_register_cmd_verifier(c, v) { v } //  INFO(Santiago): "c" is just for making the things clearer.
 
 static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
@@ -83,8 +85,6 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
 };
 
 size_t g_tlp_cmd_verifiers_nr = sizeof(g_tlp_cmd_verifiers) / sizeof(g_tlp_cmd_verifiers[0]);
-
-static int verify_curr_command(const tulip_command_t cmd, const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next);
 
 void tlperr_s(char *buf, const char *error_message, ...) {
     char *bp = buf;
@@ -186,10 +186,6 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
         }
     }
     return compilation_status;
-}
-
-static int verify_curr_command(const tulip_command_t cmd, const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next) {
-    return g_tlp_cmd_verifiers[tlp_cmd_code_to_plain_index(cmd)].verifier(buf, error_message, song, next);
 }
 
 tulip_command_t get_used_techniques() {
