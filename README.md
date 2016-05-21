@@ -6,7 +6,7 @@
 
 This software works based on a ``DSL`` designed taking in consideration my own preferences and necessities on this subject.
 
-You can follow reading the [user's manual](https://github.com/rafael-santiago/blob/master/doc/MANUAL.md) in order to known more about.
+You can follow reading the [user's manual](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md) in order to known more about.
 
 ## How to clone this repo?
 
@@ -42,5 +42,5 @@ EUREKA
 emmettbrown@DELOREAN:~/internet/github.com/src/tulip/src# _
 ```
 
-Yes, the ``Tulip``'s binary should be inside ``../bin`` sub-directory and you should visit the sub-directory ``doc`` before
+Yes, the ``Tulip``'s binary should be inside ``../bin`` sub-directory and you should visit the sub-directory [``doc``](https://github.com/rafael-santiago/tulip/tree/master/doc) before
 starting.
