@@ -18,7 +18,7 @@ not met anyone abroad whom know this same "numeric notation".
 
 In fact this kind of notation is quite old. In my formal studies, with my first teacher, I used a book from ``1966``
 written by a man called ``Fernando Azevedo``. This book was rather known by people here called "seresteiros",
-a kind of bohemians signers which produced a significant collection of Brasilians popular Songs, however, nowadays
+a kind of bohemians signers which produced a significant collection of Brasilian popular Songs, however, nowadays
 everyone tends to take it as a little bit old fashioned, specially when talking about harmonies. Even so I could learned
 important things related with the basics of the guitar playing from this *papyrus* and even today I use these learnings.
 
@@ -46,7 +46,7 @@ Piece of cake, right?
 
 However in the fret number case we have some particularities. Some people when hits the 10th fret just numbered it as
 ``10`` and others numbered it as ``00``, fret number eleven as ``01``, fiften as ``05`` and so on. I use this second one and
-as a effect this is what ``Tulip`` implements.
+as an effect this is what ``Tulip`` implements.
 
 When we have intervals or chords we should write these numbers in a way of fractions. A kind of this: "53/42/30/21/10".
 The hammer-ons, pull-offs can be noted using a simple arc between the parts.
@@ -126,7 +126,7 @@ I must confess that I can see beauty on this way of thinking.
 
 ## The Tulip system
 
-``Tulip`` is a idea/software which can be splitted and understood on a two main parts:
+``Tulip`` is an idea/software which can be splitted and understood on a two main parts:
 
 - The ``DSL`` that you use to express your ``Musical intentions`` (commonly previous transcribed using "numeric ciphering").
 - The processor that you use to produce a ``tablature`` output from your ``"tlp notation"``.
