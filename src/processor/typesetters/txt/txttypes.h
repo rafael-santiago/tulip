@@ -26,7 +26,6 @@ typedef struct _txttypesetter_fretboard_ctx {
     const char *times;
     const char *strings[6];
     const char tunning[6][3];
-    const size_t fretboard_sz;
     struct _txttypesetter_fretboard_ctx *next;
 }txttypesetter_fretboard_ctx;
 

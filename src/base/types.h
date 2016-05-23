@@ -48,20 +48,12 @@ typedef struct _tulip_single_note_ctx {
 }tulip_single_note_ctx;
 
 typedef enum _tulip_bool_prefs_map {
-    kTlpPrefsCutTabToSave   = 0x0000000000000001,
-    kTlpPrefsCloseTabToSave = 0x0000000000000020,
-    kTlpPrefsShowTunning    = 0x0000000000000040
-}tulip_prefs_map;
-
-typedef struct _tulip_preferences_ctx {
-    unsigned int fretboard_size;
-    tulip_prefs_map prefs;
-}tulip_preferences_ctx;
-
-typedef struct _tulip_code_ctx {
-    tulip_preferences_ctx *preferences;
-    char *head, *footer;
-    tulip_single_note_ctx *notes;
-}tulip_code_ctx;
+    kTlpPrefsCutTabToSave             = 0x0000000000000001,
+    kTlpPrefsCloseTabToSave           = 0x0000000000000020,
+    kTlpPrefsShowTunning              = 0x0000000000000040,
+    kTlpPrefsFretboardStyleNormal     = 0x0000000000000080,
+    kTlpPrefsFretboardStyleContinuous = 0x0000000000000100,
+    kTlpPrefsIncludeTabNotation       = 0x0000000000000200
+}tulip_prefs_map_t;
 
 #endif
