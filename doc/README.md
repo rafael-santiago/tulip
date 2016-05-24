@@ -1,4 +1,4 @@
-# Documention
+# Documentation
 
 This directory gathers information about this software. So:
 
