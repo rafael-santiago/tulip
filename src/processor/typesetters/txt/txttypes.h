@@ -20,13 +20,13 @@ typedef struct _txttypesetter_sustained_technique_ctx {
     struct _txttypesetter_sustained_technique_ctx *next;
 }txttypesetter_sustained_technique_ctx;
 
-typedef struct _txttypesetter_fretboard_ctx {
+typedef struct _txttypesetter_tablature_ctx {
     txttypesetter_comment_ctx *comments;
     txttypesetter_sustained_technique_ctx *techniques;
-    const char *times;
-    const char *strings[6];
-    const char tunning[6][3];
-    struct _txttypesetter_fretboard_ctx *next;
-}txttypesetter_fretboard_ctx;
+    char *times;
+    char *strings[6];
+    char tunning[6][3];
+    struct _txttypesetter_tablature_ctx *next;
+}txttypesetter_tablature_ctx;
 
 #endif

@@ -68,4 +68,6 @@ size_t tlp_cmd_code_to_plain_index(const tulip_command_t code);
 
 int is_valid_note_cipher(const char *cipher);
 
+tulip_command_t *demux_tlp_commands(const tulip_command_t commands, size_t *array_size);
+
 #endif

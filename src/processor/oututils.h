@@ -12,4 +12,6 @@
 
 char *get_technique_label(const tulip_command_t command);
 
+int single_note_to_tab_fret_nr(const char *single_note);
+
 #endif

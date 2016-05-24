@@ -6,6 +6,7 @@
  *
  */
 #include <dsl/utils.h>
+#include <base/memory.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -181,4 +182,26 @@ int is_valid_note_cipher(const char *cipher) {
         }
     }
     return 0;
+}
+
+tulip_command_t *demux_tlp_commands(const tulip_command_t commands, size_t *array_size) {
+    tulip_command_t *dmux = NULL;
+    tulip_command_t temp = commands;
+    size_t b = 0;
+    size_t a = 0;
+    if (array_size == NULL) {
+        return kTlpNone;
+    }
+    for (b = 0; b < sizeof(tulip_command_t) * 8; b++) {
+        temp = temp >> b;
+        (*array_size) += (temp & 1);
+    }
+    dmux = (tulip_command_t *) getseg(sizeof(tulip_command_t) * *array_size);
+    for (b = 0; b < sizeof(tulip_command_t) * 8; b++) {
+        temp = 1 << b;
+        if (commands & temp) {
+            dmux[a++] = temp;
+        }
+    }
+    return dmux;
 }

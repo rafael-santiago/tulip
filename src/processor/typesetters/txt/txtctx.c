@@ -7,6 +7,7 @@
  */
 #include <processor/typesetters/txt/txtctx.h>
 #include <processor/oututils.h>
+#include <processor/settings.h>
 #include <base/memory.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,6 +17,10 @@
 
 #define new_txttypesetter_sustained_technique_ctx(t) ( (t) = (txttypesetter_sustained_technique_ctx *) getseg(sizeof(txttypesetter_sustained_technique_ctx)),\
                                              (t)->data = NULL, (t)->next = NULL )
+
+#define new_tab_string(s, fts) ( (s) = (char *) getseg(fts + 1),\
+                                  memset((s), 0, fts + 1),\
+                                  memset((s), '-', fts) )
 
 static txttypesetter_comment_ctx *get_txttypesetter_comment_ctx_tail(txttypesetter_comment_ctx *comments);
 
@@ -100,4 +105,39 @@ void free_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_techniqu
         t = p->next;
         free(p->data);
     }
+}
+
+txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tablature_ctx **tablature) {
+    txttypesetter_tablature_ctx *tail = NULL;
+    size_t fretboard_sz = 0;
+    char **tunning = NULL;
+    if (tablature == NULL) {
+        return NULL;
+    }
+    if ((*tablature) != NULL) {
+        for (tail = (*tablature); tail->next != NULL; tail = tail->next);
+        tail->next = (txttypesetter_tablature_ctx *) getseg(sizeof(txttypesetter_tablature_ctx));
+        tail = tail->next;
+    } else {
+        (*tablature) = (txttypesetter_tablature_ctx *) getseg(sizeof(txttypesetter_tablature_ctx));
+        tail = (*tablature);
+    }
+    fretboard_sz = *((size_t *) get_processor_setting("fretboard-size", NULL));
+    tail->times = (char *) getseg(fretboard_sz + 1);
+    memset(tail->times, 0, fretboard_sz + 1);
+    new_tab_string(tail->strings[0], fretboard_sz);
+    new_tab_string(tail->strings[1], fretboard_sz);
+    new_tab_string(tail->strings[2], fretboard_sz);
+    new_tab_string(tail->strings[3], fretboard_sz);
+    new_tab_string(tail->strings[4], fretboard_sz);
+    new_tab_string(tail->strings[5], fretboard_sz);
+    tunning = (char **) get_processor_setting("tunning", NULL);
+    strncpy(tail->tunning[0], tunning[0], sizeof(tail->tunning[0]) - 1);
+    strncpy(tail->tunning[1], tunning[1], sizeof(tail->tunning[1]) - 1);
+    strncpy(tail->tunning[2], tunning[2], sizeof(tail->tunning[2]) - 1);
+    strncpy(tail->tunning[3], tunning[3], sizeof(tail->tunning[3]) - 1);
+    strncpy(tail->tunning[4], tunning[4], sizeof(tail->tunning[4]) - 1);
+    strncpy(tail->tunning[5], tunning[5], sizeof(tail->tunning[5]) - 1);
+    tail->next = NULL;
+    return tail;
 }

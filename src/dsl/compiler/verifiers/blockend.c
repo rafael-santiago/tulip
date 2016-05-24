@@ -8,6 +8,7 @@
 #include <dsl/compiler/verifiers/blockend.h>
 #include <dsl/compiler/compiler.h>
 #include <dsl/utils.h>
+#include <base/ctx.h>
 
 int blockend_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next) {
     if (buf == NULL || song == NULL || next == NULL) {
@@ -18,6 +19,9 @@ int blockend_verifier(const char *buf, char *error_message, tulip_single_note_ct
         return 0;
     }
     pop_technique();
+    //  INFO(Santiago): D i r t y  t r i c k -> The following code is useless in the song context but handfull for song
+    //                                          structures mirroring.
+    (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpBlockEnd, NULL);
     (*next) = buf + 1;
     return 1;
 }

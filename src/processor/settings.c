@@ -1,3 +1,10 @@
+/*
+ *                           Copyright (C) 2005-2016 by Rafael Santiago
+ *
+ * This is a free software. You can redistribute it and/or modify under
+ * the terms of the GNU General Public License version 2.
+ *
+ */
 #include <processor/settings.h>
 #include <base/types.h>
 #include <string.h>
@@ -24,7 +31,8 @@ static struct processor_setting_handler_ctx g_processor_setting_handlers[] = {
     register_new_processor_setting("indentation-deepness", NULL, NULL),
     register_new_processor_setting("include-tab-notation", NULL, NULL),
     register_new_processor_setting("cut-tab-on-last-note", NULL, NULL),
-    register_new_processor_setting("add-tunning-to-the-fretboard", NULL, NULL)
+    register_new_processor_setting("add-tunning-to-the-fretboard", NULL, NULL),
+    register_new_processor_setting("tunning", NULL, NULL)
 };
 
 const size_t g_processor_setting_handlers_nr = sizeof(g_processor_setting_handlers) / sizeof(g_processor_setting_handlers[0]);
@@ -64,7 +72,7 @@ void set_processor_setting(const char *setting, const void *data, const size_t d
 void *get_processor_setting(const char *setting, size_t *dsize) {
     void *data = NULL;
     struct processor_setting_handler_ctx *handler = NULL;
-    if (setting == NULL || dsize == NULL) {
+    if (setting == NULL) {
         return;
     }
     handler = get_setting_handler(setting);
