@@ -62,7 +62,7 @@ int txttypesetter_reset_curr_master_row_value() {
     g_txttypesetter_curr_row = 1;
 }
 
-txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypesetter_tablature_ctx **tab, const int intended_consumption) {
+txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypesetter_tablature_ctx **tab, const int row_usage) {
     txttypesetter_tablature_ctx *tp = NULL;
     size_t *fretboard_size = NULL;
     if (tab == NULL) {
@@ -76,7 +76,7 @@ txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypes
     if (fretboard_size == NULL) {
         return NULL;
     }
-    if (txttypesetter_get_curr_master_row_value() + intended_consumption >= *fretboard_size) {
+    if (txttypesetter_get_curr_master_row_value() + row_usage >= *fretboard_size) {
         tp = new_txttypesetter_tablature_ctx(tab);
         txttypesetter_reset_curr_master_row_value();
     } else {
@@ -85,7 +85,7 @@ txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypes
     return tp;
 }
 
-int txttypesetter_eval_intended_buffer_consumption(const tulip_command_t techniques, const tulip_single_note_ctx *note, const txttypesetter_tablature_ctx *tab) {
+int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const tulip_single_note_ctx *note, const txttypesetter_tablature_ctx *tab) {
     const tulip_single_note_ctx *np = NULL;
     txttypesetter_sustained_technique_ctx *tp = NULL;
     int longest = 0, l = 0;
@@ -106,22 +106,23 @@ int txttypesetter_eval_intended_buffer_consumption(const tulip_command_t techniq
             }
         }
         //  WARN(Santiago): In practice it is uncommon things like let-ring + palm-mute anyway let's support other
-        //                  weird combinations. As a result we will get ugly outputs like "tpbt......." :-P~~~
-        return l + txttypesetter_eval_intended_buffer_consumption(techniques & ~(curr_technique), note, tab);
+        //                  weird combinations. As a result we will get ugly outputs like: "tp.......
+        //                                                                                  bt......."...
+        return l + txttypesetter_eval_buffer_row_usage(techniques & ~(curr_technique), note, tab);
     } else if (techniques & kTlpChord) {
         longest = -1;
         for (np = note; np != NULL && (np->techniques & kTlpChord) == 0; np = np->next) {
             if (np->buf[0] == 0) {
                 continue;
             }
-            l = txttypesetter_eval_intended_buffer_consumption(kTlpSingleNote, np, tab);
+            l = txttypesetter_eval_buffer_row_usage(kTlpSingleNote, np, tab);
             if (l > longest) {
                 longest = l;
             }
         }
-        return longest + txttypesetter_eval_intended_buffer_consumption(techniques & ~(kTlpChord | kTlpSingleNote), note, tab);
+        return longest + txttypesetter_eval_buffer_row_usage(techniques & ~(kTlpChord | kTlpSingleNote), note, tab);
     } else if (techniques & kTlpSingleNote) {
-        return strlen(note->buf) - 1;
+        return strlen(note->buf) - 1 + txttypesetter_eval_buffer_row_usage(techniques & ~(kTlpSingleNote), note, tab);
     } else if ((techniques & kTlpVibrato) || (techniques & kTlpSlideDown)       ||
                (techniques & kTlpSlideUp) || (techniques & kTlpHammerOn)        ||
                (techniques & kTlpPullOff) || (techniques & kTlpVibratoWBar)     ||
@@ -129,19 +130,19 @@ int txttypesetter_eval_intended_buffer_consumption(const tulip_command_t techniq
                (techniques & kTlpBend   ) || (techniques & kTlpReleaseBend)     ||
                (techniques & kTlpTapping) || (techniques & kTlpNaturalHarmonic) ||
                (techniques & kTlpArtificialHarmonic)) {
-            return 1 + txttypesetter_eval_intended_buffer_consumption(techniques & ~(kTlpVibrato         |
-                                                                                     kTlpSlideDown       |
-                                                                                     kTlpSlideUp         |
-                                                                                     kTlpHammerOn        |
-                                                                                     kTlpPullOff         |
-                                                                                     kTlpVibratoWBar     |
-                                                                                     kTlpNoteSep         |
-                                                                                     kTlpSepBar          |
-                                                                                     kTlpBend            |
-                                                                                     kTlpReleaseBend     |
-                                                                                     kTlpTapping         |
-                                                                                     kTlpNaturalHarmonic |
-                                                                                     kTlpArtificialHarmonic), note, tab);
+            return 1 + txttypesetter_eval_buffer_row_usage(techniques & ~(kTlpVibrato         |
+                                                                          kTlpSlideDown       |
+                                                                          kTlpSlideUp         |
+                                                                          kTlpHammerOn        |
+                                                                          kTlpPullOff         |
+                                                                          kTlpVibratoWBar     |
+                                                                          kTlpNoteSep         |
+                                                                          kTlpSepBar          |
+                                                                          kTlpBend            |
+                                                                          kTlpReleaseBend     |
+                                                                          kTlpTapping         |
+                                                                          kTlpNaturalHarmonic |
+                                                                          kTlpArtificialHarmonic), note, tab);
     }
 
     return 0;
