@@ -60,13 +60,15 @@ void free_txttypesetter_comment_ctx(txttypesetter_comment_ctx *comments) {
     }
 }
 
-txttypesetter_sustained_technique_ctx *push_technique_to_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_technique_ctx *techniques, const tulip_command_t technique, const size_t fretboard_sz) {
+txttypesetter_sustained_technique_ctx *push_technique_to_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_technique_ctx *techniques, const tulip_command_t technique) {
     txttypesetter_sustained_technique_ctx *top = NULL;
     const char *technique_label = get_technique_label(technique);
+    size_t fretboard_sz = 0;
     if (technique_label == NULL) {
         return techniques;
     }
     new_txttypesetter_sustained_technique_ctx(top);
+    fretboard_sz = *((size_t *) get_processor_setting("fretboard-size", NULL));
     top->data = (char *) getseg(fretboard_sz + 1);
     memset(top->data, 0, fretboard_sz + 1);
     strncpy(top->data, technique_label, fretboard_sz);
@@ -85,18 +87,16 @@ txttypesetter_sustained_technique_ctx *pop_technique_from_txttypesetter_sustaine
     return top;
 }
 
-txttypesetter_sustained_technique_ctx *sustain_techniques(txttypesetter_sustained_technique_ctx *techniques, const size_t fretboard_sz) {
+void sustain_technique(txttypesetter_sustained_technique_ctx **technique) {
     txttypesetter_sustained_technique_ctx *tp = NULL;
-    if (techniques == NULL) {
-        return NULL;
+    size_t fretboard_sz = 0;
+    if (technique == NULL) {
+        return;
     }
-    for (tp = techniques; tp != NULL; tp = tp->next) {
-        if (strnlen(tp->data, fretboard_sz) >= fretboard_sz) {
-            continue;
-        }
+    fretboard_sz = *((size_t *) get_processor_setting("fretboard-size", NULL));
+    for (tp = *technique; tp != NULL; tp = tp->next) {
         strncat(tp->data, ".", fretboard_sz);
     }
-    return techniques;
 }
 
 void free_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_technique_ctx *techniques) {

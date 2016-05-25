@@ -9,6 +9,10 @@
 #include <processor/typesetters/txt/txttypes.h>
 #include <processor/typesetters/txt/txtctx.h>
 #include <processor/typesetters/txt/printers/mutetxtprinter.h>
+#include <processor/typesetters/txt/printers/letringtxtprinter.h>
+#include <processor/typesetters/txt/printers/beattxtprinter.h>
+#include <processor/typesetters/txt/printers/tremolopickingtxtprinter.h>
+#include <processor/typesetters/txt/printers/vibratowbartxtprinter.h>
 #include <processor/settings.h>
 #include <processor/oututils.h>
 #include <dsl/utils.h>
@@ -17,20 +21,20 @@
 
 typedef void (*txttypesetter_print_func)(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note);
 
-#define register_new_typesetter_printer(tc, p) (p) //  INFO(Santiago): "tc" is just for documenting issues.
+#define register_new_typesetter_printer(tc, p) (p) //  INFO(Santiago): Hello sloppy creatures, "tc" is just for documenting issues.
 
 static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpMute, txttypesetter_mute_printer),
-    register_new_typesetter_printer(kTlpLetRing, NULL),
+    register_new_typesetter_printer(kTlpLetRing, txttypesetter_letring_printer),
     register_new_typesetter_printer(kTlpChord, NULL),
-    register_new_typesetter_printer(kTlpBeat, NULL),
-    register_new_typesetter_printer(kTlpTremoloPicking, NULL),
+    register_new_typesetter_printer(kTlpBeat, txttypesetter_beat_printer),
+    register_new_typesetter_printer(kTlpTremoloPicking, txttypesetter_tremolopicking_printer),
     register_new_typesetter_printer(kTlpVibrato, NULL),
     register_new_typesetter_printer(kTlpSlideDown, NULL),
     register_new_typesetter_printer(kTlpSlideUp, NULL),
     register_new_typesetter_printer(kTlpHammerOn, NULL),
     register_new_typesetter_printer(kTlpPullOff, NULL),
-    register_new_typesetter_printer(kTlpVibratoWBar, NULL),
+    register_new_typesetter_printer(kTlpVibratoWBar, txttypesetter_vibratowbar_printer),
     register_new_typesetter_printer(kTlpTunning, NULL),
     register_new_typesetter_printer(kTlpLiteral, NULL),
     register_new_typesetter_printer(kTlpSingleNote, NULL),
@@ -60,6 +64,29 @@ int txttypesetter_inc_curr_master_row_value(const int amount) {
 
 int txttypesetter_reset_curr_master_row_value() {
     g_txttypesetter_curr_row = 1;
+}
+
+void txttypesetter_print_sustained_technique_mark(const tulip_command_t command, txttypesetter_sustained_technique_ctx **technique_stack, const int row_usage) {
+    txttypesetter_sustained_technique_ctx *tp = NULL;
+    char *technique_label = NULL;
+    int r = row_usage;
+    if (technique_stack == NULL) {
+        return;
+    }
+    technique_label = get_technique_label(command);
+    for (tp = *technique_stack; tp != NULL; tp = tp->next) {
+        if (strstr(tp->data, technique_label) == tp->data) {
+            while (r-- > 0) {
+                sustain_technique(&tp);
+            }
+            return;
+        }
+    }
+    tp = push_technique_to_txttypesetter_sustained_technique_ctx((*technique_stack), command);
+    r -= strlen(technique_label);
+    while (r-- > 0) {
+        sustain_technique(&tp);
+    }
 }
 
 txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypesetter_tablature_ctx **tab, const int row_usage) {

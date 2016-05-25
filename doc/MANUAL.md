@@ -91,13 +91,13 @@ the transcription improvements. If you transcribe/adapt things you should know t
 Because we are always evoluting and learning.
 
 Contradicting myself in the **Figure 1** you can see a part of an adaptation from an ``Albert King``'s solo on a
-napkin that I recently did these days:
+napkin that I recently did these days.
 
 **Figure 1**: A short solo transcription written down on a napkin.
 
 ![Sample of my mess direct from my desk](https://github.com/rafael-santiago/tulip/blob/master/etc/draft.jpg)
 
-According to the shown figure is possible to see that I like to use arrows to express bending cases and the symbol ``~``
+According to the **Figure 1** is possible to see that I like to use arrows to express bending cases and the symbol ``~``
 to vibrato cases and also the way how the chords are expressed in this kind of notation. But in ``Tulip`` these things are
 a little bit more structured. Nevertheless this is the base for the Language discussed here.
 

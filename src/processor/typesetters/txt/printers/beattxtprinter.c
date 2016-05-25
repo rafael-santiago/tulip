@@ -5,9 +5,9 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#include <processor/typesetters/txt/printers/mutetxtprinter.h>
+#include <processor/typesetters/txt/printers/beattxtprinter.h>
 #include <processor/typesetters/txt/printers/sustainedtxt.h>
 
-void txttypesetter_mute_printer(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note) {
-    txttypesetter_sustained_printer(kTlpMute, tab, note);
+void txttypesetter_beat_printer(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note) {
+    txttypesetter_sustained_printer(kTlpBeat, tab, note);
 }
