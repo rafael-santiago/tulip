@@ -192,6 +192,7 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
                 print(&tab, sp);
             }
         }
+        free(dmuxd_cmds);
     }
     return 1;
 }
