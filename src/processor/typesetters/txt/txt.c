@@ -19,6 +19,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+//  WARN(Santiago): For this typesetter I am taking in consideration the usage of monospaced fonts.
+//                  If you like to use non-monospaced fonts for your plain-text guitar tablatures -> step off <-
+
 typedef void (*txttypesetter_print_func)(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note);
 
 #define register_new_typesetter_printer(tc, p) (p) //  INFO(Santiago): Hello sloppy creatures, "tc" is just for documenting issues.
@@ -50,21 +53,6 @@ static txttypesetter_print_func g_txttypesetter_printers[] = {
 };
 
 size_t g_txttypesetter_printer_nr = sizeof(g_txttypesetter_printers) / sizeof(g_txttypesetter_printers[0]);
-
-static int g_txttypesetter_curr_row = 1;
-
-int txttypesetter_get_curr_master_row_value() {
-    return g_txttypesetter_curr_row;
-}
-
-int txttypesetter_inc_curr_master_row_value(const int amount) {
-    g_txttypesetter_curr_row += amount;
-    return txttypesetter_get_curr_master_row_value();
-}
-
-int txttypesetter_reset_curr_master_row_value() {
-    g_txttypesetter_curr_row = 1;
-}
 
 void txttypesetter_print_sustained_technique_mark(const tulip_command_t command, txttypesetter_sustained_technique_ctx **technique_stack, const int row_usage) {
     txttypesetter_sustained_technique_ctx *tp = NULL;
@@ -103,9 +91,8 @@ txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypes
     if (fretboard_size == NULL) {
         return NULL;
     }
-    if (txttypesetter_get_curr_master_row_value() + row_usage >= *fretboard_size) {
+    if ((*tab)->curr_row + row_usage >= *fretboard_size) {
         tp = new_txttypesetter_tablature_ctx(tab);
-        txttypesetter_reset_curr_master_row_value();
     } else {
         for (tp = (*tab); tp->next != NULL; tp = tp->next);
     }
@@ -132,7 +119,7 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
                 l++;
             }
         }
-        //  WARN(Santiago): In practice it is uncommon things like let-ring + palm-mute anyway let's support other
+        //  WARN(Santiago): In practice is uncommon things like let-ring + palm-mute anyway let's support other
         //                  weird combinations. As a result we will get ugly outputs like: "tp.......
         //                                                                                  bt......."...
         return l + txttypesetter_eval_buffer_row_usage(techniques & ~(curr_technique), note, tab);

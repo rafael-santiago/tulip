@@ -26,6 +26,7 @@ typedef struct _txttypesetter_tablature_ctx {
     char *times;
     char *strings[6];
     char tunning[6][3];
+    size_t curr_row;
     struct _txttypesetter_tablature_ctx *next;
 }txttypesetter_tablature_ctx;
 

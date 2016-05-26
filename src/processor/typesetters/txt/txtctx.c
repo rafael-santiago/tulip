@@ -139,5 +139,6 @@ txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tabla
     strncpy(tail->tunning[4], tunning[4], sizeof(tail->tunning[4]) - 1);
     strncpy(tail->tunning[5], tunning[5], sizeof(tail->tunning[5]) - 1);
     tail->next = NULL;
+    tail->curr_row = 1;
     return tail;
 }
