@@ -123,6 +123,7 @@ txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tabla
         tail = (*tablature);
     }
     fretboard_sz = *((size_t *) get_processor_setting("fretboard-size", NULL));
+    tail->fretboard_sz = fretboard_sz;
     tail->times = (char *) getseg(fretboard_sz + 1);
     memset(tail->times, 0, fretboard_sz + 1);
     new_tab_string(tail->strings[0], fretboard_sz);
@@ -140,5 +141,6 @@ txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tabla
     strncpy(tail->tunning[5], tunning[5], sizeof(tail->tunning[5]) - 1);
     tail->next = NULL;
     tail->curr_row = 1;
+    tail->curr_str = 1;
     return tail;
 }

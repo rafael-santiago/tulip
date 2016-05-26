@@ -13,6 +13,17 @@
 #include <processor/typesetters/txt/printers/beattxtprinter.h>
 #include <processor/typesetters/txt/printers/tremolopickingtxtprinter.h>
 #include <processor/typesetters/txt/printers/vibratowbartxtprinter.h>
+#include <processor/typesetters/txt/printers/chordtxtprinter.h>
+#include <processor/typesetters/txt/printers/vibratotxtprinter.h>
+#include <processor/typesetters/txt/printers/slidedowntxtprinter.h>
+#include <processor/typesetters/txt/printers/slideuptxtprinter.h>
+#include <processor/typesetters/txt/printers/noteseptxtprinter.h>
+#include <processor/typesetters/txt/printers/sepbartxtprinter.h>
+#include <processor/typesetters/txt/printers/bendtxtprinter.h>
+#include <processor/typesetters/txt/printers/releasebendtxtprinter.h>
+#include <processor/typesetters/txt/printers/tappingtxtprinter.h>
+#include <processor/typesetters/txt/printers/naturalharmonictxtprinter.h>
+#include <processor/typesetters/txt/printers/artificialharmonictxtprinter.h>
 #include <processor/settings.h>
 #include <processor/oututils.h>
 #include <dsl/utils.h>
@@ -29,27 +40,27 @@ typedef void (*txttypesetter_print_func)(txttypesetter_tablature_ctx **tab, cons
 static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpMute, txttypesetter_mute_printer),
     register_new_typesetter_printer(kTlpLetRing, txttypesetter_letring_printer),
-    register_new_typesetter_printer(kTlpChord, NULL),
+    register_new_typesetter_printer(kTlpChord, txttypesetter_chord_printer),
     register_new_typesetter_printer(kTlpBeat, txttypesetter_beat_printer),
     register_new_typesetter_printer(kTlpTremoloPicking, txttypesetter_tremolopicking_printer),
-    register_new_typesetter_printer(kTlpVibrato, NULL),
-    register_new_typesetter_printer(kTlpSlideDown, NULL),
-    register_new_typesetter_printer(kTlpSlideUp, NULL),
+    register_new_typesetter_printer(kTlpVibrato, txttypesetter_vibrato_printer),
+    register_new_typesetter_printer(kTlpSlideDown, txttypesetter_slidedown_printer),
+    register_new_typesetter_printer(kTlpSlideUp, txttypesetter_slideup_printer),
     register_new_typesetter_printer(kTlpHammerOn, NULL),
     register_new_typesetter_printer(kTlpPullOff, NULL),
     register_new_typesetter_printer(kTlpVibratoWBar, txttypesetter_vibratowbar_printer),
     register_new_typesetter_printer(kTlpTunning, NULL),
     register_new_typesetter_printer(kTlpLiteral, NULL),
     register_new_typesetter_printer(kTlpSingleNote, NULL),
-    register_new_typesetter_printer(kTlpNoteSep, NULL),
-    register_new_typesetter_printer(kTlpSepBar, NULL),
+    register_new_typesetter_printer(kTlpNoteSep, txttypesetter_notesep_printer),
+    register_new_typesetter_printer(kTlpSepBar, txttypesetter_sepbar_printer),
     register_new_typesetter_printer(kTlpSavePoint, NULL),
-    register_new_typesetter_printer(kTlpBend, NULL),
-    register_new_typesetter_printer(kTlpReleaseBend, NULL),
+    register_new_typesetter_printer(kTlpBend, txttypesetter_bend_printer),
+    register_new_typesetter_printer(kTlpReleaseBend, txttypesetter_releasebend_printer),
     register_new_typesetter_printer(kTlpBlockEnd, NULL),
-    register_new_typesetter_printer(kTlpTapping, NULL),
-    register_new_typesetter_printer(kTlpNaturalHarmonic, NULL),
-    register_new_typesetter_printer(kTlpArtificialHarmonic, NULL)
+    register_new_typesetter_printer(kTlpTapping, txttypesetter_tapping_printer),
+    register_new_typesetter_printer(kTlpNaturalHarmonic, txttypesetter_naturalharmonic_printer),
+    register_new_typesetter_printer(kTlpArtificialHarmonic, txttypesetter_artificialharmonic_printer)
 };
 
 size_t g_txttypesetter_printer_nr = sizeof(g_txttypesetter_printers) / sizeof(g_txttypesetter_printers[0]);
