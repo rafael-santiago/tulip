@@ -44,7 +44,7 @@ The another part of the notation is about combining the fret number with the str
 So a note can be depicted as: ``<string-number><fret-number>``. These notes should be separated by a single ``dash``.
 Piece of cake, right?
 
-However in the fret number case we have some particularities. Some people when hits the 10th fret just numbered it as
+However in the fret number case we have some particularities. Some people when hit the 10th fret just numbered it as
 ``10`` and others numbered it as ``00``, fret number eleven as ``01``, fiften as ``05`` and so on. I use this second one and
 as an effect this is what ``Tulip`` implements.
 
@@ -54,7 +54,7 @@ The hammer-ons, pull-offs can be noted using a simple arc between the parts.
 Let's take a look at the **Table 1** in order to review your new knowledges about a new simple notation that you just have been
 learned ;)
 
-**Table 1**: Notes from the fretbord to numbers.
+**Table 1**: Notes from the fretboard to numbers.
 
 |          **Fretboard**               | **Numeric cipher** |
 |:------------------------------------:|:------------------:|
@@ -71,7 +71,7 @@ learned ;)
 |          5th string fret 20          |        510         |
 |          6th string fret 13          |        603         |
 
-Maybe the usage of ``00`` for fret ten can confuse you at the beginning but with practice your brain will start thinking
+Maybe the usage of ``00`` for fret tenth can confuse you at the beginning but with practice your brain will start thinking
 in this weird way.
 
 Beware that if you search the term ``Numeric cipher`` you will reach subjects dealing with ``Cryptography``.

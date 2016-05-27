@@ -13,7 +13,7 @@
 #include <processor/typesetters/txt/printers/beattxtprinter.h>
 #include <processor/typesetters/txt/printers/tremolopickingtxtprinter.h>
 #include <processor/typesetters/txt/printers/vibratowbartxtprinter.h>
-#include <processor/typesetters/txt/printers/chordtxtprinter.h>
+//#include <processor/typesetters/txt/printers/chordtxtprinter.h>
 #include <processor/typesetters/txt/printers/vibratotxtprinter.h>
 #include <processor/typesetters/txt/printers/slidedowntxtprinter.h>
 #include <processor/typesetters/txt/printers/slideuptxtprinter.h>
@@ -24,6 +24,12 @@
 #include <processor/typesetters/txt/printers/tappingtxtprinter.h>
 #include <processor/typesetters/txt/printers/naturalharmonictxtprinter.h>
 #include <processor/typesetters/txt/printers/artificialharmonictxtprinter.h>
+#include <processor/typesetters/txt/printers/singlenotetxtprinter.h>
+#include <processor/typesetters/txt/printers/savepointtxtprinter.h>
+#include <processor/typesetters/txt/printers/hammerontxtprinter.h>
+#include <processor/typesetters/txt/printers/pullofftxtprinter.h>
+#include <processor/typesetters/txt/printers/tunningtxtprinter.h>
+#include <processor/typesetters/txt/printers/literaltxtprinter.h>
 #include <processor/settings.h>
 #include <processor/oututils.h>
 #include <dsl/utils.h>
@@ -40,21 +46,21 @@ typedef void (*txttypesetter_print_func)(txttypesetter_tablature_ctx **tab, cons
 static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpMute, txttypesetter_mute_printer),
     register_new_typesetter_printer(kTlpLetRing, txttypesetter_letring_printer),
-    register_new_typesetter_printer(kTlpChord, txttypesetter_chord_printer),
+    register_new_typesetter_printer(kTlpChord, NULL),
     register_new_typesetter_printer(kTlpBeat, txttypesetter_beat_printer),
     register_new_typesetter_printer(kTlpTremoloPicking, txttypesetter_tremolopicking_printer),
     register_new_typesetter_printer(kTlpVibrato, txttypesetter_vibrato_printer),
     register_new_typesetter_printer(kTlpSlideDown, txttypesetter_slidedown_printer),
     register_new_typesetter_printer(kTlpSlideUp, txttypesetter_slideup_printer),
-    register_new_typesetter_printer(kTlpHammerOn, NULL),
-    register_new_typesetter_printer(kTlpPullOff, NULL),
+    register_new_typesetter_printer(kTlpHammerOn, txttypesetter_hammeron_printer),
+    register_new_typesetter_printer(kTlpPullOff, txttypesetter_pulloff_printer),
     register_new_typesetter_printer(kTlpVibratoWBar, txttypesetter_vibratowbar_printer),
-    register_new_typesetter_printer(kTlpTunning, NULL),
-    register_new_typesetter_printer(kTlpLiteral, NULL),
-    register_new_typesetter_printer(kTlpSingleNote, NULL),
+    register_new_typesetter_printer(kTlpTunning, txttypesetter_tunning_printer),
+    register_new_typesetter_printer(kTlpLiteral, txttypesetter_literal_printer),
+    register_new_typesetter_printer(kTlpSingleNote, txttypesetter_singlenote_printer),
     register_new_typesetter_printer(kTlpNoteSep, txttypesetter_notesep_printer),
     register_new_typesetter_printer(kTlpSepBar, txttypesetter_sepbar_printer),
-    register_new_typesetter_printer(kTlpSavePoint, NULL),
+    register_new_typesetter_printer(kTlpSavePoint, txttypesetter_savepoint_printer),
     register_new_typesetter_printer(kTlpBend, txttypesetter_bend_printer),
     register_new_typesetter_printer(kTlpReleaseBend, txttypesetter_releasebend_printer),
     register_new_typesetter_printer(kTlpBlockEnd, NULL),
@@ -63,7 +69,7 @@ static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpArtificialHarmonic, txttypesetter_artificialharmonic_printer)
 };
 
-size_t g_txttypesetter_printer_nr = sizeof(g_txttypesetter_printers) / sizeof(g_txttypesetter_printers[0]);
+const size_t g_txttypesetter_printer_nr = sizeof(g_txttypesetter_printers) / sizeof(g_txttypesetter_printers[0]);
 
 void txttypesetter_print_sustained_technique_mark(const tulip_command_t command, txttypesetter_sustained_technique_ctx **technique_stack, const int row_usage) {
     txttypesetter_sustained_technique_ctx *tp = NULL;

@@ -9,12 +9,42 @@
 #include <processor/oututils.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <stdio.h>
 
-void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage) {
-    char *technique_label = NULL;
+static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage);
+
+static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage) {
+    char s_fret_nr[255] = "";
     if (tab == NULL || note == NULL) {
         return;
     }
+
+    (*tab)->curr_str = (note->buf[0] - '0');
+
+    if (isdigit(note->buf[0]) && note->buf[1] == ':') {
+        return;
+    }
+
+    if (note->buf[1] == 'X' || note->buf[1] == '?') {
+        (*tab)->strings[(*tab)->curr_str][(*tab)->curr_row] = note->buf[1];
+    } else {
+        sprintf(s_fret_nr, "%d", single_note_to_tab_fret_nr(note->buf));
+        strncat((*tab)->strings[(*tab)->curr_str], s_fret_nr, (*tab)->fretboard_sz);
+    }
+
+    if ((note->techniques & kTlpChord) == 0 || (note->next != NULL && (note->next->techniques & kTlpChord) == 0)) {
+        (*tab)->curr_row += row_usage;
+    }
+}
+
+void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage) {
+    char *technique_label = NULL;
+
+    if (tab == NULL || note == NULL) {
+        return;
+    }
+
     switch (command) {
         case kTlpVibrato:
         case kTlpSlideDown:
@@ -38,9 +68,12 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
             break;
 
         case kTlpSingleNote:
+            txttypesetter_flush_note(tab, note, row_usage);
             break;
 
         case kTlpSavePoint:
+            new_txttypesetter_tablature_ctx(tab);
             break;
     }
+
 }
