@@ -29,6 +29,7 @@ typedef struct _txttypesetter_tablature_ctx {
     size_t curr_row;
     size_t curr_str;
     size_t fretboard_sz;
+    size_t string_nr;
     struct _txttypesetter_tablature_ctx *next;
 }txttypesetter_tablature_ctx;
 

@@ -123,6 +123,7 @@ txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tabla
         tail = (*tablature);
     }
     fretboard_sz = *((size_t *) get_processor_setting("fretboard-size", NULL));
+    tail->string_nr = 6;
     tail->fretboard_sz = fretboard_sz;
     tail->times = (char *) getseg(fretboard_sz + 1);
     memset(tail->times, 0, fretboard_sz + 1);
