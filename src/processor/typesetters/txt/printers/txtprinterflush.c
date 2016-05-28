@@ -16,6 +16,7 @@ static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tu
 
 static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage) {
     char s_fret_nr[255] = "";
+    char *string = NULL;
     if (tab == NULL || note == NULL) {
         return;
     }
@@ -30,7 +31,12 @@ static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tu
         (*tab)->strings[(*tab)->curr_str][(*tab)->curr_row] = note->buf[1];
     } else {
         sprintf(s_fret_nr, "%d", single_note_to_tab_fret_nr(note->buf));
-        strncat((*tab)->strings[(*tab)->curr_str], s_fret_nr, (*tab)->fretboard_sz);
+        string = &(*tab)->strings[(*tab)->curr_str][(*tab)->curr_row];
+        if ((note->techniques & kTlpChord) && row_usage > 1 && strlen(s_fret_nr) == 1) {
+            //  INFO(Santiago): Seeking the best note alignment.
+            string += (row_usage - 1);
+        }
+        memcpy(string, s_fret_nr, strnlen(s_fret_nr, sizeof(s_fret_nr)));
     }
 
     if ((note->techniques & kTlpChord) == 0 || (note->next != NULL && (note->next->techniques & kTlpChord) == 0)) {
@@ -39,7 +45,8 @@ static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tu
 }
 
 void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage) {
-    char *technique_label = NULL;
+    char *technique_label = NULL, *tp = NULL;
+    char *string = NULL;
 
     if (tab == NULL || note == NULL) {
         return;
@@ -59,9 +66,7 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
         case kTlpNaturalHarmonic:
         case kTlpArtificialHarmonic:
             technique_label = get_technique_label(command);
-            if (technique_label != NULL) {
-                strncat((*tab)->strings[(*tab)->curr_str], technique_label, (*tab)->fretboard_sz);
-            }
+            memcpy(&(*tab)->strings[(*tab)->curr_str][(*tab)->curr_row], technique_label, strlen(technique_label));
             if ((note->techniques & kTlpChord) == 0) {
                 (*tab)->curr_row += row_usage;
             }
