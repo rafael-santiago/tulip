@@ -86,11 +86,11 @@ teenagerhood. As a result during these years I produced huge stacks of paper. On
 my dirty little stack but I would say that I stopped with my sloppiness. Now I am stacking ``notebooks`` ;)
 
 Even today I use pencil and paper and so I create a ``Tulip code`` for. This is my basic workflow on it. The fact is
-that transcribe my drafts to ``Tulip``'s ``DSL`` is pretty confortable besides the fact that I can versioning it and control
-the transcription improvements. If you transcribe/adapt things you should know that we are constantly evoluting our work.
-Because we are always evoluting and learning.
+that transcribe my drafts to ``Tulip``'s ``DSL`` is pretty confortable besides the fact that I can add some versioning on it
+and control the transcription improvements. If you transcribe/adapt things you should know that we are constantly evoluting
+our work, because we are always learning and evoluting ourselves.
 
-Contradicting myself in the **Figure 1** you can see a part of an adaptation from an ``Albert King``'s solo on a
+Contradicting myself, in the **Figure 1**, you can see a part of an adaptation from an ``Albert King``'s solo on a
 napkin that I recently did these days.
 
 **Figure 1**: A short solo transcription written down on a napkin.
