@@ -25,4 +25,6 @@ void free_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_techniqu
 
 txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tablature_ctx **tablature);
 
+void free_txttypesetter_tablature_ctx(txttypesetter_tablature_ctx *tablature);
+
 #endif

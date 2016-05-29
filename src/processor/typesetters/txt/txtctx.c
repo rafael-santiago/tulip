@@ -145,3 +145,18 @@ txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tabla
     tail->curr_str = 1;
     return tail;
 }
+
+void free_txttypesetter_tablature_ctx(txttypesetter_tablature_ctx *tablature) {
+    txttypesetter_tablature_ctx *t, *p;
+    size_t s;
+    for (t = p = tablature; t; p = t) {
+        t = p->next;
+        free_txttypesetter_comment_ctx(p->comments);
+        free_txttypesetter_sustained_technique_ctx(p->techniques);
+        free(p->times);
+        for (s = 0; s < 6; s++) {
+            free(p->strings[s]);
+        }
+        free(p);
+    }
+}

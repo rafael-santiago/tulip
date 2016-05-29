@@ -30,6 +30,7 @@
 #include <processor/typesetters/txt/printers/pullofftxtprinter.h>
 #include <processor/typesetters/txt/printers/tunningtxtprinter.h>
 #include <processor/typesetters/txt/printers/literaltxtprinter.h>
+#include <processor/typesetters/txt/txtinkspill.h>
 #include <processor/settings.h>
 #include <processor/oututils.h>
 #include <dsl/utils.h>
@@ -185,6 +186,7 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     txttypesetter_print_func print;
     tulip_command_t *dmuxd_cmds = NULL;
     size_t dmuxd_cmds_sz = 0;
+    int has_error = 1;
     if (song == NULL || tabpath == NULL) {
         return 0;
     }
@@ -198,5 +200,10 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
         }
         free(dmuxd_cmds);
     }
-    return 1;
+    if (tab == NULL) {
+        return 0;
+    }
+    has_error = (txttypesetter_inkspill(tabpath, tab) != 1);
+    free_txttypesetter_tablature_ctx(tab);
+    return has_error;
 }
