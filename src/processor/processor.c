@@ -22,19 +22,19 @@ struct tlp_processor_ctx {
 
 static int blackhole_processor(const tulip_single_note_ctx *song, const char *tabpath);
 
-static int comming_soon(const tulip_single_note_ctx *song, const char *tabpath);
+static int coming_soon(const tulip_single_note_ctx *song, const char *tabpath);
 
 static struct tlp_processor_ctx g_processors[] = {
     register_new_tlp_processor(".txt", txt_typesetter),
-    register_new_tlp_processor(".ps", comming_soon),
-    register_new_tlp_processor(".pdf", comming_soon),
+    register_new_tlp_processor(".ps", coming_soon),
+    register_new_tlp_processor(".pdf", coming_soon),
     register_new_tlp_processor(NULL, blackhole_processor)
 };
 
 static const g_processors_nr = sizeof(g_processors) / sizeof(g_processors[0]);
 
-static int comming_soon(const tulip_single_note_ctx *song, const char *tabpath) {
-    printf("tulip WARNING: the processor to produce the file \"%s\" is not totally implemented yet! comming soon!\n", tabpath);
+static int coming_soon(const tulip_single_note_ctx *song, const char *tabpath) {
+    printf("WARNING: the processor to produce the file \"%s\" is not totally implemented yet! coming soon!\n", tabpath);
     return 1;
 }
 
@@ -44,7 +44,6 @@ int blackhole_processor(const tulip_single_note_ctx *song, const char *tabpath) 
 }
 
 int mktab(const tulip_single_note_ctx *song, const char *tabpath) {
-    typesetter_callout typesetter = NULL;
     size_t p = 0;
     const char *tp = NULL;
     if (tabpath == NULL) {
