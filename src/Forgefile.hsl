@@ -31,6 +31,7 @@ function get_codes() : result type list {
     var s type int;
     var oldcwd type string;
     $oldcwd = hefesto.sys.pwd();
+    hefesto.sys.setenv("GET_C_CPP_DEPS_SRC_ROOT", $oldcwd);
     $deps = get_c_cpp_deps();
     $codes.ls(".*\\.c$");
     $submodules = hefesto.sys.get_option("sub-modules");

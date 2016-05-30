@@ -36,7 +36,7 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
     size_t i = 0;
     ssize_t s_limit = -1;
 
-    if (g_txttypesetter_settings.prefs & kTlpPrefsCutTabToSave) {
+    if (g_txttypesetter_settings.prefs & kTlpPrefsCutTabOnTheLastNote) {
         for (s = 0; s < tab->string_nr; s++) {
             for (i = strlen(tab->strings[s]) - 1; i >= 0 && is_sep(tab->strings[s][i]); i--);
             if ((ssize_t)i > s_limit) {
