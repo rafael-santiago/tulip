@@ -6,6 +6,7 @@
  *
  */
 #include <usrland/repoprefs.h>
+#include <usrland/usropt2tlpopt.h>
 #include <base/memory.h>
 #include <processor/settings.h>
 #include <stdio.h>
@@ -18,6 +19,7 @@ void ld_repo_prefs() {
     char line[255] = "", *lp = NULL, *lp_end = NULL;
     char *file_buffer = NULL, *fb = NULL, *fb_end = NULL;
     long file_size = 0;
+    struct usropt2tlpopt_ctx *setting = NULL;
     if (fp == NULL) {
         return;
     }
@@ -33,8 +35,16 @@ void ld_repo_prefs() {
     lp = &line[0];
     lp_end = lp + sizeof(line);
     while (fb != fb_end) {
-        if (*fb == '\n' || *fb == '\r' && lp != &line[0]) {
+        if ((*fb == '\n' || *fb == '\r' || fb + 1 == fb_end) && lp != &line[0]) {
+            if (fb + 1 == fb_end) {
+                *lp = *fb;
+                lp++;
+            }
+            *lp = 0;
             lp = &line[0];
+            setting = usropt2tlpopt(lp);
+            set_processor_setting(setting->option, setting->data, setting->dsize);
+            free_usropt2tlpopt_ctx(setting);
         } else {
             if (lp < lp_end) {
                 *lp = *fb;

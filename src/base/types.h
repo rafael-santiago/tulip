@@ -48,7 +48,7 @@ typedef struct _tulip_single_note_ctx {
 }tulip_single_note_ctx;
 
 typedef enum _tulip_bool_prefs_map {
-    kTlpPrefsCutTabToSave             = 0x0000000000000001,
+    kTlpPrefsCutTabOnTheLastNote      = 0x0000000000000001,
     kTlpPrefsCloseTabToSave           = 0x0000000000000020,
     kTlpPrefsShowTunning              = 0x0000000000000040,
     kTlpPrefsFretboardStyleNormal     = 0x0000000000000080,
