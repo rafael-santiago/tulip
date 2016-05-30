@@ -109,7 +109,17 @@ static struct usropt2tlpopt_ctx *get_tulip_prefs_map_t(const char *option, const
             break;
         }
     }
-    pref = pref << b;
+    if (strcmp(entire_buf, "1")    == 0  ||
+        strcmp(entire_buf, "yes")  == 0  ||
+        strcmp(entire_buf, "true") == 0  ||
+        strcmp(entire_buf, "on")   == 0) {
+        pref = pref << b;
+    } else if (strcmp(entire_buf, "0")     == 0 ||
+               strcmp(entire_buf, "no")    == 0 ||
+               strcmp(entire_buf, "false") == 0 ||
+               strcmp(entire_buf, "off")   == 0) {
+        pref &= ~(pref << b);
+    }
     opt = (struct usropt2tlpopt_ctx *)getseg(sizeof(struct usropt2tlpopt_ctx));
     opt->option = (char *)getseg((b = strlen(option) + 1));
     memset(opt->option, 0, b);

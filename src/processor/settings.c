@@ -37,8 +37,8 @@ static struct processor_setting_handler_ctx g_processor_setting_handlers[] = {
 
 const size_t g_processor_setting_handlers_nr = sizeof(g_processor_setting_handlers) / sizeof(g_processor_setting_handlers[0]);
 
-#define DEFAULT_TULIP_PROCESSOR_SETTINGS { kTlpPrefsCutTabToSave   |\
-                                           kTlpPrefsCloseTabToSave |\
+#define DEFAULT_TULIP_PROCESSOR_SETTINGS { kTlpPrefsCutTabOnTheLastNote   |\
+                                           kTlpPrefsCloseTabToSave        |\
                                            kTlpPrefsFretboardStyleNormal, 80, {"e", "B", "G", "D", "A", "E"}, 8 }
 
 static struct processor_settings_ctx g_processor_settings = DEFAULT_TULIP_PROCESSOR_SETTINGS;

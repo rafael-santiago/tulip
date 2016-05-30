@@ -5,10 +5,9 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#include <system/init.h>
-#include <system/exec.h>
+#ifndef TULIP_SYSTEM_EXEC_H
+#define TULIP_SYSTEM_EXEC_H 1
 
-int main(int argc, char **argv) {
-    tulip_system_init(argc, argv);
-    return tulip_task_exec();
-}
+int tulip_task_exec();
+
+#endif
