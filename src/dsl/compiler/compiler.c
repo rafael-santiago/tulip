@@ -86,6 +86,8 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
 
 size_t g_tlp_cmd_verifiers_nr = sizeof(g_tlp_cmd_verifiers) / sizeof(g_tlp_cmd_verifiers[0]);
 
+static char *get_tag_from_compiler_stack();
+
 void tlperr_s(char *buf, const char *error_message, ...) {
     char *bp = buf;
     const char *ep = error_message;
@@ -128,6 +130,24 @@ void tlperr_s(char *buf, const char *error_message, ...) {
     }
     strcat(buf, "\n");
     va_end(args);
+}
+
+static char *get_tag_from_compiler_stack() {
+    static char *tags[] = {
+        ".mute",
+        ".letring",
+        ".chord",
+        ".beat",
+        ".tremolopicking",
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        ".vibratowbar"
+    };
+    const size_t tags_nr = sizeof(tags) / sizeof(tags[0]);
+    return &tags[tlp_cmd_code_to_plain_index(top_of_technique_stack_ctx(g_techniques)) % tags_nr][0];
 }
 
 int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_note_ctx **song) {
@@ -173,7 +193,9 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
         callstack_level = 0;
         if ((*song) != NULL) { //  INFO(Santiago): A.k.a "compilation_status == 1".
             if (!is_empty_technique_stack_ctx(g_techniques)) {
-                tlperr_s(message_buf, "The code has some unterminated tag, please check and try again.");
+                tlperr_s(message_buf, "The code has some unterminated tag, please check and try again. "
+                                      "Tip: pay attention on the \"%s\" tag occurrences or on the tags that are going inside "
+                                      "them.", get_tag_from_compiler_stack());
                 free_tulip_single_note_ctx((*song));
                 (*song) = NULL;
                 free_technique_stack_ctx(g_techniques);
