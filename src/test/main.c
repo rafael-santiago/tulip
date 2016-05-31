@@ -12,6 +12,10 @@
 #include <dsl/str/strutils.h>
 #include <dsl/parser/parser.h>
 #include <dsl/compiler/compiler.h>
+#include <processor/oututils.h>
+#include <system/version.h>
+#include <system/init.h>
+#include <system/exec.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -351,6 +355,147 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
     }
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(dsl_utils_demux_tlp_commands_tests)
+    tulip_command_t *demuxes = NULL;
+    size_t demuxes_sz = 0;
+    tulip_command_t techniques = kTlpMute            |
+                                 kTlpLetRing         |
+                                 kTlpChord           |
+                                 kTlpBeat            |
+                                 kTlpTremoloPicking  |
+                                 kTlpVibrato         |
+                                 kTlpSlideDown       |
+                                 kTlpSlideUp         |
+                                 kTlpHammerOn        |
+                                 kTlpPullOff         |
+                                 kTlpVibratoWBar     |
+                                 kTlpTunning         |
+                                 kTlpLiteral         |
+                                 kTlpSingleNote      |
+                                 kTlpNoteSep         |
+                                 kTlpSepBar          |
+                                 kTlpSavePoint       |
+                                 kTlpBend            |
+                                 kTlpReleaseBend     |
+                                 kTlpBlockEnd        |
+                                 kTlpTapping         |
+                                 kTlpNaturalHarmonic |
+                                 kTlpArtificialHarmonic;
+    tulip_command_t expected_demuxes[] = {
+        kTlpMute,
+        kTlpLetRing,
+        kTlpChord,
+        kTlpBeat,
+        kTlpTremoloPicking,
+        kTlpVibrato,
+        kTlpSlideDown,
+        kTlpSlideUp,
+        kTlpHammerOn,
+        kTlpPullOff,
+        kTlpVibratoWBar,
+        kTlpTunning,
+        kTlpLiteral,
+        kTlpSingleNote,
+        kTlpNoteSep,
+        kTlpSepBar,
+        kTlpSavePoint,
+        kTlpBend,
+        kTlpReleaseBend,
+        kTlpBlockEnd,
+        kTlpTapping,
+        kTlpNaturalHarmonic,
+        kTlpArtificialHarmonic
+    };
+    demuxes = demux_tlp_commands(techniques, &demuxes_sz);
+    CUTE_ASSERT(demuxes != NULL);
+    CUTE_ASSERT(demuxes_sz == 23);
+    while (demuxes_sz-- > 0) {
+        CUTE_ASSERT(demuxes[demuxes_sz] == expected_demuxes[demuxes_sz]);
+    }
+    free(demuxes);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(processor_oututils_get_technique_label_tests)
+    struct expected_labels_ctx {
+        const char *label;
+        tulip_command_t technique;
+    };
+    struct expected_labels_ctx expected_labels[] = {
+        { "pm", kTlpMute               },
+        { "lr", kTlpLetRing            },
+        { "bt", kTlpBeat               },
+        { "tp", kTlpTremoloPicking     },
+        { "~" , kTlpVibrato            },
+        { "/" , kTlpSlideDown          },
+        { "\\", kTlpSlideUp            },
+        { "h" , kTlpHammerOn           },
+        { "p" , kTlpPullOff            },
+        { "vb", kTlpVibratoWBar        },
+        { "-" , kTlpNoteSep            },
+        { "|" , kTlpSepBar             },
+        { "b" , kTlpBend               },
+        { "r" , kTlpReleaseBend        },
+        { "T" , kTlpTapping            },
+        { "*" , kTlpNaturalHarmonic    },
+        { "v" , kTlpArtificialHarmonic }
+    };
+    const size_t expected_labels_nr = sizeof(expected_labels) / sizeof(expected_labels[0]);
+    size_t e = 0;
+    char *label = NULL;
+    for (e = 0; e < expected_labels_nr; e++) {
+        label = get_technique_label(expected_labels[e].technique);
+        CUTE_ASSERT(label != NULL);
+        CUTE_ASSERT(strcmp(label, expected_labels[e].label) == 0);
+    }
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(processor_oututils_single_note_to_tab_fret_nr_tests)
+    struct test_vector_ctx {
+        const char *note;
+        const int fret_nr;
+    };
+    struct test_vector_ctx test_vector[] = {
+        { "10" ,  0 }, { "11" ,  1 }, { "12" ,  2 }, { "13" ,  3 }, { "14" ,  4 }, { "15" ,  5 }, { "16" ,  6 }, { "17" ,  7 }, { "18" ,  8 }, { "19" ,  9 }, { "100", 10 }, { "101", 11 }, { "102", 12 }, { "103", 13 }, { "104", 14 }, { "105", 15 }, { "106", 16 }, { "107", 17 }, { "108", 18 }, { "109", 19 }, { "110", 20 }, { "111", 21 }, { "112", 22 },
+        { "20" ,  0 }, { "21" ,  1 }, { "22" ,  2 }, { "23" ,  3 }, { "24" ,  4 }, { "25" ,  5 }, { "26" ,  6 }, { "27" ,  7 }, { "28" ,  8 }, { "29" ,  9 }, { "200", 10 }, { "201", 11 }, { "202", 12 }, { "203", 13 }, { "204", 14 }, { "205", 15 }, { "206", 16 }, { "207", 17 }, { "208", 18 }, { "209", 19 }, { "210", 20 }, { "211", 21 }, { "212", 22 },
+        { "30" ,  0 }, { "31" ,  1 }, { "32" ,  2 }, { "33" ,  3 }, { "34" ,  4 }, { "35" ,  5 }, { "36" ,  6 }, { "37" ,  7 }, { "38" ,  8 }, { "39" ,  9 }, { "300", 10 }, { "301", 11 }, { "302", 12 }, { "303", 13 }, { "304", 14 }, { "305", 15 }, { "306", 16 }, { "307", 17 }, { "308", 18 }, { "309", 19 }, { "310", 20 }, { "311", 21 }, { "312", 22 },
+        { "40" ,  0 }, { "41" ,  1 }, { "42" ,  2 }, { "43" ,  3 }, { "44" ,  4 }, { "45" ,  5 }, { "46" ,  6 }, { "47" ,  7 }, { "48" ,  8 }, { "49" ,  9 }, { "400", 10 }, { "401", 11 }, { "402", 12 }, { "403", 13 }, { "404", 14 }, { "405", 15 }, { "406", 16 }, { "407", 17 }, { "408", 18 }, { "409", 19 }, { "410", 20 }, { "411", 21 }, { "412", 22 },
+        { "50" ,  0 }, { "51" ,  1 }, { "52" ,  2 }, { "53" ,  3 }, { "54" ,  4 }, { "55" ,  5 }, { "56" ,  6 }, { "57" ,  7 }, { "58" ,  8 }, { "59" ,  9 }, { "500", 10 }, { "501", 11 }, { "502", 12 }, { "503", 13 }, { "504", 14 }, { "505", 15 }, { "506", 16 }, { "507", 17 }, { "508", 18 }, { "509", 19 }, { "510", 20 }, { "511", 21 }, { "512", 22 },
+        { "60" ,  0 }, { "61" ,  1 }, { "62" ,  2 }, { "63" ,  3 }, { "64" ,  4 }, { "65" ,  5 }, { "66" ,  6 }, { "67" ,  7 }, { "68" ,  8 }, { "69" ,  9 }, { "600", 10 }, { "601", 11 }, { "602", 12 }, { "603", 13 }, { "604", 14 }, { "605", 15 }, { "606", 16 }, { "607", 17 }, { "608", 18 }, { "609", 19 }, { "610", 20 }, { "611", 21 }, { "612", 22 },
+    };
+    const size_t test_vector_nr = sizeof(test_vector) / sizeof(test_vector[0]);
+    size_t t = 0;
+    for (t = 0; t < test_vector_nr; t++) {
+        CUTE_ASSERT(single_note_to_tab_fret_nr(test_vector[t].note) == test_vector[t].fret_nr);
+    }
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(system_get_tulip_system_version)
+    CUTE_ASSERT(get_tulip_system_version() != NULL);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(system_tulip_task_exec)
+    //  WARN(Santiago): This test will test indirectly the tulip_system_init() function.
+    //                  If it is failing nothing here will make sense too.
+    struct task_ctx {
+        int exit_code;
+        int argc;
+        const char * const *argv;
+    };
+    //  TODO(Santiago): Test the single compilation of a tiny valid tlp code.
+    struct task_ctx tasks[] = {
+        { 1, 2, (const char * const []){"", "--duh"        } },
+        { 0, 2, (const char * const []){"", "--help"       } },
+        { 0, 2, (const char * const []){"", "--version"    } },
+        { 1, 2, (const char * const []){"", "--tlp=unk.tlp"} }
+    };
+    const size_t tasks_nr = sizeof(tasks) / sizeof(tasks[0]);
+    size_t t = 0;
+    for (t = 0; t < tasks_nr; t++) {
+        tulip_system_init(tasks[t].argc, tasks[t].argv);
+        CUTE_ASSERT(tulip_task_exec() == tasks[t].exit_code);
+    }
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(tulip_tests)
     CUTE_RUN_TEST(base_tulip_technique_stack_ctx_tests);
     CUTE_RUN_TEST(base_tulip_single_note_ctx_tests);
@@ -365,7 +510,17 @@ CUTE_TEST_CASE(tulip_tests)
     CUTE_RUN_TEST(dsl_parser_set_curr_code_line_number_tests);
     CUTE_RUN_TEST(dsl_parser_get_curr_code_line_number_tests);
     CUTE_RUN_TEST(dsl_utils_tlp_cmd_code_to_plain_index_tests);
+    CUTE_RUN_TEST(dsl_utils_demux_tlp_commands_tests);
     CUTE_RUN_TEST(dsl_compiler_compile_tulip_codebuf);
+    //  WARN(Santiago): It is important to run the following test after
+    //                  the test "dsl_utils_tlp_cmd_code_to_plain_index_tests"
+    //                  because the following tested function is quite dependant
+    //                  from the previous one. Being totally non-sense try to test
+    //                  it with the another broken.
+    CUTE_RUN_TEST(processor_oututils_get_technique_label_tests);
+    CUTE_RUN_TEST(processor_oututils_single_note_to_tab_fret_nr_tests);
+    CUTE_RUN_TEST(system_get_tulip_system_version);
+    CUTE_RUN_TEST(system_tulip_task_exec);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulip_tests);

@@ -184,26 +184,35 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     const tulip_single_note_ctx *sp = NULL;
     txttypesetter_tablature_ctx *tab = NULL;
     txttypesetter_print_func print;
-    tulip_command_t *dmuxd_cmds = NULL;
-    size_t dmuxd_cmds_sz = 0;
+    tulip_command_t *demuxes = NULL;
+    size_t demuxes_sz = 0;
     int has_error = 1;
+
     if (song == NULL || tabpath == NULL) {
         return 0;
     }
+
     for (sp = song; sp != NULL; sp = sp->next) {
-        dmuxd_cmds = demux_tlp_commands(sp->techniques, &dmuxd_cmds_sz);
-        while (dmuxd_cmds_sz-- > 0) {
-            print = g_txttypesetter_printers[dmuxd_cmds[dmuxd_cmds_sz]];
+        demuxes = demux_tlp_commands(sp->techniques, &demuxes_sz);
+        if (demuxes == NULL) {
+            continue;
+        }
+        while (demuxes_sz-- > 0) {
+            print = g_txttypesetter_printers[tlp_cmd_code_to_plain_index(demuxes[demuxes_sz])];
             if (print != NULL) {
                 print(&tab, sp);
             }
         }
-        free(dmuxd_cmds);
+        free(demuxes);
     }
+
     if (tab == NULL) {
         return 0;
     }
+
     has_error = (txttypesetter_inkspill(tabpath, tab) != 1);
+
     free_txttypesetter_tablature_ctx(tab);
+
     return has_error;
 }

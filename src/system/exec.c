@@ -10,6 +10,7 @@
 #include <dsl/compiler/compiler.h>
 #include <base/ctx.h>
 #include <system/version.h>
+#include <processor/processor.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -70,8 +71,7 @@ static int tulip_task_compile(const char *tlp, tulip_single_note_ctx **song) {
 }
 
 static int tulip_task_typeset(const char *out, const tulip_single_note_ctx *song) {
-    printf("not yet! comming soon!\n");
-    return 1;
+    return mktab(song, out);
 }
 
 static int tulip_task_help() {
