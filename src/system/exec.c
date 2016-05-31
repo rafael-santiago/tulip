@@ -22,6 +22,8 @@ static int tulip_task_help();
 
 static int tulip_task_version();
 
+static int tulip_task_notask();
+
 static int tulip_task_compile(const char *tlp, tulip_single_note_ctx **song) {
     char errmsg[255];
     char *tlpcode = NULL;
@@ -73,7 +75,20 @@ static int tulip_task_typeset(const char *out, const tulip_single_note_ctx *song
 }
 
 static int tulip_task_help() {
-    printf("use: tulip --tlp=<tlp file path> [--out=<out file path>]\n");
+    printf("usage: tulip --tlp=<tlp file path> [--out=<out file path>]\n\n");
+    printf("* If you do not know Tulip's Language try to take a look at MANUAL.md.\n"
+           "  This is located under the sub-path doc/MANUAL.md in the repo's tree.\n\n"
+           "Tulip is licensed under GPLv2. This is a free software.\n"
+           "You can redistribute it and/or modify under the terms of the GNU General Public License version 2.\n\n"
+           "Tulip language is Copyright (C) 2005-2016 by Rafael Santiago.\n"
+           "Tulip compiler is Copyright (C) 2005-2016 by Rafael Santiago.\n"
+           "Tulip txt typesetter is Copyright (C) 2005-2016 by Rafael Santiago.\n\n"
+           "Bug reports, feedback, etc: <voidbrainvoid@gmail.com> or <https://github.com/rafael-santiago/tulip/issues>\n\n");
+    return 0;
+}
+
+static int tulip_task_notask() {
+    printf("tulip: What do you mean? Try to call me again using --help option. Maybe we will can understand each other in a better way.\n");
     return 1;
 }
 
@@ -98,8 +113,10 @@ int tulip_task_exec() {
         }
     } else if (get_bool_option("version", 0) != 0) {
         exit_code = tulip_task_version();
-    } else {
+    } else if (get_bool_option("help", 0) != 0) {
         exit_code = tulip_task_help();
+    } else {
+        exit_code = tulip_task_notask();
     }
 
     return exit_code;
