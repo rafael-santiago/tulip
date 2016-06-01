@@ -16,6 +16,7 @@
 #include <system/version.h>
 #include <system/init.h>
 #include <system/exec.h>
+#include <processor/typesetters/txt/txtctx.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -408,7 +409,7 @@ CUTE_TEST_CASE(dsl_utils_demux_tlp_commands_tests)
     };
     demuxes = demux_tlp_commands(techniques, &demuxes_sz);
     CUTE_ASSERT(demuxes != NULL);
-    CUTE_ASSERT(demuxes_sz == 23);
+    CUTE_ASSERT(demuxes_sz == 22);
     while (demuxes_sz-- > 0) {
         CUTE_ASSERT(demuxes[demuxes_sz] == expected_demuxes[demuxes_sz]);
     }
@@ -469,7 +470,7 @@ CUTE_TEST_CASE(processor_oututils_single_note_to_tab_fret_nr_tests)
     }
 CUTE_TEST_CASE_END
 
-CUTE_TEST_CASE(system_get_tulip_system_version)
+CUTE_TEST_CASE(system_get_tulip_system_version_tests)
     CUTE_ASSERT(get_tulip_system_version() != NULL);
 CUTE_TEST_CASE_END
 
@@ -482,7 +483,7 @@ void write_buffer_to_disk(const char *filepath, const char * buffer, const size_
     fclose(fp);
 }
 
-CUTE_TEST_CASE(system_tulip_task_exec)
+CUTE_TEST_CASE(system_tulip_task_exec_tests)
     //  WARN(Santiago): This test will test indirectly the tulip_system_init() function.
     //                  If it is failing nothing here will make sense too.
     struct task_ctx {
@@ -508,6 +509,15 @@ CUTE_TEST_CASE(system_tulip_task_exec)
     remove("ok.tlp");
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(processor_typesetters_txt_tablature_ctx_tests)
+    txttypesetter_tablature_ctx *tab = NULL, *head = NULL, *next = NULL;
+    head = new_txttypesetter_tablature_ctx(&tab);
+    CUTE_ASSERT(tab != NULL && tab == head);
+    next = new_txttypesetter_tablature_ctx(&tab);
+    CUTE_ASSERT(tab == head && tab->next == next && next->next == NULL);
+    free_txttypesetter_tablature_ctx(tab);
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(tulip_tests)
     CUTE_RUN_TEST(base_tulip_technique_stack_ctx_tests);
     CUTE_RUN_TEST(base_tulip_single_note_ctx_tests);
@@ -531,8 +541,9 @@ CUTE_TEST_CASE(tulip_tests)
     //                  it with the another broken.
     CUTE_RUN_TEST(processor_oututils_get_technique_label_tests);
     CUTE_RUN_TEST(processor_oututils_single_note_to_tab_fret_nr_tests);
-    CUTE_RUN_TEST(system_get_tulip_system_version);
-    CUTE_RUN_TEST(system_tulip_task_exec);
+    CUTE_RUN_TEST(system_get_tulip_system_version_tests);
+    CUTE_RUN_TEST(system_tulip_task_exec_tests);
+    CUTE_RUN_TEST(processor_typesetters_txt_tablature_ctx_tests);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulip_tests);

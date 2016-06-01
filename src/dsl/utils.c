@@ -192,7 +192,7 @@ tulip_command_t *demux_tlp_commands(const tulip_command_t commands, size_t *arra
     if (array_size == NULL || commands == kTlpNone) {
         return kTlpNone;
     }
-    (*array_size) = 1;
+    (*array_size) = 0;
     for (b = 0; b < sizeof(tulip_command_t) * 8; b++) {
         temp = temp >> 1;
         (*array_size) += (temp & 1);

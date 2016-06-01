@@ -198,6 +198,7 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
             continue;
         }
         while (demuxes_sz-- > 0) {
+            //printf("index = %d (%x)\n", tlp_cmd_code_to_plain_index(demuxes[demuxes_sz]), demuxes[demuxes_sz]);
             print = g_txttypesetter_printers[tlp_cmd_code_to_plain_index(demuxes[demuxes_sz])];
             if (print != NULL) {
                 print(&tab, sp);
