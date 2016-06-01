@@ -3,7 +3,7 @@
 ----
 
 **Abstract**: ``Tulip`` is an application which implements a ``Language`` and some ``processors`` in order to generate
-``Guitar`` tablatures. This document shows the main aspects of the implemented ``Language`` and also aspects that envolves
+``Guitar`` tablatures. This document shows the main aspects of the implemented ``Language`` and also aspects that involves
 the output production a.k.a the ``processors``. Here you can find something about my motivations on writing this
 software. If you are in a rush try to jump to "The Tulip system" section.
 
