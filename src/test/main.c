@@ -473,27 +473,39 @@ CUTE_TEST_CASE(system_get_tulip_system_version)
     CUTE_ASSERT(get_tulip_system_version() != NULL);
 CUTE_TEST_CASE_END
 
+void write_buffer_to_disk(const char *filepath, const char * buffer, const size_t buffer_size) {
+    FILE *fp = fopen(filepath, "wb");
+    if (fp == NULL) {
+        return;
+    }
+    fwrite(buffer, 1, buffer_size, fp);
+    fclose(fp);
+}
+
 CUTE_TEST_CASE(system_tulip_task_exec)
     //  WARN(Santiago): This test will test indirectly the tulip_system_init() function.
     //                  If it is failing nothing here will make sense too.
     struct task_ctx {
         int exit_code;
         int argc;
-        const char * const *argv;
+        char **argv;
     };
-    //  TODO(Santiago): Test the single compilation of a tiny valid tlp code.
     struct task_ctx tasks[] = {
-        { 1, 2, (const char * const []){"", "--duh"        } },
-        { 0, 2, (const char * const []){"", "--help"       } },
-        { 0, 2, (const char * const []){"", "--version"    } },
-        { 1, 2, (const char * const []){"", "--tlp=unk.tlp"} }
+        { 1, 2, (char * []){"", "--duh"        } },
+        { 0, 2, (char * []){"", "--help"       } },
+        { 0, 2, (char * []){"", "--version"    } },
+        { 1, 2, (char * []){"", "--tlp=unk.tlp"} },
+        { 0, 2, (char * []){"", "--tlp=ok.tlp" } }
     };
     const size_t tasks_nr = sizeof(tasks) / sizeof(tasks[0]);
+    const char *tlp_code = ".chord{60-52-42-31-20-10}-60-.letring{.chord{10-20}--------}";
     size_t t = 0;
+    write_buffer_to_disk("ok.tlp", tlp_code, strlen(tlp_code));
     for (t = 0; t < tasks_nr; t++) {
         tulip_system_init(tasks[t].argc, tasks[t].argv);
         CUTE_ASSERT(tulip_task_exec() == tasks[t].exit_code);
     }
+    remove("ok.tlp");
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(tulip_tests)
