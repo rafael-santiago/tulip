@@ -541,9 +541,11 @@ CUTE_TEST_CASE(tulip_tests)
     //                  it with the another broken.
     CUTE_RUN_TEST(processor_oututils_get_technique_label_tests);
     CUTE_RUN_TEST(processor_oututils_single_note_to_tab_fret_nr_tests);
+    CUTE_RUN_TEST(processor_typesetters_txt_tablature_ctx_tests);
+    //  WARN(Santiago): The tests related with the system module should
+    //                  run after.
     CUTE_RUN_TEST(system_get_tulip_system_version_tests);
     CUTE_RUN_TEST(system_tulip_task_exec_tests);
-    CUTE_RUN_TEST(processor_typesetters_txt_tablature_ctx_tests);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulip_tests);

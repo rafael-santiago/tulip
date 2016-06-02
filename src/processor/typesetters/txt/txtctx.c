@@ -141,6 +141,8 @@ txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tabla
     tail->next = NULL;
     tail->curr_row = 1;
     tail->curr_str = 1;
+    tail->comments = NULL;
+    tail->techniques = NULL;
     return tail;
 }
 
@@ -152,9 +154,6 @@ void free_txttypesetter_tablature_ctx(txttypesetter_tablature_ctx *tablature) {
         free_txttypesetter_comment_ctx(p->comments);
         free_txttypesetter_sustained_technique_ctx(p->techniques);
         free(p->times);
-        for (s = 0; s < 6; s++) {
-            free(p->strings[s]);
-        }
         free(p);
     }
 }
