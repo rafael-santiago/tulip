@@ -17,11 +17,12 @@ static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tu
 static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage) {
     char s_fret_nr[255] = "";
     char *string = NULL;
+
     if (tab == NULL || note == NULL) {
         return;
     }
 
-    (*tab)->curr_str = (note->buf[0] - '0');
+    (*tab)->curr_str = (note->buf[0] - '0') - 1;
 
     if (isdigit(note->buf[0]) && note->buf[1] == ':') {
         return;
@@ -65,6 +66,11 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
         case kTlpTapping:
         case kTlpNaturalHarmonic:
         case kTlpArtificialHarmonic:
+            //  INFO(Santiago): This avoid erasing when we have a chord in printing process. Note that separators
+            //                  inside chord tags must be "pinched" on the fretboard using string jumps.
+            if (note->last != NULL && (note->last->techniques & kTlpSingleNote) && note->last->buf[1] != ':') {
+                return;
+            }
             technique_label = get_technique_label(command);
             memcpy(&(*tab)->strings[(*tab)->curr_str][(*tab)->curr_row], technique_label, strlen(technique_label));
             if ((note->techniques & kTlpChord) == 0) {

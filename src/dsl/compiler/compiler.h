@@ -10,7 +10,7 @@
 
 #include <base/types.h>
 
-int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_note_ctx **song);
+int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_note_ctx **song, const char **next_codebuf);
 
 void tlperr_s(char *buf, const char *error_message, ...);
 

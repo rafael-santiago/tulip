@@ -344,7 +344,7 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
     size_t t;
     int result = 0;
     for (t = 0; t < tlpcodes_nr; t++) {
-        result = compile_tulip_codebuf(tlpcodes[t].codebuf, errbuf, &song);
+        result = compile_tulip_codebuf(tlpcodes[t].codebuf, errbuf, &song, NULL);
         CUTE_ASSERT(result == tlpcodes[t].valid);
         if (tlpcodes[t].valid) {
             CUTE_ASSERT(song != NULL);

@@ -58,7 +58,7 @@ static int tulip_task_compile(const char *tlp, tulip_single_note_ctx **song) {
 
     fclose(fp);
 
-    is_tlpcode_ok = compile_tulip_codebuf(tlpcode, errmsg, song);
+    is_tlpcode_ok = compile_tulip_codebuf(tlpcode, errmsg, song, NULL);
 
     free(tlpcode);
 

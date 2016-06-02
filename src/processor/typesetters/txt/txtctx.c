@@ -18,7 +18,7 @@
 #define new_txttypesetter_sustained_technique_ctx(t) ( (t) = (txttypesetter_sustained_technique_ctx *) getseg(sizeof(txttypesetter_sustained_technique_ctx)),\
                                              (t)->data = NULL, (t)->next = NULL )
 
-#define new_tab_string(s, fts) ( (s) = (char *) getseg(fts + 1),\
+#define new_tab_string(s, fts) (  (s) = (char *)getseg(fts + 1),\
                                   memset((s), 0, fts + 1),\
                                   memset((s), '-', fts) )
 
@@ -153,6 +153,9 @@ void free_txttypesetter_tablature_ctx(txttypesetter_tablature_ctx *tablature) {
         t = p->next;
         free_txttypesetter_comment_ctx(p->comments);
         free_txttypesetter_sustained_technique_ctx(p->techniques);
+        for (s = 0; s < 6; s++) {
+            free(p->strings[s]);
+        }
         free(p->times);
         free(p);
     }

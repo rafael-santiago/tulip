@@ -12,9 +12,11 @@
 void txttypesetter_single_printer(const tulip_command_t technique, txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note) {
     int row_usage = 0;
     txttypesetter_tablature_ctx *tp = NULL;
+
     if (tab == NULL || note == NULL) {
         return;
     }
+
     row_usage = txttypesetter_eval_buffer_row_usage(technique, note, (*tab));
     tp = txttypesetter_get_properly_output_location(tab, row_usage);
     txttypesetter_flush_printer(technique, &tp, note, row_usage);

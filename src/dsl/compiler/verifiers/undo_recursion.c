@@ -18,6 +18,5 @@ int undo_recursion(const tulip_command_t command, const char *buf, char *error_m
     bp_end = get_next_tlp_technique_block_end(buf);
     push_technique(command);
     (*song) = add_note_to_tulip_single_note_ctx((*song), get_used_techniques() | command, NULL);
-    (*next) = bp + 1;
-    return compile_tulip_codebuf(bp, error_message, song);
+    return compile_tulip_codebuf(bp, error_message, song, next);
 }
