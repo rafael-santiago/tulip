@@ -82,17 +82,11 @@ void txttypesetter_print_sustained_technique_mark(const tulip_command_t command,
     technique_label = get_technique_label(command);
     for (tp = *technique_stack; tp != NULL; tp = tp->next) {
         if (strstr(tp->data, technique_label) != NULL) {
-            //while (r-- > 0) {
-                sustain_technique(&tp);
-            //}
+            sustain_technique(&tp);
             return;
         }
     }
     (*technique_stack) = push_technique_to_txttypesetter_sustained_technique_ctx((*technique_stack), command, curr_row);
-    /*r -= strlen(technique_label);
-    while (r-- > 0) {
-        sustain_technique(&tp);
-    }*/
 }
 
 txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypesetter_tablature_ctx **tab, const int row_usage) {
@@ -107,7 +101,7 @@ txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypes
         return (*tab);
     }
 
-    if ((*tab)->curr_row + row_usage >= (*tab)->fretboard_sz) {
+    if (((*tab)->curr_row + row_usage) >= (*tab)->fretboard_sz) {
         tp = new_txttypesetter_tablature_ctx(tab);
     } else {
         for (tp = (*tab); tp->next != NULL; tp = tp->next);
@@ -207,7 +201,7 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     }
 
     if (tab == NULL) {
-        return 0;
+        return 1;
     }
 
     has_error = (txttypesetter_inkspill(tabpath, tab) != 1);

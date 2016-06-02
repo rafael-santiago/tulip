@@ -25,7 +25,7 @@ typedef struct _txttypesetter_tablature_ctx {
     txttypesetter_sustained_technique_ctx *techniques;
     char *times;
     char *strings[6];
-    char tunning[6][3];
+    char tunning[6][23];
     size_t curr_row;
     size_t curr_str;
     size_t fretboard_sz;

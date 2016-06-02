@@ -73,9 +73,9 @@ txttypesetter_sustained_technique_ctx *push_technique_to_txttypesetter_sustained
     top->data = (char *) getseg(fretboard_sz + 1);
     memset(top->data, 0, fretboard_sz + 1);
     if (curr_row > 0) {
-        memset(top->data, ' ', curr_row);
+        memset(top->data, ' ', curr_row % fretboard_sz);
     }
-    strncpy(&top->data[curr_row], technique_label, fretboard_sz);
+    memcpy(&top->data[curr_row], technique_label, strlen(technique_label) % (fretboard_sz - curr_row));
     top->next = techniques;
     return top;
 }

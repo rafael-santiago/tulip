@@ -75,6 +75,9 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
             if (technique_label == NULL) {
                 return;
             }
+            if (!((*tab)->curr_str >= 0 && (*tab)->curr_str < 6)) {
+                return;
+            }
             memcpy(&(*tab)->strings[(*tab)->curr_str][(*tab)->curr_row], technique_label, strlen(technique_label));
             if ((note->techniques & kTlpChord) == 0) {
                 (*tab)->curr_row += row_usage;

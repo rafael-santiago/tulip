@@ -145,8 +145,8 @@ static struct usropt2tlpopt_ctx *get_fretboard_style_t(const char *option, const
         pref = kTlpPrefsFretboardStyleContinuous;
     }
     opt = (struct usropt2tlpopt_ctx *)getseg(sizeof(struct usropt2tlpopt_ctx));
-    opt->option = (char *)getseg(16);
-    strncpy(opt->option, "fretboard-style", 16);
+    opt->option = (char *)getseg(40);
+    strncpy(opt->option, "fretboard-style", 40);
     opt->data = getseg(sizeof(tulip_prefs_map_t));
     opt->dsize = sizeof(tulip_prefs_map_t);
     *(tulip_prefs_map_t *)opt->data = pref;

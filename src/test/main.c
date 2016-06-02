@@ -159,7 +159,7 @@ CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(dsl_parser_get_codebuf_from_filepath_tests)
     const char *codebuf = "302-200-100-;-.chord{501-400-201-202}";
-    const char *ldbuf = NULL;
+    char *ldbuf = NULL;
     FILE *fp = fopen("test.tlp", "wb");
     CUTE_ASSERT(fp != NULL);
     fwrite(codebuf, 1, strlen(codebuf), fp);

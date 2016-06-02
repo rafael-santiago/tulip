@@ -39,7 +39,7 @@ static char *g_tlp_technique_label[] = {
 const size_t g_tlp_technique_label_nr = sizeof(g_tlp_technique_label) / sizeof(g_tlp_technique_label[0]);
 
 char *get_technique_label(const tulip_command_t command) {
-    return &g_tlp_technique_label[tlp_cmd_code_to_plain_index(command)][0];
+    return &g_tlp_technique_label[tlp_cmd_code_to_plain_index(command) % g_tlp_technique_label_nr][0];
 }
 
 int single_note_to_tab_fret_nr(const char *single_note) {
