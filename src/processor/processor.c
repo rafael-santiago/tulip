@@ -46,6 +46,7 @@ int blackhole_processor(const tulip_single_note_ctx *song, const char *tabpath) 
 int mktab(const tulip_single_note_ctx *song, const char *tabpath) {
     size_t p = 0;
     const char *tp = NULL;
+
     if (tabpath == NULL) {
         //  WARN(Santiago): Let's put the guilty little-devel ashamed ;)
         printf("processor PANIC: Hey Beavis! Huh!! We got a (null) @tabpath here!!"
@@ -54,18 +55,23 @@ int mktab(const tulip_single_note_ctx *song, const char *tabpath) {
                "null he-he he-he! Huh-Huh!\n");
         return 1;
     }
+
     tp = tabpath + strlen(tabpath) - 1;
+
     while (tp != tabpath && *tp != '.') {
         tp--;
     }
+
     if (*tp != '.') {
         printf("processor ERROR: Unspecified output extension.\n");
         return 1;
     }
+
     for (p = 0; p < g_processors_nr; p++) {
         if (strcmp(g_processors[p].ext, tp) == 0) {
             return g_processors[p].typesetter(song, tabpath);
         }
     }
+
     return g_processors[g_processors_nr - 1].typesetter(NULL, tabpath);
 }

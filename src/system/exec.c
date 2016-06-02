@@ -8,6 +8,7 @@
 #include <system/exec.h>
 #include <usrland/cmdlineoptions.h>
 #include <dsl/compiler/compiler.h>
+#include <dsl/parser/parser.h>
 #include <base/ctx.h>
 #include <system/version.h>
 #include <processor/processor.h>
@@ -28,8 +29,6 @@ static int tulip_task_notask();
 static int tulip_task_compile(const char *tlp, tulip_single_note_ctx **song) {
     char errmsg[255];
     char *tlpcode = NULL;
-    long tlpcode_sz = 0;
-    FILE *fp = NULL;
     int is_tlpcode_ok = 0;
 
     if (tlp == NULL || song == NULL) {
@@ -39,24 +38,12 @@ static int tulip_task_compile(const char *tlp, tulip_single_note_ctx **song) {
         return 1;
     }
 
-    if ((fp = fopen(tlp, "rb")) == NULL) {
+    tlpcode = get_codebuf_from_filepath(tlp);
+
+    if (tlpcode == NULL) {
         printf("tulip I/O ERROR: unable to read from file \"%s\".\n", tlp);
         return 1;
     }
-
-    fseek(fp, 0L, SEEK_END);
-    tlpcode_sz = ftell(fp);
-    fseek(fp, 0L, SEEK_SET);
-    tlpcode = (char *) getseg(tlpcode_sz + 1);
-    memset(tlpcode, 0, tlpcode_sz + 1);
-    if (fread(tlpcode, 1, tlpcode_sz, fp) == -1) {
-        printf("tulip I/O ERROR: during the file reading process.\n");
-        fclose(fp);
-        free(tlpcode);
-        return 1;
-    }
-
-    fclose(fp);
 
     is_tlpcode_ok = compile_tulip_codebuf(tlpcode, errmsg, song, NULL);
 
@@ -114,6 +101,8 @@ int tulip_task_exec() {
         exit_code = tulip_task_compile(tlp, &song);
         if (exit_code == 0 && (out = get_option("out", NULL)) != NULL) {
             exit_code = tulip_task_typeset(out, song);
+        }
+        if (song != NULL) {
             free_tulip_single_note_ctx(song);
         }
     } else if (get_bool_option("version", 0) != 0) {

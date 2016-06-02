@@ -168,6 +168,7 @@ CUTE_TEST_CASE(dsl_parser_get_codebuf_from_filepath_tests)
     remove("test.tlp");
     CUTE_ASSERT(ldbuf != NULL);
     CUTE_ASSERT(strcmp(ldbuf, codebuf) == 0);
+    free(ldbuf);
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(dsl_parser_get_next_tlp_command_tests)

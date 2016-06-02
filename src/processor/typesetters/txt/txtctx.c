@@ -57,6 +57,7 @@ void free_txttypesetter_comment_ctx(txttypesetter_comment_ctx *comments) {
     for (t = p = comments; t; p = t) {
         t = p->next;
         free(p->data);
+        free(p);
     }
 }
 
