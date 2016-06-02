@@ -72,7 +72,7 @@ static txttypesetter_print_func g_txttypesetter_printers[] = {
 
 const size_t g_txttypesetter_printer_nr = sizeof(g_txttypesetter_printers) / sizeof(g_txttypesetter_printers[0]);
 
-void txttypesetter_print_sustained_technique_mark(const tulip_command_t command, txttypesetter_sustained_technique_ctx **technique_stack, const int row_usage) {
+void txttypesetter_print_sustained_technique_mark(const tulip_command_t command, txttypesetter_sustained_technique_ctx **technique_stack, const int row_usage, const int curr_row) {
     txttypesetter_sustained_technique_ctx *tp = NULL;
     char *technique_label = NULL;
     int r = row_usage;
@@ -81,18 +81,18 @@ void txttypesetter_print_sustained_technique_mark(const tulip_command_t command,
     }
     technique_label = get_technique_label(command);
     for (tp = *technique_stack; tp != NULL; tp = tp->next) {
-        if (strstr(tp->data, technique_label) == tp->data) {
-            while (r-- > 0) {
+        if (strstr(tp->data, technique_label) != NULL) {
+            //while (r-- > 0) {
                 sustain_technique(&tp);
-            }
+            //}
             return;
         }
     }
-    (*technique_stack) = push_technique_to_txttypesetter_sustained_technique_ctx((*technique_stack), command);
-    r -= strlen(technique_label);
+    (*technique_stack) = push_technique_to_txttypesetter_sustained_technique_ctx((*technique_stack), command, curr_row);
+    /*r -= strlen(technique_label);
     while (r-- > 0) {
         sustain_technique(&tp);
-    }
+    }*/
 }
 
 txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypesetter_tablature_ctx **tab, const int row_usage) {

@@ -60,7 +60,7 @@ void free_txttypesetter_comment_ctx(txttypesetter_comment_ctx *comments) {
     }
 }
 
-txttypesetter_sustained_technique_ctx *push_technique_to_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_technique_ctx *techniques, const tulip_command_t technique) {
+txttypesetter_sustained_technique_ctx *push_technique_to_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_technique_ctx *techniques, const tulip_command_t technique, const int curr_row) {
     txttypesetter_sustained_technique_ctx *top = NULL;
     const char *technique_label = get_technique_label(technique);
     size_t fretboard_sz = 0;
@@ -71,7 +71,10 @@ txttypesetter_sustained_technique_ctx *push_technique_to_txttypesetter_sustained
     fretboard_sz = *((size_t *) get_processor_setting("fretboard-size", NULL));
     top->data = (char *) getseg(fretboard_sz + 1);
     memset(top->data, 0, fretboard_sz + 1);
-    strncpy(top->data, technique_label, fretboard_sz);
+    if (curr_row > 0) {
+        memset(top->data, ' ', curr_row);
+    }
+    strncpy(&top->data[curr_row], technique_label, fretboard_sz);
     top->next = techniques;
     return top;
 }
@@ -104,6 +107,7 @@ void free_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_techniqu
     for (t = p = techniques; t; p = t) {
         t = p->next;
         free(p->data);
+        free(p);
     }
 }
 

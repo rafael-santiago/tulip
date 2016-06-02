@@ -71,6 +71,11 @@ static int tulip_task_compile(const char *tlp, tulip_single_note_ctx **song) {
 }
 
 static int tulip_task_typeset(const char *out, const tulip_single_note_ctx *song) {
+    /*const tulip_single_note_ctx *sp = song;
+    while (sp != NULL) {
+        printf("CODE = %.8x / BUF = %s\n", sp->techniques, sp->buf);
+        sp = sp->next;
+    }*/
     return mktab(song, out);
 }
 
