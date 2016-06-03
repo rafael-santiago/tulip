@@ -125,9 +125,11 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
         (curr_technique = (techniques & kTlpBeat)) || (curr_technique = (techniques & kTlpTremoloPicking))) {
         technique_label = get_technique_label(curr_technique);
         l = 1;
-        for (tp = tab->techniques; tp != NULL && l == 1; tp = tp->next) {
-            if (strstr(tp->data, technique_label) == tp->data) {
-                l++;
+        if (tab != NULL) {
+            for (tp = tab->techniques; tp != NULL && l == 1; tp = tp->next) {
+                if (strstr(tp->data, technique_label) == tp->data) {
+                    l++;
+                }
             }
         }
         //  WARN(Santiago): In practice is uncommon things like let-ring + palm-mute anyway let's support other
@@ -173,12 +175,31 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
     return 0;
 }
 
+static int show_curr_fretboard(const txttypesetter_tablature_ctx *tab) {
+    const txttypesetter_tablature_ctx *tp = tab;
+    size_t s = 0;
+    if (tp == NULL) {
+        return;
+    }
+    while (tp->next != NULL) {
+        tp = tp->next;
+    }
+    txttypesetter_sustained_technique_ctx *sp = NULL;
+    for (sp = tp->techniques; sp != NULL; sp = sp->next) {
+        printf("%s\n", sp->data);
+    }
+    for (s = 0; s < 6; s++) {
+        printf("%s\n", tp->strings[s]);
+    }
+    system("read");
+}
+
 int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     const tulip_single_note_ctx *sp = NULL;
     txttypesetter_tablature_ctx *tab = NULL;
     txttypesetter_print_func print;
     tulip_command_t *demuxes = NULL;
-    size_t demuxes_sz = 0;
+    size_t demuxes_nr = 0;
     int has_error = 1;
 
     if (song == NULL || tabpath == NULL) {
@@ -186,16 +207,20 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     }
 
     for (sp = song; sp != NULL; sp = sp->next) {
-        demuxes = demux_tlp_commands(sp->techniques, &demuxes_sz);
+        demuxes = demux_tlp_commands(sp->techniques, &demuxes_nr);
         if (demuxes == NULL) {
             continue;
         }
-        while (demuxes_sz-- > 0) {
-            //printf("(index: %d) (cmd: %x) (note: %s)\n", tlp_cmd_code_to_plain_index(demuxes[demuxes_sz]), demuxes[demuxes_sz], sp->buf);
-            print = g_txttypesetter_printers[tlp_cmd_code_to_plain_index(demuxes[demuxes_sz])];
+        while (demuxes_nr-- > 0) {
+            //printf("(index: %d) (cmd: %x) (note: %s)\n", tlp_cmd_code_to_plain_index(demuxes[demuxes_nr]), demuxes[demuxes_nr], sp->buf);
+            /*if (tab != NULL) {
+                printf("(%d) %.8x / mux: %.8x / note %s %d\n", tlp_cmd_code_to_plain_index(demuxes[demuxes_nr]), sp->techniques, demuxes[demuxes_nr], sp->buf, tab->curr_row);
+            }*/
+            print = g_txttypesetter_printers[tlp_cmd_code_to_plain_index(demuxes[demuxes_nr])];
             if (print != NULL) {
                 print(&tab, sp);
             }
+            //show_curr_fretboard(tab);
         }
         free(demuxes);
     }

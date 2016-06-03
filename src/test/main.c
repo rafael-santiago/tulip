@@ -410,7 +410,7 @@ CUTE_TEST_CASE(dsl_utils_demux_tlp_commands_tests)
     };
     demuxes = demux_tlp_commands(techniques, &demuxes_sz);
     CUTE_ASSERT(demuxes != NULL);
-    CUTE_ASSERT(demuxes_sz == 22);
+    CUTE_ASSERT(demuxes_sz == 23);
     while (demuxes_sz-- > 0) {
         CUTE_ASSERT(demuxes[demuxes_sz] == expected_demuxes[demuxes_sz]);
     }

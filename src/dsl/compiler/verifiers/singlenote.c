@@ -33,6 +33,7 @@ int singlenote_verifier(const char *buf, char *error_message, tulip_single_note_
         np++;
     }
     *np = 0;
+    //printf("NOTE = %s (%.8x)\n", note, get_used_techniques() | kTlpSingleNote);
     (*song) = add_note_to_tulip_single_note_ctx((*song), get_used_techniques() | kTlpSingleNote, note);
     (*next) = bp;
     return 1;

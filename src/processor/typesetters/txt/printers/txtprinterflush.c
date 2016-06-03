@@ -68,7 +68,7 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
         case kTlpArtificialHarmonic:
             //  INFO(Santiago): This avoid erasing when we have a chord in printing process. Note that separators
             //                  inside chord tags must be "pinched" on the fretboard using string jumps.
-            if (note->last != NULL && (note->last->techniques & kTlpSingleNote) && note->last->buf[1] != ':') {
+            if (note->techniques & kTlpChord) {
                 return;
             }
             technique_label = get_technique_label(command);

@@ -194,8 +194,8 @@ tulip_command_t *demux_tlp_commands(const tulip_command_t commands, size_t *arra
     }
     (*array_size) = 0;
     for (b = 0; b < sizeof(tulip_command_t) * 8; b++) {
-        temp = temp >> 1;
         (*array_size) += (temp & 1);
+        temp = temp >> 1;
     }
     dmux = (tulip_command_t *) getseg(sizeof(tulip_command_t *) + sizeof(tulip_command_t) * *array_size);
     for (b = 0; b < sizeof(tulip_command_t) * 8; b++) {
