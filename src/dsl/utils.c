@@ -112,10 +112,10 @@ int is_single_note(const char *buf) {
         return 0;
     }
     if ((*(bp) == 'X' || *(bp) == ':') || *(bp) == '?') {
-        if (*bp == 'X' && *(bp + 1) == 0) {
+        if (*bp == 'X' && (*(bp + 1) == 0 || is_blank(*(bp + 1)))) {
             return 1;
         }
-        if (*bp == '?' && *(bp + 1) == 0) {
+        if (*bp == '?' && (*(bp + 1) == 0 || is_blank(*(bp + 1)))) {
             return 1;
         }
         bp++;

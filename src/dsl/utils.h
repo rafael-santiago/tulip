@@ -54,6 +54,10 @@
 
 #define is_string_jmp(c) ( (c) == ':' )
 
+#define is_muffled(c) ( (c) == 'X' )
+
+#define is_anyfret(c) ( (c) == '?' )
+
 #define is_note_sep(c) ( is_sep(c) || is_hammeron(c) || is_pulloff(c) || is_vibrato(c) ||\
                          is_slidedown(c) || is_slideup(c) || is_bend(c) || is_release_bend(c) || is_tapping(c) ||\
                          is_natural_harmonic(c) || is_artificial_harmonic(c) )
