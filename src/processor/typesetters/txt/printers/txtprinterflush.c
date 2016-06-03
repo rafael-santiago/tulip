@@ -48,8 +48,15 @@ static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tu
 void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage) {
     char *technique_label = NULL, *tp = NULL;
     char *string = NULL;
+    size_t s = 0;
 
     if (tab == NULL || note == NULL) {
+        return;
+    }
+
+    if (command == kTlpNoteSep && (*tab)->curr_row == 1) {
+        //  INFO(Santiago): This avoid the row consumption with a single '-' at the beginning of
+        //                  the tablature what would be a poor output.
         return;
     }
 
@@ -60,7 +67,6 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
         case kTlpHammerOn:
         case kTlpPullOff:
         case kTlpNoteSep:
-        case kTlpSepBar:
         case kTlpBend:
         case kTlpReleaseBend:
         case kTlpTapping:
@@ -71,14 +77,19 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
             if (note->techniques & kTlpChord) {
                 return;
             }
+
             technique_label = get_technique_label(command);
+
             if (technique_label == NULL) {
                 return;
             }
+
             if (!((*tab)->curr_str >= 0 && (*tab)->curr_str < 6)) {
                 return;
             }
+
             memcpy(&(*tab)->strings[(*tab)->curr_str][(*tab)->curr_row], technique_label, strlen(technique_label));
+
             if ((note->techniques & kTlpChord) == 0) {
                 (*tab)->curr_row += row_usage;
             }
@@ -91,6 +102,26 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
         case kTlpSavePoint:
             new_txttypesetter_tablature_ctx(tab);
             break;
+
+        case kTlpSepBar:
+            if (note->techniques & kTlpChord) {
+                //  INFO(Santiago): Step out! It does not make sense.
+                return;
+            }
+
+            technique_label = get_technique_label(command);
+
+            if (technique_label == NULL) {
+                return;
+            }
+
+            for (s = 0; s < 6; s++) {
+                (*tab)->strings[s][(*tab)->curr_row] = *technique_label;
+            }
+
+            (*tab)->curr_row += row_usage;
+            break;
+
     }
 
 }
