@@ -72,21 +72,22 @@ static txttypesetter_print_func g_txttypesetter_printers[] = {
 
 const size_t g_txttypesetter_printer_nr = sizeof(g_txttypesetter_printers) / sizeof(g_txttypesetter_printers[0]);
 
-void txttypesetter_print_sustained_technique_mark(const tulip_command_t command, txttypesetter_sustained_technique_ctx **technique_stack, const int row_usage, const int curr_row) {
-    txttypesetter_sustained_technique_ctx *tp = NULL;
-    char *technique_label = NULL;
-    int r = row_usage;
-    if (technique_stack == NULL) {
+void txttypesetter_print_sustained_technique_mark(const tulip_command_t command, txttypesetter_tablature_ctx **tab, const row_usage) {
+    txttypesetter_active_technique_ctx *ap = NULL;
+
+    if (tab == NULL) {
         return;
     }
-    technique_label = get_technique_label(command);
-    for (tp = *technique_stack; tp != NULL; tp = tp->next) {
-        if (strstr(tp->data, technique_label) != NULL) {
-            sustain_technique(&tp);
-            return;
-        }
+
+    for (ap = (*tab)->active_techniques; ap != NULL && ap->technique != command; ap = ap->next);
+
+    if (ap != NULL) {
+        printf("SUSTAINING %.8x\n", command);
+        sustain_active_techniques((*tab)->active_techniques, row_usage, (*tab)->curr_row);
+        return;
     }
-    (*technique_stack) = push_technique_to_txttypesetter_sustained_technique_ctx((*technique_stack), command, curr_row);
+    printf("ADDING %.8x\n", command);
+    (*tab)->active_techniques = push_technique_to_txttypesetter_active_technique_ctx((*tab)->active_techniques, command, &(*tab)->techniques, &(*tab)->curr_row);
 }
 
 txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypesetter_tablature_ctx **tab, const int row_usage) {
