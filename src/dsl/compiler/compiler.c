@@ -159,39 +159,55 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
     tulip_single_note_ctx *sp = NULL;
     tulip_command_t curr_command = kTlpNone;
     int compilation_status = 1;
+    char command_chunk[20] = "";
+
     if (cp == NULL) {
         return 0;
     }
+
     cp_end = cp + strlen(cp);
+
     if (cltmp == 0) {
         set_curr_code_line_number(1);
     }
+
     if (message_buf != 0) {
         *message_buf = 0;
     }
+
     sp = *song;
+
     while (cp != cp_end && compilation_status != 0) {
         cp = get_next_tlp_command(cp);
+
         if (cp == cp_end) {
             continue;
         }
+
         if ((curr_command = get_cmd_code_from_cmd_tag(cp)) == kTlpNone) {
-            tlperr_s(message_buf, "Unknown sequence: %s", cp);
+            memset(command_chunk, 0, sizeof(command_chunk));
+            memcpy(command_chunk, cp, 19);
+            tlperr_s(message_buf, "Unknown sequence: %s", command_chunk);
             compilation_status = 0;
         } else {
             compilation_status = verify_curr_command(curr_command, cp, message_buf, song, &cp);
         }
+
         if (compilation_status == 0) {
             if ((*song) != NULL) {
                 free_tulip_single_note_ctx((*song));
                 (*song) = NULL;
             }
         }
+
     }
+
     if (cltmp == 0) {
         callstack_level = 0;
+
         if ((*song) != NULL) { //  INFO(Santiago): A.k.a "compilation_status == 1".
             if (!is_empty_technique_stack_ctx(g_techniques)) {
+
                 tlperr_s(message_buf, "The code has some unterminated tag, please check and try again. "
                                       "Tip: pay attention on the \"%s\" tag occurrences or on the tags that are going inside "
                                       "them.", get_tag_from_compiler_stack());
@@ -200,14 +216,18 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
                 free_technique_stack_ctx(g_techniques);
                 g_techniques = NULL;
                 compilation_status = 0;
+
             }
+
             if (compilation_status) {
                 sprintf(message_buf, "tulip INFO: compilation success.\n");
             }
+
         }
     } else if (next_codebuf != NULL) {
         *next_codebuf = cp;
     }
+
     return compilation_status;
 }
 

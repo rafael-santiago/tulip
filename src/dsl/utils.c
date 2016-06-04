@@ -145,25 +145,31 @@ int is_sustained_technique(const char *buf) {
 
 static ssize_t get_tlp_tag_index(const char *buf) {
     size_t t;
+
     if (buf == NULL) {
         return -1;
     }
+
     for (t = 0; t < g_tlp_tag_map_nr; t++) {
         if (strstr(buf, g_tlp_tag_map[t].tag) == buf) {
             return t;
         }
     }
+
     return -1;
 }
 
 tulip_command_t get_cmd_code_from_cmd_tag(const char *buf) {
     ssize_t t = get_tlp_tag_index(buf);
+
     if (t > -1 && t < g_tlp_tag_map_nr) {
         return g_tlp_tag_map[t].code;
     }
+
     if (is_single_note(buf)) {
         return kTlpSingleNote;
     }
+
     return kTlpNone;
 }
 
