@@ -11,12 +11,15 @@
 #include <dsl/utils.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 static void txttypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ctx *comments);
 
 static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_sustained_technique_ctx *techniques);
 
 static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab);
+
+static void txttypesetter_spill_times(FILE *fp, const char *times);
 
 static void txttypesetter_init_settings();
 
@@ -72,22 +75,44 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
         fprintf(fp, "\n");
 
     }
+    fprintf(fp, "\n");
 }
 
 static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_sustained_technique_ctx *techniques) {
     const txttypesetter_sustained_technique_ctx *tp = NULL;
+
     for (tp = techniques; tp != NULL; tp = tp->next) {
         fprintf(fp, "%s\n", tp->data);
     }
-    fprintf(fp, "\n");
+
+    if (techniques != NULL) {
+        fprintf(fp, "\n");
+    }
 }
 
 static void txttypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ctx *comments) {
     const txttypesetter_comment_ctx *cp = NULL;
+
     for (cp = comments; cp != NULL; cp = cp->next) {
         fprintf(fp, "%s\n", cp->data);
     }
-    fprintf(fp, "\n");
+
+    if (comments != NULL) {
+        fprintf(fp, "\n");
+    }
+}
+
+static void txttypesetter_spill_times(FILE *fp, const char *times) {
+    const char *tp = times;
+    int print_times = 0;
+
+    if (tp == NULL) {
+        return;
+    }
+
+    while (*tp != 0 && print_times) {
+        print_times = isdigit(*tp);
+    }
 }
 
 int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab) {
@@ -104,7 +129,7 @@ int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
     for (tp = tab; tp != NULL; tp = tp->next) {
         txttypesetter_spill_comments(fp, tp->comments);
         txttypesetter_spill_sustained_techniques(fp, tp->techniques);
-        fprintf(fp, "%s\n", tp->times);
+        txttypesetter_spill_times(fp, tp->times);
         txttypesetter_spill_fretboard_pinches(fp, tp);
     }
     fclose(fp);
