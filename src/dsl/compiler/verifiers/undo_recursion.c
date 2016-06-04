@@ -14,9 +14,13 @@
 int undo_recursion(const tulip_command_t command, const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next) {
     const char *bp_end = NULL;
     const char *bp = NULL;
+
     bp = get_next_tlp_technique_block_begin(buf);
     bp_end = get_next_tlp_technique_block_end(buf);
+
     push_technique(command);
+
     (*song) = add_note_to_tulip_single_note_ctx((*song), get_used_techniques() | command, NULL);
+
     return compile_tulip_codebuf(bp, error_message, song, next);
 }

@@ -198,10 +198,12 @@ tulip_command_t *demux_tlp_commands(const tulip_command_t commands, size_t *arra
         temp = temp >> 1;
     }
     dmux = (tulip_command_t *) getseg(sizeof(tulip_command_t *) + sizeof(tulip_command_t) * *array_size);
+    //  TODO(Santiago): Change the order of tulip_command_t (kTlpBlockEnd) must be the lower value in this enum.
+    a = *array_size - 1;
     for (b = 0; b < sizeof(tulip_command_t) * 8; b++) {
         temp = 1 << b;
         if (commands & temp) {
-            dmux[a++] = temp;
+            dmux[a--] = temp;
         }
     }
     return dmux;

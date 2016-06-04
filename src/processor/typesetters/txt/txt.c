@@ -68,7 +68,7 @@ static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpSavePoint, txttypesetter_savepoint_printer),
     register_new_typesetter_printer(kTlpBend, txttypesetter_bend_printer),
     register_new_typesetter_printer(kTlpReleaseBend, txttypesetter_releasebend_printer),
-    register_new_typesetter_printer(kTlpBlockEnd, NULL),
+    register_new_typesetter_printer(kTlpBlockEnd, txttypesetter_blockend_handler),
     register_new_typesetter_printer(kTlpTapping, txttypesetter_tapping_printer),
     register_new_typesetter_printer(kTlpNaturalHarmonic, txttypesetter_naturalharmonic_printer),
     register_new_typesetter_printer(kTlpArtificialHarmonic, txttypesetter_artificialharmonic_printer)
@@ -79,21 +79,26 @@ const size_t g_txttypesetter_printer_nr = sizeof(g_txttypesetter_printers) / siz
 static int g_txttypesetter_has_active_chord = 0;
 
 static void txttypesetter_blockend_handler(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note) {
+
     if (tab == NULL || (*tab)->active_techniques == NULL) {
         return;
     }
-    if (g_txttypesetter_has_active_chord > 0) {
-        g_txttypesetter_has_active_chord--;
+
+    if (g_txttypesetter_has_active_chord) {
+        g_txttypesetter_has_active_chord = 0;
         return;
     }
+
     (*tab)->active_techniques = pop_technique_from_txttypesetter_active_technique_ctx((*tab)->active_techniques);
+
 }
 
 static void txttypesetter_chord_handler(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note) {
-    if (tab == NULL) {
+    if (tab == NULL || g_txttypesetter_has_active_chord) {
         return;
     }
-    g_txttypesetter_has_active_chord++;
+
+    g_txttypesetter_has_active_chord = 1;
 }
 
 void txttypesetter_print_sustained_technique_mark(const tulip_command_t command, txttypesetter_tablature_ctx **tab, const row_usage) {
@@ -109,6 +114,7 @@ void txttypesetter_print_sustained_technique_mark(const tulip_command_t command,
         sustain_active_techniques((*tab)->active_techniques, row_usage, (*tab)->curr_row);
         return;
     }
+
     (*tab)->active_techniques = push_technique_to_txttypesetter_active_technique_ctx((*tab)->active_techniques, command, &(*tab)->techniques, &(*tab)->curr_row);
 }
 
@@ -219,7 +225,7 @@ static int show_curr_fretboard(const txttypesetter_tablature_ctx *tab) {
 
 int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     const tulip_single_note_ctx *sp = NULL;
-    txttypesetter_tablature_ctx *tab = NULL;
+    txttypesetter_tablature_ctx *tab = NULL, *tp = NULL;
     txttypesetter_print_func print;
     tulip_command_t *demuxes = NULL;
     size_t demuxes_nr = 0;
@@ -229,11 +235,15 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
         return 0;
     }
 
+    tp = tab;
+
     for (sp = song; sp != NULL; sp = sp->next) {
         demuxes = demux_tlp_commands(sp->techniques, &demuxes_nr);
+
         if (demuxes == NULL) {
             continue;
         }
+
         while (demuxes_nr-- > 0) {
             //printf("(index: %d) (cmd: %x) (note: %s)\n", tlp_cmd_code_to_plain_index(demuxes[demuxes_nr]), demuxes[demuxes_nr], sp->buf);
             /*if (tab != NULL) {
@@ -241,11 +251,24 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
             }*/
             print = g_txttypesetter_printers[tlp_cmd_code_to_plain_index(demuxes[demuxes_nr])];
             if (print != NULL) {
-                print(&tab, sp);
+                print(&tp, sp);
             }
-            //show_curr_fretboard(tab);
+            //show_curr_fretboard(tp);
         }
+
         free(demuxes);
+
+        if (tp == NULL) {
+            continue;
+        }
+
+        if (tab == NULL && tp != NULL) {
+            tab = tp;
+        }
+
+        while (tp->next != NULL) {
+            tp = tp->next;
+        }
     }
 
     if (tab == NULL) {

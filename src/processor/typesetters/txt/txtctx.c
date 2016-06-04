@@ -219,8 +219,8 @@ txttypesetter_active_technique_ctx *push_technique_to_txttypesetter_active_techn
     top->technique = technique;
 
     for (rp = *record_list; rp != NULL && top->dp == NULL; rp = rp->next) {
-        found = 0;
 
+        found = 0;
         for (ap = active_stack; ap != NULL && !found; ap = ap->next) {
             found = (rp->data == ap->dp);
         }
@@ -240,6 +240,8 @@ txttypesetter_active_technique_ctx *push_technique_to_txttypesetter_active_techn
 
     if (label != NULL) {
         lp = label;
+        //  WARN(Santiago): This avoid ugly gaps with ' '.
+        sustain_active_techniques(top->next, strlen(lp), *curr_row);
         while (*lp != 0) {
             top->dp[(*curr_row)++] = *lp;
             lp++;
@@ -254,9 +256,7 @@ void sustain_active_techniques(txttypesetter_active_technique_ctx *actives, cons
 
     for (ap = actives; ap != NULL; ap = ap->next) {
         memset(&ap->dp[curr_row], '.', dot_nr);
-        //printf("%s\n", ap->dp);
     }
-    //printf("--\n");
 }
 
 txttypesetter_active_technique_ctx *pop_technique_from_txttypesetter_active_technique_ctx(txttypesetter_active_technique_ctx *active_stack) {
