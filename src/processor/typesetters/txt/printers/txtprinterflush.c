@@ -6,6 +6,7 @@
  *
  */
 #include <processor/typesetters/txt/printers/txtprinterflush.h>
+#include <processor/typesetters/txt/txt.h>
 #include <processor/oututils.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +14,8 @@
 #include <stdio.h>
 
 static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage);
+
+static void ttxttypesetter_flush_sustained_marks(txttypesetter_tablature_ctx **tab, const int row_usage);
 
 static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage) {
     char s_fret_nr[255] = "";
@@ -26,6 +29,10 @@ static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tu
 
     if (isdigit(note->buf[0]) && note->buf[1] == ':') {
         return;
+    }
+
+    if ((*tab)->active_techniques != NULL) {
+        ttxttypesetter_flush_sustained_marks(tab, row_usage);
     }
 
     if (note->buf[1] == 'X' || note->buf[1] == '?') {
@@ -42,6 +49,19 @@ static void txttypesetter_flush_note(txttypesetter_tablature_ctx **tab, const tu
 
     if ((note->techniques & kTlpChord) == 0 || (note->next != NULL && (note->next->techniques & kTlpChord) == 0)) {
         (*tab)->curr_row += row_usage;
+    }
+}
+
+static void ttxttypesetter_flush_sustained_marks(txttypesetter_tablature_ctx **tab, const int row_usage) {
+    int temp = 0;
+    txttypesetter_active_technique_ctx *ap = NULL;
+    if (tab == NULL) {
+        return;
+    }
+    for (ap = (*tab)->active_techniques; ap != NULL; ap = ap->next) {
+        temp = (*tab)->curr_row;
+        txttypesetter_print_sustained_technique_mark(ap->technique, tab, row_usage);
+        (*tab)->curr_row = temp;
     }
 }
 
@@ -89,6 +109,10 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
             }
 
             memcpy(&(*tab)->strings[(*tab)->curr_str][(*tab)->curr_row], technique_label, strlen(technique_label));
+
+            if ((*tab)->active_techniques != NULL) {
+                ttxttypesetter_flush_sustained_marks(tab, row_usage);
+            }
 
             if ((note->techniques & kTlpChord) == 0) {
                 (*tab)->curr_row += row_usage;

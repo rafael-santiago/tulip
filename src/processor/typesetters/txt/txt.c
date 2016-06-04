@@ -44,10 +44,14 @@ typedef void (*txttypesetter_print_func)(txttypesetter_tablature_ctx **tab, cons
 
 #define register_new_typesetter_printer(tc, p) (p) //  INFO(Santiago): Hello sloppy creatures, "tc" is just for documenting issues.
 
+static void txttypesetter_blockend_handler(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note);
+
+static void txttypesetter_chord_handler(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note);
+
 static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpMute, txttypesetter_mute_printer),
     register_new_typesetter_printer(kTlpLetRing, txttypesetter_letring_printer),
-    register_new_typesetter_printer(kTlpChord, NULL),
+    register_new_typesetter_printer(kTlpChord, txttypesetter_chord_handler),
     register_new_typesetter_printer(kTlpBeat, txttypesetter_beat_printer),
     register_new_typesetter_printer(kTlpTremoloPicking, txttypesetter_tremolopicking_printer),
     register_new_typesetter_printer(kTlpVibrato, txttypesetter_vibrato_printer),
@@ -72,6 +76,26 @@ static txttypesetter_print_func g_txttypesetter_printers[] = {
 
 const size_t g_txttypesetter_printer_nr = sizeof(g_txttypesetter_printers) / sizeof(g_txttypesetter_printers[0]);
 
+static int g_txttypesetter_has_active_chord = 0;
+
+static void txttypesetter_blockend_handler(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note) {
+    if (tab == NULL || (*tab)->active_techniques == NULL) {
+        return;
+    }
+    if (g_txttypesetter_has_active_chord > 0) {
+        g_txttypesetter_has_active_chord--;
+        return;
+    }
+    (*tab)->active_techniques = pop_technique_from_txttypesetter_active_technique_ctx((*tab)->active_techniques);
+}
+
+static void txttypesetter_chord_handler(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note) {
+    if (tab == NULL) {
+        return;
+    }
+    g_txttypesetter_has_active_chord++;
+}
+
 void txttypesetter_print_sustained_technique_mark(const tulip_command_t command, txttypesetter_tablature_ctx **tab, const row_usage) {
     txttypesetter_active_technique_ctx *ap = NULL;
 
@@ -82,11 +106,9 @@ void txttypesetter_print_sustained_technique_mark(const tulip_command_t command,
     for (ap = (*tab)->active_techniques; ap != NULL && ap->technique != command; ap = ap->next);
 
     if (ap != NULL) {
-        printf("SUSTAINING %.8x\n", command);
         sustain_active_techniques((*tab)->active_techniques, row_usage, (*tab)->curr_row);
         return;
     }
-    printf("ADDING %.8x\n", command);
     (*tab)->active_techniques = push_technique_to_txttypesetter_active_technique_ctx((*tab)->active_techniques, command, &(*tab)->techniques, &(*tab)->curr_row);
 }
 

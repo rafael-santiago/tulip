@@ -29,7 +29,7 @@ txttypesetter_active_technique_ctx *push_technique_to_txttypesetter_active_techn
 
 void sustain_active_techniques(txttypesetter_active_technique_ctx *actives, const int dot_nr, const int curr_row);
 
-txttypesetter_active_technique_ctx *pop_technique_from_txttypesetter_active_technique_ctx(txttypesetter_active_technique_ctx *active_list);
+txttypesetter_active_technique_ctx *pop_technique_from_txttypesetter_active_technique_ctx(txttypesetter_active_technique_ctx *active_stack);
 
 void free_txttypesetter_active_technique_ctx(txttypesetter_active_technique_ctx *active_stack);
 
