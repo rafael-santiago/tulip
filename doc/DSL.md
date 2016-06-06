@@ -27,14 +27,14 @@ and forget this.
         <tag-code>                ::= <mute-tag-code>           |
                                       <letring-tag-code>        |
                                       <chord-tag-code>          |
-                                      <beat-tag-code>           |
+                                      <strum-tag-code>          |
                                       <tremolopicking-tag-code> |
                                       <vibratowbar-tag-code>    |
                                       <tunning-tag-code>        |
                                       <literal-tag-code>
         <mute-tag-code>           ::= "mute" <recursive-tag-stmt-list>
         <letring-tag-code>        ::= "letring" <recursive-tag-stmt-list>
-        <beat-tag-code>           ::= "beat" <recursive-tag-stmt-list>
+        <strum-tag-code>          ::= "strum" <recursive-tag-stmt-list>
         <tremolopicking-tag-code> ::= "tremolopicking" <recursive-tag-stmt-list>
         <vibratowbar-tag-code>    ::= "vibratowbar" <recursive-tag-stmt-list>
         <tunning-tag-code>        ::= "tunning" <tag-begin> <tunning-code> <tag-end>
