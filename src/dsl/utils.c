@@ -20,30 +20,30 @@ struct tulip_command_table_ctx {
 #define tulip_register_code_tag(c, t, s) { t, c, s }
 
 static struct tulip_command_table_ctx g_tlp_tag_map[] = {
+    tulip_register_code_tag(kTlpSavePoint, ";", 0),
+    tulip_register_code_tag(kTlpNoteSep, "-", 0),
+    tulip_register_code_tag(kTlpBlockEnd, "}", 0),
     tulip_register_code_tag(kTlpMute, ".mute", 1),
     tulip_register_code_tag(kTlpLetRing, ".letring", 1),
     tulip_register_code_tag(kTlpChord, ".chord", 1),
     tulip_register_code_tag(kTlpStrum, ".strum", 1),
     tulip_register_code_tag(kTlpTremoloPicking, ".tremolopicking", 1),
+    tulip_register_code_tag(kTlpVibratoWBar, ".vibratowbar", 1),
     tulip_register_code_tag(kTlpVibrato, "~", 0),
     tulip_register_code_tag(kTlpSlideDown, "/", 0),
     tulip_register_code_tag(kTlpSlideUp, "\\", 0),
     tulip_register_code_tag(kTlpHammerOn, "h", 0),
     tulip_register_code_tag(kTlpPullOff, "p", 0),
-    tulip_register_code_tag(kTlpVibratoWBar, ".vibratowbar", 1),
     tulip_register_code_tag(kTlpTunning, ".tunning", 0),
     tulip_register_code_tag(kTlpLiteral, ".literal", 0),
     tulip_register_code_tag(kTlpLiteral, ".blah", 0),
     tulip_register_code_tag(kTlpLiteral, ".quote", 0),
-    tulip_register_code_tag(kTlpNoteSep, "-", 0),
     tulip_register_code_tag(kTlpSepBar, "|", 0),
-    tulip_register_code_tag(kTlpSavePoint, ";", 0),
     tulip_register_code_tag(kTlpBend, "b", 0),
     tulip_register_code_tag(kTlpReleaseBend, "r", 0),
     tulip_register_code_tag(kTlpTapping, "T", 0),
     tulip_register_code_tag(kTlpNaturalHarmonic, "*", 0),
-    tulip_register_code_tag(kTlpArtificialHarmonic, "v", 0),
-    tulip_register_code_tag(kTlpBlockEnd, "}", 0)
+    tulip_register_code_tag(kTlpArtificialHarmonic, "v", 0)
 };
 
 static const size_t g_tlp_tag_map_nr = sizeof(g_tlp_tag_map) / sizeof(g_tlp_tag_map[0]);
@@ -195,22 +195,26 @@ tulip_command_t *demux_tlp_commands(const tulip_command_t commands, size_t *arra
     tulip_command_t temp = commands;
     size_t b = 0;
     size_t a = 0;
+
     if (array_size == NULL || commands == kTlpNone) {
         return kTlpNone;
     }
+
     (*array_size) = 0;
+
     for (b = 0; b < sizeof(tulip_command_t) * 8; b++) {
         (*array_size) += (temp & 1);
         temp = temp >> 1;
     }
+
     dmux = (tulip_command_t *) getseg(sizeof(tulip_command_t *) + sizeof(tulip_command_t) * *array_size);
-    //  TODO(Santiago): Change the order of tulip_command_t (kTlpBlockEnd) must be the lower value in this enum.
-    a = *array_size - 1;
+
     for (b = 0; b < sizeof(tulip_command_t) * 8; b++) {
         temp = 1 << b;
         if (commands & temp) {
-            dmux[a--] = temp;
+            dmux[a++] = temp;
         }
     }
+
     return dmux;
 }

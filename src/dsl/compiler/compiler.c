@@ -59,26 +59,26 @@ struct tlp_command_verifiers_ctx {
 #define tlp_compiler_register_cmd_verifier(c, v) { v } //  INFO(Santiago): "c" is just for making the things clearer.
 
 static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
+    tlp_compiler_register_cmd_verifier(kTlpSavePoint, savepoint_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpNoteSep, notesep_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpBlockEnd, blockend_verifier),
     tlp_compiler_register_cmd_verifier(kTlpMute, mute_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpLetRing, letring_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpChord, chord_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpStrum, strum_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpTremoloPicking, tremolopicking_tag_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpVibratoWBar, vibratowbar_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpVibrato, vibrato_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSlideDown, slidedown_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSlideUp, slideup_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpHammerOn, hammeron_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpPullOff, pulloff_sep_verifier),
-    tlp_compiler_register_cmd_verifier(kTlpVibratoWBar, vibratowbar_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpTunning, tunning_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpLiteral, literal_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSingleNote, singlenote_verifier),
-    tlp_compiler_register_cmd_verifier(kTlpNoteSep, notesep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSepBar, sepbar_verifier),
-    tlp_compiler_register_cmd_verifier(kTlpSavePoint, savepoint_verifier),
     tlp_compiler_register_cmd_verifier(kTlpBend, bend_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpReleaseBend, releasebend_sep_verifier),
-    tlp_compiler_register_cmd_verifier(kTlpBlockEnd, blockend_verifier),
     tlp_compiler_register_cmd_verifier(kTlpTapping, tapping_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpNaturalHarmonic, naturalharmonic_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpArtificialHarmonic, artificialharmonic_sep_verifier)
@@ -134,16 +134,14 @@ void tlperr_s(char *buf, const char *error_message, ...) {
 
 static char *get_tag_from_compiler_stack() {
     static char *tags[] = {
+        NULL,
+        NULL,
+        NULL,
         ".mute",
         ".letring",
         ".chord",
         ".beat",
         ".tremolopicking",
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
         ".vibratowbar"
     };
     const size_t tags_nr = sizeof(tags) / sizeof(tags[0]);
