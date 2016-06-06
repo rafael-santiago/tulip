@@ -13,7 +13,7 @@ typedef enum _tulip_command_t {
     kTlpMute               = 0x00000001,
     kTlpLetRing            = 0x00000002,
     kTlpChord              = 0x00000004,
-    kTlpBeat               = 0x00000008,
+    kTlpStrum              = 0x00000008,
     kTlpTremoloPicking     = 0x00000010,
     kTlpVibrato            = 0x00000020,
     kTlpSlideDown          = 0x00000040,

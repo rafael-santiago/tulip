@@ -14,7 +14,7 @@ static char *g_tlp_technique_label[] = {
     "pm",
     "lr",
     "",
-    "bt",
+    "st",
     "tp",
     "~",
     "/",

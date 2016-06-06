@@ -10,7 +10,7 @@
 #include <processor/typesetters/txt/txtctx.h>
 #include <processor/typesetters/txt/printers/mutetxtprinter.h>
 #include <processor/typesetters/txt/printers/letringtxtprinter.h>
-#include <processor/typesetters/txt/printers/beattxtprinter.h>
+#include <processor/typesetters/txt/printers/strumtxtprinter.h>
 #include <processor/typesetters/txt/printers/tremolopickingtxtprinter.h>
 #include <processor/typesetters/txt/printers/vibratowbartxtprinter.h>
 //#include <processor/typesetters/txt/printers/chordtxtprinter.h>
@@ -52,7 +52,7 @@ static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpMute, txttypesetter_mute_printer),
     register_new_typesetter_printer(kTlpLetRing, txttypesetter_letring_printer),
     register_new_typesetter_printer(kTlpChord, txttypesetter_chord_handler),
-    register_new_typesetter_printer(kTlpBeat, txttypesetter_beat_printer),
+    register_new_typesetter_printer(kTlpStrum, txttypesetter_strum_printer),
     register_new_typesetter_printer(kTlpTremoloPicking, txttypesetter_tremolopicking_printer),
     register_new_typesetter_printer(kTlpVibrato, txttypesetter_vibrato_printer),
     register_new_typesetter_printer(kTlpSlideDown, txttypesetter_slidedown_printer),
@@ -151,7 +151,7 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
     }
 
     if ((curr_technique = (techniques & kTlpMute)) || (curr_technique = (techniques & kTlpLetRing)) ||
-        (curr_technique = (techniques & kTlpBeat)) || (curr_technique = (techniques & kTlpTremoloPicking))) {
+        (curr_technique = (techniques & kTlpStrum)) || (curr_technique = (techniques & kTlpTremoloPicking))) {
         technique_label = get_technique_label(curr_technique);
         l = 1;
         if (tab != NULL) {
@@ -163,7 +163,7 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
         }
         //  WARN(Santiago): In practice is uncommon things like let-ring + palm-mute anyway let's support other
         //                  weird combinations. As a result we will get ugly outputs like: "tp.......
-        //                                                                                  bt......."...
+        //                                                                                  st......."...
         return l + txttypesetter_eval_buffer_row_usage(techniques & ~(curr_technique), note, tab);
     } else if (techniques & kTlpChord) {
         longest = -1;

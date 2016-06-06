@@ -23,7 +23,7 @@
 #include <dsl/compiler/verifiers/tunning.h>
 #include <dsl/compiler/verifiers/letring.h>
 #include <dsl/compiler/verifiers/mute.h>
-#include <dsl/compiler/verifiers/beat.h>
+#include <dsl/compiler/verifiers/strum.h>
 #include <dsl/compiler/verifiers/tremolopicking.h>
 #include <dsl/compiler/verifiers/vibratowbar.h>
 #include <dsl/compiler/verifiers/tapping.h>
@@ -62,7 +62,7 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpMute, mute_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpLetRing, letring_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpChord, chord_tag_verifier),
-    tlp_compiler_register_cmd_verifier(kTlpBeat, beat_tag_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpStrum, strum_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpTremoloPicking, tremolopicking_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpVibrato, vibrato_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSlideDown, slidedown_sep_verifier),

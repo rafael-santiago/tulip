@@ -48,7 +48,7 @@ CUTE_TEST_CASE(dsl_basic_dsl_utils_tests)
         {           ".mute",               kTlpMute, 1 },
         {        ".letring",            kTlpLetRing, 1 },
         {          ".chord",              kTlpChord, 1 },
-        {           ".beat",               kTlpBeat, 1 },
+        {           ".strum",             kTlpStrum, 1 },
         { ".tremolopicking",     kTlpTremoloPicking, 1 },
         {    ".vibratowbar",        kTlpVibratoWBar, 1 },
         {               "~",            kTlpVibrato, 0 },
@@ -245,7 +245,7 @@ CUTE_TEST_CASE(dsl_utils_tlp_cmd_code_to_plain_index_tests)
         {               kTlpMute,  0 },
         {            kTlpLetRing,  1 },
         {              kTlpChord,  2 },
-        {               kTlpBeat,  3 },
+        {              kTlpStrum,  3 },
         {     kTlpTremoloPicking,  4 },
         {            kTlpVibrato,  5 },
         {          kTlpSlideDown,  6 },
@@ -311,13 +311,13 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
         { "~4~", 0},
         { ".mute { 20 - 30 - 40 - 20 }", 1},
         { ".letring{.chord{20-10}}", 1},
-        { ".beat{.chord{60-52-42-31-20-10}}", 1},
+        { ".strum{.chord{60-52-42-31-20-10}}", 1},
         { ".tremolopicking{60-------------}", 1},
         { ".vibratowbar{37****************}", 1},
         { ".literal{\"boo.\"}", 1},
         { ".mute { 20 - 30 - 40 - 20 ", 0},
         { ".letring{.chord{20-10}", 0},
-        { ".beat{.chord{60-52-42-31-20-10}", 0},
+        { ".strum{.chord{60-52-42-31-20-10}", 0},
         { ".tremolopicking{60-------------", 0},
         { ".vibratowbar{37****************", 0},
         { ".literal{\"boo.\"", 0},
@@ -363,7 +363,7 @@ CUTE_TEST_CASE(dsl_utils_demux_tlp_commands_tests)
     tulip_command_t techniques = kTlpMute            |
                                  kTlpLetRing         |
                                  kTlpChord           |
-                                 kTlpBeat            |
+                                 kTlpStrum           |
                                  kTlpTremoloPicking  |
                                  kTlpVibrato         |
                                  kTlpSlideDown       |
@@ -403,7 +403,7 @@ CUTE_TEST_CASE(dsl_utils_demux_tlp_commands_tests)
         kTlpSlideDown,
         kTlpVibrato,
         kTlpTremoloPicking,
-        kTlpBeat,
+        kTlpStrum,
         kTlpChord,
         kTlpLetRing,
         kTlpMute
@@ -425,7 +425,7 @@ CUTE_TEST_CASE(processor_oututils_get_technique_label_tests)
     struct expected_labels_ctx expected_labels[] = {
         { "pm", kTlpMute               },
         { "lr", kTlpLetRing            },
-        { "bt", kTlpBeat               },
+        { "st", kTlpStrum              },
         { "tp", kTlpTremoloPicking     },
         { "~" , kTlpVibrato            },
         { "/" , kTlpSlideDown          },
