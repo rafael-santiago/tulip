@@ -44,6 +44,10 @@ typedef void (*txttypesetter_print_func)(txttypesetter_tablature_ctx **tab, cons
 
 #define register_new_typesetter_printer(tc, p) (p) //  INFO(Santiago): Hello sloppy creatures, "tc" is just for documenting issues.
 
+static void cut_data_buf(char *bp);
+
+static void trim_upper_data_from_tab(txttypesetter_tablature_ctx *tab);
+
 static void txttypesetter_blockend_handler(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note);
 
 static void txttypesetter_chord_handler(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note);
@@ -223,6 +227,39 @@ static int show_curr_fretboard(const txttypesetter_tablature_ctx *tab) {
     system("read");
 }
 
+static void cut_data_buf(char *bp) {
+    char *bp_end = NULL;
+
+    if (bp == NULL) {
+        return;
+    }
+
+    bp = bp + strlen(bp) - 1;
+    bp_end = bp;
+
+    while (*bp == ' ') {
+        bp--;
+    }
+
+    if (bp != bp_end) {
+        *(bp + 1) = 0;
+    }
+}
+
+static void trim_upper_data_from_tab(txttypesetter_tablature_ctx *tab) {
+    txttypesetter_sustained_technique_ctx *tp = NULL;
+
+    if (tab == NULL) {
+        return;
+    }
+
+    cut_data_buf(tab->times);
+
+    for (tp = tab->techniques; tp != NULL; tp = tp->next) {
+        cut_data_buf(tp->data);
+    }
+}
+
 int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     const tulip_single_note_ctx *sp = NULL;
     txttypesetter_tablature_ctx *tab = NULL, *tp = NULL;
@@ -274,6 +311,8 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     if (tab == NULL) {
         return 1;
     }
+
+    trim_upper_data_from_tab(tab);
 
     has_error = (txttypesetter_inkspill(tabpath, tab) != 1);
 
