@@ -110,8 +110,13 @@ static void txttypesetter_spill_times(FILE *fp, const char *times) {
         return;
     }
 
-    while (*tp != 0 && print_times) {
+    while (*tp != 0 && !print_times) {
         print_times = isdigit(*tp);
+        tp++;
+    }
+
+    if (print_times) {
+        fprintf(fp, "%s\n", times);
     }
 }
 

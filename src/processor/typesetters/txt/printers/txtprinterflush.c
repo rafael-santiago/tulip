@@ -146,6 +146,10 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
             (*tab)->curr_row += row_usage;
             break;
 
+        case kTlpTimes:
+            memcpy(&(*tab)->times[(*tab)->curr_row], note->buf, strlen(note->buf));
+            break;
+
     }
 
 }

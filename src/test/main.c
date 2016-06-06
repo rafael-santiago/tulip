@@ -251,20 +251,21 @@ CUTE_TEST_CASE(dsl_utils_tlp_cmd_code_to_plain_index_tests)
         {              kTlpStrum,  6 },
         {     kTlpTremoloPicking,  7 },
         {        kTlpVibratoWBar,  8 },
-        {            kTlpVibrato,  9 },
-        {          kTlpSlideDown, 10 },
-        {            kTlpSlideUp, 11 },
-        {           kTlpHammerOn, 12 },
-        {            kTlpPullOff, 13 },
-        {            kTlpTunning, 14 },
-        {            kTlpLiteral, 15 },
-        {         kTlpSingleNote, 16 },
-        {             kTlpSepBar, 17 },
-        {               kTlpBend, 18 },
-        {        kTlpReleaseBend, 19 },
-        {            kTlpTapping, 20 },
-        {    kTlpNaturalHarmonic, 21 },
-        { kTlpArtificialHarmonic, 22 }
+        {              kTlpTimes,  9 },
+        {            kTlpVibrato, 10 },
+        {          kTlpSlideDown, 11 },
+        {            kTlpSlideUp, 12 },
+        {           kTlpHammerOn, 13 },
+        {            kTlpPullOff, 14 },
+        {            kTlpTunning, 15 },
+        {            kTlpLiteral, 16 },
+        {         kTlpSingleNote, 17 },
+        {             kTlpSepBar, 18 },
+        {               kTlpBend, 19 },
+        {        kTlpReleaseBend, 20 },
+        {            kTlpTapping, 21 },
+        {    kTlpNaturalHarmonic, 22 },
+        { kTlpArtificialHarmonic, 23 }
     };
     size_t values_nr = sizeof(values) / sizeof(values[0]), v;
     for (v = 0; v < values_nr; v++) {
@@ -370,6 +371,7 @@ CUTE_TEST_CASE(dsl_utils_demux_tlp_commands_tests)
                                  kTlpSlideUp         |
                                  kTlpHammerOn        |
                                  kTlpPullOff         |
+                                 kTlpTimes           |
                                  kTlpVibratoWBar     |
                                  kTlpTunning         |
                                  kTlpLiteral         |
@@ -393,6 +395,7 @@ CUTE_TEST_CASE(dsl_utils_demux_tlp_commands_tests)
         kTlpStrum,
         kTlpTremoloPicking,
         kTlpVibratoWBar,
+        kTlpTimes,
         kTlpVibrato,
         kTlpSlideDown,
         kTlpSlideUp,
@@ -410,7 +413,7 @@ CUTE_TEST_CASE(dsl_utils_demux_tlp_commands_tests)
     };
     demuxes = demux_tlp_commands(techniques, &demuxes_sz);
     CUTE_ASSERT(demuxes != NULL);
-    CUTE_ASSERT(demuxes_sz == 23);
+    CUTE_ASSERT(demuxes_sz == 24);
     while (demuxes_sz-- > 0) {
         CUTE_ASSERT(demuxes[demuxes_sz] == expected_demuxes[demuxes_sz]);
     }

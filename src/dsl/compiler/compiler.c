@@ -29,6 +29,7 @@
 #include <dsl/compiler/verifiers/tapping.h>
 #include <dsl/compiler/verifiers/naturalharmonic.h>
 #include <dsl/compiler/verifiers/artificialharmonic.h>
+#include <dsl/compiler/verifiers/times.h>
 #include <dsl/parser/parser.h>
 #include <dsl/utils.h>
 #include <base/ctx.h>
@@ -68,6 +69,7 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpStrum, strum_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpTremoloPicking, tremolopicking_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpVibratoWBar, vibratowbar_tag_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpTimes, times_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpVibrato, vibrato_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSlideDown, slidedown_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSlideUp, slideup_sep_verifier),

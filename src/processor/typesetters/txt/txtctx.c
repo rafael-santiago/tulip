@@ -156,6 +156,7 @@ txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tabla
 
     tail->times = (char *) getseg(tail->fretboard_sz + 1);
     memset(tail->times, 0, tail->fretboard_sz + 1);
+    memset(tail->times, ' ', tail->fretboard_sz);
 
     new_tab_string(tail->strings[0], tail->fretboard_sz);
     new_tab_string(tail->strings[1], tail->fretboard_sz);

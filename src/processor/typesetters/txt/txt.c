@@ -30,6 +30,7 @@
 #include <processor/typesetters/txt/printers/pullofftxtprinter.h>
 #include <processor/typesetters/txt/printers/tunningtxtprinter.h>
 #include <processor/typesetters/txt/printers/literaltxtprinter.h>
+#include <processor/typesetters/txt/printers/timestxtprinter.h>
 #include <processor/typesetters/txt/txtinkspill.h>
 #include <processor/settings.h>
 #include <processor/oututils.h>
@@ -62,6 +63,7 @@ static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpStrum, txttypesetter_strum_printer),
     register_new_typesetter_printer(kTlpTremoloPicking, txttypesetter_tremolopicking_printer),
     register_new_typesetter_printer(kTlpVibratoWBar, txttypesetter_vibratowbar_printer),
+    register_new_typesetter_printer(kTlpTimes, txttypesetter_times_printer),
     register_new_typesetter_printer(kTlpVibrato, txttypesetter_vibrato_printer),
     register_new_typesetter_printer(kTlpSlideDown, txttypesetter_slidedown_printer),
     register_new_typesetter_printer(kTlpSlideUp, txttypesetter_slideup_printer),
@@ -203,6 +205,9 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
                                                                           kTlpTapping         |
                                                                           kTlpNaturalHarmonic |
                                                                           kTlpArtificialHarmonic), note, tab);
+    } else if (techniques & kTlpTimes) {
+        l = strlen(note->buf);
+        return l + txttypesetter_eval_buffer_row_usage(techniques & ~kTlpTimes, note, tab);
     }
 
     return 0;
