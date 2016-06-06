@@ -150,7 +150,11 @@ local function install() : result type int {
         }
 
         if ($choice == "n") {
-            $bin_dst = hefesto.sys.prompt("So type the new destination path of your choice: ");
+            $bin_dst = hefesto.sys.prompt("So type the new destination file path of your choice or \"c\" to cancel: ");
+            if ($bin_dst == "c") {
+                hefesto.sys.echo("INSTALL ERROR: process aborted by the user.\n");
+                result 1;
+            }
         } else if ($choice == "y") {
             break;
         }
