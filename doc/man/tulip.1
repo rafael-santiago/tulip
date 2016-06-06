@@ -1,0 +1,33 @@
+.TH tulip 1 "June 06, 2016" "version v3" "USER COMMANDS"
+.SH NAME
+tulip \- a guitar tablature processor
+.SH SYNOPSIS
+.B tulip [\fIOPTIONS\fR]
+.SH DESCRIPTION
+Tulip is a application which implements a compiler and processor based on a DSL designed for guitar
+tablatures generation.
+
+.SH OPTIONS
+.TP
+\-\-tlp=\fIsong.tlp\fR
+Indicates the input script containing the encoded song. In this case "song.tlp".
+
+.TP
+\-\-out=\fIsong.txt\fR
+When it is passed the processor is invoked after a successfull compilation in order to generate the guitar tablature.
+In this case will be generated a file called "song.txt" under the CWD.
+
+.SH EXIT STATUS
+If all tasks (compilation and/or typesetting) succeed tulip returns zero, otherwise non zero values are returned.
+.PP
+.SH
+SEE ALSO
+.TP
+\fI/usr/local/share/tulip/doc/MANUAL.md\fR (or equivalent in your system)
+.PP
+.SH
+HOMEPAGE
+.TP
+https://guthub.com/rafael-santiago/tulip
+.SH AUTHOR
+Rafael Santiago <voidbrainvoid@gmail.com>
