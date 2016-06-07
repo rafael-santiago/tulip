@@ -44,3 +44,19 @@ emmettbrown@DELOREAN:~/internet/github.com/src/tulip/src# _
 
 Yes, the ``Tulip``'s binary should be inside ``../bin`` sub-directory and you should visit the sub-directory [``doc``](https://github.com/rafael-santiago/tulip/tree/master/doc) before
 starting.
+
+## Can I install this software using its own build scripts?
+
+Yes, you can. For doing this you should call ``hefesto`` passing the option ``--install`` (being under ``src`` sub-directory
+of course).
+
+Actually the following commands is what you you should do. Being you inside the root project's directory:
+
+```
+emmetbrown@DELOREAN:~/internet/github.com/src/tulip# cd src
+emmetbrown@DELOREAN:~/internet/github.com/src/tulip/src# hefesto --install
+(just follow the simple steps answer the questions or canceling them to abort the process)
+(...)
+```
+
+For uninstalling you should do the same passing ``--uninstall`` option instead of the previous one.
