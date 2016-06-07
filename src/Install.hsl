@@ -230,28 +230,36 @@ local function uninstall_additional_files() : result type int {
     var basepath type string;
 
     if (hefesto.sys.os_name() != "windows") {
-        $basepath = "/usr/local/share/tulip/doc";
+        $basepath = "/usr/local/share/tulip/";
     } else {
-        $basepath = "C:\\tulip\\doc";
+        $basepath = "C:\\tulip\\";
     }
 
     var add_dst type list;
-    $add_dst.add_item(hefesto.sys.make_path($basepath, "MANUAL.md"));
-    $add_dst.add_item(hefesto.sys.make_path($basepath, "DSL.md"));
+    $add_dst.add_item(hefesto.sys.make_path($basepath, "doc/MANUAL.md"));
+    $add_dst.add_item(hefesto.sys.make_path($basepath, "doc/DSL.md"));
+    $add_dst.add_item(hefesto.sys.make_path($basepath, "doc"));
+    $add_dst.add_item(hefesto.sys.make_path($basepath, ""));
+
+    var exit_code type int;
 
     var a type int;
     $a = 0;
-    while ($a < $add_dst.count()) {
-        hefesto.sys.rm($add_dst.item($a));
+    $exit_code = 0;
+    while ($a < $add_dst.count() && $exit_code == 0) {
+        var path type string;
+        $path = $add_dst.item($a);
+        if (isfile($path)) {
+            $exit_code = hefesto.sys.rm($add_dst.item($a));
+        } else {
+            $exit_code = hefesto.sys.rmdir($add_dst.item($a));
+        }
         $a = $a + 1;
     }
 
-    if (hefesto.sys.os_name() != "windows") {
-        hefesto.sys.rmdir("/usr/local/share/tulip/doc");
-        hefesto.sys.rmdir("/usr/local/share/tulip");
-    } else {
-        hefesto.sys.rmdir("C:\\tulip\\doc");
-        hefesto.sys.rmdir("C:\\tulip");
+    if ($exit_code != 0) {
+        hefesto.sys.echo("UNINSTALL WARNING: Some additional files were not uninstalled.\n");
+        result 0;
     }
 
     result 1;
