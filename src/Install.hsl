@@ -112,8 +112,17 @@ local function install() : result type int {
     var bin_dst type string;
     var bin_src type string;
 
-    $bin_dst = "/usr/local/bin/tulip";
-    $bin_src = "../bin/tulip";
+    if (hefesto.sys.os_name() != "windows") {
+        $bin_dst = "/usr/local/bin/tulip";
+    } else {
+        $bin_dst = "C:\\tulip\\bin\\tulip.exe";
+    }
+
+    if (hefesto.sys.os_name() != "windows") {
+        $bin_src = "../bin/tulip";
+    } else {
+        $bin_src = "..\\bin\\tulip.exe";
+    }
 
     while (isfile($bin_src) == 0) {
         hefesto.sys.echo("WARNING: The source tulip's binary file was not found.\n");
@@ -217,8 +226,93 @@ local function install() : result type int {
     result $exit_code;
 }
 
-local function uninstall() : result type int {
+local function uninstall_additional_files() : result type int {
+    var basepath type string;
+
+    if (hefesto.sys.os_name() != "windows") {
+        $basepath = "/usr/local/share/tulip/doc";
+    } else {
+        $basepath = "C:\\tulip\\doc";
+    }
+
+    var add_dst type list;
+    $add_dst.add_item(hefesto.sys.make_path($basepath, "MANUAL.md"));
+    $add_dst.add_item(hefesto.sys.make_path($basepath, "DSL.md"));
+
+    var a type int;
+    $a = 0;
+    while ($a < $add_dst.count()) {
+        hefesto.sys.rm($add_dst.item($a));
+        $a = $a + 1;
+    }
+
+    if (hefesto.sys.os_name() != "windows") {
+        hefesto.sys.rmdir("/usr/local/share/tulip/doc");
+        hefesto.sys.rmdir("/usr/local/share/tulip");
+    } else {
+        hefesto.sys.rmdir("C:\\tulip\\doc");
+        hefesto.sys.rmdir("C:\\tulip");
+    }
+
     result 1;
 }
 
+local function uninstall() : result type int {
+    var bin_dst type string;
 
+    if (hefesto.sys.os_name() != "windows") {
+        $bin_dst = "/usr/local/bin/tulip";
+    } else {
+        $bin_dst = "C:\\tulip\\bin\\tulip.exe";
+    }
+
+    var choice type string;
+    $choice = "#";
+    while ($choice != "y" && $choice != "n") {
+        $choice = hefesto.sys.prompt("Do you want to uninstall tulip? [y/n] ");
+    }
+
+    if ($choice == "n") {
+        hefesto.sys.echo("UNINSTALL ERROR: process aborted by the user.\n");
+        result 1;
+    }
+
+    $choice = "#";
+    while ($choice != "y" && $choice != "n" && $choice != "c") {
+        $choice = hefesto.sys.prompt("Does the tulip binary really installed under the path " + $bin_dst + " [y/n/c] ");
+    }
+
+    if ($choice == "c") {
+        hefesto.sys.echo("UNINSTALL ERROR: process aborted by the user.\n");
+        result 1;
+    }
+
+    if ($choice == "n") {
+        var new_dst type string;
+        $new_dst = $bin_dst;
+        while ($new_dst == $bin_dst || isfile($new_dst) == 0 && $new_dst != "c") {
+            $new_dst = hefesto.sys.prompt("So type the tulip's path or type \"c\" to cancel: ");
+        }
+        if ($new_dst == "c") {
+            hefesto.sys.echo("UNINSTALL ERROR: process aborted by the user.\n");
+            result 1;
+        }
+        $bin_dst = $new_dst;
+    }
+
+    var exit_code type int;
+    $exit_code = 1;
+
+    $exit_code = hefesto.sys.rm($bin_dst);
+
+    if ($exit_code == 0) {
+        if (hefesto.sys.os_name() != "windows") {
+            $exit_code = hefesto.sys.rm("/usr/local/man/man1/tulip.1");
+        }
+        if (uninstall_additional_files() == 0) {
+            $exit_code = 1;
+        }
+    }
+
+    result $exit_code;
+}
