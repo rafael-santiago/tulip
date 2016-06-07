@@ -50,7 +50,7 @@ starting.
 Yes, you can. For doing this you should call ``hefesto`` passing the option ``--install`` (being under ``src`` sub-directory
 of course).
 
-Actually the following commands is what you you should do. Being you inside the root project's directory:
+Actually the following commands is what you should do. Being you inside the root project's directory:
 
 ```
 emmetbrown@DELOREAN:~/internet/github.com/src/tulip# cd src
