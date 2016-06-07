@@ -72,7 +72,8 @@ const char *get_next_tlp_command(const char *codebuf) {
                                      !is_note_sep(*codebuf)               &&
                                      !is_sep_bar(*codebuf)                &&
                                      !is_save_point(*codebuf)             &&
-                                     !is_technique_block_end(*codebuf)) {
+                                     !is_technique_block_end(*codebuf)    &&
+                                     !is_oncemore(*codebuf)) {
         if (*codebuf == '\n') {
             g_curr_line_nr++;
         }

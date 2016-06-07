@@ -58,9 +58,18 @@
 
 #define is_anyfret(c) ( (c) == '?' )
 
+#define is_oncemore(c) ( (c) == '@' )
+
 #define is_note_sep(c) ( is_sep(c) || is_hammeron(c) || is_pulloff(c) || is_vibrato(c) ||\
                          is_slidedown(c) || is_slideup(c) || is_bend(c) || is_release_bend(c) || is_tapping(c) ||\
                          is_natural_harmonic(c) || is_artificial_harmonic(c) )
+
+#define has_sustained_technique(c) ( ( (c) & kTlpMute           ) ||\
+                                     ( (c) & kTlpLetRing        ) ||\
+                                     ( (c) & kTlpChord          ) ||\
+                                     ( (c) & kTlpStrum          ) ||\
+                                     ( (c) & kTlpTremoloPicking ) ||\
+                                     ( (c) & kTlpVibratoWBar    ) )
 
 tulip_command_t get_cmd_code_from_cmd_tag(const char *buf);
 

@@ -34,7 +34,8 @@ static char *g_tlp_technique_label[] = {
     "r",
     "T",
     "*",
-    "v"
+    "v",
+    ""
 };
 
 const size_t g_tlp_technique_label_nr = sizeof(g_tlp_technique_label) / sizeof(g_tlp_technique_label[0]);
