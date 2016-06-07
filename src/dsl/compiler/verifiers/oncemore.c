@@ -13,11 +13,11 @@ static tulip_single_note_ctx *find_oncemore_begin(tulip_single_note_ctx *song);
 
 static tulip_single_note_ctx *find_oncemore_from_tlp_block(tulip_single_note_ctx *song);
 
-static void strip_non_sustained_techniques_from_array(tulip_command_t *array, size_t array_size);
+static void hash_techniques(tulip_command_t *array, size_t array_size);
 
-static int is_out_of_user_defined_block(const tulip_command_t *a, const size_t a_s, const tulip_command_t *b, const size_t b_s);
+static int are_similar_hashes(const tulip_command_t *a, const size_t a_s, const tulip_command_t *b, const size_t b_s);
 
-static int is_out_of_user_defined_block(const tulip_command_t *a, const size_t a_s, const tulip_command_t *b, const size_t b_s) {
+static int are_similar_hashes(const tulip_command_t *a, const size_t a_s, const tulip_command_t *b, const size_t b_s) {
     size_t a_c = 0, b_c = 0;
     int equals_nr = 0;
     if (a == NULL || b == NULL) {
@@ -37,7 +37,7 @@ static int is_out_of_user_defined_block(const tulip_command_t *a, const size_t a
     return (equals_nr == 0);
 }
 
-static void erase_non_sustained_from_array(tulip_command_t *array, size_t array_size) {
+static void hash_techniques(tulip_command_t *array, size_t array_size) {
     size_t a = 0;
 
     if (array == NULL) {
@@ -71,19 +71,19 @@ static tulip_single_note_ctx *find_oncemore_from_tlp_block(tulip_single_note_ctx
     sp = song;
 
     te_a = demux_tlp_commands(sp->techniques, &te_a_sz);
-    erase_non_sustained_from_array(te_a, te_a_sz);
+    hash_techniques(te_a, te_a_sz);
 
     te_b = demux_tlp_commands(sp->techniques, &te_b_sz);
-    erase_non_sustained_from_array(te_b, te_b_sz);
+    hash_techniques(te_b, te_b_sz);
 
-    while (sp != NULL && !is_out_of_user_defined_block(te_a, te_a_sz, te_b, te_b_sz)) {
+    while (sp != NULL && !are_similar_hashes(te_a, te_a_sz, te_b, te_b_sz)) {
         sp = sp->last;
         while (sp->techniques == kTlpBlockEnd) {
             sp = sp->last;
         }
         free(te_b);
         te_b = demux_tlp_commands(sp->techniques, &te_b_sz);
-        erase_non_sustained_from_array(te_b, te_b_sz);
+        hash_techniques(te_b, te_b_sz);
     }
 
     free(te_a);
@@ -119,6 +119,7 @@ static tulip_single_note_ctx *find_oncemore_begin(tulip_single_note_ctx *song) {
                 while (mp != NULL && (mp->techniques & kTlpSepBar) == 0) {
                     mp = mp->last;
                 }
+                mp = mp->next;
             } else if ((mp->techniques & kTlpSingleNote) && mp->last != NULL) {
                 if ((mp->last->techniques & kTlpHammerOn   ) ||
                     (mp->last->techniques & kTlpPullOff    ) ||
@@ -166,7 +167,7 @@ int oncemore_verifier(const char *buf, char *error_message, tulip_single_note_ct
     }
 
     if (sp->last == NULL) {
-        tlperr_s(error_message, "There is nothing to do once more here.");
+        tlperr_s(error_message, "There is nothing to be done once more here.");
         return 0;
     }
 
