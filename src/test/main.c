@@ -524,8 +524,8 @@ CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(base_tulip_part_ctx_tests)
     tulip_part_ctx *parts = NULL;
-    tulip_single_note_ctx *begin = 0xdeadbeef;
-    tulip_single_note_ctx *end   = 0xbeefdead;
+    tulip_single_note_ctx *begin = (tulip_single_note_ctx *)0xdeadbeef;
+    tulip_single_note_ctx *end   = (tulip_single_note_ctx *)0xbeefdead;
     parts = add_part_to_tulip_part_ctx(parts, NULL, begin, end);
     CUTE_ASSERT(parts == NULL);
     parts = add_part_to_tulip_part_ctx(parts, "(null)", NULL, end);

@@ -45,7 +45,9 @@ static struct tulip_command_table_ctx g_tlp_tag_map[] = {
     tulip_register_code_tag(kTlpTapping, "T", 0),
     tulip_register_code_tag(kTlpNaturalHarmonic, "*", 0),
     tulip_register_code_tag(kTlpArtificialHarmonic, "v", 0),
-    tulip_register_code_tag(kTlpOnceMore, "@", 0)
+    tulip_register_code_tag(kTlpOnceMore, "@", 0),
+    tulip_register_code_tag(kTlpPart, ".part", 0),
+    tulip_register_code_tag(kTlpRepeat, ".repeat", 0)
 };
 
 static const size_t g_tlp_tag_map_nr = sizeof(g_tlp_tag_map) / sizeof(g_tlp_tag_map[0]);

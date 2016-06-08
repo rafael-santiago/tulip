@@ -31,6 +31,7 @@
 #include <dsl/compiler/verifiers/artificialharmonic.h>
 #include <dsl/compiler/verifiers/times.h>
 #include <dsl/compiler/verifiers/oncemore.h>
+#include <dsl/compiler/verifiers/part.h>
 #include <dsl/parser/parser.h>
 #include <dsl/utils.h>
 #include <base/ctx.h>
@@ -40,6 +41,8 @@
 #include <stdio.h>
 
 tulip_technique_stack_ctx *g_techniques = NULL;
+
+tulip_part_ctx *g_parts = NULL;
 
 //  INFO(Santiago): This must be the general standard behavior of a verifier...
 //
@@ -85,12 +88,16 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpTapping, tapping_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpNaturalHarmonic, naturalharmonic_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpArtificialHarmonic, artificialharmonic_sep_verifier),
-    tlp_compiler_register_cmd_verifier(kTlpOnceMore, oncemore_verifier)
+    tlp_compiler_register_cmd_verifier(kTlpOnceMore, oncemore_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpPart, part_tag_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpRepeat, NULL)
 };
 
 size_t g_tlp_cmd_verifiers_nr = sizeof(g_tlp_cmd_verifiers) / sizeof(g_tlp_cmd_verifiers[0]);
 
 static char *get_tag_from_compiler_stack();
+
+static void free_parts_listing();
 
 void tlperr_s(char *buf, const char *error_message, ...) {
     char *bp = buf;
@@ -226,6 +233,7 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
             }
 
         }
+        free_parts_listing();
     } else if (next_codebuf != NULL) {
         *next_codebuf = cp;
     }
@@ -251,4 +259,17 @@ void push_technique(const tulip_command_t technique) {
 
 void pop_technique() {
     g_techniques = pop_technique_from_technique_stack_ctx(g_techniques);
+}
+
+tulip_part_ctx *get_parts_listing() {
+    return g_parts;
+}
+
+static void free_parts_listing() {
+    free_tulip_part_ctx(g_parts);
+    g_parts = NULL;
+}
+
+void set_parts_listing(tulip_part_ctx *parts) {
+    g_parts = parts;
 }

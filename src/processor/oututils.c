@@ -35,6 +35,8 @@ static char *g_tlp_technique_label[] = {
     "T",
     "*",
     "v",
+    "",
+    "",
     ""
 };
 

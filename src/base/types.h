@@ -34,7 +34,9 @@ typedef enum _tulip_command_t {
     kTlpTapping            = 0x00200000,
     kTlpNaturalHarmonic    = 0x00400000,
     kTlpArtificialHarmonic = 0x00800000,
-    kTlpOnceMore           = 0x01000000
+    kTlpOnceMore           = 0x01000000,
+    kTlpPart               = 0x02000000,
+    kTlpRepeat             = 0x04000000
 }tulip_command_t;
 
 typedef struct _tulip_technique_stack_ctx {

@@ -9,8 +9,6 @@
 #include <dsl/utils.h>
 #include <base/ctx.h>
 
-static tulip_single_note_ctx *find_oncemore_begin(tulip_single_note_ctx *song);
-
 static tulip_single_note_ctx *find_oncemore_from_tlp_block(tulip_single_note_ctx *song);
 
 static void hash_techniques(tulip_command_t *array, size_t array_size);
@@ -92,7 +90,7 @@ static tulip_single_note_ctx *find_oncemore_from_tlp_block(tulip_single_note_ctx
     return sp;
 }
 
-static tulip_single_note_ctx *find_oncemore_begin(tulip_single_note_ctx *song) {
+tulip_single_note_ctx *find_oncemore_begin(tulip_single_note_ctx *song) {
     tulip_single_note_ctx *mp = NULL;
 
     if (song == NULL) {

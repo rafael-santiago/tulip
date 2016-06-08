@@ -12,4 +12,6 @@
 
 int oncemore_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next);
 
+tulip_single_note_ctx *find_oncemore_begin(tulip_single_note_ctx *song);
+
 #endif
