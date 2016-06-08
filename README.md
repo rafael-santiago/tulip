@@ -59,4 +59,4 @@ emmetbrown@DELOREAN:~/internet/github.com/src/tulip/src# hefesto --install
 (...)
 ```
 
-For uninstalling you should do the same passing ``--uninstall`` option instead of the previous one.
+For uninstalling you should do almost the same. You should pass the ``--uninstall`` option instead of the previous one.
