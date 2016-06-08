@@ -14,7 +14,7 @@ how to produce some ``Tulip code``, if you have some formal knowledge about comp
 time freaking out your brain, it is better to move on to the [User Manual](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md)
 and forget this.
 
-        <tlp-code>                ::= (<note> | <sep> | <save-point> | <tag-announce> <tag-code>)(<tlp-code)* |
+        <tlp-code>                ::= (<note> | <sep> | <save-point> | <once-more> | <tag-announce> <tag-code>)(<tlp-code)* |
                                       (<tlp-code>)*
         <note>                    ::= <string-number> <fret-number>
         <string-number>           ::= "1" | "2" | "3" | "4" | "5" | "6"
@@ -23,6 +23,7 @@ and forget this.
         <digit>                   ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
         <sep>                     ::= ("-" | "h" | "p" | "~" | "/" | "\" | "b" | "r" | "*" | "v" | "T")+
         <save-point>              ::= (";")+
+        <once-more>               ::= ("@")+
         <tag-announce>            ::= "."
         <tag-code>                ::= <mute-tag-code>           |
                                       <letring-tag-code>        |
@@ -31,7 +32,12 @@ and forget this.
                                       <tremolopicking-tag-code> |
                                       <vibratowbar-tag-code>    |
                                       <tunning-tag-code>        |
-                                      <literal-tag-code>
+                                      <literal-tag-code>        |
+                                      <times-tag-code>          |
+                                      <song-tag-code>           |
+                                      <transcriber-tag-code>    |
+                                      <part-tag-code>           |
+                                      <repeat-tag-code>
         <mute-tag-code>           ::= "mute" <recursive-tag-stmt-list>
         <letring-tag-code>        ::= "letring" <recursive-tag-stmt-list>
         <strum-tag-code>          ::= "strum" <recursive-tag-stmt-list>
@@ -43,6 +49,11 @@ and forget this.
         <string>                  ::= """ (<US-ASCII-SET> | <string-escape-codes>)+ """
         <string-escape-codes>     ::= ("\n" | "\r" | "\n" | "\t" | "\\" | "\"")+
         <chord-tag-code>          ::= "chord" <tag-begin> <chord-stmt-list> <tag-end>
+        <times-tag-code>          ::= "times" <tag-begin> <number> <tag-end>
+        <song-tag-code>           ::= "song" <tag-begin> <string> <tag-end>
+        <transcriber-tag-code>    ::= "trancriber" <tag-begin> <string> <tag-end>
+        <part-tag-code>           ::= "part" <tag-begin> (<US-ASCII-SET-EXCEPTING-{-}-">)+ <tag-end>
+        <repeat-tag-code>         ::= "repeat" <tag-begin> (<US-ASCII-SET-EXCEPTING-{-}-">)+ <tag-end>
         <chord-stmt-list>         ::= (<note><sep>)+ | <note>
         <note-cipher>             ::= "C"  | "D"  | "E"  | "F"  | "G"  | "A"  | "B"  | "C#" | "D#" |
                                       "F#" | "G#" | "A#" | "Db" | "Eb" | "Gb" | "Ab" | "Bb" | "c"  |
@@ -54,8 +65,8 @@ and forget this.
 
 As you can see it is a pretty compact Language. Parse this is very straightforward.
 
-Excepting the tags ``chord``, ``tunning`` and ``literal`` any other should support fully recursion. What means allow a more
-internal definition of ``<tlp-code>`` as the tag's production.
+Excepting the tags ``chord``, ``tunning``, ``literal``, ``song``, ``transcriber`` and ``times`` any other should support fully
+recursion. What means allow a more internal definition of ``<tlp-code>`` as the tag's production.
 
 The production ``<note-cipher>`` does not disallow the usage of a lower-case cipher in order to express a lower string tunning.
 Nevertheless I think that use this is ugly as hell.
