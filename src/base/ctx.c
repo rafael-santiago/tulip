@@ -17,7 +17,12 @@
                                        (t)->next = (t)->last = NULL, (t)->techniques = kTlpNone, (t)->line_nr = 0,\
                                        memset((t)->buf, 0, sizeof((t)->buf)) )
 
+#define new_tulip_part_ctx(t) ( (t) = (tulip_part_ctx *) getseg(sizeof(tulip_part_ctx)),\
+                                (t)->next = NULL, (t)->label = NULL, (t)->begin = (t)->end = NULL )
+
 static tulip_single_note_ctx *get_tulip_single_note_ctx_tail(tulip_single_note_ctx *song);
+
+static tulip_part_ctx *get_tulip_part_ctx_tail(tulip_part_ctx *parts);
 
 tulip_technique_stack_ctx *push_technique_to_technique_stack_ctx(tulip_technique_stack_ctx *stack, tulip_command_t technique) {
     tulip_technique_stack_ctx *top = NULL;
@@ -86,6 +91,60 @@ void free_tulip_single_note_ctx(tulip_single_note_ctx *song) {
     tulip_single_note_ctx *t, *p;
     for (t = p = song; t; p = t) {
         t = p->next;
+        free(p);
+    }
+}
+
+static tulip_part_ctx *get_tulip_part_ctx_tail(tulip_part_ctx *parts) {
+    tulip_part_ctx *p = NULL;
+    if (parts == NULL) {
+        return NULL;
+    }
+    for (p = parts; p->next != NULL; p = p->next);
+    return p;
+}
+
+tulip_part_ctx *get_tulip_part_ctx(const char *label, tulip_part_ctx *parts) {
+    tulip_part_ctx *p = NULL;
+    for (p = parts; p != NULL; p = p->next) {
+        if (strcmp(p->label, label) == 0) {
+            return p;
+        }
+    }
+    return NULL;
+}
+
+tulip_part_ctx *add_part_to_tulip_part_ctx(tulip_part_ctx *parts, const char *label, const tulip_single_note_ctx *begin, const tulip_single_note_ctx *end) {
+    tulip_part_ctx *head = parts, *p = NULL;
+    size_t s = 0;
+
+    if (label == NULL || begin == NULL || end == NULL) {
+        return NULL;
+    }
+
+    if (head == NULL) {
+        new_tulip_part_ctx(head);
+        p = head;
+    } else {
+        p = get_tulip_part_ctx_tail(head);
+        new_tulip_part_ctx(p->next);
+        p = p->next;
+    }
+
+    p->label = (char *) getseg((s = strlen(label)) + 1);
+    memset(p->label, 0, s + 1);
+    memcpy(p->label, label, s);
+    p->begin = begin;
+    p->end = end;
+
+    return head;
+}
+
+void free_tulip_part_ctx(tulip_part_ctx *parts) {
+    tulip_part_ctx *p, *t;
+    for (t = p = parts; t; p = t) {
+        t = p->next;
+        free(p->label);
         free(p);
     }
 }

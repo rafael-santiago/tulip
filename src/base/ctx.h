@@ -24,4 +24,10 @@ tulip_single_note_ctx *add_note_to_tulip_single_note_ctx(tulip_single_note_ctx *
 
 void free_tulip_single_note_ctx(tulip_single_note_ctx *song);
 
+tulip_part_ctx *get_tulip_part_ctx(const char *label, tulip_part_ctx *parts);
+
+tulip_part_ctx *add_part_to_tulip_part_ctx(tulip_part_ctx *parts, const char *label, const tulip_single_note_ctx *begin, const tulip_single_note_ctx *end);
+
+void free_tulip_part_ctx(tulip_part_ctx *parts);
+
 #endif

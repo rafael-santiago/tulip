@@ -522,9 +522,31 @@ CUTE_TEST_CASE(processor_typesetters_txt_tablature_ctx_tests)
     free_txttypesetter_tablature_ctx(tab);
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(base_tulip_part_ctx_tests)
+    tulip_part_ctx *parts = NULL;
+    tulip_single_note_ctx *begin = 0xdeadbeef;
+    tulip_single_note_ctx *end   = 0xbeefdead;
+    parts = add_part_to_tulip_part_ctx(parts, NULL, begin, end);
+    CUTE_ASSERT(parts == NULL);
+    parts = add_part_to_tulip_part_ctx(parts, "(null)", NULL, end);
+    CUTE_ASSERT(parts == NULL);
+    parts = add_part_to_tulip_part_ctx(parts, "(null)", begin, NULL);
+    CUTE_ASSERT(parts == NULL);
+    parts = add_part_to_tulip_part_ctx(parts, "intro", begin, end);
+    parts = add_part_to_tulip_part_ctx(parts, "outro", end, begin);
+    CUTE_ASSERT(parts != NULL);
+    CUTE_ASSERT(parts->label != NULL && parts->begin != NULL && parts->end != NULL);
+    CUTE_ASSERT(strcmp(parts->label, "intro") == 0 && parts->begin == begin && parts->end == end);
+    CUTE_ASSERT(parts->next != NULL);
+    CUTE_ASSERT(parts->next->label != NULL && parts->next->begin != NULL && parts->next->end != NULL);
+    CUTE_ASSERT(strcmp(parts->next->label, "outro") == 0 && parts->next->begin == end && parts->next->end == begin);
+    free_tulip_part_ctx(parts);
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(tulip_tests)
     CUTE_RUN_TEST(base_tulip_technique_stack_ctx_tests);
     CUTE_RUN_TEST(base_tulip_single_note_ctx_tests);
+    CUTE_RUN_TEST(base_tulip_part_ctx_tests);
     CUTE_RUN_TEST(dsl_basic_dsl_utils_tests);
     CUTE_RUN_TEST(dsl_strutils_tests);
     CUTE_RUN_TEST(dsl_parser_skip_string_chunk_tests);

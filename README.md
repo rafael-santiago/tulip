@@ -16,7 +16,7 @@ Use the ordinary ``git-clone`` command:
 emmettbrown@DELOREAN:~/internet/github.com/src# git clone https://github.com/rafael-santiago/tulip tulip
 ```
 
-This repository has some submodule so after clonning it is important to initialize them in the following way:
+This repository has some submodules so after clonning it is important to initialize them in the following way:
 
 ```
 emmettbrown@DELOREAN:~/internet/github.com/src# cd tulip

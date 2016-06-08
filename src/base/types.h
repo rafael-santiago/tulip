@@ -49,6 +49,12 @@ typedef struct _tulip_single_note_ctx {
     struct _tulip_single_note_ctx *last, *next;
 }tulip_single_note_ctx;
 
+typedef struct _tulip_part_ctx {
+    char *label;
+    const tulip_single_note_ctx *begin, *end;
+    struct _tulip_part_ctx *next;
+}tulip_part_ctx;
+
 typedef enum _tulip_bool_prefs_map {
     kTlpPrefsCutTabOnTheLastNote      = 0x0000000000000001,
     kTlpPrefsCloseTabToSave           = 0x0000000000000020,
