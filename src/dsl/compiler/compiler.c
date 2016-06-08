@@ -35,6 +35,7 @@
 #include <dsl/compiler/verifiers/repeat.h>
 #include <dsl/compiler/verifiers/song.h>
 #include <dsl/compiler/verifiers/transcriber.h>
+#include <dsl/compiler/verifiers/trill.h>
 #include <dsl/parser/parser.h>
 #include <dsl/utils.h>
 #include <base/ctx.h>
@@ -76,6 +77,7 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpStrum, strum_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpTremoloPicking, tremolopicking_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpVibratoWBar, vibratowbar_tag_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpTrill, trill_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpTimes, times_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpVibrato, vibrato_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSlideDown, slidedown_sep_verifier),
@@ -158,7 +160,8 @@ static char *get_tag_from_compiler_stack() {
         ".chord",
         ".beat",
         ".tremolopicking",
-        ".vibratowbar"
+        ".vibratowbar",
+        ".trill"
     };
     const size_t tags_nr = sizeof(tags) / sizeof(tags[0]);
     return &tags[tlp_cmd_code_to_plain_index(top_of_technique_stack_ctx(g_techniques)) % tags_nr][0];

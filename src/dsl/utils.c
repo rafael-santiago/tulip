@@ -29,6 +29,7 @@ static struct tulip_command_table_ctx g_tlp_tag_map[] = {
     tulip_register_code_tag(kTlpStrum, ".strum", 1),
     tulip_register_code_tag(kTlpTremoloPicking, ".tremolopicking", 1),
     tulip_register_code_tag(kTlpVibratoWBar, ".vibratowbar", 1),
+    tulip_register_code_tag(kTlpTrill, ".trill", 1),
     tulip_register_code_tag(kTlpTimes, ".times", 0),
     tulip_register_code_tag(kTlpVibrato, "~", 0),
     tulip_register_code_tag(kTlpSlideDown, "/", 0),

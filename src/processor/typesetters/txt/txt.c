@@ -33,6 +33,7 @@
 #include <processor/typesetters/txt/printers/timestxtprinter.h>
 #include <processor/typesetters/txt/printers/songtxtprinter.h>
 #include <processor/typesetters/txt/printers/transcribertxtprinter.h>
+#include <processor/typesetters/txt/printers/trilltxtprinter.h>
 #include <processor/typesetters/txt/txtinkspill.h>
 #include <processor/settings.h>
 #include <processor/oututils.h>
@@ -65,6 +66,7 @@ static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpStrum, txttypesetter_strum_printer),
     register_new_typesetter_printer(kTlpTremoloPicking, txttypesetter_tremolopicking_printer),
     register_new_typesetter_printer(kTlpVibratoWBar, txttypesetter_vibratowbar_printer),
+    register_new_typesetter_printer(kTlpTrill, txttypesetter_trill_printer),
     register_new_typesetter_printer(kTlpTimes, txttypesetter_times_printer),
     register_new_typesetter_printer(kTlpVibrato, txttypesetter_vibrato_printer),
     register_new_typesetter_printer(kTlpSlideDown, txttypesetter_slidedown_printer),
@@ -161,7 +163,8 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
     }
 
     if ((curr_technique = (techniques & kTlpMute)) || (curr_technique = (techniques & kTlpLetRing)) ||
-        (curr_technique = (techniques & kTlpStrum)) || (curr_technique = (techniques & kTlpTremoloPicking))) {
+        (curr_technique = (techniques & kTlpStrum)) || (curr_technique = (techniques & kTlpTremoloPicking)) ||
+        (curr_technique = (techniques & kTlpVibratoWBar)) || (curr_technique = (techniques & kTlpTrill))) {
         technique_label = get_technique_label(curr_technique);
         l = 1;
         if (tab != NULL) {
@@ -189,19 +192,17 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
         return longest + txttypesetter_eval_buffer_row_usage(techniques & ~(kTlpChord | kTlpSingleNote), note, tab);
     } else if (techniques & kTlpSingleNote) {
         return strlen(note->buf) - 1 + txttypesetter_eval_buffer_row_usage(techniques & ~(kTlpSingleNote), note, tab);
-    } else if ((techniques & kTlpVibrato) || (techniques & kTlpSlideDown)       ||
-               (techniques & kTlpSlideUp) || (techniques & kTlpHammerOn)        ||
-               (techniques & kTlpPullOff) || (techniques & kTlpVibratoWBar)     ||
-               (techniques & kTlpNoteSep) || (techniques & kTlpSepBar)          ||
-               (techniques & kTlpBend   ) || (techniques & kTlpReleaseBend)     ||
-               (techniques & kTlpTapping) || (techniques & kTlpNaturalHarmonic) ||
-               (techniques & kTlpArtificialHarmonic)) {
+    } else if ((techniques & kTlpVibrato)         || (techniques & kTlpSlideDown) ||
+               (techniques & kTlpSlideUp)         || (techniques & kTlpHammerOn)  ||
+               (techniques & kTlpPullOff)         || (techniques & kTlpNoteSep)   ||
+               (techniques & kTlpSepBar)          || (techniques & kTlpBend)      ||
+               (techniques & kTlpReleaseBend)     || (techniques & kTlpTapping)   ||
+               (techniques & kTlpNaturalHarmonic) || (techniques & kTlpArtificialHarmonic)) {
             return 1 + txttypesetter_eval_buffer_row_usage(techniques & ~(kTlpVibrato         |
                                                                           kTlpSlideDown       |
                                                                           kTlpSlideUp         |
                                                                           kTlpHammerOn        |
                                                                           kTlpPullOff         |
-                                                                          kTlpVibratoWBar     |
                                                                           kTlpNoteSep         |
                                                                           kTlpSepBar          |
                                                                           kTlpBend            |
