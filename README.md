@@ -55,7 +55,7 @@ Actually the following commands are what you should execute. Being you inside th
 ```
 emmetbrown@DELOREAN:~/internet/github.com/src/tulip# cd src
 emmetbrown@DELOREAN:~/internet/github.com/src/tulip/src# hefesto --install
-(just follow the simple steps answer the questions or canceling them to abort the process)
+(just follow the simple steps answering the questions or canceling them to abort the process)
 (...)
 ```
 

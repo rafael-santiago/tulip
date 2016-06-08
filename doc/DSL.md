@@ -31,6 +31,7 @@ and forget this.
                                       <strum-tag-code>          |
                                       <tremolopicking-tag-code> |
                                       <vibratowbar-tag-code>    |
+                                      <trill-tag-code>          |
                                       <tunning-tag-code>        |
                                       <literal-tag-code>        |
                                       <times-tag-code>          |
@@ -43,6 +44,7 @@ and forget this.
         <strum-tag-code>          ::= "strum" <recursive-tag-stmt-list>
         <tremolopicking-tag-code> ::= "tremolopicking" <recursive-tag-stmt-list>
         <vibratowbar-tag-code>    ::= "vibratowbar" <recursive-tag-stmt-list>
+        <trill-tag-code>          ::= "trill" <recursive-tag-stmt-list>
         <tunning-tag-code>        ::= "tunning" <tag-begin> <tunning-code> <tag-end>
         <tunning-code>            ::= <note-cipher> | "-" <note-cipher>
         <literal-tag-code>        ::= "literal" <tag-begin> <string> <tag-end>
