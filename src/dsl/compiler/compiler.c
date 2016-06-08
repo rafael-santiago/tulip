@@ -33,6 +33,8 @@
 #include <dsl/compiler/verifiers/oncemore.h>
 #include <dsl/compiler/verifiers/part.h>
 #include <dsl/compiler/verifiers/repeat.h>
+#include <dsl/compiler/verifiers/song.h>
+#include <dsl/compiler/verifiers/transcriber.h>
 #include <dsl/parser/parser.h>
 #include <dsl/utils.h>
 #include <base/ctx.h>
@@ -89,6 +91,8 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpTapping, tapping_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpNaturalHarmonic, naturalharmonic_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpArtificialHarmonic, artificialharmonic_sep_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpSong, song_tag_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpTranscriber, transcriber_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpOnceMore, oncemore_verifier),
     tlp_compiler_register_cmd_verifier(kTlpPart, part_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpRepeat, repeat_tag_verifier)

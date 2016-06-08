@@ -31,6 +31,8 @@
 #include <processor/typesetters/txt/printers/tunningtxtprinter.h>
 #include <processor/typesetters/txt/printers/literaltxtprinter.h>
 #include <processor/typesetters/txt/printers/timestxtprinter.h>
+#include <processor/typesetters/txt/printers/songtxtprinter.h>
+#include <processor/typesetters/txt/printers/transcribertxtprinter.h>
 #include <processor/typesetters/txt/txtinkspill.h>
 #include <processor/settings.h>
 #include <processor/oututils.h>
@@ -77,7 +79,9 @@ static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpReleaseBend, txttypesetter_releasebend_printer),
     register_new_typesetter_printer(kTlpTapping, txttypesetter_tapping_printer),
     register_new_typesetter_printer(kTlpNaturalHarmonic, txttypesetter_naturalharmonic_printer),
-    register_new_typesetter_printer(kTlpArtificialHarmonic, txttypesetter_artificialharmonic_printer)
+    register_new_typesetter_printer(kTlpArtificialHarmonic, txttypesetter_artificialharmonic_printer),
+    register_new_typesetter_printer(kTlpSong, txttypesetter_song_printer),
+    register_new_typesetter_printer(kTlpTranscriber, txttypesetter_transcriber_printer)
 };
 
 const size_t g_txttypesetter_printer_nr = sizeof(g_txttypesetter_printers) / sizeof(g_txttypesetter_printers[0]);

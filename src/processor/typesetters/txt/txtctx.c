@@ -154,6 +154,9 @@ txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tabla
 
     tail->string_nr = 6;
 
+    tail->song = NULL;
+    tail->transcriber = NULL;
+
     tail->times = (char *) getseg(tail->fretboard_sz + 1);
     memset(tail->times, 0, tail->fretboard_sz + 1);
     memset(tail->times, ' ', tail->fretboard_sz);

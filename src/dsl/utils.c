@@ -37,14 +37,14 @@ static struct tulip_command_table_ctx g_tlp_tag_map[] = {
     tulip_register_code_tag(kTlpPullOff, "p", 0),
     tulip_register_code_tag(kTlpTunning, ".tunning", 0),
     tulip_register_code_tag(kTlpLiteral, ".literal", 0),
-    tulip_register_code_tag(kTlpLiteral, ".blah", 0),
-    tulip_register_code_tag(kTlpLiteral, ".quote", 0),
     tulip_register_code_tag(kTlpSepBar, "|", 0),
     tulip_register_code_tag(kTlpBend, "b", 0),
     tulip_register_code_tag(kTlpReleaseBend, "r", 0),
     tulip_register_code_tag(kTlpTapping, "T", 0),
     tulip_register_code_tag(kTlpNaturalHarmonic, "*", 0),
     tulip_register_code_tag(kTlpArtificialHarmonic, "v", 0),
+    tulip_register_code_tag(kTlpSong, ".song", 0),
+    tulip_register_code_tag(kTlpTranscriber, ".transcriber", 0),
     tulip_register_code_tag(kTlpOnceMore, "@", 0),
     tulip_register_code_tag(kTlpPart, ".part", 0),
     tulip_register_code_tag(kTlpRepeat, ".repeat", 0)
@@ -221,4 +221,14 @@ tulip_command_t *demux_tlp_commands(const tulip_command_t commands, size_t *arra
     }
 
     return dmux;
+}
+
+const char *get_cmd_tag_from_cmd_code(const tulip_command_t cmd) {
+    size_t c;
+    for (c = 0; c < g_tlp_tag_map_nr; c++) {
+        if (g_tlp_tag_map[c].code == cmd) {
+            return &g_tlp_tag_map[c].tag[0];
+        }
+    }
+    return NULL;
 }

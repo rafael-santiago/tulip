@@ -543,7 +543,52 @@ CUTE_TEST_CASE(base_tulip_part_ctx_tests)
     free_tulip_part_ctx(parts);
 CUTE_TEST_CASE_END
 
-CUTE_TEST_CASE(tulip_tests)
+CUTE_TEST_CASE(dsl_utils_get_cmd_tag_from_cmd_code_tests)
+    struct testvector {
+        const char *tag;
+        const tulip_command_t code;
+    };
+    struct testvector expected[] = {
+        {               ";", kTlpSavePoint          },
+        {               "-", kTlpNoteSep            },
+        {               "}", kTlpBlockEnd           },
+        {           ".mute", kTlpMute               },
+        {        ".letring", kTlpLetRing            },
+        {          ".chord", kTlpChord              },
+        {          ".strum", kTlpStrum              },
+        { ".tremolopicking", kTlpTremoloPicking     },
+        {    ".vibratowbar", kTlpVibratoWBar        },
+        {          ".times", kTlpTimes              },
+        {               "~", kTlpVibrato            },
+        {               "/", kTlpSlideDown          },
+        {              "\\", kTlpSlideUp            },
+        {               "h", kTlpHammerOn           },
+        {               "p", kTlpPullOff            },
+        {        ".tunning", kTlpTunning            },
+        {        ".literal", kTlpLiteral            },
+        {               "|", kTlpSepBar             },
+        {               "b", kTlpBend               },
+        {               "r", kTlpReleaseBend        },
+        {               "T", kTlpTapping            },
+        {               "*", kTlpNaturalHarmonic    },
+        {               "v", kTlpArtificialHarmonic },
+        {               "@", kTlpOnceMore           },
+        {           ".part", kTlpPart               },
+        {         ".repeat", kTlpRepeat             },
+        {           ".song", kTlpSong               },
+        {    ".transcriber", kTlpTranscriber        }
+    };
+    const size_t expected_nr = sizeof(expected) / sizeof(expected[0]);
+    size_t e;
+    const char *tag = NULL;
+    for (e = 0; e < expected_nr; e++) {
+        tag = get_cmd_tag_from_cmd_code(expected[e].code);
+        CUTE_ASSERT(tag != NULL);
+        CUTE_ASSERT(strcmp(tag, expected[e].tag) == 0);
+    }
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(tulips_tester_monkey)
     CUTE_RUN_TEST(base_tulip_technique_stack_ctx_tests);
     CUTE_RUN_TEST(base_tulip_single_note_ctx_tests);
     CUTE_RUN_TEST(base_tulip_part_ctx_tests);
@@ -559,6 +604,7 @@ CUTE_TEST_CASE(tulip_tests)
     CUTE_RUN_TEST(dsl_parser_get_curr_code_line_number_tests);
     CUTE_RUN_TEST(dsl_utils_tlp_cmd_code_to_plain_index_tests);
     CUTE_RUN_TEST(dsl_utils_demux_tlp_commands_tests);
+    CUTE_RUN_TEST(dsl_utils_get_cmd_tag_from_cmd_code_tests);
     CUTE_RUN_TEST(dsl_compiler_compile_tulip_codebuf);
     //  WARN(Santiago): It is important to run the following test after
     //                  the test "dsl_utils_tlp_cmd_code_to_plain_index_tests"
@@ -574,4 +620,4 @@ CUTE_TEST_CASE(tulip_tests)
     CUTE_RUN_TEST(system_tulip_task_exec_tests);
 CUTE_TEST_CASE_END
 
-CUTE_MAIN(tulip_tests);
+CUTE_MAIN(tulips_tester_monkey);

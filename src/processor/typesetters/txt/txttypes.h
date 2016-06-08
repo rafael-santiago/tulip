@@ -34,6 +34,8 @@ typedef struct _txttypesetter_tablature_ctx {
     char *times;
     char *strings[6];
     char tunning[6][23];
+    char *song;
+    char *transcriber;
     size_t curr_row;
     size_t curr_str;
     size_t fretboard_sz;

@@ -83,4 +83,6 @@ int is_valid_note_cipher(const char *cipher);
 
 tulip_command_t *demux_tlp_commands(const tulip_command_t commands, size_t *array_size);
 
+const char *get_cmd_tag_from_cmd_code(const tulip_command_t cmd);
+
 #endif

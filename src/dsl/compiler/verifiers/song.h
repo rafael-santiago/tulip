@@ -5,11 +5,11 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#ifndef TULIP_DSL_STR_STRUTILS_H
-#define TULIP_DSL_STR_STRUTILS_H 1
+#ifndef TULIP_DSL_COMPILER_VERIFIERS_SONG_H
+#define TULIP_DSL_COMPILER_VERIFIERS_SONG_H 1
 
-int is_valid_string(const char *buf);
+#include <base/types.h>
 
-char *expand_string(const char *buf);
+int song_tag_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next);
 
 #endif

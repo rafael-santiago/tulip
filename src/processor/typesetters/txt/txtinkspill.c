@@ -21,6 +21,10 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
 
 static void txttypesetter_spill_times(FILE *fp, const char *times);
 
+static void txttypesetter_spill_song_title(FILE *fp, const char *song);
+
+static void txttypesetter_spill_transcribers_name(FILE *fp, const char *transcriber);
+
 static void txttypesetter_init_settings();
 
 struct txttypesetter_curr_settings {
@@ -120,23 +124,48 @@ static void txttypesetter_spill_times(FILE *fp, const char *times) {
     }
 }
 
+static void txttypesetter_spill_song_title(FILE *fp, const char *song) {
+    if (song == NULL) {
+        return;
+    }
+    fprintf(fp, "Song: %s\n", song);
+}
+
+static void txttypesetter_spill_transcribers_name(FILE *fp, const char *transcriber) {
+    if (transcriber == NULL) {
+        return;
+    }
+    fprintf(fp, "Transcribed by: %s\n\n", transcriber);
+}
+
 int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab) {
     FILE *fp = NULL;
     const txttypesetter_tablature_ctx *tp = NULL;
+
     if (filepath == NULL || tab == NULL) {
         return 0;
     }
+
     fp = fopen(filepath, "w");
+
     if (fp == NULL) {
         return 0;
     }
-    //  TODO(Santiago): Handle the minor things like song title, author name, etc.
+
+    txttypesetter_spill_song_title(fp, tab->song);
+    txttypesetter_spill_transcribers_name(fp, tab->transcriber);
+    if (tab->song != NULL && tab->transcriber == NULL) {
+        fprintf(fp, "\n");
+    }
+
     for (tp = tab; tp != NULL; tp = tp->next) {
         txttypesetter_spill_comments(fp, tp->comments);
         txttypesetter_spill_sustained_techniques(fp, tp->techniques);
         txttypesetter_spill_times(fp, tp->times);
         txttypesetter_spill_fretboard_pinches(fp, tp);
     }
+
     fclose(fp);
+
     return 1;
 }
