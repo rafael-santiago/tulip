@@ -175,13 +175,9 @@ int oncemore_verifier(const char *buf, char *error_message, tulip_single_note_ct
         mp = (*song);
     }
 
-    //  INFO(Santiago): For our mirroring at least mp_end must be added to the song context.
+    //  INFO(Santiago): For our mirroring at least mp_end will be added to the song context.
 
-    while (mp != mp_end) {
-        (*song) = add_note_to_tulip_single_note_ctx((*song), mp->techniques, mp->buf);
-        mp = mp->next;
-    }
-    (*song) = add_note_to_tulip_single_note_ctx((*song), mp_end->techniques , mp_end->buf);
+    tulip_single_note_ctx_cpy(song, mp, mp_end);
     (*next) = buf + 1;
 
     return 1;

@@ -32,15 +32,15 @@ int part_tag_verifier(const char *buf, char *error_message, tulip_single_note_ct
     bp_end = get_next_tlp_technique_block_end(buf);
 
     memset(label, 0, sizeof(label));
+    bp++;
     memcpy(label, bp, (bp_end - bp) % sizeof(label));
 
-    bp++;
-
     while (bp != bp_end) {
-        if (!(isascii(*bp) && !is_string_delim(*bp))) {
+        if (!(isascii(*bp) && !is_string_delim(*bp) && !is_technique_block_begin(*bp) && !is_technique_block_end(*bp))) {
             tlperr_s(error_message, "The part label has a invalid character : %s", label);
             return 0;
         }
+        bp++;
     }
 
     if (get_tulip_part_ctx(label, get_parts_listing()) != NULL) {
@@ -49,7 +49,7 @@ int part_tag_verifier(const char *buf, char *error_message, tulip_single_note_ct
 
     for (end = (*song); end->next != NULL; end = end->next);
 
-    if (end->last != NULL) {
+    if (end->last == NULL) {
         tlperr_s(error_message, "Insufficient notes to make a part called \"%s\".", label);
         return 0;
     }

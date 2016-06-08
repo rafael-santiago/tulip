@@ -32,6 +32,7 @@
 #include <dsl/compiler/verifiers/times.h>
 #include <dsl/compiler/verifiers/oncemore.h>
 #include <dsl/compiler/verifiers/part.h>
+#include <dsl/compiler/verifiers/repeat.h>
 #include <dsl/parser/parser.h>
 #include <dsl/utils.h>
 #include <base/ctx.h>
@@ -90,7 +91,7 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpArtificialHarmonic, artificialharmonic_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpOnceMore, oncemore_verifier),
     tlp_compiler_register_cmd_verifier(kTlpPart, part_tag_verifier),
-    tlp_compiler_register_cmd_verifier(kTlpRepeat, NULL)
+    tlp_compiler_register_cmd_verifier(kTlpRepeat, repeat_tag_verifier)
 };
 
 size_t g_tlp_cmd_verifiers_nr = sizeof(g_tlp_cmd_verifiers) / sizeof(g_tlp_cmd_verifiers[0]);

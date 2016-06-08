@@ -87,6 +87,26 @@ static tulip_single_note_ctx *get_tulip_single_note_ctx_tail(tulip_single_note_c
     return p;
 }
 
+void tulip_single_note_ctx_cpy(tulip_single_note_ctx **song, const tulip_single_note_ctx *begin, const tulip_single_note_ctx *end) {
+    const tulip_single_note_ctx *bp = NULL;
+    if (song == NULL || begin == NULL || end == NULL) {
+        return;
+    }
+
+    bp = begin;
+
+    while (bp != end) {
+        if (bp->techniques != kTlpSavePoint) {
+            (*song) = add_note_to_tulip_single_note_ctx((*song), bp->techniques, bp->buf);
+        }
+        bp = bp->next;
+    }
+
+    if (end->techniques != kTlpSavePoint) {
+        (*song) = add_note_to_tulip_single_note_ctx((*song), end->techniques , end->buf);
+    }
+}
+
 void free_tulip_single_note_ctx(tulip_single_note_ctx *song) {
     tulip_single_note_ctx *t, *p;
     for (t = p = song; t; p = t) {

@@ -22,6 +22,8 @@ void free_technique_stack_ctx(tulip_technique_stack_ctx *stack);
 
 tulip_single_note_ctx *add_note_to_tulip_single_note_ctx(tulip_single_note_ctx *song, tulip_command_t techniques, const char *buf);
 
+void tulip_single_note_ctx_cpy(tulip_single_note_ctx **song, const tulip_single_note_ctx *begin, const tulip_single_note_ctx *end);
+
 void free_tulip_single_note_ctx(tulip_single_note_ctx *song);
 
 tulip_part_ctx *get_tulip_part_ctx(const char *label, tulip_part_ctx *parts);
