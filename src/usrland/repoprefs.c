@@ -36,13 +36,16 @@ void ld_repo_prefs() {
     lp_end = lp + sizeof(line);
     while (fb != fb_end) {
         if ((*fb == '\n' || *fb == '\r' || fb + 1 == fb_end) && lp != &line[0]) {
-            if (fb + 1 == fb_end) {
+            if (fb + 1 == fb_end && *fb != '\n' && *fb != '\r') {
                 *lp = *fb;
                 lp++;
             }
             *lp = 0;
             lp = &line[0];
             setting = usropt2tlpopt(lp);
+            if (setting == NULL) {
+                continue;
+            }
             set_processor_setting(setting->option, setting->data, setting->dsize);
             free_usropt2tlpopt_ctx(setting);
         } else {

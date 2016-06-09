@@ -40,17 +40,21 @@ static const g_tlpopt_callvect_nr = sizeof(g_tlpopt_callvect) / sizeof(g_tlpopt_
 static struct usropt2tlpopt_ctx *get_tlpopt(const char *option, const char *entire_buf) {
     const char *op = option;
     size_t c = 0;
+
     if (op == NULL || entire_buf == NULL) {
         return NULL;
     }
+
     while (*op == '-' && *op != 0) {
         op++;
     }
+
     for (c = 0; c < g_tlpopt_callvect_nr; c++) {
         if (strcmp(op, g_tlpopt_callvect[c].option) == 0) {
             return g_tlpopt_callvect[c].get(op, entire_buf);
         }
     }
+
     return NULL;
 }
 
@@ -62,7 +66,7 @@ static struct usropt2tlpopt_ctx *get_size_t(const char *option, const char *enti
     if (option == NULL || entire_buf == NULL) {
         return NULL;
     }
-    p = entire_buf + strlen(option);
+    p = entire_buf;
     if (*p == '=') {
         p++;
     }
@@ -74,13 +78,18 @@ static struct usropt2tlpopt_ctx *get_size_t(const char *option, const char *enti
         p++;
     }
     *bp = 0;
+
     opt = (struct usropt2tlpopt_ctx *)getseg(sizeof(struct usropt2tlpopt_ctx));
+
     opt->option = (char *)getseg((t = strlen(option) + 1));
     memset(opt->option, 0, t);
     memcpy(opt->option, option, t);
+
     opt->data = getseg(sizeof(size_t));
     opt->dsize = sizeof(size_t);
+
     *(size_t *)opt->data = atoi(buf);
+
     return opt;
 }
 
@@ -98,9 +107,11 @@ static struct usropt2tlpopt_ctx *get_tulip_prefs_map_t(const char *option, const
     size_t b;
     tulip_prefs_map_t pref = 1;
     struct usropt2tlpopt_ctx *opt = NULL;
-    if (option == NULL || entire_buf) {
+
+    if (option == NULL || entire_buf == NULL) {
         return;
     }
+
     for (b = 0; b < bitmap_options_nr; b++) {
         if (bitmap_options == NULL) {
             continue;
@@ -109,6 +120,7 @@ static struct usropt2tlpopt_ctx *get_tulip_prefs_map_t(const char *option, const
             break;
         }
     }
+
     if (strcmp(entire_buf, "1")    == 0  ||
         strcmp(entire_buf, "yes")  == 0  ||
         strcmp(entire_buf, "true") == 0  ||
@@ -118,15 +130,20 @@ static struct usropt2tlpopt_ctx *get_tulip_prefs_map_t(const char *option, const
                strcmp(entire_buf, "no")    == 0 ||
                strcmp(entire_buf, "false") == 0 ||
                strcmp(entire_buf, "off")   == 0) {
-        pref &= ~(pref << b);
+        pref = ~(pref << b);
     }
+
     opt = (struct usropt2tlpopt_ctx *)getseg(sizeof(struct usropt2tlpopt_ctx));
+
     opt->option = (char *)getseg((b = strlen(option) + 1));
     memset(opt->option, 0, b);
     memcpy(opt->option, option, b);
+
     opt->data = getseg(sizeof(tulip_prefs_map_t));
     opt->dsize = sizeof(tulip_prefs_map_t);
+
     *(tulip_prefs_map_t *)opt->data = pref;
+
     return opt;
 }
 
@@ -174,6 +191,6 @@ struct usropt2tlpopt_ctx *usropt2tlpopt(const char *data) {
         dp++;
     }
     memset(option, 0, sizeof(option));
-    memcpy(option, data, dp_end - dp - (*dp == '='));
+    memcpy(option, data, dp - data);
     return get_tlpopt(option, dp + (*dp == '='));
 }
