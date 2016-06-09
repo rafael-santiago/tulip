@@ -44,14 +44,18 @@ int tunning_tag_verifier(const char *buf, char *error_message, tulip_single_note
 
     cp = &cipher[0];
     cp_end = cp + sizeof(cipher);
-
+    bp++;
     while (bp != bp_end) {
         if (cp == cp_end) {
             *cp = 0;
             tlperr_s(error_message, "Too long tunning sequence: %s.", cipher);
             return 0;
         }
-        if (is_sep(*bp)) {
+        if (is_sep(*bp) || (bp + 1) == bp_end) {
+            if ((bp + 1) == bp_end) {
+                *cp = *bp;
+                cp++;
+            }
             *cp = 0;
             if (!is_valid_note_cipher(cipher)) {
                 tlperr_s(error_message, "Invalid note cipher: %s.", cipher);
@@ -60,15 +64,15 @@ int tunning_tag_verifier(const char *buf, char *error_message, tulip_single_note
             strncat(tunning, cipher, sizeof(tunning) - 1);
             strncat(tunning, "-", sizeof(tunning) - 1);
             cp = &cipher[0];
-        } else if (isalpha(*cp)) {
+        } else {
             *cp = *bp;
+            cp++;
         }
-        cp++;
         bp++;
     }
 
     (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpTunning, cipher);
-    (*next) = bp;
+    (*next) = bp_end;
 
     return 1;
 }

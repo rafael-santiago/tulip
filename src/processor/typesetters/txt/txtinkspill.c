@@ -15,11 +15,11 @@
 
 static void txttypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ctx *comments);
 
-static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_sustained_technique_ctx *techniques);
+static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_sustained_technique_ctx *techniques, const char tunning[6][4]);
 
 static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
-static void txttypesetter_spill_times(FILE *fp, const char *times);
+static void txttypesetter_spill_times(FILE *fp, const char *times, const char tunning[6][4]);
 
 static void txttypesetter_spill_song_title(FILE *fp, const char *song);
 
@@ -43,7 +43,7 @@ static void txttypesetter_init_settings() {
 
     g_txttypesetter_settings.indentation_deepness = (data == NULL) ? 0 : *(size_t *)data;
 
-    data = get_processor_setting("close-tab-to-save", NULL);
+    data = get_processor_setting("prefs", NULL);
     if (data != NULL) {
         g_txttypesetter_settings.prefs = *(tulip_prefs_map_t *)data;
     }
@@ -113,12 +113,22 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
     fprintf(fp, "\n");
 }
 
-static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_sustained_technique_ctx *techniques) {
+static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_sustained_technique_ctx *techniques, const char tunning[6][4]) {
     const txttypesetter_sustained_technique_ctx *tp = NULL;
     size_t i = 0;
+    int has_half_step_notes = 0;
+
+    if (g_txttypesetter_settings.prefs & kTlpPrefsShowTunning) {
+        for (i = 0; i < 6 && !has_half_step_notes; i++) {
+            has_half_step_notes = (strlen(tunning[i]) == 2);
+        }
+    }
 
     for (tp = techniques; tp != NULL; tp = tp->next) {
         for (i = 0; i < g_txttypesetter_settings.indentation_deepness; i++) {
+            fprintf(fp, " ");
+        }
+        if (has_half_step_notes) {
             fprintf(fp, " ");
         }
         fprintf(fp, "%s\n", tp->data);
@@ -141,13 +151,20 @@ static void txttypesetter_spill_comments(FILE *fp, const txttypesetter_comment_c
     }
 }
 
-static void txttypesetter_spill_times(FILE *fp, const char *times) {
+static void txttypesetter_spill_times(FILE *fp, const char *times, const char tunning[6][4]) {
     const char *tp = times;
     int print_times = 0;
     size_t i = 0;
+    int has_half_step_notes = 0;
 
     if (tp == NULL) {
         return;
+    }
+
+    if (g_txttypesetter_settings.prefs & kTlpPrefsShowTunning) {
+        for (i = 0; i < 6 && !has_half_step_notes; i++) {
+            has_half_step_notes = (strlen(tunning[i]) == 2);
+        }
     }
 
     while (*tp != 0 && !print_times) {
@@ -157,6 +174,9 @@ static void txttypesetter_spill_times(FILE *fp, const char *times) {
 
     if (print_times) {
         for (i = 0; i < g_txttypesetter_settings.indentation_deepness; i++) {
+            fprintf(fp, " ");
+        }
+        if (has_half_step_notes) {
             fprintf(fp, " ");
         }
         fprintf(fp, "%s\n", times);
@@ -201,8 +221,8 @@ int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
 
     for (tp = tab; tp != NULL; tp = tp->next) {
         txttypesetter_spill_comments(fp, tp->comments);
-        txttypesetter_spill_sustained_techniques(fp, tp->techniques);
-        txttypesetter_spill_times(fp, tp->times);
+        txttypesetter_spill_sustained_techniques(fp, tp->techniques, tp->tunning);
+        txttypesetter_spill_times(fp, tp->times, tp->tunning);
         txttypesetter_spill_fretboard_pinches(fp, tp);
     }
 

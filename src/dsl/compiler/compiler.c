@@ -237,7 +237,9 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
             }
 
             if (compilation_status) {
-                sprintf(message_buf, "tulip INFO: compilation success.\n");
+                if (message_buf != NULL) {
+                    sprintf(message_buf, "tulip INFO: compilation success.\n");
+                }
             }
 
         }

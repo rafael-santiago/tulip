@@ -41,21 +41,17 @@ static void *get_tulip_bitmap(size_t *dsize);
 #define register_new_processor_setting(s, ss, g) { (s), (ss), (g) }
 
 static struct processor_setting_handler_ctx g_processor_setting_handlers[] = {
+    register_new_processor_setting("prefs", set_tulip_bitmap, get_tulip_bitmap),
+    register_new_processor_setting("tunning", set_tunning, get_tunning),
     register_new_processor_setting("fretboard-size", set_fretboard_size, get_fretboard_size),
-    register_new_processor_setting("fretboard-style", set_tulip_bitmap, get_tulip_bitmap),
-    register_new_processor_setting("close-tab-to-save", set_tulip_bitmap, get_tulip_bitmap),
-    register_new_processor_setting("indentation-deepness", set_indentation_deepness, get_indentation_deepness),
-    register_new_processor_setting("include-tab-notation", set_tulip_bitmap, get_tulip_bitmap),
-    register_new_processor_setting("cut-tab-on-the-last-note", set_tulip_bitmap, get_tulip_bitmap),
-    register_new_processor_setting("add-tunning-to-the-fretboard", set_tulip_bitmap, get_tulip_bitmap),
-    register_new_processor_setting("tunning", set_tunning, get_tunning)
+    register_new_processor_setting("indentation-deepness", set_indentation_deepness, get_indentation_deepness)
 };
 
 const size_t g_processor_setting_handlers_nr = sizeof(g_processor_setting_handlers) / sizeof(g_processor_setting_handlers[0]);
 
 #define DEFAULT_TULIP_PROCESSOR_SETTINGS { kTlpPrefsCutTabOnTheLastNote   |\
                                            kTlpPrefsCloseTabToSave        |\
-                                           kTlpPrefsFretboardStyleNormal, 80, {"e", "B", "G", "D", "A", "E"}, 8 }
+                                           kTlpPrefsFretboardStyleNormal, 80, { "e", "B", "G", "D", "A", "E"}, 8 }
 
 static struct processor_settings_ctx g_processor_settings = DEFAULT_TULIP_PROCESSOR_SETTINGS;
 
@@ -87,11 +83,6 @@ void set_processor_setting(const char *setting, const void *data, const size_t d
         handler->set(data, dsize);
     }
 
-    if (g_processor_settings.prefs & kTlpPrefsFretboardStyleContinuous) {
-        g_processor_settings.prefs &= ~kTlpPrefsFretboardStyleNormal;
-    } else if ((g_processor_settings.prefs & kTlpPrefsFretboardStyleNormal) == 0) {
-        g_processor_settings.prefs |= kTlpPrefsFretboardStyleNormal;
-    }
 }
 
 void *get_processor_setting(const char *setting, size_t *dsize) {
@@ -122,27 +113,44 @@ static void set_tunning(const void *data, const size_t dsize) {
     const char *buf = NULL;
     const char *bp = NULL;
     const char *bp_end = NULL;
-    size_t t = 0, s = 0;
+    size_t t = 0, s = 5;
+    int has_half_step_notes = 0;
+
     if (data == NULL) {
         return;
     }
+
     buf = (char *)data;
     bp = buf;
     bp_end = bp + strlen(bp);
-    while (bp != bp_end) {
+
+    while (bp != bp_end && s >= 0) {
         if (*bp == '-' || (bp + 1) == bp_end) {
             if ((bp + 1) == bp_end) {
-                t = (t + 1) % sizeof(g_processor_settings.tunning[0]);
                 g_processor_settings.tunning[s][t] = *bp;
+                t = (t + 1) % sizeof(g_processor_settings.tunning[0]);
             }
             g_processor_settings.tunning[s][t] = 0;
-            s++;
+            if (strlen(g_processor_settings.tunning[s]) == 2) {
+                has_half_step_notes = 1;
+            }
+            s--;
             t = 0;
         } else {
             g_processor_settings.tunning[s][t] = *bp;
             t = (t + 1) % sizeof(g_processor_settings.tunning[0]);
         }
         bp++;
+    }
+
+    if (has_half_step_notes) {
+        s = 0;
+        while (s < 6) {
+            if (strlen(g_processor_settings.tunning[s]) == 1) {
+                strncat(g_processor_settings.tunning[s], " ", sizeof(g_processor_settings.tunning[s]) - 1);
+            }
+            s++;
+        }
     }
 }
 

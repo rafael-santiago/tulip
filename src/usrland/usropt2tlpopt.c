@@ -8,7 +8,9 @@
 #include <usrland/usropt2tlpopt.h>
 #include <base/memory.h>
 #include <base/types.h>
+#include <dsl/compiler/compiler.h>
 #include <string.h>
+#include <stdio.h>
 
 static struct usropt2tlpopt_ctx *get_tlpopt(const char *option, const char *entire_buf);
 
@@ -17,6 +19,8 @@ static struct usropt2tlpopt_ctx *get_size_t(const char *option, const char *enti
 static struct usropt2tlpopt_ctx *get_tulip_prefs_map_t(const char *option, const char *entire_buf);
 
 static struct usropt2tlpopt_ctx *get_fretboard_style_t(const char *option, const char *entire_buf);
+
+static struct usropt2tlpopt_ctx *get_tunning(const char *option, const char *entire_buf);
 
 struct get_tlpopt_callvect {
     const char *option;
@@ -33,6 +37,7 @@ static struct get_tlpopt_callvect g_tlpopt_callvect[] = {
     register_new_tlpopt_callout("include-tab-notation", get_tulip_prefs_map_t),
     register_new_tlpopt_callout("cut-tab-on-the-last-note", get_tulip_prefs_map_t),
     register_new_tlpopt_callout("add-tunning-to-the-fretboard", get_tulip_prefs_map_t),
+    register_new_tlpopt_callout("tunning", get_tunning),
 };
 
 static const g_tlpopt_callvect_nr = sizeof(g_tlpopt_callvect) / sizeof(g_tlpopt_callvect[0]);
@@ -56,6 +61,39 @@ static struct usropt2tlpopt_ctx *get_tlpopt(const char *option, const char *enti
     }
 
     return NULL;
+}
+
+static struct usropt2tlpopt_ctx *get_tunning(const char *option, const char *entire_buf) {
+    struct usropt2tlpopt_ctx *opt = NULL;
+    size_t t = 0;
+    char buf[255] = "";
+    const char *bp = NULL;
+    tulip_single_note_ctx *tunning = NULL;
+    int is_ok = 0;
+
+    if (option == NULL || entire_buf == NULL) {
+        return NULL;
+    }
+
+    sprintf(buf, ".tunning{%s}", entire_buf);
+    is_ok = compile_tulip_codebuf(buf, NULL, &tunning, &bp);
+    if (!is_ok) {
+        return;
+    }
+    free_tulip_single_note_ctx(tunning);
+
+    opt = (struct usropt2tlpopt_ctx *)getseg(sizeof(struct usropt2tlpopt_ctx));
+
+    opt->option = (char *)getseg((t = strlen(option) + 1));
+    memset(opt->option, 0, t);
+    memcpy(opt->option, option, t);
+
+    opt->dsize = strlen(entire_buf);
+    opt->data = getseg(opt->dsize + 1);
+    memset(opt->data, 0, opt->dsize + 1);
+    memcpy(opt->data, entire_buf, opt->dsize);
+
+    return opt;
 }
 
 static struct usropt2tlpopt_ctx *get_size_t(const char *option, const char *entire_buf) {
@@ -135,9 +173,9 @@ static struct usropt2tlpopt_ctx *get_tulip_prefs_map_t(const char *option, const
 
     opt = (struct usropt2tlpopt_ctx *)getseg(sizeof(struct usropt2tlpopt_ctx));
 
-    opt->option = (char *)getseg((b = strlen(option) + 1));
-    memset(opt->option, 0, b);
-    memcpy(opt->option, option, b);
+    opt->option = (char *)getseg(32);
+    memset(opt->option, 0, 32);
+    strncpy(opt->option, "prefs", 31);
 
     opt->data = getseg(sizeof(tulip_prefs_map_t));
     opt->dsize = sizeof(tulip_prefs_map_t);
@@ -150,22 +188,25 @@ static struct usropt2tlpopt_ctx *get_tulip_prefs_map_t(const char *option, const
 static struct usropt2tlpopt_ctx *get_fretboard_style_t(const char *option, const char *entire_buf) {
     struct usropt2tlpopt_ctx *opt = NULL;
     tulip_prefs_map_t pref = 0;
+
     if (entire_buf == NULL || option == NULL) {
         return NULL;
     }
+
     if (strcmp(option, "fretboard-style") != 0) {
         return NULL;
     }
+
     if (strstr(entire_buf, "normal") == entire_buf) {
-        pref = kTlpPrefsFretboardStyleNormal;
+        pref = kTlpPrefsFretboardStyleNormal | (~kTlpPrefsFretboardStyleContinuous);
     } else if (strstr(entire_buf, "continuous") == entire_buf) {
-        pref = kTlpPrefsFretboardStyleContinuous;
+        pref = kTlpPrefsFretboardStyleContinuous | (~kTlpPrefsFretboardStyleNormal);
     }
 
     opt = (struct usropt2tlpopt_ctx *)getseg(sizeof(struct usropt2tlpopt_ctx));
 
-    opt->option = (char *)getseg(40);
-    strncpy(opt->option, "fretboard-style", 40);
+    opt->option = (char *)getseg(32);
+    strncpy(opt->option, "prefs", 31);
 
     opt->data = getseg(sizeof(tulip_prefs_map_t));
     opt->dsize = sizeof(tulip_prefs_map_t);
