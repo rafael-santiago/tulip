@@ -29,7 +29,18 @@ int part_tag_verifier(const char *buf, char *error_message, tulip_single_note_ct
     }
 
     bp = get_next_tlp_technique_block_begin(buf);
+
+    if (bp == NULL) {
+        tlperr_s(error_message, "A tag part without code listing.");
+        return 0;
+    }
+
     bp_end = get_next_tlp_technique_block_end(buf);
+
+    if (bp_end == NULL) {
+        tlperr_s(error_message, "Unterminated part tag.");
+        return 0;
+    }
 
     memset(label, 0, sizeof(label));
     bp++;

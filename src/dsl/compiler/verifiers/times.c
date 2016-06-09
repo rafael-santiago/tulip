@@ -27,7 +27,18 @@ int times_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
     }
 
     bp = get_next_tlp_technique_block_begin(buf);
+
+    if (bp == NULL) {
+        tlperr_s(error_message, "A tag times without code listing.");
+        return 0;
+    }
+
     bp_end = get_next_tlp_technique_block_end(buf);
+
+    if (bp_end == NULL) {
+        tlperr_s(error_message, "Unterminated tag times.");
+        return 0;
+    }
 
     if (bp == bp_end) {
         tlperr_s(error_message, "A valid number of times was expected.");

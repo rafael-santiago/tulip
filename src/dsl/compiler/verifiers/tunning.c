@@ -18,17 +18,33 @@ int tunning_tag_verifier(const char *buf, char *error_message, tulip_single_note
     char cipher[255] = "";
     char tunning[255] = "";
     char *cp = NULL, *cp_end = NULL;
+
     if (buf == NULL || song == NULL || next == NULL) {
         return 0;
     }
+
     if (get_cmd_code_from_cmd_tag(buf) != kTlpTunning) {
         tlperr_s(error_message, "The tag tunning was expected.");
         return 0;
     }
+
     bp = get_next_tlp_technique_block_begin(buf);
+
+    if (bp == NULL) {
+        tlperr_s(error_message, "A tag tunning without code listing.");
+        return 0;
+    }
+
     bp_end = get_next_tlp_technique_block_end(buf);
+
+    if (bp_end == NULL) {
+        tlperr_s(error_message, "Unterminated tag tunning.");
+        return 0;
+    }
+
     cp = &cipher[0];
     cp_end = cp + sizeof(cipher);
+
     while (bp != bp_end) {
         if (cp == cp_end) {
             *cp = 0;
@@ -50,7 +66,9 @@ int tunning_tag_verifier(const char *buf, char *error_message, tulip_single_note
         cp++;
         bp++;
     }
+
     (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpTunning, cipher);
     (*next) = bp;
+
     return 1;
 }

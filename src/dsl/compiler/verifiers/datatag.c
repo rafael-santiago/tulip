@@ -29,10 +29,18 @@ int datatag_verifier(const tulip_command_t command, const char *buf, char *error
     }
 
     bp = get_next_tlp_technique_block_begin(buf);
+
+    if (bp == NULL) {
+        tag = get_cmd_tag_from_cmd_code(command);
+        tlperr_s(error_message, "A tag %s without code listing.", (tag == NULL || strlen(tag) == 1) ? tag : tag + 1);
+        return 0;
+    }
+
     bp_end = get_next_tlp_technique_block_end(buf);
 
     if (bp_end == NULL) {
-        tlperr_s(error_message, "Unterminated string.");
+        tag = get_cmd_tag_from_cmd_code(command);
+        tlperr_s(error_message, "Unterminated %s tag.", (tag == NULL || strlen(tag) == 1) ? tag : tag + 1);
         return 0;
     }
 

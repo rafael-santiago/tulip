@@ -14,11 +14,14 @@ int bend_sep_verifier(const char *buf, char *error_message, tulip_single_note_ct
     if (buf == NULL || song == NULL || next == NULL) {
         return 0;
     }
+
     if (get_cmd_code_from_cmd_tag(buf) != kTlpBend) {
         tlperr_s(error_message, "The bend separator was expected.");
         return 0;
     }
+
     (*song) = add_note_to_tulip_single_note_ctx((*song), get_used_techniques() | kTlpBend, NULL);
     (*next) = buf + 1;
+
     return 1;
 }

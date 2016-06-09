@@ -14,9 +14,11 @@ int tremolopicking_tag_verifier(const char *buf, char *error_message, tulip_sing
     if (buf == NULL || song == NULL || next == NULL) {
         return 0;
     }
+
     if (get_cmd_code_from_cmd_tag(buf) != kTlpTremoloPicking) {
         tlperr_s(error_message, "The .tremolopicking tag was expected.");
         return 0;
     }
+
     return undo_recursion(kTlpTremoloPicking, buf, error_message, song, next);
 }

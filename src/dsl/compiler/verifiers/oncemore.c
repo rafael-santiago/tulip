@@ -18,9 +18,11 @@ static int are_similar_hashes(const tulip_command_t *a, const size_t a_s, const 
 static int are_similar_hashes(const tulip_command_t *a, const size_t a_s, const tulip_command_t *b, const size_t b_s) {
     size_t a_c = 0, b_c = 0;
     int equals_nr = 0;
+
     if (a == NULL || b == NULL) {
         return 1;
     }
+
     for (a_c = 0; a_c < a_s; a_c++) {
         if (a[a_c] == kTlpNone) {
             continue;
@@ -32,6 +34,7 @@ static int are_similar_hashes(const tulip_command_t *a, const size_t a_s, const 
             equals_nr += (a[a_c] == b[b_c]);
         }
     }
+
     return (equals_nr == 0);
 }
 

@@ -14,9 +14,11 @@ int mute_tag_verifier(const char *buf, char *error_message, tulip_single_note_ct
     if (buf == NULL || song == NULL || next == NULL) {
         return 0;
     }
+
     if (get_cmd_code_from_cmd_tag(buf) != kTlpMute) {
         tlperr_s(error_message, "The tag .mute was expected.");
         return 0;
     }
+
     return undo_recursion(kTlpMute, buf, error_message, song, next);
 }

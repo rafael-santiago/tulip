@@ -17,25 +17,40 @@ int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
     const char *bp_end = NULL;
     char note[255] = "", *np, *np_end = NULL;
     tulip_single_note_ctx *sp = NULL;
+
     if (song == NULL || next == NULL || buf == NULL) {
         return 0;
     }
+
     sp = *song;
+
     if (get_cmd_code_from_cmd_tag(buf) != kTlpChord) {
         tlperr_s(error_message, ".chord was expected.");
         return 0;
     }
+
     bp = get_next_tlp_technique_block_begin(buf);
+
     if (bp == NULL) {
-        tlperr_s(error_message, ".chord tag without note listing.");
+        tlperr_s(error_message, "A chord tag without note listing.");
         return 0;
     }
+
     bp++;
+
     (*next) = bp;
     bp_end = get_next_tlp_technique_block_end(buf);
+
+    if (bp_end == NULL) {
+        tlperr_s(error_message, "Unterminated chord tag.");
+        return 0;
+    }
+
     push_technique(kTlpChord);
+
     np = &note[0];
     np_end = np + sizeof(note);
+
     while (bp < bp_end) {
         //  WARN(Santiago): This tag disallow recursion so here we do not need to worry about
         //                  block ending or new tag announcement.
@@ -43,10 +58,12 @@ int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
             tlperr_s(error_message, "The current note is too long.");
             return 0;
         }
+
         if (is_blank(*bp)) {
             bp++;
             continue;
         }
+
         if (is_sep(*bp) && np != &note[0]) { // INFO(Santiago): It is legal productions like this: .chord{60-52-42---31}
             *np = 0;
             if (!is_single_note(note)) {
@@ -70,8 +87,11 @@ int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
                 np++;
             }
         }
+
         bp++;
     }
+
     (*song) = add_note_to_tulip_single_note_ctx((*song), get_used_techniques() | kTlpChord, NULL);
+
     return 1;
 }

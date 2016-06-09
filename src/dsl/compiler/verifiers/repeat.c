@@ -28,7 +28,19 @@ int repeat_tag_verifier(const char *buf, char *error_message, tulip_single_note_
     }
 
     bp = get_next_tlp_technique_block_begin(buf);
+
+    if (bp == NULL) {
+        tlperr_s(error_message, "A tag repeat without code listing.");
+        return 0;
+    }
+
     bp_end = get_next_tlp_technique_block_end(buf);
+
+    if (bp_end == NULL) {
+        tlperr_s(error_message, "Unterminated tag repeat.");
+        return 0;
+    }
+
     bp++;
     memset(label, 0, sizeof(label));
     memcpy(label, bp, (bp_end - bp) % sizeof(label));

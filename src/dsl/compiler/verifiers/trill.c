@@ -13,9 +13,11 @@ int trill_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
     if (buf == NULL || song == NULL || next == NULL) {
         return 0;
     }
+
     if (get_cmd_code_from_cmd_tag(buf) != kTlpTrill) {
         tlperr_s(error_message, "The .trill tag was expected.");
         return 0;
     }
+
     return undo_recursion(kTlpTrill, buf, error_message, song, next);
 }
