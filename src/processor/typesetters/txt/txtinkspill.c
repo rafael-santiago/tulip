@@ -35,17 +35,51 @@ struct txttypesetter_curr_settings {
 static struct txttypesetter_curr_settings g_txttypesetter_settings;
 
 static void txttypesetter_init_settings() {
-    // TODO(Santiago): Load the settings.
+    void *data = NULL;
+    char *bitmap_setting[] = {
+        "close-tab-to-save",
+        "fretboard-style",
+        "include-tab-notation",
+        "cut-tab-on-the-last-note",
+        "add-tunning-to-the-fretboard"
+    };
+    const size_t bitmap_settings_nr = sizeof(bitmap_setting) / sizeof(bitmap_setting[0]);
+    size_t b = 0;
+
+    g_txttypesetter_settings.prefs = 0;
+
+    data = get_processor_setting("indentation-deepness", NULL);
+
+    g_txttypesetter_settings.indentation_deepness = (data == NULL) ? 0 : *(size_t *)data;
+
+    for (b = 0; b < bitmap_settings_nr; b++) {
+        data = get_processor_setting(bitmap_setting[b], NULL);
+        if (data == NULL) {
+            continue;
+        }
+        g_txttypesetter_settings.prefs |= *(tulip_prefs_map_t *)data;
+    }
 }
 
 static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     size_t s = 0;
     size_t i = 0;
-    ssize_t s_limit = -1;
+    ssize_t s_limit = -1, real_s_limit = -1;
+    txttypesetter_sustained_technique_ctx *tp = NULL;
 
     if (g_txttypesetter_settings.prefs & kTlpPrefsCutTabOnTheLastNote) {
         for (s = 0; s < tab->string_nr; s++) {
+
             for (i = strlen(tab->strings[s]) - 1; i >= 0 && is_sep(tab->strings[s][i]); i--);
+
+            i++;
+
+            if (!is_sep(tab->strings[s][i - 1]) && !is_sep_bar(tab->strings[s][i - 1])) {
+                i++;
+            } else if (is_sep_bar(tab->strings[s][i - 1])) {
+                i--;
+            }
+
             if ((ssize_t)i > s_limit) {
                 s_limit = (ssize_t)i;
             }
@@ -67,7 +101,16 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
         if (s_limit == -1) {
             fprintf(fp, "%s", tab->strings[s]);
         } else {
-            fwrite(tab->strings[s], 1, s_limit, fp);
+            real_s_limit = s_limit;
+            for (tp = tab->techniques; tp != NULL; tp = tp->next) {
+                if (tp->data == NULL) {
+                    continue;
+                }
+                while (is_sustain(tp->data[real_s_limit])) {
+                    real_s_limit++;
+                }
+            }
+            fwrite(tab->strings[s], 1, real_s_limit, fp);
         }
 
         if ((g_txttypesetter_settings.prefs  & kTlpPrefsFretboardStyleNormal    ) ||
@@ -84,8 +127,12 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
 
 static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_sustained_technique_ctx *techniques) {
     const txttypesetter_sustained_technique_ctx *tp = NULL;
+    size_t i = 0;
 
     for (tp = techniques; tp != NULL; tp = tp->next) {
+        for (i = 0; i < g_txttypesetter_settings.indentation_deepness; i++) {
+            fprintf(fp, " ");
+        }
         fprintf(fp, "%s\n", tp->data);
     }
 
@@ -109,6 +156,7 @@ static void txttypesetter_spill_comments(FILE *fp, const txttypesetter_comment_c
 static void txttypesetter_spill_times(FILE *fp, const char *times) {
     const char *tp = times;
     int print_times = 0;
+    size_t i = 0;
 
     if (tp == NULL) {
         return;
@@ -120,6 +168,9 @@ static void txttypesetter_spill_times(FILE *fp, const char *times) {
     }
 
     if (print_times) {
+        for (i = 0; i < g_txttypesetter_settings.indentation_deepness; i++) {
+            fprintf(fp, " ");
+        }
         fprintf(fp, "%s\n", times);
     }
 }
@@ -151,6 +202,8 @@ int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
     if (fp == NULL) {
         return 0;
     }
+
+    txttypesetter_init_settings();
 
     txttypesetter_spill_song_title(fp, tab->song);
     txttypesetter_spill_transcribers_name(fp, tab->transcriber);
