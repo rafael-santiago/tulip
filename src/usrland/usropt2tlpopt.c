@@ -31,7 +31,7 @@ static struct get_tlpopt_callvect g_tlpopt_callvect[] = {
     register_new_tlpopt_callout("close-tab-to-save", get_tulip_prefs_map_t),
     register_new_tlpopt_callout("indentation-deepness", get_size_t),
     register_new_tlpopt_callout("include-tab-notation", get_tulip_prefs_map_t),
-    register_new_tlpopt_callout("cut-tab-on-last-note", get_tulip_prefs_map_t),
+    register_new_tlpopt_callout("cut-tab-on-the-last-note", get_tulip_prefs_map_t),
     register_new_tlpopt_callout("add-tunning-to-the-fretboard", get_tulip_prefs_map_t),
 };
 
@@ -156,17 +156,22 @@ static struct usropt2tlpopt_ctx *get_fretboard_style_t(const char *option, const
     if (strcmp(option, "fretboard-style") != 0) {
         return NULL;
     }
-    if (strstr(entire_buf, "styNormal") == entire_buf) {
+    if (strstr(entire_buf, "normal") == entire_buf) {
         pref = kTlpPrefsFretboardStyleNormal;
-    } else if (strstr(entire_buf, "styContinuous") == entire_buf) {
+    } else if (strstr(entire_buf, "continuous") == entire_buf) {
         pref = kTlpPrefsFretboardStyleContinuous;
     }
+
     opt = (struct usropt2tlpopt_ctx *)getseg(sizeof(struct usropt2tlpopt_ctx));
+
     opt->option = (char *)getseg(40);
     strncpy(opt->option, "fretboard-style", 40);
+
     opt->data = getseg(sizeof(tulip_prefs_map_t));
     opt->dsize = sizeof(tulip_prefs_map_t);
+
     *(tulip_prefs_map_t *)opt->data = pref;
+
     return opt;
 }
 

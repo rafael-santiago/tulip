@@ -45,5 +45,4 @@ void tulip_system_init(int argc, char **argv) {
             free_usropt2tlpopt_ctx(setting);
         }
     }
-
 }

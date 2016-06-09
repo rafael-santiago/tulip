@@ -36,15 +36,6 @@ static struct txttypesetter_curr_settings g_txttypesetter_settings;
 
 static void txttypesetter_init_settings() {
     void *data = NULL;
-    char *bitmap_setting[] = {
-        "close-tab-to-save",
-        "fretboard-style",
-        "include-tab-notation",
-        "cut-tab-on-the-last-note",
-        "add-tunning-to-the-fretboard"
-    };
-    const size_t bitmap_settings_nr = sizeof(bitmap_setting) / sizeof(bitmap_setting[0]);
-    size_t b = 0;
 
     g_txttypesetter_settings.prefs = 0;
 
@@ -52,12 +43,9 @@ static void txttypesetter_init_settings() {
 
     g_txttypesetter_settings.indentation_deepness = (data == NULL) ? 0 : *(size_t *)data;
 
-    for (b = 0; b < bitmap_settings_nr; b++) {
-        data = get_processor_setting(bitmap_setting[b], NULL);
-        if (data == NULL) {
-            continue;
-        }
-        g_txttypesetter_settings.prefs |= *(tulip_prefs_map_t *)data;
+    data = get_processor_setting("close-tab-to-save", NULL);
+    if (data != NULL) {
+        g_txttypesetter_settings.prefs = *(tulip_prefs_map_t *)data;
     }
 }
 

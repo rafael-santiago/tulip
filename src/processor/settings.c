@@ -46,7 +46,7 @@ static struct processor_setting_handler_ctx g_processor_setting_handlers[] = {
     register_new_processor_setting("close-tab-to-save", set_tulip_bitmap, get_tulip_bitmap),
     register_new_processor_setting("indentation-deepness", set_indentation_deepness, get_indentation_deepness),
     register_new_processor_setting("include-tab-notation", set_tulip_bitmap, get_tulip_bitmap),
-    register_new_processor_setting("cut-tab-on-last-note", set_tulip_bitmap, get_tulip_bitmap),
+    register_new_processor_setting("cut-tab-on-the-last-note", set_tulip_bitmap, get_tulip_bitmap),
     register_new_processor_setting("add-tunning-to-the-fretboard", set_tulip_bitmap, get_tulip_bitmap),
     register_new_processor_setting("tunning", set_tunning, get_tunning)
 };
@@ -76,12 +76,21 @@ static struct processor_setting_handler_ctx *get_setting_handler(const char *set
 
 void set_processor_setting(const char *setting, const void *data, const size_t dsize) {
     struct processor_setting_handler_ctx *handler = NULL;
+
     if (setting == NULL && data == NULL) {
         return;
     }
+
     handler = get_setting_handler(setting);
+
     if (handler != NULL && handler->set != NULL) {
         handler->set(data, dsize);
+    }
+
+    if (g_processor_settings.prefs & kTlpPrefsFretboardStyleContinuous) {
+        g_processor_settings.prefs &= ~kTlpPrefsFretboardStyleNormal;
+    } else if ((g_processor_settings.prefs & kTlpPrefsFretboardStyleNormal) == 0) {
+        g_processor_settings.prefs |= kTlpPrefsFretboardStyleNormal;
     }
 }
 
@@ -184,7 +193,6 @@ static void set_tulip_bitmap(const void *data, const size_t dsize) {
     } else {
         g_processor_settings.prefs |= *(tulip_prefs_map_t *)data;
     }
-
 }
 
 static void *get_tulip_bitmap(size_t *dsize) {

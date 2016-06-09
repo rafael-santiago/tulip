@@ -49,7 +49,7 @@ void ld_repo_prefs() {
             set_processor_setting(setting->option, setting->data, setting->dsize);
             free_usropt2tlpopt_ctx(setting);
         } else {
-            if (lp < lp_end) {
+            if (lp < lp_end && *fb != '\n' && *fb != '\r') {
                 *lp = *fb;
                 lp++;
             }
