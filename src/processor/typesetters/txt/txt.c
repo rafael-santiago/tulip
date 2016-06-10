@@ -91,8 +91,7 @@ const size_t g_txttypesetter_printer_nr = sizeof(g_txttypesetter_printers) / siz
 static int g_txttypesetter_has_active_chord = 0;
 
 static void txttypesetter_blockend_handler(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note) {
-
-    if (tab == NULL || (*tab)->active_techniques == NULL) {
+    if (tab == NULL || (*tab)->active_techniques == NULL && !g_txttypesetter_has_active_chord) {
         return;
     }
 
@@ -102,7 +101,6 @@ static void txttypesetter_blockend_handler(txttypesetter_tablature_ctx **tab, co
     }
 
     (*tab)->active_techniques = pop_technique_from_txttypesetter_active_technique_ctx((*tab)->active_techniques);
-
 }
 
 static void txttypesetter_chord_handler(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note) {
@@ -218,8 +216,7 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
     return 0;
 }
 
-/*
-static int show_curr_fretboard(const txttypesetter_tablature_ctx *tab) {
+/*static int show_curr_fretboard(const txttypesetter_tablature_ctx *tab) {
     const txttypesetter_tablature_ctx *tp = tab;
     size_t s = 0;
     if (tp == NULL) {
@@ -236,8 +233,7 @@ static int show_curr_fretboard(const txttypesetter_tablature_ctx *tab) {
         printf("%s\n", tp->strings[s]);
     }
     system("read");
-}
-*/
+}*/
 
 static void cut_data_buf(char *bp) {
     char *bp_end = NULL;
@@ -305,7 +301,7 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
             if (print != NULL) {
                 print(&tp, sp);
             }
-            //show_curr_fretboard(tp);
+//            show_curr_fretboard(tp);
         }
 
         free(demuxes);
