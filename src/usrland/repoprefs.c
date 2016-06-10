@@ -12,10 +12,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#define TLPPREFS_DOT_FILE ".tlpprefs"
-
 void ld_repo_prefs() {
-    FILE *fp = fopen(TLPPREFS_DOT_FILE, "rb");
+    FILE *fp = fopen(".tulipprefs", "rb");
     char line[255] = "", *lp = NULL, *lp_end = NULL;
     char *file_buffer = NULL, *fb = NULL, *fb_end = NULL;
     long file_size = 0;
