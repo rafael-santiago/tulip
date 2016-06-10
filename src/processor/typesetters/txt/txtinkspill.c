@@ -222,7 +222,7 @@ static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_c
     tulip_command_t *demuxes = NULL;
     size_t demuxes_nr = 0, d = 0;
     const tulip_single_note_ctx *sp = NULL;
-    int found = 0;
+    int found = 0, s = 0;
     char **tunning = NULL;
     int has_muffled = 0;
     int has_anyfret = 0;
@@ -283,14 +283,14 @@ static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_c
 
         fprintf(fp, "Tunning [%d-1]: ", d);
 
-        for (u = 0; u < d; u++) {
-            fprintf(fp, "%c", tunning[u][0]);
+        for (s = d - 1; s >= 0; s--) {
+            fprintf(fp, "%c", tunning[s][0]);
 
-            if (tunning[u][1] != 0 && tunning[u][1] != ' ') {
-                fprintf(fp, "%c", tunning[u][1]);
+            if (tunning[s][1] != 0 && tunning[s][1] != ' ') {
+                fprintf(fp, "%c", tunning[s][1]);
             }
 
-            if ((u + 1) != d) {
+            if (s != 0) {
                 fprintf(fp, ", ");
             } else {
                 fprintf(fp, "\n");
