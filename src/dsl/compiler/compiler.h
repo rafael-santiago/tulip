@@ -20,6 +20,8 @@ void push_technique(const tulip_command_t technique);
 
 void pop_technique();
 
+int has_some_sustained_technique();
+
 tulip_part_ctx *get_parts_listing();
 
 void set_parts2_listing(tulip_part_ctx *parts);

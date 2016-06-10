@@ -20,6 +20,11 @@ int blockend_verifier(const char *buf, char *error_message, tulip_single_note_ct
         return 0;
     }
 
+    if (!has_some_sustained_technique()) {
+        tlperr_s(error_message, "Unexpected block ending.");
+        return 0;
+    }
+
     pop_technique();
 
     //  INFO(Santiago): D i r t y  t r i c k -> The following code is useless in the song context but handfull for song

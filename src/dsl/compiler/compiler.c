@@ -283,3 +283,7 @@ static void free_parts_listing() {
 void set_parts_listing(tulip_part_ctx *parts) {
     g_parts = parts;
 }
+
+int has_some_sustained_technique() {
+    return (g_techniques != NULL);
+}
