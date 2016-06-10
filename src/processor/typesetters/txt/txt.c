@@ -257,16 +257,19 @@ static void cut_data_buf(char *bp) {
 }
 
 static void trim_upper_data_from_tab(txttypesetter_tablature_ctx *tab) {
-    txttypesetter_sustained_technique_ctx *tp = NULL;
+    txttypesetter_tablature_ctx *tp = NULL;
+    txttypesetter_sustained_technique_ctx *sp = NULL;
 
     if (tab == NULL) {
         return;
     }
 
-    cut_data_buf(tab->times);
+    for (tp = tab; tp != NULL; tp = tp->next) {
+        cut_data_buf(tp->times);
 
-    for (tp = tab->techniques; tp != NULL; tp = tp->next) {
-        cut_data_buf(tp->data);
+        for (sp = tp->techniques; sp != NULL; sp = sp->next) {
+            cut_data_buf(sp->data);
+        }
     }
 }
 
