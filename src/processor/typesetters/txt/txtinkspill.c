@@ -7,11 +7,28 @@
  */
 #include <processor/typesetters/txt/txtinkspill.h>
 #include <processor/settings.h>
-#include <base/types.h>
+#include <processor/oututils.h>
 #include <dsl/utils.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+
+#define is_relevant_technique(t) ( (t) == kTlpHammerOn           ||\
+                                   (t) == kTlpPullOff            ||\
+                                   (t) == kTlpVibrato            ||\
+                                   (t) == kTlpSlideDown          ||\
+                                   (t) == kTlpSlideUp            ||\
+                                   (t) == kTlpBend               ||\
+                                   (t) == kTlpReleaseBend        ||\
+                                   (t) == kTlpTapping            ||\
+                                   (t) == kTlpNaturalHarmonic    ||\
+                                   (t) == kTlpArtificialHarmonic ||\
+                                   (t) == kTlpMute               ||\
+                                   (t) == kTlpLetRing            ||\
+                                   (t) == kTlpStrum              ||\
+                                   (t) == kTlpTremoloPicking     ||\
+                                   (t) == kTlpVibratoWBar        ||\
+                                   (t) == kTlpTrill )
 
 static void txttypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ctx *comments);
 
@@ -24,6 +41,8 @@ static void txttypesetter_spill_times(FILE *fp, const char *times, const char tu
 static void txttypesetter_spill_song_title(FILE *fp, const char *song);
 
 static void txttypesetter_spill_transcribers_name(FILE *fp, const char *transcriber);
+
+static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song);
 
 static void txttypesetter_init_settings();
 
@@ -41,7 +60,7 @@ static void txttypesetter_init_settings() {
 
     data = get_processor_setting("indentation-deepness", NULL);
 
-    g_txttypesetter_settings.indentation_deepness = (data == NULL) ? 0 : *(size_t *)data;
+    g_txttypesetter_settings.indentation_deepness = ( data == NULL) ? 0 : *(size_t *)data;
 
     data = get_processor_setting("prefs", NULL);
     if (data != NULL) {
@@ -197,7 +216,93 @@ static void txttypesetter_spill_transcribers_name(FILE *fp, const char *transcri
     fprintf(fp, "Transcribed by: %s\n\n", transcriber);
 }
 
-int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab) {
+static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song) {
+    tulip_command_t used_techniques[31];
+    size_t used_techniques_nr = 0, u = 0;
+    tulip_command_t *demuxes = NULL;
+    size_t demuxes_nr = 0, d = 0;
+    const tulip_single_note_ctx *sp = NULL;
+    int found = 0;
+    char **tunning = NULL;
+    int has_muffled = 0;
+    int has_anyfret = 0;
+
+    if ((g_txttypesetter_settings.prefs & kTlpPrefsIncludeTabNotation) == 0) {
+        return;
+    }
+
+    if (song == NULL) {
+        return;
+    }
+
+    for (sp = song; sp != NULL && used_techniques_nr < sizeof(used_techniques); sp = sp->next) {
+        demuxes = demux_tlp_commands(sp->techniques, &demuxes_nr);
+
+        for (d = 0; d < demuxes_nr; d++) {
+            if (is_relevant_technique(demuxes[d])) {
+                found = 0;
+                for (u = 0; u < used_techniques_nr && !found; u++) {
+                    found = (demuxes[d] == used_techniques[u]);
+                }
+                if (!found) {
+                    used_techniques[used_techniques_nr] = demuxes[d];
+                    used_techniques_nr++;
+                }
+            } else if (sp->buf[0] != 0) {
+                if (!has_muffled) {
+                    has_muffled = (strstr(sp->buf, "X") != NULL);
+                }
+                if (!has_anyfret) {
+                    has_anyfret = (strstr(sp->buf, "?") != NULL);
+                }
+            }
+        }
+
+        free(demuxes);
+    }
+
+    if (used_techniques_nr > 0) {
+        for (u = 0; u < used_techniques_nr; u++) {
+            fprintf(fp, "%s = %s\n", get_technique_label(used_techniques[u]),
+                                     get_technique_notation_label(used_techniques[u]));
+
+        }
+        //  WARN(Santiago): These "techniques" are just single note complements. Then, we can handle it
+        //                  from here.
+        if (has_muffled) {
+            fprintf(fp, "X = Muffled note\n");
+        }
+        if (has_anyfret) {
+            fprintf(fp, "? = From any fret\n");
+        }
+        fprintf(fp, "\n");
+    }
+
+    if ((g_txttypesetter_settings.prefs & kTlpPrefsShowTunning) == 0) {
+        tunning = get_processor_setting("tunning", &d);
+
+        fprintf(fp, "Tunning [%d-1]: ", d);
+
+        for (u = 0; u < d; u++) {
+            fprintf(fp, "%c", tunning[u][0]);
+
+            if (tunning[u][1] != 0 && tunning[u][1] != ' ') {
+                fprintf(fp, "%c", tunning[u][1]);
+            }
+
+            if ((u + 1) != d) {
+                fprintf(fp, ", ");
+            } else {
+                fprintf(fp, "\n");
+            }
+        }
+
+        fprintf(fp, "\n");
+    }
+
+}
+
+int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab, const tulip_single_note_ctx *song) {
     FILE *fp = NULL;
     const txttypesetter_tablature_ctx *tp = NULL;
 
@@ -218,6 +323,8 @@ int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
     if (tab->song != NULL && tab->transcriber == NULL) {
         fprintf(fp, "\n");
     }
+
+    txttypesetter_spill_tab_notation(fp, song);
 
     for (tp = tab; tp != NULL; tp = tp->next) {
         txttypesetter_spill_comments(fp, tp->comments);

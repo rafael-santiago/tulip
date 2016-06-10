@@ -151,7 +151,7 @@ static struct usropt2tlpopt_ctx *get_tulip_prefs_map_t(const char *option, const
     }
 
     for (b = 0; b < bitmap_options_nr; b++) {
-        if (bitmap_options == NULL) {
+        if (bitmap_options[b] == NULL) {
             continue;
         }
         if (strcmp(bitmap_options[b], option) == 0) {

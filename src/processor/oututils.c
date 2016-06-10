@@ -43,6 +43,39 @@ static char *g_tlp_technique_label[] = {
     ""
 };
 
+static char *g_tlp_technique_notation_label[] = {
+    "",
+    "",
+    "",
+    "Palm mute",
+    "Let ring",
+    "",
+    "Strum",
+    "Tremolo Picking",
+    "Vibrato with bar",
+    "Trill",
+    "",
+    "Vibrato",
+    "Slide down",
+    "Slide up",
+    "Hammer-on",
+    "Pull-off",
+    "",
+    "",
+    "",
+    "",
+    "Bend",
+    "Release bend",
+    "Tapping",
+    "Natural harmonic",
+    "Artificial harmonic",
+    "",
+    "",
+    "",
+    "",
+    ""
+};
+
 const size_t g_tlp_technique_label_nr = sizeof(g_tlp_technique_label) / sizeof(g_tlp_technique_label[0]);
 
 char *get_technique_label(const tulip_command_t command) {
@@ -57,4 +90,8 @@ int single_note_to_tab_fret_nr(const char *single_note) {
         return atoi(&single_note[1]) + 10;
     }
     return atoi(&single_note[1]);
+}
+
+char *get_technique_notation_label(const tulip_command_t command) {
+    return &g_tlp_technique_notation_label[tlp_cmd_code_to_plain_index(command) % g_tlp_technique_label_nr][0];
 }

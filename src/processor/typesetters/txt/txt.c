@@ -324,7 +324,7 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
 
     trim_upper_data_from_tab(tab);
 
-    has_error = (txttypesetter_inkspill(tabpath, tab) != 1);
+    has_error = (txttypesetter_inkspill(tabpath, tab, song) != 1);
 
     free_txttypesetter_tablature_ctx(tab);
 
