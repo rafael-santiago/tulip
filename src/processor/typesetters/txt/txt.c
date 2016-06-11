@@ -164,6 +164,12 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
         (curr_technique = (techniques & kTlpStrum)) || (curr_technique = (techniques & kTlpTremoloPicking)) ||
         (curr_technique = (techniques & kTlpVibratoWBar)) || (curr_technique = (techniques & kTlpTrill))) {
         technique_label = get_technique_label(curr_technique);
+        //  WARN(Santiago): The following commented code is useless because there is an implicity compesation
+        //                  by the wrapped remaining techniques. Then, for this reason we do not have to sum
+        //                  the recursion result with this current @l. Okay, you do not understand this, so
+        //                  let's face it as magic or still a supernatural thing, however, PLEASE... do not promote
+        //                  sacrifices in the name of it, right? ;)
+        /*
         l = 1;
         if (tab != NULL) {
             for (tp = tab->techniques; tp != NULL && l == 1; tp = tp->next) {
@@ -172,14 +178,15 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
                 }
             }
         }
+        */
         //  WARN(Santiago): In practice is uncommon things like let-ring + palm-mute anyway let's support other
         //                  weird combinations. As a result we will get ugly outputs like: "tp.......
         //                                                                                  st......."...
-        return l + txttypesetter_eval_buffer_row_usage(techniques & ~(curr_technique), note, tab);
+        return txttypesetter_eval_buffer_row_usage(techniques & ~(curr_technique), note, tab);
     } else if (techniques & kTlpChord) {
         longest = -1;
-        for (np = note; np != NULL && (np->techniques & kTlpChord) == 0; np = np->next) {
-            if (np->buf[0] == 0) {
+        for (np = note; np != NULL && (np->techniques & kTlpChord); np = np->next) {
+            if (np->buf[0] == 0 || (np->techniques & kTlpSingleNote) == 0) {
                 continue;
             }
             l = txttypesetter_eval_buffer_row_usage(kTlpSingleNote, np, tab);

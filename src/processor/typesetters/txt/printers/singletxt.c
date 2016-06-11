@@ -17,7 +17,7 @@ void txttypesetter_single_printer(const tulip_command_t technique, txttypesetter
         return;
     }
 
-    row_usage = txttypesetter_eval_buffer_row_usage(technique, note, (*tab));
+    row_usage = txttypesetter_eval_buffer_row_usage(note->techniques, note, (*tab));
     tp = txttypesetter_get_properly_output_location(tab, row_usage);
     txttypesetter_flush_printer(technique, &tp, note, row_usage);
 }
