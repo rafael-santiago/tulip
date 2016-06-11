@@ -251,7 +251,7 @@ by the ``pipe`` symbol. It is useful to separate things in logical blocks inside
 a vertical breaking in the ``tab diagram``.
 
 Note that in the previous code we have a repetion in the second "bar" (forget about sheets here,
-ok? no time divisions, this is just tablatures). I hate use copying and paste, it is boring. In ``Tulip`` there is a smart
+ok? no time divisions, this is just tablatures). I hate using copy and paste, it is boring. In ``Tulip`` there is a smart
 symbol that you use to say: "hey, here you will repeat the same that I did just before."
 
 For this you use the ``at`` symbol. So, the lazy version would be:
