@@ -262,7 +262,7 @@ For this you use the ``at`` symbol. So, the lazy version would be:
 
 
 The ``@`` in ``Tulip`` is known as ``once more``. The ``once more`` uses some rules for trying to be more smart when talking
-about understand the user intentions about...
+about understanding the user intentions about...
 
 >"WTF this user really wants to do once more here?"
 
