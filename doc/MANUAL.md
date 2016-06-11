@@ -171,7 +171,7 @@ Besides being instinctive for guitar players. Well, maybe you can be wondering a
 be made. Actually, your own playing will guide you for getting this answer. What can I say is that I did care about this
 feature for letting the song writing the most natural for us while musicians.
 
-A ``tag`` is a word sequence with special meaning preceded by a single ``dash``. The **Table 2** lists the supported
+A ``tag`` is a word sequence with special meaning preceded by a single ``period``. The **Table 2** lists the supported
 tags until now.
 
 
@@ -230,7 +230,7 @@ and the guitar (if acting like a bass) should do this:
 
 These layers of sound produce a "thing" called ``tritone``. ``Tritones`` are commonly referenced as a way to add
 tension or "frightening ambiences" for the listeners. In fact, if you do only the first thing coded above, you will
-not be able to achieve this "tension". Actually, it will be sound pretty boring. So, what about combining these to worlds?
+not be able to achieve this "tension". Actually, it will be sound pretty boring. So, what about combining these two worlds?
 
         69-.chord{500-401}--69-.chord{500-401}--69-.chord{500-401}--69-.chord{500-401}-
 
