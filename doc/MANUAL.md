@@ -153,18 +153,23 @@ instead of the ``standard``. For the following code samples ``is important`` you
 guitar tunned ``two steps down``. Why? I am crazy, just accept this.
 
 >Last thing: all here is about approximations and adaptations. Do not expect note-by-note things. Let's free ourselves from
-obligations and have some fun with.
+obligations and have some fun with. I invite you...
 
 The ``guitar`` is a fascinating musical instrument not because is loud or distorted, well, this sometimes can make the things
 cooler. The most fascinating thing about the guitar is that this instrument is a range of sounds. A note is a note but it
 depends on how you attack (if you attack) this note, if you slide it or hammer it on or pull it off. For instance, the approach
-that you use to perform a bend can actually change your tone. Etc, etc. For this reason, I like to say that the guitar is a
-musical instrument driven by mood ;)
+that you use to perform a bend can actually change your tone. The way how you hold the neck to "blow up" a vibrato.
+Still, you can make it soft and sweet instead of angry. Etc, etc. For this reason, I like to say that the guitar is a musical
+instrument driven by mood. Maybe any musical instrument could be but string instruments are pretty organic, you realy gives
+your body on it. What say about your precious calluses? Huh? ;)
 
-Express this details is quite hard even using our natural language. However, on the guitar we got several techniques that
-isolated do not have much sense, but ``when combined`` can produce interesting sounds. The ``tlp`` use ``tags`` in order to
-indicate some isolated techniques. The nice thing about these tags is that we can put one inside another to produce these
-techniques combinations. These recursions makes the implemented ``DSL`` very powerful in terms of expressivity.
+Express this techniques details is quite hard even using our natural language. However, on the guitar we got several
+techniques that isolated do not have much sense but ``when combined`` can produce interesting sounds. The ``tlp`` use ``tags``
+in order to indicate some isolated techniques. The nice thing about these tags is that we can put one inside another to
+produce a technique combination. These recursions make the implemented ``DSL`` very powerful in terms of expressivity.
+Besides being instinctive for guitar players. Well, maybe you can be wondering about how much possible combinations can
+be made. Actually, your own playing will guide you for getting this answer. What can I say is that I did care about this
+feature for letting the song writing the most natural for us while musicians.
 
 A ``tag`` is a word sequence with special meaning preceded by a single ``dash``. The **Table 2** lists the supported
 tags until now.
