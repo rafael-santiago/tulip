@@ -212,4 +212,68 @@ Separators are important building blocks to link the notes and in ``Tulip`` we h
 |              ``*``                     |    A natural harmonic using the current note(s) |
 |              ``v``                     | An articial harmonic using the current notes(s) |
 
+Now we have basic informations about how to produce a ``Tulip code``. What about start with a music from a master?
+Then, for starting let's pick up one famous music by ``Jimi Hendrix`` called ``Purple Haze``. I will show you
+little by little this song, in the way that I play and at the end, we will have a complete code for generating
+our guitar tablature. During this time, I will introduce some techniques and concepts behind the ``Tulip's DSL``.
+
+Let's go...
+
+The ``Purple Haze's`` introduction has a pretty interesting thing. Originally, the introduction is made by
+``bass`` and ``guitar`` play different things together. So, the guitar does this (ok, here goes our first code):
+
+        69-401--69-401--69-401--69-401
+
+and the guitar (if acting like a bass) should do this:
+
+        500-302--500-302--500-302--500-302
+
+These layers of sound produce a "thing" called ``tritone``. ``Tritones`` are commonly referenced as a way to add
+tension or "frightening ambiences" for the listeners. In fact, if you do only the first thing coded above, you will
+not be able to achieve this "tension". Actually, it will be sound pretty boring. So, what about combining these to worlds?
+
+        69-.chord{500-401}--69-.chord{500-401}--69-.chord{500-401}--69-.chord{500-401}-
+
+Better? I think so. Remembering that everything is taking in consideration my personal preference for tunning
+the guitar ``two steps down``.
+
+Now the cool riff. You should wet it with a ``Fuzz`` if you have one...
+
+    400h402-300-201-400~~~~~-46/.letring{48-58}-63-45~~-|-
+    400h402-300-201-400~~~~~-46/.letring{48-58}-63-45~~-|-
+    400h402-300-201-400~~~~~-46/.letring{48-58}-63-66~~-|-
+    58-500-48-400/402-400~~~~-400~~-400/402-300~-300~-300h302~~---300h301p300-402\-
+
+Yes, this is a little bit different from ``Jimi`` and a crap when compared with what he did... :-P
+
+In the code showed above there is a new thing. The ``separation bar`` or ``sep bar`` as I like to call. This is denoted
+by the ``pipe`` symbol. It is useful to separate things in logical blocks inside the tablature. Resulting visually as
+a vertical breaking in the ``tab diagram``.
+
+Note that in the previous code we have a repetion in the second "bar" (forget about sheets here,
+ok? no time divisions, this is just tablatures). I hate use copying and paste, it is boring. In ``Tulip`` there is a smart
+symbol that you use to say: "hey, here you will repeat the same that I did just before."
+
+For this you use the ``at`` symbol. So, the lazy version would be:
+
+    400h402-300-201-400~~~~~-46/.letring{48-58}-63-45~~-|-@
+    400h402-300-201-400~~~~~-46/.letring{48-58}-63-66~~-|-
+    58-500-48-400/402-400~~~~-400~~-400/402-300~-300~-300h302~~---300h301p300-402\-
+
+
+The ``@`` in ``Tulip`` is known as ``once more``. The ``once more`` uses some rules for trying to be more smart when talking
+about understand the user intentions about...
+
+>"WTF this user really wants to do once more here?"
+
+Follows the basic rules:
+
+- If we have a single note, only this note will be repeated.
+- If we have a tag, the tag and what this tag brings will be repeated.
+- If we have a sep bar before the once more, the once more will repeat everything inside the last logical block that you created. This is what is happing in the ``Purple Haze's`` main riff showed above.
+
+Backing to our transcription, until now we already know how to do the ``introduction`` and the ``main riff``.
+
+Let's see the verses.
+
 ### Using Tulip's processors
