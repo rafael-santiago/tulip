@@ -220,13 +220,13 @@ our guitar tablature. During this time, I will introduce some techniques and con
 Let's go...
 
 The ``Purple Haze's`` introduction has a pretty interesting thing. Originally, the introduction is made by
-``bass`` and ``guitar`` play different things together. So, the guitar does this (ok, here goes our first code):
+``bass`` and ``guitar`` playing different things together. So, the guitar does this (ok, here goes our first code):
 
-        69-401--69-401--69-401--69-401
+        500-302--500-302--500-302--500-302
 
 and the guitar (if acting like a bass) should do this:
 
-        500-302--500-302--500-302--500-302
+        69-401--69-401--69-401--69-401
 
 These layers of sound produce a "thing" called ``tritone``. ``Tritones`` are commonly referenced as a way to add
 tension or "frightening ambiences" for the listeners. In fact, if you do only the first thing coded above, you will
@@ -270,7 +270,7 @@ Follows the basic rules:
 
 - If we have a single note, only this note will be repeated.
 - If we have a tag, the tag and what this tag brings will be repeated.
-- If we have a sep bar before the once more, the once more will repeat everything inside the last logical block that you created. This is what is happing in the ``Purple Haze's`` main riff showed above.
+- If we have a sep bar before the once more, the ``once more`` will repeat everything inside the last logical block that you created. This is what is happing in the ``Purple Haze's`` main riff showed above.
 
 Backing to our transcription, until now we already know how to do the ``introduction`` and the ``main riff``.
 
