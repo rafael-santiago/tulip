@@ -262,7 +262,7 @@ For this you use the ``at`` symbol. So, the lazy version would be:
 
 
 The ``@`` in ``Tulip`` is known as ``once more``. The ``once more`` uses some rules for trying to be more smart when talking
-about understand the user intentions about...
+about understanding the user intentions about...
 
 >"WTF this user really wants to do once more here?"
 
@@ -270,7 +270,7 @@ Follows the basic rules:
 
 - If we have a single note, only this note will be repeated.
 - If we have a tag, the tag and what this tag brings will be repeated.
-- If we have a sep bar before the once more, the ``once more`` will repeat everything inside the last logical block that you created. This is what is happing in the ``Purple Haze's`` main riff showed above.
+- If we have a sep bar before the once more, the ``once more`` will repeat everything inside the last logical block that you created. This is what is happening in the ``Purple Haze's`` main riff showed above.
 
 Backing to our transcription, until now we already know how to do the ``introduction`` and the ``main riff``.
 
