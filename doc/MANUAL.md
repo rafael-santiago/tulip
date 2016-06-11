@@ -163,8 +163,8 @@ musical instrument driven by mood ;)
 
 Express this details is quite hard even using our natural language. However, on the guitar we got several techniques that
 isolated do not have much sense, but ``when combined`` can produce interesting sounds. The ``tlp`` use ``tags`` in order to
-indicate some isolated techniques. The nice thing about this tags is that we can put one inside another to produce these
-techniques combinations. These recursions makes the implemented ``DSL`` very powerfull in terms of expressivity.
+indicate some isolated techniques. The nice thing about these tags is that we can put one inside another to produce these
+techniques combinations. These recursions makes the implemented ``DSL`` very powerful in terms of expressivity.
 
 A ``tag`` is a word sequence with special meaning preceded by a single ``dash``. The **Table 2** lists the supported
 tags until now.
@@ -190,6 +190,21 @@ There is another important thing that is expressed as a tag: chords/intervals. B
 technique. Inside a ``chord tag`` can exist only notes and single separators (to be continued, hold on). The
 important thing to know by now is that the ``chord tag`` is represented by ``.chord``.
 
-Separators are important things to link the notes and in ``Tulip`` we have several, take a look at the **Table 3**.
+Separators are important building blocks to link the notes and in ``Tulip`` we have several, take a look at the **Table 3**.
+
+**Table 3**: The tlp note separators.
+
+|          **Separator**                 |           **On the guitar it means**            |
+|:--------------------------------------:|:-----------------------------------------------:|
+|              ``-``                     |        A single pause between the notes         |
+|              ``~``                     |        A vibrato using the current note(s)      |
+|              ``/``                     |        A slide-down using the current note(s)   |
+|              ``\``                     |        A slide-up using the current note(s)     |
+|              ``h``                     |        A hammer-on using the current note(s)    |
+|              ``p``                     |        A pull-off using the current note(s)     |
+|              ``b``                     |        A bend-on using the current note(s)      |
+|              ``r``                     |        A release bend using the current note(s) |
+|              ``*``                     |    A natural harmonic using the current note(s) |
+|              ``v``                     | An articial harmonic using the current notes(s) |
 
 ### Using Tulip's processors
