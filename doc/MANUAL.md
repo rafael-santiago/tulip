@@ -279,7 +279,7 @@ called ``times``. The ``.times`` tag should receive inside its code listing a ``
 However, the ``.times`` tag must co-working with a ``sep bar`` because alone it tends to produce non-sense/dubious indications
 in the output tablature. Then, using ``.times`` for our last code sample it would be:
 
-    400h402-300-201-400~~~~~-46/.letring{48-58}-63-45~~-|-.times{2}
+    400h402-300-201-400~~~~~-46/.letring{48-58}-63-45~~-.times{2}-|-
     400h402-300-201-400~~~~~-46/.letring{48-58}-63-66~~-|-
     58-500-48-400/402-400~~~~-400~~-400/402-300~-300~-300h302~~---300h301p300-402\-
 
@@ -289,8 +289,36 @@ Backing to our transcription, until now we already know how to do the ``introduc
 
 Let's see the verses.
 
-The verses uses a lot of cool things that people like to call ``Hendrix's chords`` (seventh sharp ninth chords).
+The verses use a lot of cool things that people like to call ``Hendrix's chords`` (seventh sharp ninth chords).
 We also use two major triads in a common shortened way (4th shape from CAGED). Doing some kind of thing with
-them that some people like to call ``motown thing``, because it is rather used in ``R&B/Soul Music`` accompanying.
+them that some people like to call ``Motown's thing``, because it is rather used in ``R&B/Soul Music`` accompanying.
+Come on, I am pretty sure that you are a serious music lover, further introductions related with ``Motown`` I judge
+unnecessary here.
+
+Here goes the first part of verses accompanying:
+
+    5?/.letring{500-49}-.chord{500-49-300-201}.chord{5:~4:~3:~2:~}-|-
+    .chord{500-49-300-201}.chord{5:~4:~3:~2:~}---.times{3}-|-
+    4?/.letring{48-37}-.chord{48-37-28}.chord{2:p}.chord{48-37-26}--
+    4?/.letring{400-39}-.chord{400-39-200}.chord{2:p}.chord{400-39-28}-
+
+Beware that here I am not playing "that" open 6th string when it is played ``a half step down`` (the original tunning).
+Here we could hold this note at the 3th fret but we need to sustain it to sound heavy and dude I sincerely hate capos.
+I prefer to find my own way.
+
+It is quite hard express accompanying patterns. I think that the most important thing to do with a accompanying instruction
+is add your own ``mojo``... Let your *"mojo working"* here... ;) I dislike dissect rhythm patterns because I afraid of
+playing in a robot-way. I think that rhythm must be primitive. Not detailed understood. It is time to celebrate your
+caveman's inheritance, no theories, listen the beat and go for yourself.
+
+Another nice thing that I like to do with this base is hold the triads root using my thumb instead of playing this root
+using the 4th string. So, I slide it down until the root and dive into the shortened triad holding its root with my thumb.
+
+I also use some kind of hybrid picking here but its out of a tablature's scope. Again, the colors is up to you.
+
+We got new ``tlp`` stuffs in the showed base pattern. The fisrt is the "fret abstraction". The guitar is not a science
+it is an art due to it several times we face imprecise things. Sometimes slides have destination but can be done from any
+source. For doing it you must use a note that only indicates the string number and replaces the fret region by a sugestive
+question symbol. Then, for it we have ``6?``, ``5?``, ``4?``, ``3?``, ``2?`` and ``1?`` as possible abstractions.
 
 ### Using Tulip's processors
