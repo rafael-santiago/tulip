@@ -291,7 +291,7 @@ Let's see the verses.
 
 The verses use a lot of cool things that people like to call ``Hendrix's chords`` (seventh sharp ninth chords).
 We also use two major triads in a common shortened way (4th shape from CAGED). Doing some kind of thing with
-them that some people like to call ``Motown's thing``, because it is rather used in ``R&B/Soul Music`` accompanying.
+them that some people like to call ``Motown's thing``, because it is rather used in ``R&B`` and ``Soul`` accompanying.
 Come on, I am pretty sure that you are a serious music lover, further introductions related with ``Motown`` I judge
 unnecessary here.
 
@@ -311,14 +311,14 @@ is add your own ``mojo``... Let your *"mojo working"* here... ;) I dislike disse
 playing in a robot-way. I think that rhythm must be primitive. Not detailed understood. It is time to celebrate your
 caveman's inheritance, no theories, listen the beat and go for yourself.
 
-Another nice thing that I like to do with this base is hold the triads root using my thumb instead of playing this root
+Another nice thing that I like to do with this base is hold the triads root using my thumb at 6th instead of playing this root
 using the 4th string. So, I slide it down until the root and dive into the shortened triad holding its root with my thumb.
 
-I also use some kind of hybrid picking here but its out of a tablature's scope. Again, the colors is up to you.
+I also use some a kind of hybrid picking here but its out of a tablature's scope. Again, the colors is up to you.
 
-We got new ``tlp`` stuffs in the showed base pattern. The fisrt is the "fret abstraction". The guitar is not a science
-it is an art due to it several times we face imprecise things. Sometimes slides have destination but can be done from any
-source. For doing it you must use a note that only indicates the string number and replaces the fret region by a sugestive
+We got new ``tlp`` stuffs in the showed base pattern. The first is the "fret abstraction". The guitar is not a science
+this is an art due to it several times we face imprecise things. Sometimes slides have destination but can be done from any
+source. For doing it you must use a note that only indicates the string number and replaces the fret region by a suggestive
 question symbol. Then, for it we have ``6?``, ``5?``, ``4?``, ``3?``, ``2?`` and ``1?`` as possible abstractions.
 
 ### Using Tulip's processors
