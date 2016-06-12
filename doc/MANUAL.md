@@ -146,28 +146,28 @@ From now on, sometimes I will refer to the implemented ``DSL`` as ``tlp``.
 Perhaps it will be read by people that have some experience with computer programming and by people that do not.
 Regardless, I am sure that these both kinds of people have one aspect in common: some level of knowledge about music, specially
 guitar playing. Thinking about this, I decided to introduce the ``DSL`` concepts showing real examples of some well-known songs.
-I find be in touching with real world transcriptions, talking about ``Music`` will certainly deviate us from a terrible boredom.
+I find be in touch with real world transcriptions, talking about ``Music`` will certainly deviate us from a terrible boredom.
 
-All songs showed here is the way which I am currently playing. I am saying it because I like to use an ``alternate`` tunning
-instead of the ``standard``. For the following code samples ``is important`` you considering that all is done in a
+All songs showed here are in the way which I am currently playing. I am saying it because I like to use an ``alternate``
+tunning instead of the ``standard``. For the following code samples ``it is important`` you considering that all is done in a
 guitar tunned ``two steps down``. Why? I am crazy, just accept this.
 
 >Last thing: all here is about approximations and adaptations. Do not expect note-by-note things. Let's free ourselves from
 obligations and have some fun with. I invite you...
 
 The ``guitar`` is a fascinating musical instrument not because is loud or distorted, well, this sometimes can make the things
-cooler. The most fascinating thing about the guitar is that this instrument is a range of sounds. A note is a note but it
+cooler, exciting. The most fascinating thing about the guitar is that this instrument is a range of sounds. A note is a note but it
 depends on how you attack (if you attack) this note, if you slide it or hammer it on or pull it off. For instance, the approach
 that you use to perform a bend can actually change your tone. The way how you hold the neck to "blow up" a vibrato.
 Still, you can make it soft and sweet instead of angry. Etc, etc. For this reason, I like to say that the guitar is a musical
-instrument driven by mood. Maybe any musical instrument could be but string instruments are pretty organic, you realy gives
-your body on it. What say about your precious calluses? Huh? ;)
+instrument driven by mood. Maybe any musical instrument could be but string instruments are pretty organic, you really gives
+your body (maybe your soul, ha-ha) on it. What say about your precious calluses? Huh? ;)
 
 Express this techniques details is quite hard even using our natural language. However, on the guitar we got several
-techniques that isolated do not have much sense but ``when combined`` can produce interesting sounds. The ``tlp`` use ``tags``
+techniques that isolated do not have much sense but ``when combined`` can produce interesting sounds. The ``tlp`` uses ``tags``
 in order to indicate some isolated techniques. The nice thing about these tags is that we can put one inside another to
-produce a technique combination. These recursions make the implemented ``DSL`` very powerful in terms of expressivity.
-Besides being instinctive for guitar players. Well, maybe you can be wondering about how much possible combinations can
+produce a technique combination. These recursions make the implemented ``DSL`` very powerful in terms of expressivity
+besides being instinctive for guitar players. Well, maybe you can be wondering about how much possible combinations can
 be made. Actually, your own playing will guide you for getting this answer. What can I say is that I did care about this
 feature for letting the song writing the most natural for us while musicians.
 
@@ -189,9 +189,9 @@ tags until now.
 
 All ``tlp tag`` must be followed by a code listing. A code listing is a variable sequence enclosed by ``{ ... }``.
 As said before, between the brackets we can have other tags, notes and separators (to be continued, hold on).
-As a result our musical intentions coded.
+As a result, our musical intentions coded.
 
-There is another important thing that is expressed as a tag: chords/intervals. But this is not a specific guitar
+There is another important thing that is expressed as a tag: ``chords/intervals``. But this is not a specific guitar
 technique. Inside a ``chord tag`` can exist only notes and single separators (to be continued, hold on). The
 important thing to know by now is that the ``chord tag`` is represented by ``.chord``.
 
@@ -211,10 +211,11 @@ Separators are important building blocks to link the notes and in ``Tulip`` we h
 |              ``r``                     |        A release bend using the current note(s) |
 |              ``*``                     |    A natural harmonic using the current note(s) |
 |              ``v``                     | An articial harmonic using the current notes(s) |
+|              ``T``                     |        A tapping using the current note(s)      |
 
-Now we have basic informations about how to produce a ``Tulip code``. What about start with a music from a master?
-Then, for starting let's pick up one famous music by ``Jimi Hendrix`` called ``Purple Haze``. I will show you
-little by little this song, in the way that I play and at the end, we will have a complete code for generating
+Now we have basic informations about how to produce a ``Tulip code``. What about start with a music from a genius?
+Then, for starting let's pick up one famous song by ``Jimi Hendrix`` called ``Purple Haze``. I will show you
+little by little this song, in the way that I play and at the end we will have a complete code for generating
 our guitar tablature. During this time, I will introduce some techniques and concepts behind the ``Tulip's DSL``.
 
 Let's go...
@@ -222,19 +223,20 @@ Let's go...
 The ``Purple Haze's`` introduction has a pretty interesting thing. Originally, the introduction is made by
 ``bass`` and ``guitar`` playing different things together. So, the guitar does this (ok, here goes our first code):
 
-        500-302--500-302--500-302--500-302
+        69-401--69-401--69-401--69-401
 
 and the guitar (if acting like a bass) should do this:
 
-        69-401--69-401--69-401--69-401
+        500-302--500-302--500-302--500-302
 
 These layers of sound produce a "thing" called ``tritone``. ``Tritones`` are commonly referenced as a way to add
 tension or "frightening ambiences" for the listeners. In fact, if you do only the first thing coded above, you will
-not be able to achieve this "tension". Actually, it will be sound pretty boring. So, what about combining these two worlds?
+not be able to achieve this "tension". Actually, it will be sound pretty unexpressive. So, what about combining these
+two worlds?
 
         69-.chord{500-401}--69-.chord{500-401}--69-.chord{500-401}--69-.chord{500-401}-
 
-Better? I think so. Remembering that everything is taking in consideration my personal preference for tunning
+Better? I think so... Remembering that everything is taking in consideration my personal preference for tunning
 the guitar ``two steps down``.
 
 Now the cool riff. You should wet it with a ``Fuzz`` if you have one...
@@ -244,7 +246,7 @@ Now the cool riff. You should wet it with a ``Fuzz`` if you have one...
     400h402-300-201-400~~~~~-46/.letring{48-58}-63-66~~-|-
     58-500-48-400/402-400~~~~-400~~-400/402-300~-300~-300h302~~---300h301p300-402\-
 
-Yes, this is a little bit different from ``Jimi`` and a crap when compared with what he did... :-P
+Yes, this is a little bit different from ``Jimi`` and a crap when compared with what he did... :-D
 
 In the code showed above there is a new thing. The ``separation bar`` or ``sep bar`` as I like to call. This is denoted
 by the ``pipe`` symbol. It is useful to separate things in logical blocks inside the tablature. Resulting visually as
@@ -252,7 +254,7 @@ a vertical breaking in the ``tab diagram``.
 
 Note that in the previous code we have a repetion in the second "bar" (forget about sheets here,
 ok? no time divisions, this is just tablatures). I hate using copy and paste, it is boring. In ``Tulip`` there is a smart
-symbol that you use to say: "hey, here you will repeat the same that I did just before."
+symbol that you use to say: "hey guy, here you will repeat the same that I did just before."
 
 For this you use the ``at`` symbol. So, the lazy version would be:
 
@@ -264,16 +266,31 @@ For this you use the ``at`` symbol. So, the lazy version would be:
 The ``@`` in ``Tulip`` is known as ``once more``. The ``once more`` uses some rules for trying to be more smart when talking
 about understanding the user intentions about...
 
->"WTF this user really wants to do once more here?"
+>"...WTF this user really wants to do once more here?!"
 
 Follows the basic rules:
 
 - If we have a single note, only this note will be repeated.
-- If we have a tag, the tag and what this tag brings will be repeated.
-- If we have a sep bar before the once more, the ``once more`` will repeat everything inside the last logical block that you created. This is what is happening in the ``Purple Haze's`` main riff showed above.
+- If we have a tag, the tag and what this tag brings wrapped will be repeated.
+- If we have a sep bar before the once more, the ``once more`` will repeat everything inside the last logical block that you created. By the way, this is what is happening in the ``Purple Haze's`` main riff showed previously.
+
+There is another way to indicate a repetition avoid annoying ourselves with re-typing again and again. It is a special ``control tag``
+called ``times``. The ``.times`` tag should receive inside its code listing a ``number of times`` what indicates the repetion of something.
+However, the ``.times`` tag must co-working with a ``sep bar`` because alone it tends to produce non-sense/dubious indications
+in the output tablature. Then, using ``.times`` for our last code sample it would be:
+
+    400h402-300-201-400~~~~~-46/.letring{48-58}-63-45~~-|-.times{2}
+    400h402-300-201-400~~~~~-46/.letring{48-58}-63-66~~-|-
+    58-500-48-400/402-400~~~~-400~~-400/402-300~-300~-300h302~~---300h301p300-402\-
+
+As a result we will get a kind of indication saying "2X" near from the tablature breaking.
 
 Backing to our transcription, until now we already know how to do the ``introduction`` and the ``main riff``.
 
 Let's see the verses.
+
+The verses uses a lot of cool things that people like to call ``Hendrix's chords`` (seventh sharp ninth chords).
+We also use two major triads in a common shortened way (4th shape from CAGED). Doing some kind of thing with
+them that some people like to call ``motown thing``, because it is rather used in ``R&B/Soul Music`` accompanying.
 
 ### Using Tulip's processors
