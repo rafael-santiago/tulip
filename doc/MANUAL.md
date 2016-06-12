@@ -213,7 +213,7 @@ Separators are important building blocks to link the notes and in ``Tulip`` we h
 |              ``v``                     | An articial harmonic using the current notes(s) |
 |              ``T``                     |        A tapping using the current note(s)      |
 
-Now we have basic informations about how to produce a ``Tulip code``. What about start with a music from a genius?
+Now we have basic informations about how to produce a ``Tulip code``. What about start with a song written by a genius?
 Then, for starting let's pick up one famous song by ``Jimi Hendrix`` called ``Purple Haze``. I will show you
 little by little this song, in the way that I play and at the end we will have a complete code for generating
 our guitar tablature. During this time, I will introduce some techniques and concepts behind the ``Tulip's DSL``.
@@ -248,7 +248,7 @@ Now the cool riff. You should wet it with a ``Fuzz`` if you have one...
 
 Yes, this is a little bit different from ``Jimi`` and a crap when compared with what he did... :-D
 
-In the code showed above there is a new thing. The ``separation bar`` or ``sep bar`` as I like to call. This is denoted
+In the code shown above there is a new thing. The ``separation bar`` or ``sep bar`` as I like to call. This is denoted
 by the ``pipe`` symbol. It is useful to separate things in logical blocks inside the tablature. Resulting visually as
 a vertical breaking in the ``tab diagram``.
 
@@ -289,11 +289,11 @@ Backing to our transcription, until now we already know how to do the ``introduc
 
 Let's see the verses.
 
-The verses use a lot of cool things that people like to call ``Hendrix's chords`` (seventh sharp ninth chords).
+The verses use a cool thing that people like to call ``Hendrix's chords`` (seventh sharp ninth chords).
 We also use two major triads in a common shortened way (4th shape from CAGED). Doing some kind of thing with
 them that some people like to call ``Motown's thing``, because it is rather used in ``R&B`` and ``Soul`` accompanying.
 Come on, I am pretty sure that you are a serious music lover, further introductions related with ``Motown`` I judge
-unnecessary here.
+unnecessary here. Right?
 
 Here goes the first part of verses accompanying:
 
@@ -320,5 +320,59 @@ We got new ``tlp`` stuffs in the showed base pattern. The first is the "fret abs
 this is an art due to it several times we face imprecise things. Sometimes slides have destination but can be done from any
 source. For doing it you must use a note that only indicates the string number and replaces the fret region by a suggestive
 question symbol. Then, for it we have ``6?``, ``5?``, ``4?``, ``3?``, ``2?`` and ``1?`` as possible abstractions.
+
+In the previous code we can see a thing called ``string jump``, we use a string jump to indicate to ``Tulip`` where
+we want to put the following separator that complements this "jump". A jump is denoted as ``<string-number>:<separator>``.
+So, it is possible to do things like ``3:~``, ``2:p``, etc.
+
+When there is pull-offs, hammer-ons or any single technique done using intervals and chords is important to build up
+this song block using three or more chord tags in order to wrap this things. This guarantees a fancy typesetting.
+
+Now, the second part from verses is related with a break done at the end of the last verse:
+
+    4?/.letring{48-37}-.chord{48-37-28}.chord{2:p}.chord{48-37-26}--
+    4?/.letring{400-39}-.chord{400-39-200}.chord{2:p}.chord{400-39-28}-|-
+    .chord{500-49}.chord{5:\4:\}-
+
+Nothing new in code. The following is related to the bridge and then all verses are played again:
+
+    .chord{500-302}.chord{5:/3:/}.chord{502-304}-.chord{500-302}-.chord{58-300}-|-
+    400h402-300-201~~-400h402-300-201~~-
+
+It brings a slide over eighth intervals and a little mention of the beginning of the main riff.
+
+Here goes my solo's bad aproximation... If you have a ``Octave Fuzz`` you should use it. The solo's entrance could be:
+
+    402h404-302-205~~--402h402-302-205~~--305h307-206-108~~--305h307-206-108~~
+
+Engage your octave...
+
+    203-.letring{205b-105-205~~-105-205b-205~~}-|-205h207-207~--205-207-205-307~~--307-309-307-305-307~~-307/309-305~~
+    405/407-305-307-305-407-305~~--305-307-305-407-405~~--405-407-405-507-405~~~--402/405-302-304--
+    304h305p304-405-302-304-405--304-405-304-405-304-405~~--402-405-302-304-305--106b-104h106p104-102-104-102-204-3?/304-203-
+    .letring{204b-104-204~~~~}-
+
+Maybe you will note a weird thing on bendings, I avoid indicating the destination notes. It is a personal thing
+because I think that bends must be done singing the sound, muttering or thinking about what should be. It is weird
+thinking: "Okay, now a will bend this strings half tone, whole tone". But in ``Tulip`` you can do things like ``204b206``
+there is no problem on it.
+
+In order to get a complete transcription we need to the "exit solo". This is what follows:
+
+    305h307-206-106~~~-.letring{63---------}-305h307-206-106~~-.letring{63---------}-|-
+    206-208-209-208--206-307-305--.chord{209-106}.chord{2:b}-.chord{209-106}.chord{2:~~~}-|-
+    1?/.tremolopicking{106~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}-
+
+``Eric Gales`` does a nice ending using the eighth intervals from the bridge. ``Strumming`` them:
+
+    .strum{5?/.chrod{500-302}----------------------5?/.chord{502-304}----------------------5?/.chord{58-300}-----------}
+
+Go ahead repeating it again and again. The use of ``.strum`` is straightforward, this is a way to abstract the strumming
+complications, saying only where to put the fingers and strum it according to the current beat.
+
+All done! Now we get a complete song.
+
+WARNING: Please do not take my assumptions as an absolute truth. This came from a lot of bad playing and personal tastes
+about some things so do not try to learn how to play with me. :) Just learn how to use this ``software``.
 
 ### Using Tulip's processors
