@@ -368,7 +368,7 @@ there is no problem on it.
 
 In order to get a complete transcription we need to the "exit solo". This is what follows:
 
-    305h307-206-106~~~-.letring{63---------}-305h307-206-106~~-.letring{63---------}-|-
+    305h307-206-108~~~-.letring{63---------}-305h307-206-108~~-.letring{63---------}-|-
     206-208-209-208--206-307-305--.chord{209-106}.chord{2:b}-.chord{209-106}.chord{2:~~~}-|-
     1?/.tremolopicking{106~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}-
 
