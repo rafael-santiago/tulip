@@ -18,7 +18,7 @@ not met anyone abroad whom know this same "numeric notation".
 
 In fact this kind of notation is quite old. In my formal studies, with my first teacher, I used a book from ``1966``
 written by a man called ``Fernando Azevedo``. This book was rather known by people here called "seresteiros".
-A kind of bohemians signers which produced a significant collection of Brasilian popular Songs. However, nowadays
+A kind of bohemians singers which produced a significant collection of popular Brasilian's Songs. However, nowadays
 everyone tends to take it a little bit old fashioned, specially when talking about harmonies. Even so I could learned
 important things related with the basics of the guitar playing from that *papyrus* and even today I use these learnings.
 
@@ -32,7 +32,7 @@ Okay, you do not know this kind of notation, right? Until now...
 ### The numeric notation
 
 As I said I could not be able to find anything about this in English or any other Language besides Portuguese. I am afraid
-of this is used only by brazilians or portugueses but I am not so sure about (take a look in this [discussion on the Reddit](https://www.reddit.com/r/musictheory/comments/4hqic2/what_is_the_name_of_this_kind_of_notation/)).
+of this is used only by brazilians or portugueses but I am not so sure about (take a look at this [discussion on the Reddit](https://www.reddit.com/r/musictheory/comments/4hqic2/what_is_the_name_of_this_kind_of_notation/)).
 
 This notation is the main idea behind ``Tulip's DSL`` so if you want to master ``Tulip`` you must master it before.
 
@@ -48,7 +48,7 @@ However, in the fret number case we have some particularities. Some people when 
 ``10`` and others numbered it as ``00``, fret number eleven as ``01``, fiften as ``05`` and so on. I use this second one and
 as an effect this is what ``Tulip`` implements.
 
-When we have intervals or chords we should be written down using stacked numbers. A kind of this: "53/42/30/21/10".
+When we have intervals or chords it should be written down using stacked numbers. A kind of this: "53/42/30/21/10".
 The hammer-ons, pull-offs can be noted using a simple arc between the parts.
 
 Let's take a look at the **Table 1** in order to review your new knowledges about a new simple notation that you just have been
@@ -82,7 +82,7 @@ I am saying it because I am hooked on this subject too but here I am translating
 
 I like to transcribe/adapt songs as an exercise and for fun issues too. I am in this "business" since my
 teenagerhood. As a result during these years I have been producing huge stacks of paper. One of my motivations to create
-``Tulip`` (still in ``2005``) was an effort in order to stop with this mess. The thurth is that I did not stop pushing papers
+``Tulip`` (still in ``2005``) was an effort in order to stop with this mess. The truth is that I did not stop pushing papers
 to my endless little stack but I would say that I stopped with my sloppiness. Now I am stacking ``notebooks`` ;)
 
 Even today I use pencil and paper and then I create a ``Tulip code`` for. This is my basic workflow on it. Truly
@@ -148,7 +148,7 @@ Regardless, I am sure that these both kinds of people have one aspect in common:
 guitar playing. Thinking about this, I decided to introduce the ``DSL`` concepts showing real examples of some well-known songs.
 I find be in touch with real world transcriptions, talking about ``Music`` will certainly deviate us from a terrible boredom.
 
-All songs showed here are in the way which I am currently playing. I am saying it because I like to use an ``alternate``
+All songs shown here are in the way which I am currently playing. I am saying it because I like to use an ``alternate``
 tunning instead of the ``standard``. For the following code samples ``it is important`` you considering that all is done in a
 guitar tunned ``two steps down``. Why? I am crazy, just accept this.
 
@@ -167,9 +167,9 @@ Express this techniques details is quite hard even using our natural language. H
 techniques that isolated do not have much sense but ``when combined`` can produce interesting sounds. The ``tlp`` uses ``tags``
 in order to indicate some isolated techniques. The nice thing about these tags is that we can put one inside another to
 produce a technique combination. These recursions make the implemented ``DSL`` very powerful in terms of expressivity
-besides being instinctive for guitar players. Well, maybe you can be wondering about how much possible combinations can
-be made. Actually, your own playing will guide you for getting this answer. What can I say is that I did care about this
-feature for letting the song writing the most natural for us while musicians.
+besides being instinctive for any guitar player. Well, maybe you can be wondering about how much possible
+combinations can be made. Actually, your own playing will guide you for getting this answer. What can I say is that I did
+care about this feature for letting the song writing the most natural for us while musicians.
 
 A ``tag`` is a word sequence with special meaning preceded by a single ``period``. The **Table 2** lists the supported
 tags until now.
@@ -181,7 +181,7 @@ tags until now.
 |:-----------------------------------:|:----------------------------------------------:|
 |          ``.mute``                  |              Palm mute                         |
 |          ``.letring``               |              Let ring                          |
-|          ``.strum``                 |              Strum                             |
+|          ``.strum``                 |              Strumming                         |
 |          ``.tremolopicking``        |              Tremolo picking                   |
 |          ``.vibratowbar``           |              Vibrato with bar                  |
 |          ``.trill``                 |              Trill                             |
@@ -191,7 +191,7 @@ All ``tlp tag`` must be followed by a code listing. A code listing is a variable
 As said before, between the brackets we can have other tags, notes and separators (to be continued, hold on).
 As a result, our musical intentions coded.
 
-There is another important thing that is expressed as a tag: ``chords/intervals``. But this is not a specific guitar
+There is another important thing that is expressed as a tag: ``chords`` and ``intervals``. But this is not a specific guitar
 technique. Inside a ``chord tag`` can exist only notes and single separators (to be continued, hold on). The
 important thing to know by now is that the ``chord tag`` is represented by ``.chord``.
 
@@ -216,7 +216,7 @@ Separators are important building blocks to link the notes and in ``Tulip`` we h
 Now we have basic informations about how to produce a ``Tulip code``. What about start with a song written by a genius?
 Then, for starting let's pick up one famous song by ``Jimi Hendrix`` called ``Purple Haze``. I will show you
 little by little this song, in the way that I play and at the end we will have a complete code for generating
-our guitar tablature. During this time, I will introduce some techniques and concepts behind the ``Tulip's DSL``.
+our guitar tablature. During this time, I will introduce you some techniques and concepts behind the ``Tulip's DSL``.
 
 Let's go...
 
@@ -228,6 +228,10 @@ The ``Purple Haze's`` introduction has a pretty interesting thing. Originally, t
 and the guitar (if acting like a bass) should do this:
 
         500-302--500-302--500-302--500-302
+
+or still, this:
+
+        63-45--63-45--63-45--63-45
 
 These layers of sound produce a "thing" called ``tritone``. ``Tritones`` are commonly referenced as a way to add
 tension or "frightening ambiences" for the listeners. In fact, if you do only the first thing coded above, you will
@@ -272,9 +276,9 @@ Follows the basic rules:
 
 - If we have a single note, only this note will be repeated.
 - If we have a tag, the tag and what this tag brings wrapped will be repeated.
-- If we have a sep bar before the once more, the ``once more`` will repeat everything inside the last logical block that you created. By the way, this is what is happening in the ``Purple Haze's`` main riff showed previously.
+- If we have a sep bar before the once more, the ``once more`` will repeat everything inside the last logical block that you created. By the way, this is what is happening in the ``Purple Haze's`` main riff previously shown.
 
-There is another way to indicate a repetition avoid annoying ourselves with re-typing again and again. It is a special ``control tag``
+There is another way to indicate a repetition avoiding annoying ourselves with re-typing again and again. It is a special ``control tag``
 called ``times``. The ``.times`` tag should receive inside its code listing a ``number of times`` what indicates the repetion of something.
 However, the ``.times`` tag must co-working with a ``sep bar`` because alone it tends to produce non-sense/dubious indications
 in the output tablature. Then, using ``.times`` for our last code sample it would be:
@@ -289,7 +293,7 @@ Backing to our transcription, until now we already know how to do the ``introduc
 
 Let's see the verses.
 
-The verses use a cool thing that people like to call ``Hendrix's chords`` (seventh sharp ninth chords).
+The verses use a cool thing that people like to call ``Hendrix's chord`` (seventh sharp ninth chords).
 We also use two major triads in a common shortened way (4th shape from CAGED). Doing some kind of thing with
 them that some people like to call ``Motown's thing``, because it is rather used in ``R&B`` and ``Soul`` accompanying.
 Come on, I am pretty sure that you are a serious music lover, further introductions related with ``Motown`` I judge
@@ -302,28 +306,29 @@ Here goes the first part of verses accompanying:
     4?/.letring{48-37}-.chord{48-37-28}.chord{2:p}.chord{48-37-26}--
     4?/.letring{400-39}-.chord{400-39-200}.chord{2:p}.chord{400-39-28}-
 
-Beware that here I am not playing "that" open 6th string when it is played ``a half step down`` (the original tunning).
+Beware that here I am not playing "that" open 6th string when it is played ``a half step down`` (by the way, the original tunning).
 Here we could hold this note at the 3th fret but we need to sustain it to sound heavy and dude I sincerely hate capos.
 I prefer to find my own way.
 
-It is quite hard express accompanying patterns. I think that the most important thing to do with a accompanying instruction
-is add your own ``mojo``... Let your *"mojo working"* here... ;) I dislike dissect rhythm patterns because I afraid of
-playing in a robot-way. I think that rhythm must be primitive. Not detailed understood. It is time to celebrate your
-caveman's inheritance, no theories, listen the beat and go for yourself.
+It is quite hard express accompanying patterns. Specially ``Hendrix's`` patterns, because he had used to avoid doing boring
+"cowboy things", you know, up-and-down-up-and-down... In addition, I think that the most important thing to do with an
+accompanying instruction is add your own ``mojo``... Let your *"mojo working"* here... ;) I dislike dissect rhythm patterns
+because I afraid of playing in a robot-way. I think that rhythm must be primitive. Not detailed understood. It is time
+to celebrate your caveman's inheritance, no theories, listen the beat and go for yourself letting your ancestors guide you ;)
 
 Another nice thing that I like to do with this base is hold the triads root using my thumb at 6th instead of playing this root
 using the 4th string. So, I slide it down until the root and dive into the shortened triad holding its root with my thumb.
 
-I also use some a kind of hybrid picking here but its out of a tablature's scope. Again, the colors is up to you.
+I also use some kind of hybrid picking here but its out of a tablature's scope. Again, the colors is up to you.
 
-We got new ``tlp`` stuffs in the showed base pattern. The first is the "fret abstraction". The guitar is not a science
+We got new ``tlp`` stuffs in the presented base pattern. The first is the "fret abstraction". The guitar is not a science
 this is an art due to it several times we face imprecise things. Sometimes slides have destination but can be done from any
 source. For doing it you must use a note that only indicates the string number and replaces the fret region by a suggestive
-question symbol. Then, for it we have ``6?``, ``5?``, ``4?``, ``3?``, ``2?`` and ``1?`` as possible abstractions.
+question mark. Then, for it we have ``6?``, ``5?``, ``4?``, ``3?``, ``2?`` and ``1?`` as possible abstractions.
 
-In the previous code we can see a thing called ``string jump``, we use a string jump to indicate to ``Tulip`` where
-we want to put the following separator that complements this "jump". A jump is denoted as ``<string-number>:<separator>``.
-So, it is possible to do things like ``3:~``, ``2:p``, etc.
+In the previous code we can see a thing called ``string jumping`` (in terms of code), we use a string jump to indicate
+to ``Tulip`` where we want to put the next separator that complements this "jump". A jump is denoted by
+``<string-number>:<separator>``. So, it is possible to do things like ``3:~``, ``2:p``, etc.
 
 When there is pull-offs, hammer-ons or any single technique done using intervals and chords is important to build up
 this song block using three or more chord tags in order to wrap this things. This guarantees a fancy typesetting.
@@ -334,14 +339,18 @@ Now, the second part from verses is related with a break done at the end of the 
     4?/.letring{400-39}-.chord{400-39-200}.chord{2:p}.chord{400-39-28}-|-
     .chord{500-49}.chord{5:\4:\}-
 
-Nothing new in code. The following is related to the bridge and then all verses are played again:
+Anyway, as I said before this is just a little window about what ``Hendrix`` was able to do with this. The truth is that
+he naturally used to add new little random things at each turn, producing a rich accompanying. As a result what we feel while
+listeners is that there is a secondary song inside the main. It is up to you and your own creativity.
+
+In terms of code, nothing new was presented above. The following is related to the bridge and then all verses are played again:
 
     .chord{500-302}.chord{5:/3:/}.chord{502-304}-.chord{500-302}-.chord{58-300}-|-
     400h402-300-201~~-400h402-300-201~~-
 
 It brings a slide over eighth intervals and a little mention of the beginning of the main riff.
 
-Here goes my solo's bad aproximation... If you have a ``Octave Fuzz`` you should use it. The solo's entrance could be:
+Here goes my bad solo's aproximation... If you have a ``Octave Fuzz`` you should use it. The solo's entrance could be:
 
     402h404-302-205~~--402h402-302-205~~--305h307-206-108~~--305h307-206-108~~
 
@@ -349,12 +358,12 @@ Engage your octave...
 
     203-.letring{205b-105-205~~-105-205b-205~~}-|-205h207-207~--205-207-205-307~~--307-309-307-305-307~~-307/309-305~~
     405/407-305-307-305-407-305~~--305-307-305-407-405~~--405-407-405-507-405~~~--402/405-302-304--
-    304h305p304-405-302-304-405--304-405-304-405-304-405~~--402-405-302-304-305--106b-104h106p104-102-104-102-204-3?/304-203-
-    .letring{204b-104-204~~~~}-
+    304h305p304-405-302-304-405--304-405-304-405-304-405~~--402-405-302-304-305--106b-104h106p104-102-104-102-204-
+    3?/304-203-.letring{204b-104-204~~~~}-
 
-Maybe you will note a weird thing on bendings, I avoid indicating the destination notes. It is a personal thing
+Maybe you will note a weird thing on bendings, I avoid indicating the destination notes. It is a personal preference
 because I think that bends must be done singing the sound, muttering or thinking about what should be. It is weird
-thinking: "Okay, now a will bend this strings half tone, whole tone". But in ``Tulip`` you can do things like ``204b206``
+thinking: "Okay, now a will bend this string a half tone, a whole tone". But in ``Tulip`` you can do things like ``204b206``
 there is no problem on it.
 
 In order to get a complete transcription we need to the "exit solo". This is what follows:
@@ -363,7 +372,8 @@ In order to get a complete transcription we need to the "exit solo". This is wha
     206-208-209-208--206-307-305--.chord{209-106}.chord{2:b}-.chord{209-106}.chord{2:~~~}-|-
     1?/.tremolopicking{106~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}-
 
-``Eric Gales`` does a nice ending using the eighth intervals from the bridge. ``Strumming`` them:
+Another great guitar player called ``Eric Gales`` does a nice ending using the eighth intervals from the bridge.
+``Strumming`` more or less in this way:
 
     .strum{5?/.chrod{500-302}----------------------5?/.chord{502-304}----------------------5?/.chord{58-300}-----------}
 
