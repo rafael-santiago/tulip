@@ -140,7 +140,7 @@ txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypes
         return (*tab);
     }
 
-    if (((*tab)->curr_row + row_usage) >= (*tab)->fretboard_sz) {
+    if (((*tab)->curr_row + row_usage) >= (*tab)->fretboard_sz - 1) {
         tp = new_txttypesetter_tablature_ctx(tab);
     } else {
         for (tp = (*tab); tp->next != NULL; tp = tp->next);
