@@ -96,7 +96,7 @@ void tulip_single_note_ctx_cpy(tulip_single_note_ctx **song, const tulip_single_
     bp = begin;
 
     while (bp != end) {
-        if (bp->techniques != kTlpSavePoint) {
+        if (bp->techniques != kTlpSavePoint && bp->techniques != kTlpLiteral) {
             (*song) = add_note_to_tulip_single_note_ctx((*song), bp->techniques, bp->buf);
         }
         bp = bp->next;

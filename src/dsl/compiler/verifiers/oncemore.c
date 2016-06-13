@@ -94,7 +94,7 @@ static tulip_single_note_ctx *find_oncemore_from_tlp_block(tulip_single_note_ctx
 }
 
 tulip_single_note_ctx *find_oncemore_begin(tulip_single_note_ctx *song) {
-    tulip_single_note_ctx *mp = NULL;
+    tulip_single_note_ctx *mp = NULL, *lp = NULL;
 
     if (song == NULL) {
         return NULL;
@@ -117,10 +117,16 @@ tulip_single_note_ctx *find_oncemore_begin(tulip_single_note_ctx *song) {
             mp = song;
             if (mp->techniques & kTlpSepBar) {
                 mp = mp->last;
+                lp = mp;
                 while (mp != NULL && (mp->techniques & kTlpSepBar) == 0) {
+                    lp = mp;
                     mp = mp->last;
                 }
-                mp = mp->next;
+                if (mp != NULL) {
+                    mp = mp->next;
+                } else {
+                    mp = lp;
+                }
             } else if ((mp->techniques & kTlpSingleNote) && mp->last != NULL) {
                 if ((mp->last->techniques & kTlpHammerOn   ) ||
                     (mp->last->techniques & kTlpPullOff    ) ||
