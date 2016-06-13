@@ -47,7 +47,7 @@ starting.
 
 ## Can I install this software using its own build scripts?
 
-Yes, you can. For doing this you should call ``hefesto`` passing the option ``--install`` (being under ``src`` sub-directory
+Yes, you can. For doing this you should call ``hefesto`` passing the option ``--install`` (being under ``src`` sub-directory,
 of course).
 
 Actually the following commands are what you should execute. Being you inside the root project's directory:
@@ -59,4 +59,4 @@ emmetbrown@DELOREAN:~/internet/github.com/src/tulip/src# hefesto --install
 (...)
 ```
 
-For uninstalling you should do almost the same. You should pass the ``--uninstall`` option instead of the previous one.
+For uninstalling, you should do almost the same. You should pass the ``--uninstall`` option instead of the previous one.
