@@ -375,7 +375,7 @@ In order to get a complete transcription we need to the "exit solo". This is wha
 Another great guitar player called ``Eric Gales`` does a nice ending using the eighth intervals from the bridge.
 ``Strumming`` more or less in this way:
 
-    .strum{5?/.chrod{500-302}----------------------5?/.chord{502-304}----------------------5?/.chord{58-300}-----------}
+    .strum{5?/.chord{500-302}----------------------5?/.chord{502-304}----------------------5?/.chord{58-300}-----------}
 
 Go ahead repeating it again and again. The use of ``.strum`` is straightforward, this is a way to abstract the strumming
 complications, saying only where to put the fingers and strum it according to the current beat.
