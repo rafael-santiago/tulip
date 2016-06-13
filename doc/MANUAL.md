@@ -340,8 +340,8 @@ Now, the second part from verses is related with a break done at the end of the 
     .chord{500-49}.chord{5:\4:\}-
 
 Anyway, as I said before this is just a little window about what ``Hendrix`` was able to do with this. The truth is that
-he naturally used to add new little random things at each turn, producing a rich accompanying. As a result what we feel while
-listeners is that there is a secondary song inside the main. It is up to you and your own creativity.
+he naturally used to add new little random things at each turn, producing a richer accompanying. As a result what we feel while
+listeners is that there is a secondary song inside the main. Emulate this is up to you and your own creativity.
 
 In terms of code, nothing new was presented above. The following is related to the bridge and then all verses are played again:
 
