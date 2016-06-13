@@ -8,6 +8,7 @@
 #include <processor/typesetters/txt/printers/txtprinterflush.h>
 #include <processor/typesetters/txt/txt.h>
 #include <processor/oututils.h>
+#include <dsl/utils.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -108,6 +109,13 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
                 return;
             }
 
+            //  WARN(Santiago): Some stacked constructions take us to do it. When the sum exceeds the fretboard size we
+            //                  will not ask for a brand new one. Let the bad typesetting happen and the user do his own
+            //                  adjustments.
+            while (!is_sep((*tab)->strings[(*tab)->curr_str][(*tab)->curr_row]) && (*tab)->curr_row < (*tab)->fretboard_sz) {
+                (*tab)->curr_row++;
+            }
+
             memcpy(&(*tab)->strings[(*tab)->curr_str][(*tab)->curr_row], technique_label, strlen(technique_label));
 
             if ((*tab)->active_techniques != NULL) {
@@ -137,6 +145,17 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
 
             if (technique_label == NULL) {
                 return;
+            }
+
+            //  WARN(Santiago): Some stacked constructions take us to do it. When the sum exceeds the fretboard size we
+            //                  will not ask for a brand new one. Let the bad typesetting happen and the user do his own
+            //                  adjustments.
+            if ((*tab)->curr_row > 0) {
+                for (s = 0; s < 6; s++) {
+                    while (!is_sep((*tab)->strings[s][(*tab)->curr_row-1]) && (*tab)->curr_row < (*tab)->fretboard_sz) {
+                        (*tab)->curr_row++;
+                    }
+                }
             }
 
             for (s = 0; s < 6; s++) {
