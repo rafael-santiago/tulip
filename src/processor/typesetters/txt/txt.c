@@ -184,7 +184,7 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
         //                                                                                  st......."...
         return txttypesetter_eval_buffer_row_usage(techniques & ~(curr_technique), note, tab);
     } else if (techniques & kTlpChord) {
-        longest = -1;
+        longest = 0;
         for (np = note; np != NULL && (np->techniques & kTlpChord); np = np->next) {
             if (np->buf[0] == 0 || (np->techniques & kTlpSingleNote) == 0) {
                 continue;
@@ -223,7 +223,7 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
     return 0;
 }
 
-/*static int show_curr_fretboard(const txttypesetter_tablature_ctx *tab) {
+static int show_curr_fretboard(const txttypesetter_tablature_ctx *tab) {
     const txttypesetter_tablature_ctx *tp = tab;
     size_t s = 0;
     if (tp == NULL) {
@@ -240,7 +240,7 @@ int txttypesetter_eval_buffer_row_usage(const tulip_command_t techniques, const 
         printf("%s\n", tp->strings[s]);
     }
     system("read");
-}*/
+}
 
 static void cut_data_buf(char *bp) {
     char *bp_end = NULL;
