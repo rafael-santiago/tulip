@@ -169,6 +169,12 @@ int oncemore_verifier(const char *buf, char *error_message, tulip_single_note_ct
     }
 
     sp = (*song);
+
+    if (sp == NULL) {
+        tlperr_s(error_message, "There is nothing to be done once more here.");
+        return 0;
+    }
+
     while (sp->next != NULL) {
         sp = sp->next;
     }

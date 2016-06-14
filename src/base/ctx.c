@@ -82,7 +82,7 @@ tulip_single_note_ctx *add_note_to_tulip_single_note_ctx(tulip_single_note_ctx *
 }
 
 static tulip_single_note_ctx *get_tulip_single_note_ctx_tail(tulip_single_note_ctx *song) {
-    tulip_single_note_ctx *p;
+    tulip_single_note_ctx *p = NULL;
     for (p = song; p->next != NULL; p = p->next);
     return p;
 }

@@ -13,6 +13,7 @@
 #include <dsl/parser/parser.h>
 #include <dsl/compiler/compiler.h>
 #include <processor/oututils.h>
+#include <usrland/cmdlineoptions.h>
 #include <system/version.h>
 #include <system/init.h>
 #include <system/exec.h>
@@ -281,65 +282,65 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
     };
     struct tlpcode_test_vector tlpcodes[] = {
         //  INFO(Santiago): Toy productions.
-        { ".chord{60-52-42-31-20-10}", 1},
-        { ".chord 60-52-42-31-20-10}", 0},
-        { "30", 1},
-        { "3a", 0},
-        { "h", 1},
-        { "h3q", 0},
-        { "p", 1},
-        { "p4#", 0},
-        { "-", 1},
-        { "-3a", 0},
-        { "|", 1},
-        { "|3B", 0},
-        { "-|-", 1},
-        { ";", 1},
-        { ";-3a", 0},
-        { "b", 1},
-        { "b33b", 1},
-        { "b3b", 0},
-        { "r", 1},
-        { "r33r", 1},
-        { "r4r", 0},
-        { "*", 1},
-        { "*3a", 0},
-        { "T", 1},
-        { "T3T", 0},
-        { "v", 1},
-        { "v3a", 0},
-        { "~", 1},
-        { "~3a", 0},
-        { "~4~", 0},
-        { ".mute { 20 - 30 - 40 - 20 }", 1},
-        { ".letring{.chord{20-10}}", 1},
-        { ".strum{.chord{60-52-42-31-20-10}}", 1},
-        { ".tremolopicking{60-------------}", 1},
-        { ".vibratowbar{37****************}", 1},
-        { ".literal{\"boo.\"}", 1},
-        { ".mute { 20 - 30 - 40 - 20 ", 0},
-        { ".letring{.chord{20-10}", 0},
-        { ".strum{.chord{60-52-42-31-20-10}", 0},
-        { ".tremolopicking{60-------------", 0},
-        { ".vibratowbar{37****************", 0},
-        { ".literal{\"boo.\"", 0},
+        { ".chord{60-52-42-31-20-10}", 1 },
+        { ".chord 60-52-42-31-20-10}", 0 },
+        { "30", 1 },
+        { "3a", 0 },
+        { "h", 1 },
+        { "h3q", 0 },
+        { "p", 1 },
+        { "p4#", 0 },
+        { "-", 1 },
+        { "-3a", 0 },
+        { "|", 1 },
+        { "|3B", 0 },
+        { "-|-", 1 },
+        { ";", 1 },
+        { ";-3a", 0 },
+        { "b", 1 },
+        { "b33b", 1 },
+        { "b3b", 0 },
+        { "r", 1 },
+        { "r33r", 1 },
+        { "r4r", 0 },
+        { "*", 1 },
+        { "*3a", 0 },
+        { "T", 1 },
+        { "T3T", 0 },
+        { "v", 1 },
+        { "v3a", 0 },
+        { "~", 1 },
+        { "~3a", 0 },
+        { "~4~", 0 },
+        { ".mute { 20 - 30 - 40 - 20 }", 1 },
+        { ".letring{.chord{20-10}}", 1 },
+        { ".strum{.chord{60-52-42-31-20-10}}", 1 },
+        { ".tremolopicking{60-------------}", 1 },
+        { ".vibratowbar{37****************}", 1 },
+        { ".literal{\"boo.\"}", 1 },
+        { ".mute { 20 - 30 - 40 - 20 ", 0 },
+        { ".letring{.chord{20-10}", 0 },
+        { ".strum{.chord{60-52-42-31-20-10}", 0 },
+        { ".tremolopicking{60-------------", 0 },
+        { ".vibratowbar{37****************", 0 },
+        { ".literal{\"boo.\"", 0 },
         //  INFO(Santiago): Real world productions. All following must compile without any error.
-        { ".chord{40-30}-.chord{43-33}-.chord{45-35}.chord{4:~3:~}-|-.chord{40-30}-.chord{43-33}-.chord{46-36}.chord{4:p3:p}.chord{45-35}.chord{4:~3:~}-|-.chord{40-30}-.chord{43-33}-.chord{45-35}-.chord{43-33}-.chord{40-30}-;", 1},
-        { ".letring{55-47-37-27---27-37-47-55-47-27--54-46-36-26--46-36-26--24h26h27-14--55-47-37-27--47-37-27--55-27-14b15r--54-46-36-26--46-36-26--26b27r};", 1},
-        { ".chord{600-500-402}--.chord{601-501-403}--.chord{602-502-404}-|;", 1},
-        { "6?/67-55-56-57-57-45b-57-|-6?/67-55-56-57-57-45b-57-|-5?/57-45-46-47-47-35b-47-|-5?/57-45-46-47-47-35b-47-|-6?/67-55-56-57-57-45b-57-|-6?/67-55-56-57-57-45b-57-|-57/59-47-48-.letring{.chord{49-48}-.chord{49-48}-.chord{200-100}-.chord{49-48}-.chord{49-48}-.chord{200-100}}-|-.chord{59-48-39-200}-.chord{500-49-300-201}-.letring{.chord{60-57---}}-|-.chord{200-17}.chord{2:b1:b}-.chord{200-17}.chord{2:b1:b}-.chord{102-202}-205-202-302-404-302b-404-502h504-502h504-;", 1},
-        { "4?/402-.chord{400-300-200}-|-302-200-100-203b204-200-302-300-402-.chord{402-302}-", 1},
-        { ".letring{61-.chord{21-11}-|-63-.chord{23-13}-|-64-.chord{24-14}-|-63-.chord{23-13}-|-51h53-43-}|-", 1},
-        { ".chord{37-100}.chord{3:/1:/}.chord{38-101}-.chord{38-101}-.chord{301-202}-.chord{39-29}-301-300-39-.chord{39-29-101}-.chord{19-29-39}-;", 1},
-        { ".chord{56-46}-.chord{56-46}-.chord{67-59}-.letring{.chord{56-46}-----}", 1},
-        { ".letring{5?/54-44--45-46-}-|-.letring{5?/59-49--400-401};", 1},
-        { "63-45--63-45--55-43-;", 1},
-        { "62-54-42-44-;-62--54-42-44-32-42-4X-42h44-|-62--54-42-44-32-62-42h44-42h44-;", 1},
-        { "59-67-59-67-47-67-67-67-", 1},
-        { "67-67-55-67-62-62-65-66-", 1},
-        { ".mute{50-42-21-32-10-11-21-13-23-}-50-53~~-52-53-", 1},
-        { ".chord{50-42-32-21}-.chord{50-42-32-21}--.chord{45-34-23}--50-53~~-52-53-", 1},
-        { ".letring{67-59-49-37-49--49-59-49-37-49--49-47h49}-", 1}
+        { ".chord{40-30}-.chord{43-33}-.chord{45-35}.chord{4:~3:~}-|-.chord{40-30}-.chord{43-33}-.chord{46-36}.chord{4:p3:p}.chord{45-35}.chord{4:~3:~}-|-.chord{40-30}-.chord{43-33}-.chord{45-35}-.chord{43-33}-.chord{40-30}-;", 1 },
+        { ".letring{55-47-37-27---27-37-47-55-47-27--54-46-36-26--46-36-26--24h26h27-14--55-47-37-27--47-37-27--55-27-14b15r--54-46-36-26--46-36-26--26b27r};", 1 },
+        { ".chord{600-500-402}--.chord{601-501-403}--.chord{602-502-404}-|;", 1 },
+        { "6?/67-55-56-57-57-45b-57-|-6?/67-55-56-57-57-45b-57-|-5?/57-45-46-47-47-35b-47-|-5?/57-45-46-47-47-35b-47-|-6?/67-55-56-57-57-45b-57-|-6?/67-55-56-57-57-45b-57-|-57/59-47-48-.letring{.chord{49-48}-.chord{49-48}-.chord{200-100}-.chord{49-48}-.chord{49-48}-.chord{200-100}}-|-.chord{59-48-39-200}-.chord{500-49-300-201}-.letring{.chord{60-57---}}-|-.chord{200-17}.chord{2:b1:b}-.chord{200-17}.chord{2:b1:b}-.chord{102-202}-205-202-302-404-302b-404-502h504-502h504-;", 1 },
+        { "4?/402-.chord{400-300-200}-|-302-200-100-203b204-200-302-300-402-.chord{402-302}-", 1 },
+        { ".letring{61-.chord{21-11}-|-63-.chord{23-13}-|-64-.chord{24-14}-|-63-.chord{23-13}-|-51h53-43-}|-", 1 },
+        { ".chord{37-100}.chord{3:/1:/}.chord{38-101}-.chord{38-101}-.chord{301-202}-.chord{39-29}-301-300-39-.chord{39-29-101}-.chord{19-29-39}-;", 1 },
+        { ".chord{56-46}-.chord{56-46}-.chord{67-59}-.letring{.chord{56-46}-----}", 1 },
+        { ".letring{5?/54-44--45-46-}-|-.letring{5?/59-49--400-401};", 1 },
+        { "63-45--63-45--55-43-;", 1 },
+        { "62-54-42-44-;-62--54-42-44-32-42-4X-42h44-|-62--54-42-44-32-62-42h44-42h44-;", 1 },
+        { "59-67-59-67-47-67-67-67-", 1 },
+        { "67-67-55-67-62-62-65-66-", 1 },
+        { ".mute{50-42-21-32-10-11-21-13-23-}-50-53~~-52-53-", 1 },
+        { ".chord{50-42-32-21}-.chord{50-42-32-21}--.chord{45-34-23}--50-53~~-52-53-", 1 },
+        { ".letring{67-59-49-37-49--49-59-49-37-49--49-47h49}-", 1 }
     };
     tulip_single_note_ctx *song = NULL;
     char errbuf[255] = "";
@@ -589,6 +590,173 @@ CUTE_TEST_CASE(dsl_utils_get_cmd_tag_from_cmd_code_tests)
     }
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(dsl_utils_has_sustained_technique_tests)
+    struct test_vector {
+        tulip_command_t technique;
+        int expected;
+    };
+    struct test_vector tests[] = {
+        {                              kTlpNone,  0 },
+        {                         kTlpSavePoint,  0 },
+        {                           kTlpNoteSep,  0 },
+        {                          kTlpBlockEnd,  0 },
+        {                              kTlpMute,  1 },
+        {                           kTlpLetRing,  1 },
+        {                             kTlpChord,  1 },
+        {                             kTlpStrum,  1 },
+        {                    kTlpTremoloPicking,  1 },
+        {                       kTlpVibratoWBar,  1 },
+        {                             kTlpTrill,  1 },
+        {                             kTlpTimes,  0 },
+        {                           kTlpVibrato,  0 },
+        {                         kTlpSlideDown,  0 },
+        {                           kTlpSlideUp,  0 },
+        {                          kTlpHammerOn,  0 },
+        {                           kTlpPullOff,  0 },
+        {                           kTlpTunning,  0 },
+        {                           kTlpLiteral,  0 },
+        {                        kTlpSingleNote,  0 },
+        {                            kTlpSepBar,  0 },
+        {                              kTlpBend,  0 },
+        {                       kTlpReleaseBend,  0 },
+        {                           kTlpTapping,  0 },
+        {                   kTlpNaturalHarmonic,  0 },
+        {                kTlpArtificialHarmonic,  0 },
+        {                              kTlpSong,  0 },
+        {                       kTlpTranscriber,  0 },
+        {                          kTlpOnceMore,  0 },
+        {                              kTlpPart,  0 },
+        {                            kTlpRepeat,  0 },
+        { kTlpHammerOn | kTlpMute | kTlpVibrato,  1 },
+        { kTlpPullOff | kTlpTrill | kTlpHammerOn, 1 },
+        { kTlpVibratoWBar | kTlpMute | kTlpChord, 1 }
+    };
+    size_t tests_nr = sizeof(tests) / sizeof(tests[0]);
+    size_t t = 0;
+    for (t = 0; t < tests_nr; t++) {
+        CUTE_ASSERT(has_sustained_technique(tests[t].technique) == tests[t].expected);
+    }
+
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(dsl_utils_has_non_sustained_technique_tests)
+    struct test_vector {
+        tulip_command_t technique;
+        int expected;
+    };
+    struct test_vector tests[] = {
+        {                              kTlpNone,  0 },
+        {                         kTlpSavePoint,  0 },
+        {                           kTlpNoteSep,  1 },
+        {                          kTlpBlockEnd,  0 },
+        {                              kTlpMute,  0 },
+        {                           kTlpLetRing,  0 },
+        {                             kTlpChord,  0 },
+        {                             kTlpStrum,  0 },
+        {                    kTlpTremoloPicking,  0 },
+        {                       kTlpVibratoWBar,  0 },
+        {                             kTlpTrill,  0 },
+        {                             kTlpTimes,  0 },
+        {                           kTlpVibrato,  1 },
+        {                         kTlpSlideDown,  1 },
+        {                           kTlpSlideUp,  1 },
+        {                          kTlpHammerOn,  1 },
+        {                           kTlpPullOff,  1 },
+        {                           kTlpTunning,  0 },
+        {                           kTlpLiteral,  0 },
+        {                        kTlpSingleNote,  0 },
+        {                            kTlpSepBar,  0 },
+        {                              kTlpBend,  1 },
+        {                       kTlpReleaseBend,  1 },
+        {                           kTlpTapping,  1 },
+        {                   kTlpNaturalHarmonic,  1 },
+        {                kTlpArtificialHarmonic,  1 },
+        {                              kTlpSong,  0 },
+        {                       kTlpTranscriber,  0 },
+        {                          kTlpOnceMore,  0 },
+        {                              kTlpPart,  0 },
+        {                            kTlpRepeat,  0 },
+        { kTlpHammerOn | kTlpMute | kTlpVibrato,  1 },
+        { kTlpPullOff | kTlpTrill | kTlpHammerOn, 1 },
+        { kTlpVibratoWBar | kTlpMute | kTlpChord, 0 }
+    };
+    size_t tests_nr = sizeof(tests) / sizeof(tests[0]);
+    size_t t = 0;
+    for (t = 0; t < tests_nr; t++) {
+        CUTE_ASSERT(has_non_sustained_technique(tests[t].technique) == tests[t].expected);
+    }
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(usrland_cmdlineoptions_tests)
+    char *argv[] = {
+        "--qotsa=qotsa,rater-r,songs-for-the-deaf,lullabies-to-paralyze,era-vulgaris,...like-clockwork",
+        "--jimi-hendrix=are-you-experienced?,axis-bold-as-love,eletric-ladyland",
+        "--black-sabbath=black-sabbath,paranoid,master-of-reality,vol.4,sabbath-bloody-sabbath,sabotage,technical-ecstasy,never-say-die!",
+        "--awesome"
+    };
+    int argc = sizeof(argv) / sizeof(argv[0]);
+    struct test_vector {
+        char *option;
+        char *expected;
+    };
+    struct test_vector tests[] = {
+        { "qotsa", "qotsa,rater-r,songs-for-the-deaf,lullabies-to-paralyze,era-vulgaris,...like-clockwork" },
+        { "jimi-hendrix", "are-you-experienced?,axis-bold-as-love,eletric-ladyland" },
+        { "black-sabbath", "black-sabbath,paranoid,master-of-reality,vol.4,sabbath-bloody-sabbath,sabotage,technical-ecstasy,never-say-die!" }
+    };
+    size_t tests_nr = sizeof(tests) / sizeof(tests[0]);
+    size_t t = 0;
+    const char *data = NULL;
+
+    for (t = 0; t < tests_nr; t++) {
+        CUTE_ASSERT(get_option(tests[t].option, NULL) == NULL);
+    }
+
+    set_option_argc_argv(argc, argv);
+
+    for (t = 0; t < tests_nr; t++) {
+        data = get_option(tests[t].option, NULL);
+        CUTE_ASSERT(data != NULL);
+        CUTE_ASSERT(strcmp(tests[t].expected, data) == 0);
+    }
+
+    CUTE_ASSERT(get_bool_option("these-droids-aren't-what-we-are-looking-for", 1) == 1);
+
+    CUTE_ASSERT(get_bool_option("--awesome", 0) == 0);
+
+    CUTE_ASSERT(get_bool_option("awesome", 0) == 1);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(dsl_compiler_fuzz_tests)
+    size_t fuzz_nr = 10000;
+    char *buf = NULL;
+    size_t buf_sz = 0;
+    size_t b = 0;
+    tulip_single_note_ctx *song = NULL;
+
+    srand(stime(0));
+
+    printf("\tHello Human, I will try to compile %d random buffers of varied sizes in order to see if something can explode here...\n"
+           "\tPlease wait...\n", fuzz_nr);
+    while (fuzz_nr-- > 0) {
+        buf_sz = rand() % 65535;
+        buf = (char *) getseg(buf_sz + 1);
+        memset(buf, 0, buf_sz + 1);
+        for (b = 0; b < buf_sz; b++) {
+            buf[b] = rand() % 255;
+        }
+        write_buffer_to_disk("fuzz.tlp", buf, buf_sz);  //  WARN(Santiago): If it can cause any unexpected behavior we need to known more about this buffer.
+        compile_tulip_codebuf(buf, NULL, &song, NULL);
+        if (song != NULL) {
+            free_tulip_single_note_ctx(song);
+            song = NULL;
+        }
+        free(buf);
+        remove("fuzz.tlp");
+    }
+    printf("\tNice! We are alive! Nothing exploded.\n");
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(tulips_tester_monkey)
     CUTE_RUN_TEST(base_tulip_technique_stack_ctx_tests);
     CUTE_RUN_TEST(base_tulip_single_note_ctx_tests);
@@ -606,7 +774,10 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     CUTE_RUN_TEST(dsl_utils_tlp_cmd_code_to_plain_index_tests);
     CUTE_RUN_TEST(dsl_utils_demux_tlp_commands_tests);
     CUTE_RUN_TEST(dsl_utils_get_cmd_tag_from_cmd_code_tests);
+    CUTE_RUN_TEST(dsl_utils_has_sustained_technique_tests);
+    CUTE_RUN_TEST(dsl_utils_has_non_sustained_technique_tests);
     CUTE_RUN_TEST(dsl_compiler_compile_tulip_codebuf);
+    CUTE_RUN_TEST(dsl_compiler_fuzz_tests);
     //  WARN(Santiago): It is important to run the following test after
     //                  the test "dsl_utils_tlp_cmd_code_to_plain_index_tests"
     //                  because the following tested function is quite dependant
@@ -615,6 +786,7 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     CUTE_RUN_TEST(processor_oututils_get_technique_label_tests);
     CUTE_RUN_TEST(processor_oututils_single_note_to_tab_fret_nr_tests);
     CUTE_RUN_TEST(processor_typesetters_txt_tablature_ctx_tests);
+    CUTE_RUN_TEST(usrland_cmdlineoptions_tests);
     //  WARN(Santiago): The tests related with the system module should
     //                  run after.
     CUTE_RUN_TEST(system_get_tulip_system_version_tests);

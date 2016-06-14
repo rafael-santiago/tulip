@@ -71,7 +71,8 @@
                                      ( (c) & kTlpChord          ) ||\
                                      ( (c) & kTlpStrum          ) ||\
                                      ( (c) & kTlpTremoloPicking ) ||\
-                                     ( (c) & kTlpVibratoWBar    ) )
+                                     ( (c) & kTlpVibratoWBar    ) ||\
+                                     ( (c) & kTlpTrill          ) )
 
 #define has_non_sustained_technique(c) ( ( (c) & kTlpVibrato )            ||\
                                          ( (c) & kTlpSlideDown )          ||\
