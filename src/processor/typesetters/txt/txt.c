@@ -128,8 +128,12 @@ void txttypesetter_print_sustained_technique_mark(const tulip_command_t command,
     (*tab)->active_techniques = push_technique_to_txttypesetter_active_technique_ctx((*tab)->active_techniques, command, &(*tab)->techniques, &(*tab)->curr_row);
 }
 
-txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypesetter_tablature_ctx **tab, const int row_usage) {
+txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage) {
     txttypesetter_tablature_ctx *tp = NULL;
+    int temp[2] = { 0, 0 };
+    int is_brand_new = 0;
+    tulip_command_t *demuxes = NULL;
+    size_t demuxes_sz = 0;
 
     if (tab == NULL) {
         return NULL;
@@ -142,8 +146,50 @@ txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypes
 
     if (((*tab)->curr_row + row_usage) >= (*tab)->fretboard_sz - 1) {
         tp = new_txttypesetter_tablature_ctx(tab);
-    } else {
+        is_brand_new = 1;
+    } else if (note->next != NULL && (note->next->next != NULL) && (note->next->techniques & kTlpNoteSep) == 0 &&
+          has_non_sustained_technique(note->next->techniques)) {
+        //  WARN(Santiago): This heuristic is useful to avoid orphan notes at the end of the tab diagram which
+        //                  disrupts a nice continuous reading (indispensable during studies).
+        //
+        //                  Then, here we are seeking to avoid ugly outputs like: (...)-10h-|  [Ha-ha! To be continued... :P~~]
+        //
+        //                  Although it can cause a side effect (1).
+        //
+        temp[0] = txttypesetter_eval_buffer_row_usage(note->next->techniques, note->next, (*tab));
+        temp[1] = txttypesetter_eval_buffer_row_usage(note->next->next->techniques, note->next->next, (*tab));
+
+        if (((*tab)->curr_row + row_usage + temp[0] + temp[1]) >= (*tab)->fretboard_sz - 1) {
+            tp = new_txttypesetter_tablature_ctx(tab);
+            is_brand_new = 1;
+        }
+    }
+
+    if (tp == NULL) {
         for (tp = (*tab); tp->next != NULL; tp = tp->next);
+    } else if (is_brand_new && has_sustained_technique(note->techniques)) {
+        //  WARN(Santiago): This heuristic is for avoiding a horrendous typesetting as follows:
+        //
+        //              lr...... (...)
+        //                       (...)
+        //            |-~--~---- (...)
+        //            |--------- (...)
+        //            |--------- (...)
+        //            |--------- (...)
+        //            |--------- (...)
+        //            |--------- (...)
+        //
+        //  Here the side effect (1) is mitigated.
+        //
+        demuxes = demux_tlp_commands(note->techniques, &demuxes_sz);
+
+        while (demuxes_sz-- > 0) {
+            if (has_sustained_technique(demuxes[demuxes_sz])) {
+                txttypesetter_print_sustained_technique_mark(demuxes[demuxes_sz], &tp, row_usage);
+            }
+        }
+
+        free(demuxes);
     }
 
     return tp;

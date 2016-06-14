@@ -18,9 +18,9 @@ void txttypesetter_tunning_printer(txttypesetter_tablature_ctx **tab, const tuli
     //                  does not consume any real output buffer amount, for this reason we need to look for this
     //                  consumption using the next technique. If the next one is another .tunning it does not matter
     //                  in some point of the processing we will set a non-dummy tunning.
-    tp = txttypesetter_get_properly_output_location((tab), txttypesetter_eval_buffer_row_usage(note->next->techniques,
-                                                                                               note->next,
-                                                                                               (*tab)));
+    tp = txttypesetter_get_properly_output_location((tab), note, txttypesetter_eval_buffer_row_usage(note->next->techniques,
+                                                                                                     note->next,
+                                                                                                     (*tab)));
     t = 0;
     s = 0;
     n = 0;

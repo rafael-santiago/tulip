@@ -21,6 +21,6 @@ void txttypesetter_sustained_printer(const tulip_command_t technique, txttypeset
         return;
     }
     row_usage = txttypesetter_eval_buffer_row_usage(note->techniques, note, *tab);
-    tp = txttypesetter_get_properly_output_location(tab, row_usage);
+    tp = txttypesetter_get_properly_output_location(tab, note, row_usage);
     txttypesetter_print_sustained_technique_mark(technique, tab, row_usage);
 }

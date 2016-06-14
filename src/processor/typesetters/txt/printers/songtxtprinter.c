@@ -19,7 +19,7 @@ void txttypesetter_song_printer(txttypesetter_tablature_ctx **tab, const tulip_s
     if ((*tab) != NULL) {
         for (tp = (*tab); tp->last != NULL; tp = tp->last);
     } else {
-        tp = txttypesetter_get_properly_output_location(tab, 0);
+        tp = txttypesetter_get_properly_output_location(tab, note, 0);
     }
 
     tp->song = expand_string(note->buf);

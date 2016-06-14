@@ -73,6 +73,18 @@
                                      ( (c) & kTlpTremoloPicking ) ||\
                                      ( (c) & kTlpVibratoWBar    ) )
 
+#define has_non_sustained_technique(c) ( ( (c) & kTlpVibrato )            ||\
+                                         ( (c) & kTlpSlideDown )          ||\
+                                         ( (c) & kTlpSlideUp )            ||\
+                                         ( (c) & kTlpHammerOn )           ||\
+                                         ( (c) & kTlpPullOff )            ||\
+                                         ( (c) & kTlpBend )               ||\
+                                         ( (c) & kTlpReleaseBend )        ||\
+                                         ( (c) & kTlpTapping )            ||\
+                                         ( (c) & kTlpNaturalHarmonic )    ||\
+                                         ( (c) & kTlpArtificialHarmonic ) ||\
+                                         ( (c) & kTlpNoteSep ) )
+
 tulip_command_t get_cmd_code_from_cmd_tag(const char *buf);
 
 int is_single_note(const char *buf);

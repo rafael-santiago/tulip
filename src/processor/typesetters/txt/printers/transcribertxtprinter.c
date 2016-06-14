@@ -18,7 +18,7 @@ void txttypesetter_transcriber_printer(txttypesetter_tablature_ctx **tab, const 
     if ((*tab) != NULL) {
         for (tp = (*tab); tp->last != NULL; tp = tp->last);
     } else {
-        tp = txttypesetter_get_properly_output_location(tab, 0);
+        tp = txttypesetter_get_properly_output_location(tab, note, 0);
     }
 
     tp->transcriber = expand_string(note->buf);

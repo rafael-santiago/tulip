@@ -20,7 +20,7 @@ void txttypesetter_literal_printer(txttypesetter_tablature_ctx **tab, const tuli
     if (string == NULL) {
         return;
     }
-    tp = txttypesetter_get_properly_output_location(tab, 0);
+    tp = txttypesetter_get_properly_output_location(tab, note, 0);
     tp->comments = add_comment_to_txttypesetter_comment_ctx(tp->comments, string, (*tab)->fretboard_sz);
     free(string);
 }
