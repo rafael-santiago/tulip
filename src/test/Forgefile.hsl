@@ -53,7 +53,19 @@ function forge_libcutest() : result type none {
 }
 
 function runtests() : result type int {
-    result hefesto.sys.run(hefesto.sys.make_path("bin", get_appname()));
+    var test_options type list;
+    var test_options_data type string;
+    var t type int;
+    $test_options = hefesto.sys.get_option("test-options");
+    if ($test_options.count() > 0) {
+        $test_options_data = " ";
+        $t = 0;
+        while ($t < $test_options.count()) {
+            $test_options_data = $test_options_data + $test_options.item($t) + " ";
+            $t = $t + 1;
+        }
+    }
+    result hefesto.sys.run(hefesto.sys.make_path("bin", get_appname()) + $test_options_data);
 }
 
 function get_appname() : result type string {

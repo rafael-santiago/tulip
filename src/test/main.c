@@ -777,7 +777,11 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     CUTE_RUN_TEST(dsl_utils_has_sustained_technique_tests);
     CUTE_RUN_TEST(dsl_utils_has_non_sustained_technique_tests);
     CUTE_RUN_TEST(dsl_compiler_compile_tulip_codebuf);
-    CUTE_RUN_TEST(dsl_compiler_fuzz_tests);
+    if (CUTE_GET_OPTION("skip-fuzz-tests") == NULL) {
+        CUTE_RUN_TEST(dsl_compiler_fuzz_tests);
+    } else {
+        printf("***\n*** WARNING: The compiler's fuzz tests were skipped.\n***\n");
+    }
     //  WARN(Santiago): It is important to run the following test after
     //                  the test "dsl_utils_tlp_cmd_code_to_plain_index_tests"
     //                  because the following tested function is quite dependant
