@@ -18,6 +18,8 @@
 #include <system/init.h>
 #include <system/exec.h>
 #include <processor/typesetters/txt/txtctx.h>
+#include <processor/processor.h>
+#include "fancytesting.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -754,7 +756,37 @@ CUTE_TEST_CASE(dsl_compiler_fuzz_tests)
         free(buf);
         remove("fuzz.tlp");
     }
-    printf("\tNice! We are alive! Nothing exploded.\n");
+    printf("\tNice! We are alive! Nothing is exploding at our faces.\n");
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(processor_fancy_outputs_assurance)
+    size_t t;
+    tulip_single_note_ctx *song = NULL;
+    char *output_buf = NULL;
+    size_t output_buf_sz = 0, b = 0;
+    FILE *output = NULL;
+    for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
+        CUTE_ASSERT(compile_tulip_codebuf(g_fancy_outputs_test_vector[t].tlp_code, NULL, &song, NULL) == 1);
+        CUTE_ASSERT(song != NULL);
+        CUTE_ASSERT(mktab(song, "output.txt") == 0);
+        free_tulip_single_note_ctx(song);
+        song = NULL;
+        output = fopen("output.txt", "rb");
+        CUTE_ASSERT(output != NULL);
+        fseek(output, 0L, SEEK_END);
+        output_buf_sz = (size_t) ftell(output);
+        fseek(output, 0L, SEEK_SET);
+        CUTE_ASSERT(output_buf_sz == g_fancy_outputs_test_vector[t].txt_output_sz);
+        output_buf = (char *) getseg(output_buf_sz + 1);
+        memset(output_buf, 0, output_buf_sz + 1);
+        fread(output_buf, 1, output_buf_sz, output);
+        fclose(output);
+        for (b = 0; b < output_buf_sz; b++) {
+            CUTE_ASSERT(output_buf[b] == g_fancy_outputs_test_vector[t].txt_output[b]);
+        }
+        free(output_buf);
+        remove("output.txt");
+    }
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(tulips_tester_monkey)
@@ -795,6 +827,11 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     //                  run after.
     CUTE_RUN_TEST(system_get_tulip_system_version_tests);
     CUTE_RUN_TEST(system_tulip_task_exec_tests);
+    if (CUTE_GET_OPTION("skip-fancy-outputs-assurance") == NULL) {
+        CUTE_RUN_TEST(processor_fancy_outputs_assurance);
+    } else {
+        printf("***\n*** WARNING: The fancy outputs assurance tests were skipped.\n***\n");
+    }
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulips_tester_monkey);

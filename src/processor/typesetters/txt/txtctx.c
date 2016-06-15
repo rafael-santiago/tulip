@@ -204,6 +204,12 @@ void free_txttypesetter_tablature_ctx(txttypesetter_tablature_ctx *tablature) {
             free(p->strings[s]);
         }
         free(p->times);
+        if (p->song != NULL) {
+            free(p->song);
+        }
+        if (p->transcriber != NULL) {
+            free(p->transcriber);
+        }
         free(p);
     }
 }
