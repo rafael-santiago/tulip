@@ -136,6 +136,7 @@ static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesett
     const txttypesetter_sustained_technique_ctx *tp = NULL;
     size_t i = 0;
     int has_half_step_notes = 0;
+    char *dp = NULL;
 
     if (g_txttypesetter_settings.prefs & kTlpPrefsShowTunning) {
         for (i = 0; i < 6 && !has_half_step_notes; i++) {
@@ -144,6 +145,13 @@ static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesett
     }
 
     for (tp = techniques; tp != NULL; tp = tp->next) {
+        dp = tp->data;
+        while (*dp == ' ') {
+            dp++;
+        }
+        if (*dp == '.') {
+            continue;
+        }
         for (i = 0; i < g_txttypesetter_settings.indentation_deepness; i++) {
             fprintf(fp, " ");
         }
