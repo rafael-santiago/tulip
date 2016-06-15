@@ -113,6 +113,7 @@ static void txttypesetter_chord_handler(txttypesetter_tablature_ctx **tab, const
 
 void txttypesetter_print_sustained_technique_mark(const tulip_command_t command, txttypesetter_tablature_ctx **tab, const row_usage) {
     txttypesetter_active_technique_ctx *ap = NULL;
+    txttypesetter_tablature_ctx *tp = NULL;
 
     if (tab == NULL) {
         return;
@@ -125,7 +126,13 @@ void txttypesetter_print_sustained_technique_mark(const tulip_command_t command,
         return;
     }
 
-    (*tab)->active_techniques = push_technique_to_txttypesetter_active_technique_ctx((*tab)->active_techniques, command, &(*tab)->techniques, &(*tab)->curr_row);
+    if (((*tab)->curr_row + 2) >= (*tab)->fretboard_sz - 1) {
+        tp = new_txttypesetter_tablature_ctx(tab);
+    } else {
+        tp = (*tab);
+    }
+
+    tp->active_techniques = push_technique_to_txttypesetter_active_technique_ctx(tp->active_techniques, command, &tp->techniques, &tp->curr_row);
 }
 
 txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage) {
