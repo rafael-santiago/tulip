@@ -296,20 +296,20 @@ static int show_curr_fretboard(const txttypesetter_tablature_ctx *tab) {
 }
 */
 static void cut_data_buf(char *bp) {
-    char *bp_end = NULL;
+    char *bp_start = NULL;
 
     if (bp == NULL) {
         return;
     }
 
+    bp_start = bp;
     bp = bp + strlen(bp) - 1;
-    bp_end = bp;
 
-    while (bp != bp_end && *bp == ' ') {
+    while (bp != bp_start && *bp == ' ') {
         bp--;
     }
 
-    if (bp != bp_end) {
+    if (bp != bp_start) {
         *(bp + 1) = 0;
     }
 }
