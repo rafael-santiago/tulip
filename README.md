@@ -63,7 +63,7 @@ For uninstalling, you should do almost the same. You should pass the ``--uninsta
 
 ## Using syntax highlighting
 
-I am a ``mcedit`` user. Due to it by now only syntax highlighting to this editor is implemented and can be found under the
+I am a ``mcedit`` user. Due to it by now only syntax highlighting for this editor is implemented and can be found under the
 ``sub-path etc/tulip.syntax``.
 
 ### Adding tulip's syntax highlighting to the mcedit
