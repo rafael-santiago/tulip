@@ -305,7 +305,7 @@ static void cut_data_buf(char *bp) {
     bp = bp + strlen(bp) - 1;
     bp_end = bp;
 
-    while (*bp == ' ') {
+    while (bp != bp_end && *bp == ' ') {
         bp--;
     }
 
