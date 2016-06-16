@@ -74,9 +74,26 @@ function runtests() : result type int {
         hefesto.sys.echo("\n" +
                          "*** NICE: You got Valgrind installed. What a nice place to run a build!\n" +
                          "          Let's run the tests using Valgrind (to inhibit it use --no-valgrind option).\n\n");
-        $runline = wrap_cmdline_with_valgrind($runline + " --fuzz-nr=1000", "memcheck.log");
+        $runline = wrap_cmdline_with_valgrind($runline + " --fuzz-nr=10", "memcheck.log");
     }
-    result hefesto.sys.run($runline);
+    var exit_code type int;
+    $exit_code = hefesto.sys.run($runline);
+    if ($valgrind_is_in_the_house) {
+        var memcheck_lines type list;
+        $memcheck_lines = hefesto.sys.lines_from_file("memcheck.log", "== All heap blocks were freed.*no leaks are possible");
+        if ($memcheck_lines.count() == 0) {
+            hefesto.sys.echo("WARNING: Issues were found by Valgrind...\n" +
+                             "         Please, try to re-run the main forge under src sub-directory using the following command:\n\n" +
+                             "                     hefesto --compile-model=debug\n\n" +
+                             "         After it, please, open an issue on:\n\n" +
+                             "                     https://github.com/rafael-santiago/tulip/issues\n\n" +
+                             "         Attaching in this issue the file memcheck.log created under the sub-path src/test/\n" +
+                             "Thank you!\n");
+        } else {
+            hefesto.sys.echo("*** INFO: All clean! No issues were found by Valgrind.\n");
+        }
+    }
+    result $exit_code;
 }
 
 function get_appname() : result type string {
