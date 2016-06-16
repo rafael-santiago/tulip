@@ -1,0 +1,52 @@
+wholechars abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_%-
+context default
+    keyword		.mute		brightcyan
+    keyword		.chord		brightcyan
+    keyword		.strum		brightcyan
+    keyword		.letring	brightcyan
+    keyword		.tremolopicking	brightcyan
+    keyword		.vibratowbar	brightcyan
+    keyword		.trill		brightcyan
+    keyword             .times          gray
+    keyword             .part           gray
+    keyword	        .repeat		gray
+    keyword		.literal	gray
+    keyword             .tunning        gray
+    keyword             .song           gray
+    keyword             .transcriber    gray
+# symbols
+    keyword		{		brightcyan
+    keyword		}		brightcyan
+    keyword		p		brightcyan
+    keyword		h		brightcyan
+    keyword		b		brightcyan
+    keyword		r		brightcyan
+    keyword		~		brightcyan
+    keyword		\*		brightcyan
+    keyword		/		brightcyan
+    keyword		\\		brightcyan
+    keyword		X		brightcyan
+    keyword             v               brightcyan
+    keyword		:		brightcyan
+    keyword		|		red
+    keyword		-		brightcyan
+    keyword		?		brightcyan
+    keyword		;		red
+    keyword             T               brightcyan
+    keyword             @               gray
+# notes
+    keyword		0 		cyan
+    keyword		1 		cyan
+    keyword		2 		cyan
+    keyword		3 		cyan
+    keyword		4 		cyan
+    keyword		5 		cyan
+    keyword		6 		cyan
+    keyword		7 		cyan
+    keyword		8 		cyan
+    keyword		9 		cyan
+
+    keyword		"*"		green
+    keyword 		\\n		brightgreen
+    keyword		\\t		brightgreen
+

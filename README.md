@@ -60,3 +60,29 @@ emmetbrown@DELOREAN:~/internet/github.com/src/tulip/src# hefesto --install
 ```
 
 For uninstalling, you should do almost the same. You should pass the ``--uninstall`` option instead of the previous one.
+
+## Using syntax highlighting
+
+I am a ``mcedit``. Due to it by now only syntax highlighting to this editor is implemented and can be found under the
+``sub-path etc/tulip.syntax``.
+
+### Adding tulip's syntax highlighting to the mcedit
+
+Copy the file ``etc/tulip.syntax`` to the mcedit's syntax directory (It depends on your editor installation details):
+
+```
+emmetbrown@DELOREAN:~/internet/github.com/src/tulip# cp etc/tulip.syntax /usr/share/mc/syntax/
+```
+
+After doing it you should tell to ``mcedit`` about your intentions of highlighting tulip's code. It should be done adding
+a pattern into the ``mcedit's Syntax`` file (It depends on your editor installation details). For instance, my ``Linux distro``
+brings it under the path ``/etc/mc/Syntax``. Follows what should be added to this editor's configuration file:
+
+```
+file ..\*\\.(tlp)$ Tulip\sscript
+include tulip.syntax
+```
+
+Now everything using extension ``.tlp`` will be highlighted:
+
+![mcedit-after-before](https://github.com/rafael-santiago/tulip/blob/master/etc/mcedit-high.gif)
