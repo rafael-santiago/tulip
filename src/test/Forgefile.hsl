@@ -6,6 +6,7 @@
 #
 #
 include ~/toolsets/gcc/gcc-app.hsl
+include Forgeutils.hsl
 
 var src type list;
 var inc type list;
@@ -65,7 +66,17 @@ function runtests() : result type int {
             $t = $t + 1;
         }
     }
-    result hefesto.sys.run(hefesto.sys.make_path("bin", get_appname()) + $test_options_data);
+    var runline type string;
+    $runline = hefesto.sys.make_path("bin", get_appname()) + $test_options_data;
+    var valgrind_is_in_the_house type int;
+    $valgrind_is_in_the_house = has_valgrind();
+    if ($valgrind_is_in_the_house) {
+        hefesto.sys.echo("\n" +
+                         "*** NICE: You got Valgrind installed. What a nice place to run a build!\n" +
+                         "          Let's run the tests using Valgrind (to inhibit it use --no-valgrind option).\n\n");
+        $runline = wrap_cmdline_with_valgrind($runline + " --fuzz-nr=1000", "memcheck.log");
+    }
+    result hefesto.sys.run($runline);
 }
 
 function get_appname() : result type string {

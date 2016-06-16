@@ -1,0 +1,19 @@
+#
+#                           Copyright (C) 2005-2016 by Rafael Santiago
+#
+# This is a free software. You can redistribute it and/or modify under
+# the terms of the GNU General Public License version 2.
+#
+#
+function has_valgrind() : result type int {
+    var no_valgrind type list;
+    $no_valgrind = hefesto.sys.get_option("no-valgrind");
+    if ($no_valgrind.count() > 0) {
+        result 0;
+    }
+    result (hefesto.sys.run("valgrind --version >/dev/null 2>&1") == 0);
+}
+
+function wrap_cmdline_with_valgrind(cmdline type string, logpath type string) : result type string {
+    result "valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --log-file=" + $logpath + " " + $cmdline;
+}

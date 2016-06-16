@@ -738,8 +738,15 @@ CUTE_TEST_CASE(dsl_compiler_fuzz_tests)
 
     srand(stime(0));
 
+    buf = CUTE_GET_OPTION("fuzz-nr");
+
+    if (buf != NULL) {
+        fuzz_nr = (size_t) atoi(buf);
+    }
+
     printf("\tHello Human, I will try to compile %d random buffers of varied sizes in order to see if something can explode here...\n"
            "\tPlease wait...\n", fuzz_nr);
+
     while (fuzz_nr-- > 0) {
         buf_sz = rand() % 65535;
         buf = (char *) getseg(buf_sz + 1);
