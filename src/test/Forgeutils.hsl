@@ -6,6 +6,9 @@
 #
 #
 function has_valgrind() : result type int {
+    if (hefesto.sys.os_name() == "windows") {
+        result 0;
+    }
     var no_valgrind type list;
     $no_valgrind = hefesto.sys.get_option("no-valgrind");
     if ($no_valgrind.count() > 0) {
