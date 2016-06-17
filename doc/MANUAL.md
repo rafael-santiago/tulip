@@ -706,4 +706,21 @@ repeat this "highlighted" part using ``.repeat{Name of this Part}``. The code ou
 
 The rules about highlighting used in the ``.part`` tag are the same present in the ``once more``.
 
+Now let's see a cool song from one of my favorite contemporary singers: ``Imelda May``. This song came from her
+second album. It is called ``Feel me``. For sure that my transcription is pretty bad wrong but I like to play in this way.
+In the way of a ``frustrated piano player``, ha-ha...
+
+This song starts with a nice "piano's riff", I approximate it as follows:
+
+        60--.chord{401-302-202-102}-.chord{305-205}-.chord{302-202}-.chord{304-204}-.chord{302-202}--
+        502-504-402-404-.chord{302-202}-
+
+The base is a mix of fingering and strumming, I think that the better way is listen to it and try to figure out:
+
+        .strum{57-.chord{57-49-39-28-17}----67-.chord{67-59-47-38-200-17}----401-.chord{401-302-202-102}---.chord{400-301-200-101}---|-
+         57-.chord{57-49-39-28-17}----67-.chord{67-59-47-38-200-17}----400-.chord{400-301-200-101}---60-.chord{500-48-39-28}---}
+
+
+
+
 ### Using Tulip's processors

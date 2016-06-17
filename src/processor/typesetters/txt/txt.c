@@ -126,7 +126,7 @@ void txttypesetter_print_sustained_technique_mark(const tulip_command_t command,
         return;
     }
 
-    if (((*tab)->curr_row + 2) >= (*tab)->fretboard_sz - 1) {
+    if (!g_txttypesetter_has_active_chord && ((*tab)->curr_row + 2) >= (*tab)->fretboard_sz - 1) {
         tp = new_txttypesetter_tablature_ctx(tab);
     } else {
         tp = (*tab);
@@ -151,7 +151,8 @@ txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypes
         return (*tab);
     }
 
-    if (((*tab)->curr_row + row_usage) >= (*tab)->fretboard_sz - 1) {
+    //  TODO(Santiago): Try to contain the issue not using "!g_txttypesetter_has_active_chord".
+    if (((*tab)->curr_row + row_usage) >= (*tab)->fretboard_sz - 1 && !g_txttypesetter_has_active_chord) {
         tp = new_txttypesetter_tablature_ctx(tab);
         is_brand_new = 1;
     } else if (note->next != NULL && (note->next->next != NULL) && (note->next->techniques & kTlpNoteSep) == 0 &&

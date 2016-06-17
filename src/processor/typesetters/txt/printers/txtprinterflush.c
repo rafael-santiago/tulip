@@ -147,6 +147,12 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
                 return;
             }
 
+            //  WARN(Santiago): Sometimes the automatic breaking will led us to printing dumb sep bar's into brand new
+            //                  tab diagram. The following code avoid it.
+            if ((*tab)->curr_row == 1) {
+                return;
+            }
+
             //  WARN(Santiago): Some stacked constructions take us to do it. When the sum exceeds the fretboard size we
             //                  will not ask for a brand new one. Let the bad typesetting happen and the user do his own
             //                  adjustments.
