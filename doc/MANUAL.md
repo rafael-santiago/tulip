@@ -706,58 +706,90 @@ repeat this "highlighted" part using ``.repeat{Name of this Part}``. The code ou
 
 The rules about highlighting used in the ``.part`` tag are the same present in the ``once more``.
 
-Now let's see a cool song from one of my favorite contemporary singers: ``Imelda May``. This song came from her
+Now let's see a cool song by one of my favorite contemporary singers: ``Imelda May``. This song comes from her
 second album. It is called ``Feel me``. It brings a great guitar's solo by an awesome guitar player called ``Darrel
-Higham``. For sure that my transcription is pretty wrong but I like to play in this way.
-In the way of a ``frustrated piano player``, :-P~
+Higham``. For sure that my transcription is pretty wrong but I like to play in this way (from the point of view of a
+``frustrated piano player``). :O)
 
 So... This song starts with a nice "piano's riff", I approximate it as follows:
 
     .literal{"Piano's riff:\n"}
 
-            60--.chord{401-302-202-102}-.chord{305-205}-.chord{302-202}-
-            .chord{304-204}-.chord{302-202}--502-504-402-404-.chord{302-202}-;
+            60--.chord{401-302-202-102}-.chord{305-205}-.chord{302-202}-.chord{304-204}-.chord{302-202}--
+            502-504-402-404-.chord{302-202}-;
 
 The base is a mix of fingering and strumming, I think that the better way is listen to it and try to figure out:
 
     .literal{"Base:\n"}
 
-            .strum{57-.chord{57-49-39-28-17}----67-.chord{17-67-59-47-38-200}----
-            401-.chord{401-302-202-102}---.chord{400-301-200-101}---|-
-            57-.chord{57-49-39-28-17}----67-.chord{17-67-59-47-38-200}----
-            400-.chord{400-301-200-101}---60-.chord{500-48-39-28}---}-;
+            .strum {
+                57-.chord{57-49-39-28-17}----
+
+                67-.chord{17-67-59-47-38-200}----
+
+                401-.chord{401-302-202-102}---.chord{400-301-200-101}---|-
+
+                57-.chord{57-49-39-28-17}----
+
+                67-.chord{17-67-59-47-38-200}----
+
+                400-.chord{400-301-200-101}---60-.chord{500-48-39-28}---
+             }-;
 
 Maybe the chorus, at first, can be a kind of complicated, because we get so many dynamics and several repetions. Again,
 the better way is listen to it:
 
     .literal{"Chorus:\n"}
 
-            .chord{404-304-204}-.chord{407-307-207}--.chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
-            .chord{402-302-202}-.strum{.chord{501-400-301}-----}-.chord{406-306-206}-.chord{404-304-204}-
-            .chord{402-302-202}-.times{2}-|-
+            .chord{404-304-204}-.chord{407-307-207}--
+            .chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
+            .chord{402-302-202}-.strum{.chord{501-400-301}-----}-
+            .chord{406-306-206}-.chord{404-304-204}-.chord{402-302-202}-.times{2}-|-
+
             .strum{.chord{501-400-301}-----.chord{57-49-39-28-17}-----}.times{2}-|-
-            .chord{404-304-204}-.chord{407-307-207}--.chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
-            .chord{402-302-202}-.strum{.chord{501-400-301}---}|-.mute{.chord{67-59-49}--}.times{7}-|-
-            .chord{404-304-204}-.chord{407-307-207}--.chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
-            .chord{402-302-202}-.strum{.chord{501-400-301}-----}-.chord{406-306-206}-.chord{404-304-204}-.chord{402-302-202}-|-
-            .chord{404-304-204}-.chord{407-307-207}--.chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
+
+            .chord{404-304-204}-.chord{407-307-207}--
+            .chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
+            .chord{402-302-202}-.strum{.chord{501-400-301}---}|-
+
+            .mute{.chord{67-59-49}--}.times{7}-|-
+
+            .chord{404-304-204}-.chord{407-307-207}--
+            .chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
+            .chord{402-302-202}-.strum{.chord{501-400-301}-----}-
+            .chord{406-306-206}-.chord{404-304-204}-.chord{402-302-202}-|-
+
+            .chord{404-304-204}-.chord{407-307-207}--
+            .chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
             .chord{402-302-202}-.strum{.chord{501-400-301}-----.chord{57-49-39-28-17}------}-;
 
-Here goes my bad guitar solo's approximation, add your improvements according to your own preferences and skills:
+Here goes my bad guitar solo's approximation. Add your improvements according to your own preferences and skills:
 
     .literal{"Solo:\n"}
 
-            5:/57-57-57-57-|-67-600-57-59-600-57-59-47-49-37-39-27-28-100-|-100-18h100p18-17-28-39-|-
-            402h403h404-.chord{302-202}.chord{3:b2:b}--404-502h504-402-404-302b-|-404-302-.letring{304b-205-304r}-302-.times{2}-|-
-            404-.chord{302-202}.chord{3:b2:b}-404-|-304b-202-102-;
-            .letring{205b-102--}.times{5}-|-205b----|-3:/306-207-105-107b---107r-105-107-207~~-|-
+            5:/57-57-57-57-|-
+
+            67-600-57-59-600-57-59-47-49-37-39-27-28-100-|-100-18h100p18-17-28-39-|-
+
+            402h403h404-.chord{302-202}.chord{3:b2:b}--404-502h504-402-404-302b-|-
+
+            404-302-.letring{304b-205-304r}-302-.times{2}-|-
+
+            404-.chord{302-202}.chord{3:b2:b}-404-|-304b-202-102-;.letring{205b-102--}.times{5}-|-
+
+            205b----|-3:/306-207-105-107b---107r-105-107-207~~-|-
+
             304-202-102-205b-205-202-304-205-404-304-302-404-302-404-|-504-402-404-.chord{302-202}-|-
+
             404-402h403h404-.chord{302-202}.chord{3:b2:b}-.chord{302-202}.chord{3:b2:b}-404-|-
+
             27h28-17-102-102-100-18-17-28-28-17-28-|-27h28-17-100-100-18-17-28-39-39-28-39-|-
-            47h49-37-39-28-39-37-49-28-28-39-|-.letring{305b-207p202}-.times{4}-|-
+
+            47h49-37-39-28-39-37-49-28-28-39-|-;.letring{305b-207p202}-.times{4}-|-
+
             .chord{205-102}.chord{2:b1:b}-205r-202-205p202-304-302b-404\-;
 
-Now the entire code listing:
+Now the entire song's code listing:
 
     .song{"Feel me - (Imelda May / Love Tattoo [2007])"}
     .transcriber{"Rafael Santiago"}
@@ -769,36 +801,67 @@ Now the entire code listing:
 
     .literal{"Base:\n"}
 
-            .strum{57-.chord{57-49-39-28-17}----67-.chord{17-67-59-47-38-200}----401-
-            .chord{401-302-202-102}---.chord{400-301-200-101}---|-
-             57-.chord{57-49-39-28-17}----67-.chord{17-67-59-47-38-200}----400-
-            .chord{400-301-200-101}---60-.chord{500-48-39-28}---}-;
+            .strum {
+                57-.chord{57-49-39-28-17}----
+
+                67-.chord{17-67-59-47-38-200}----
+
+                401-.chord{401-302-202-102}---.chord{400-301-200-101}---|-
+
+                57-.chord{57-49-39-28-17}----
+
+                67-.chord{17-67-59-47-38-200}----
+
+                400-.chord{400-301-200-101}---60-.chord{500-48-39-28}---
+             }-;
 
     .literal{"Chorus:\n"}
 
-            .chord{404-304-204}-.chord{407-307-207}--.chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
-            .chord{402-302-202}-.strum{.chord{501-400-301}-----}-.chord{406-306-206}-.chord{404-304-204}-
-            .chord{402-302-202}-.times{2}-|-
-            .strum{.chord{501-400-301}-----.chord{57-49-39-28-17}-----}.times{2}-|-
-            .chord{404-304-204}-.chord{407-307-207}--.chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
-            .chord{402-302-202}-.strum{.chord{501-400-301}---}|-.mute{.chord{67-59-49}--}.times{7}-|-
-            .chord{404-304-204}-.chord{407-307-207}--.chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
-            .chord{402-302-202}-.strum{.chord{501-400-301}-----}-.chord{406-306-206}-.chord{404-304-204}-.chord{402-302-202}-|-
-            .chord{404-304-204}-.chord{407-307-207}--.chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
-            .chord{402-302-202}-.strum{.chord{501-400-301}-----.chord{57-49-39-28-17}------}-;
+                .chord{404-304-204}-.chord{407-307-207}--
+                .chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
+                .chord{402-302-202}-.strum{.chord{501-400-301}-----}-
+                .chord{406-306-206}-.chord{404-304-204}-.chord{402-302-202}-.times{2}-|-
+
+                .strum{.chord{501-400-301}-----.chord{57-49-39-28-17}-----}.times{2}-|-
+
+                .chord{404-304-204}-.chord{407-307-207}--
+                .chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
+                .chord{402-302-202}-.strum{.chord{501-400-301}---}|-
+
+                .mute{.chord{67-59-49}--}.times{7}-|-
+
+                .chord{404-304-204}-.chord{407-307-207}--
+                .chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
+                .chord{402-302-202}-.strum{.chord{501-400-301}-----}-
+                .chord{406-306-206}-.chord{404-304-204}-.chord{402-302-202}-|-
+
+                .chord{404-304-204}-.chord{407-307-207}--
+                .chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
+                .chord{402-302-202}-.strum{.chord{501-400-301}-----.chord{57-49-39-28-17}------}-;
 
     .literal{"Solo:\n"}
 
-            5:/57-57-57-57-|-67-600-57-59-600-57-59-47-49-37-39-27-28-100-|-100-18h100p18-17-28-39-|-
-            402h403h404-.chord{302-202}.chord{3:b2:b}--404-502h504-402-404-302b-|-404-302-
-            .letring{304b-205-304r}-302-.times{2}-|-
-            404-.chord{302-202}.chord{3:b2:b}-404-|-304b-202-102-;
-            .letring{205b-102--}.times{5}-|-205b----|-3:/306-207-105-107b---107r-105-107-207~~-|-
-            304-202-102-205b-205-202-304-205-404-304-302-404-302-404-|-504-402-404-.chord{302-202}-|-
-            404-402h403h404-.chord{302-202}.chord{3:b2:b}-.chord{302-202}.chord{3:b2:b}-404-|-
-            27h28-17-102-102-100-18-17-28-28-17-28-|-27h28-17-100-100-18-17-28-39-39-28-39-|-
-            47h49-37-39-28-39-37-49-28-28-39-|-.letring{305b-207p202}-.times{4}-|-
-            .chord{205-102}.chord{2:b1:b}-205r-202-205p202-304-302b-404\-;
+                5:/57-57-57-57-|-
+
+                67-600-57-59-600-57-59-47-49-37-39-27-28-100-|-100-18h100p18-17-28-39-|-
+
+                402h403h404-.chord{302-202}.chord{3:b2:b}--404-502h504-402-404-302b-|-
+
+                404-302-.letring{304b-205-304r}-302-.times{2}-|-
+
+                404-.chord{302-202}.chord{3:b2:b}-404-|-304b-202-102-;.letring{205b-102--}.times{5}-|-
+
+                205b----|-3:/306-207-105-107b---107r-105-107-207~~-|-
+
+                304-202-102-205b-205-202-304-205-404-304-302-404-302-404-|-504-402-404-.chord{302-202}-|-
+
+                404-402h403h404-.chord{302-202}.chord{3:b2:b}-.chord{302-202}.chord{3:b2:b}-404-|-
+
+                27h28-17-102-102-100-18-17-28-28-17-28-|-27h28-17-100-100-18-17-28-39-39-28-39-|-
+
+                47h49-37-39-28-39-37-49-28-28-39-|-;.letring{305b-207p202}-.times{4}-|-
+
+                .chord{205-102}.chord{2:b1:b}-205r-202-205p202-304-302b-404\-;
 
 Follows the output tablature:
 
@@ -913,5 +976,9 @@ Follows the output tablature:
             |--------------|-----------------------------|
             |--------------|-----------------------------|
 
+Into the solo's code for the ``Feel me`` you could see that I introduced some ``save-points``. I did it seeking
+for a fancier typesetting. The ``Tulip`` tries to adjust the things by itself, however, sometimes you need to do it by
+your own. Keep in mind that internally we got some heuristics for best fitting but they are just heuristics. It is impossible
+handle all cases. Do not forget that you got control ``tags`` and ``separators`` to be in control. Your ``tab``, your rules.
 
 ### Using Tulip's processors
