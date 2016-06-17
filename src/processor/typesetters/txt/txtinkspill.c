@@ -73,6 +73,19 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
     size_t i = 0;
     ssize_t s_limit = -1, real_s_limit = -1;
     txttypesetter_sustained_technique_ctx *tp = NULL;
+    int is_empty = 0;
+
+    //  WARN(Santiago): A leading ';' at the end of a tlp script or a automatic break just after
+    //                  the last song note can cause this dummy empty tab diagram.
+    if (tab->curr_row == 1) {
+        is_empty = 1;
+        for (s = 0; s < tab->string_nr && is_empty; s++) {
+            is_empty = (tab->strings[s][0] == '-');
+        }
+        if (is_empty) {
+            return;
+        }
+    }
 
     if (g_txttypesetter_settings.prefs & kTlpPrefsCutTabOnTheLastNote) {
         for (s = 0; s < tab->string_nr; s++) {
