@@ -4,7 +4,7 @@ Well, I created this tiny ``DSL`` in ``2005`` based on my personal preferences a
 formalized anything about since then.
 
 The Language is a mix of an ancient music notation with some tablature notation and still some tag recursion. The details
-about the design and choices can be found in the ``User Manual``.
+about the design and choices can be found in the ``[User Manual](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md)``.
 
 ## The *BNF*
 
