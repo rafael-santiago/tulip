@@ -32,7 +32,7 @@
 
 static void txttypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ctx *comments);
 
-static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_sustained_technique_ctx *techniques, const char tunning[6][4]);
+static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
 static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
@@ -132,7 +132,7 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
     fprintf(fp, "\n");
 }
 
-static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_sustained_technique_ctx *techniques, const char tunning[6][4]) {
+static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     const txttypesetter_sustained_technique_ctx *tp = NULL;
     size_t i = 0;
     int has_half_step_notes = 0;
@@ -140,11 +140,11 @@ static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesett
 
     if (g_txttypesetter_settings.prefs & kTlpPrefsShowTunning) {
         for (i = 0; i < 6 && !has_half_step_notes; i++) {
-            has_half_step_notes = (strlen(tunning[i]) == 2);
+            has_half_step_notes = (strlen(tab->tunning[i]) == 2);
         }
     }
 
-    for (tp = techniques; tp != NULL; tp = tp->next) {
+    for (tp = tab->techniques; tp != NULL; tp = tp->next) {
         dp = tp->data;
         while (*dp == ' ') {
             dp++;
@@ -155,13 +155,19 @@ static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesett
         for (i = 0; i < g_txttypesetter_settings.indentation_deepness; i++) {
             fprintf(fp, " ");
         }
+        fprintf(fp, " ");
         if (has_half_step_notes) {
             fprintf(fp, " ");
+        }
+        for (i = 1; i < tab->fretboard_sz; i++) {
+            if (tab->strings[0][i] == '|' && tp->data[i] == '.') {
+                tp->data[i] = (tp->data[i+1] == '.') ? ' ' : 0;
+            }
         }
         fprintf(fp, "%s\n", tp->data);
     }
 
-    if (techniques != NULL) {
+    if (tab->techniques != NULL) {
         fprintf(fp, "\n");
     }
 }
@@ -203,6 +209,7 @@ static void txttypesetter_spill_times(FILE *fp, const char *times, const char tu
         for (i = 0; i < g_txttypesetter_settings.indentation_deepness; i++) {
             fprintf(fp, " ");
         }
+        fprintf(fp, " ");
         if (has_half_step_notes) {
             fprintf(fp, " ");
         }
@@ -336,7 +343,7 @@ int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
 
     for (tp = tab; tp != NULL; tp = tp->next) {
         txttypesetter_spill_comments(fp, tp->comments);
-        txttypesetter_spill_sustained_techniques(fp, tp->techniques, tp->tunning);
+        txttypesetter_spill_sustained_techniques(fp, tp);
         txttypesetter_spill_times(fp, tp->times, tp->tunning);
         txttypesetter_spill_fretboard_pinches(fp, tp);
     }

@@ -311,7 +311,7 @@ static void cut_data_buf(char *bp) {
     }
 
     if (bp != bp_start) {
-        *(bp + 1) = 0;
+        memset(bp + 1, 0, strlen(bp) - 1);
     }
 }
 

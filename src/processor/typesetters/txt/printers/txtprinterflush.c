@@ -168,6 +168,7 @@ void txttypesetter_flush_printer(const tulip_command_t command, txttypesetter_ta
                 (*tab)->strings[s][(*tab)->curr_row] = *technique_label;
             }
 
+
             (*tab)->curr_row += row_usage;
             break;
 
