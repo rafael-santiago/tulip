@@ -976,9 +976,62 @@ Follows the output tablature:
             |--------------|-----------------------------|
             |--------------|-----------------------------|
 
-Into the solo's code for the ``Feel me`` you could see that I introduced some ``save-points``. I did it seeking
+Into the ``Feel me``'s solo code you could see that I introduced some ``save-points``. I did it seeking
 for a fancier typesetting. The ``Tulip`` tries to adjust the things by itself, however, sometimes you need to do it by
 your own. Keep in mind that internally we got some heuristics for best fitting but they are just heuristics. It is impossible
 handle all cases. Do not forget that you got control ``tags`` and ``separators`` to be in control. Your ``tab``, your rules.
+
+Continuing... Here goes one of the most popular bass lines of the Universe written by ``Charles Mingus``
+(``Haitian Fight Song``), screwed up in my lousy ``walking bass guitar`` way:
+
+    .song{"Haitian Fight Song (Charlie Mingus / The Clown [1957])"}
+    .transcriber{"Rafael Santiago"}
+
+    6?/67-.chord{47-37-27}--50-.chord{58-47-300}-.chord{59-48-301}-.times{3}-|-.part{walk}
+
+    50-.chord{49-500-302}-.chord{59-48-301}-50-.chord{58-47-300}--.chord{59-48-301}-|-
+
+    .repeat{walk}
+
+    50-.chord{49-500-302}-.chord{59-48-301}-50-.chord{58-47-300}--.chord{59-48-301}-|-;
+
+    .repeat{walk}
+
+    .letring {
+        500-49-302---49--500--602-55/59~~--
+        .chord{48-39}.chord{4:~3:~}.chord{4:~3:~}.chord{4:~3:~}.chord{4:~3:~}-----
+        6?/67~~~~----
+    }
+
+In terms of code it does not have anything special but it is a good way to adapt your mind about the usage of the ``.chord``
+tag. I find it could be hard in the beginning. The song's theme it is up to you. Go ahead, listen to it and try to fill up with
+something that you judge good enough. The tablature is what follows:
+
+    Song: Haitian Fight Song (Charles Mingus / The Clown [1957])
+    Transcribed by: Rafael Santiago
+
+                             3X                                   3X
+            |-----------------|------------------|-----------------|------------------|
+            |-----7-----------|------------------|-----7-----------|------------------|
+            |-----7----10-11--|---12-11---10--11-|-----7----10-11--|---12-11---10--11-|
+            |-----7-----7--8--|----9--8----7---8-|-----7-----7--8--|----9--8----7---8-|
+            |--------0--8--9--|-0-10--9-0--8---9-|--------0--8--9--|-0-10--9-0--8---9-|
+            |-?/7-------------|------------------|-?/7-------------|------------------|
+
+                                lr................................................
+
+                             3X
+            |-----------------|---------------------------------------------------|
+            |-----7-----------|---------------------------------------------------|
+            |-----7----10-11--|--------12--------------------9~~~~----------------|
+            |-----7-----7--8--|------9------9----------------8~~~~----------------|
+            |--------0--8--9--|---10-----------10-----5/9~~-----------------------|
+            |-?/7-------------|--------------------12------------------?/7~~~~----|
+
+Okay as we started to talk about ``jazz``, then let's pick up a nice ``jazz-funk`` by ``Grant Green``. The song is
+``High Heeled Sneakers``. Originally, this song is an old ``blues`` song, recorded by a ``blues man`` called ``Tommy Tucker``.
+``Grant Green`` picked up the verses melody and made a dancing ``jazz-funk`` with this. I challenge you not to nod your
+head while listening to it. By the way, there is an interesting thing that I want to introduce you using this cool
+jazz theme:
 
 ### Using Tulip's processors
