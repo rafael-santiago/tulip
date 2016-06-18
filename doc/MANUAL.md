@@ -984,7 +984,7 @@ handle all cases. Do not forget that you got control ``tags`` and ``separators``
 Continuing... Here goes one of the most popular bass lines of the Universe written by ``Charles Mingus``
 (``Haitian Fight Song``), screwed up in my lousy ``walking bass guitar`` way:
 
-    .song{"Haitian Fight Song (Charlie Mingus / The Clown [1957])"}
+    .song{"Haitian Fight Song (Charles Mingus / The Clown [1957])"}
     .transcriber{"Rafael Santiago"}
 
     6?/67-.chord{47-37-27}--50-.chord{58-47-300}-.chord{59-48-301}-.times{3}-|-.part{walk}
