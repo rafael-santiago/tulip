@@ -6,9 +6,9 @@
  *
  */
 #include <dsl/compiler/verifiers/releasebend.h>
+#include <dsl/compiler/verifiers/sepexpander.h>
 #include <dsl/compiler/compiler.h>
 #include <dsl/utils.h>
-#include <base/ctx.h>
 
 int releasebend_sep_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next) {
     if (buf == NULL || song == NULL || next == NULL) {
@@ -20,7 +20,8 @@ int releasebend_sep_verifier(const char *buf, char *error_message, tulip_single_
         return 0;
     }
 
-    (*song) = add_note_to_tulip_single_note_ctx((*song), get_used_techniques() | kTlpReleaseBend, NULL);
+    add_sep_to_tulip_single_note_ctx(kTlpReleaseBend, song);
+
     (*next) = buf + 1;
 
     return 1;

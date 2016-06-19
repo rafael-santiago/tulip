@@ -6,8 +6,9 @@
  *
  */
 #include <dsl/compiler/verifiers/vibrato.h>
+#include <dsl/compiler/verifiers/sepexpander.h>
+#include <dsl/compiler/compiler.h>
 #include <dsl/utils.h>
-#include <base/ctx.h>
 
 int vibrato_sep_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next) {
     if (buf == NULL || song == NULL || next == NULL) {
@@ -19,7 +20,8 @@ int vibrato_sep_verifier(const char *buf, char *error_message, tulip_single_note
         return 0;
     }
 
-    (*song) = add_note_to_tulip_single_note_ctx((*song), get_used_techniques() | kTlpVibrato, NULL); 
+    add_sep_to_tulip_single_note_ctx(kTlpVibrato, song);
+
     (*next) = buf + 1;
 
     return 1;

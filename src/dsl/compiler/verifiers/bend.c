@@ -6,9 +6,9 @@
  *
  */
 #include <dsl/compiler/verifiers/bend.h>
+#include <dsl/compiler/verifiers/sepexpander.h>
 #include <dsl/compiler/compiler.h>
 #include <dsl/utils.h>
-#include <base/ctx.h>
 
 int bend_sep_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next) {
     if (buf == NULL || song == NULL || next == NULL) {
@@ -20,7 +20,8 @@ int bend_sep_verifier(const char *buf, char *error_message, tulip_single_note_ct
         return 0;
     }
 
-    (*song) = add_note_to_tulip_single_note_ctx((*song), get_used_techniques() | kTlpBend, NULL);
+    add_sep_to_tulip_single_note_ctx(kTlpBend, song);
+
     (*next) = buf + 1;
 
     return 1;

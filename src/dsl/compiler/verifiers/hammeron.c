@@ -6,9 +6,9 @@
  *
  */
 #include <dsl/compiler/verifiers/hammeron.h>
+#include <dsl/compiler/verifiers/sepexpander.h>
 #include <dsl/compiler/compiler.h>
 #include <dsl/utils.h>
-#include <base/ctx.h>
 
 int hammeron_sep_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next) {
     if (buf == NULL || song == NULL || next == NULL) {
@@ -20,7 +20,8 @@ int hammeron_sep_verifier(const char *buf, char *error_message, tulip_single_not
         return 0;
     }
 
-    (*song) = add_note_to_tulip_single_note_ctx((*song), get_used_techniques() | kTlpHammerOn, NULL);
+    add_sep_to_tulip_single_note_ctx(kTlpHammerOn, song);
+
     (*next) = buf + 1;
 
     return 1;
