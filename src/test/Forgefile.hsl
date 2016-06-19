@@ -74,8 +74,14 @@ function runtests() : result type int {
         hefesto.sys.echo("\n" +
                          "*** NICE: You got Valgrind installed. What a nice place to run a build!\n" +
                          "          Let's run the tests using Valgrind (to inhibit it use --no-valgrind option).\n\n");
-        $runline = wrap_cmdline_with_valgrind($runline + " --fuzz-nr=10", "memcheck.log");
+        $runline = wrap_cmdline_with_valgrind($runline + " --fuzz-nr=100", "memcheck.log");
     }
+
+    if ($test_options.index_of("--devels-forge") == -1) {
+        print_tester_monkey_banner();
+        $runline = $runline + " --cutest-log-path=test.log";
+    }
+
     var exit_code type int;
     $exit_code = hefesto.sys.run($runline);
     if ($valgrind_is_in_the_house) {
@@ -93,6 +99,11 @@ function runtests() : result type int {
             hefesto.sys.echo("*** INFO: All clean! No issues were found by Valgrind.\n");
         }
     }
+
+    if ($test_options.index_of("--devels-forge") == -1) {
+        print_test_monkey_end_banner($exit_code);
+    }
+
     result $exit_code;
 }
 
