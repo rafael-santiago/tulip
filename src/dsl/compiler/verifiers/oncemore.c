@@ -79,8 +79,11 @@ static tulip_single_note_ctx *find_oncemore_from_tlp_block(tulip_single_note_ctx
 
     while (sp != NULL && !are_similar_hashes(te_a, te_a_sz, te_b, te_b_sz)) {
         sp = sp->last;
-        while (sp->techniques == kTlpBlockEnd) {
+        while (sp != NULL && sp->techniques == kTlpBlockEnd) {
             sp = sp->last;
+        }
+        if (sp == NULL) {
+            continue;
         }
         free(te_b);
         te_b = demux_tlp_commands(sp->techniques, &te_b_sz);
@@ -110,7 +113,13 @@ tulip_single_note_ctx *find_oncemore_begin(tulip_single_note_ctx *song) {
             mp = find_oncemore_from_tlp_block(mp);
             //  INFO(Santiago): Adding a note separator in order to get a more fancy typesetting from
             //                  this "once more".
-            song = add_note_to_tulip_single_note_ctx(song, get_used_techniques() | kTlpNoteSep, NULL);
+            lp = song;
+            while (lp != NULL && lp->next != NULL) {
+                lp = lp->next;
+            }
+            if (lp == NULL || (lp->techniques & kTlpNoteSep) == 0) {
+                song = add_note_to_tulip_single_note_ctx(song, get_used_techniques() | kTlpNoteSep, NULL);
+            }
             break;
 
         default:

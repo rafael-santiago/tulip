@@ -173,7 +173,7 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
     const char *cp_end = NULL;
     static int callstack_level = 0;
     int cltmp = callstack_level++;
-    tulip_single_note_ctx *sp = NULL;
+    tulip_single_note_ctx *sp = NULL, *p;
     tulip_command_t curr_command = kTlpNone;
     int compilation_status = 1;
     char command_chunk[20] = "";
