@@ -55,10 +55,11 @@ function forge_libcutest() : result type none {
 
 function runtests() : result type int {
     var test_options type list;
-    var test_options_data type string;
-    var t type int;
     $test_options = hefesto.sys.get_option("test-options");
+
     if ($test_options.count() > 0) {
+        var test_options_data type string;
+        var t type int;
         $test_options_data = " ";
         $t = 0;
         while ($t < $test_options.count()) {
@@ -66,18 +67,30 @@ function runtests() : result type int {
             $t = $t + 1;
         }
     }
+
     var runline type string;
     $runline = hefesto.sys.make_path("bin", get_appname()) + $test_options_data;
+
     var valgrind_is_in_the_house type int;
     $valgrind_is_in_the_house = has_valgrind();
+
+    var devels_forge type list;
+    $devels_forge = hefesto.sys.get_option("devels-forge");
+
     if ($valgrind_is_in_the_house) {
         hefesto.sys.echo("\n" +
                          "*** NICE: You got Valgrind installed. What a nice place to run a build!\n" +
                          "          Let's run the tests using Valgrind (to inhibit it use --no-valgrind option).\n\n");
-        $runline = wrap_cmdline_with_valgrind($runline + " --fuzz-nr=100", "memcheck.log");
+        var fuzz_nr type int;
+        if ($devels_forge.count() == 0) {
+            $fuzz_nr = 5000;
+        } else {
+            $fuzz_nr = 10;
+        }
+        $runline = wrap_cmdline_with_valgrind($runline + " --fuzz-nr=" + $fuzz_nr, "memcheck.log");
     }
 
-    if ($test_options.index_of("--devels-forge") == -1) {
+    if ($devels_forge.count() == 0) {
         print_tester_monkey_banner();
         $runline = $runline + " --cutest-log-path=test.log";
     }
@@ -88,7 +101,7 @@ function runtests() : result type int {
         var memcheck_lines type list;
         $memcheck_lines = hefesto.sys.lines_from_file("memcheck.log", "== All heap blocks were freed.*no leaks are possible");
         if ($memcheck_lines.count() == 0) {
-            hefesto.sys.echo("WARNING: Issues were found by Valgrind...\n" +
+            hefesto.sys.echo("\nWARNING: Issues were found by Valgrind...\n" +
                              "         Please, try to re-run the main forge under src sub-directory using the following command:\n\n" +
                              "                     hefesto --compile-model=debug\n\n" +
                              "         After it, please, open an issue on:\n\n" +
@@ -96,11 +109,11 @@ function runtests() : result type int {
                              "         Attaching in this issue the file memcheck.log created under the sub-path src/test/\n" +
                              "Thank you!\n");
         } else {
-            hefesto.sys.echo("*** INFO: All clean! No issues were found by Valgrind.\n");
+            hefesto.sys.echo("\n*** INFO: All clean! No issues were found by Valgrind.\n");
         }
     }
 
-    if ($test_options.index_of("--devels-forge") == -1) {
+    if ($devels_forge.count() == 0) {
         print_test_monkey_end_banner($exit_code);
     }
 

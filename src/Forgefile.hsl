@@ -55,15 +55,10 @@ function runtests() : result type int {
     var oldcwd type string;
     var test_options type list;
     var test_options_data type string;
-    var devels_forge type list;
     var t type int;
     $oldcwd = hefesto.sys.pwd();
     hefesto.sys.cd("test");
     $test_options = hefesto.sys.get_option("test-options");
-    $devels_forge = hefesto.sys.get_option("devels-forge");
-    if ($devels_forge.count() > 0) {
-        $test_options.add_item("--devels-forge");
-    }
     if ($test_options.count() > 0) {
         $test_options_data = " --test-options=";
         $t = 0;
@@ -75,6 +70,13 @@ function runtests() : result type int {
             }
         }
     }
+
+    var devels_forge type list;
+    $devels_forge = hefesto.sys.get_option("devels-forge");
+    if ($devels_forge.count() > 0) {
+        $test_options_data = $test_options_data + " --devels-forge";
+    }
+
     hefesto.sys.forge("tulip-tests", "Forgefile.hsl", "--obj-output-dir=o --bin-output-dir=bin --master-project-obj-dir=../o --includes=cutest/src,../. --ldflags=-lcutest --libraries=cutest/src/lib" + $test_options_data);
     hefesto.sys.cd($oldcwd);
     result hefesto.sys.last_forge_result();

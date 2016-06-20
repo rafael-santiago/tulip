@@ -744,7 +744,8 @@ CUTE_TEST_CASE(dsl_compiler_fuzz_tests)
         fuzz_nr = (size_t) atoi(buf);
     }
 
-    printf("\tHello Human, I will try to compile %d random buffers of varied sizes in order to see if something can explode here...\n"
+    printf("\tHello Human I am the Dr. Fuzz, I will try to compile %d pseudo-random buffers of varied sizes...\n"
+           "\t...In order to see if something can explode here... Muahahauahauahaaaaaaa!!!\n"
            "\tPlease wait...\n", fuzz_nr);
 
     while (fuzz_nr-- > 0) {
@@ -763,7 +764,7 @@ CUTE_TEST_CASE(dsl_compiler_fuzz_tests)
         free(buf);
         remove("fuzz.tlp");
     }
-    printf("\tNice! We are alive! Nothing is exploding at our faces.\n");
+    printf("\tDamn!! We are all alive! Nothing is exploding at our faces.\n\n\tTsc, tsc... Shame on you Dr. Fuzz... Nothing exploding is a pretty nice thing!\n\n");
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(processor_fancy_outputs_assurance)

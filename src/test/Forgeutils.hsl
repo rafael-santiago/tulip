@@ -39,10 +39,10 @@ function print_tester_monkey_banner() : result type string {
                      "Hello beloved " + $username + "! I am the Tulip's Tester Monkey...\n" +
                      " For your best software experience,\n" +
                      "    I will test the generated software...\n" +
-                     "  You know... in order to see if everything is fine... etc.\n" +
+                     "  You know... in order to see if everything is really fine...\n" +
                      "    I think Rafael took care to make it acceptable for us.\n" +
                      "     At least since the last time I saw him he told me:\n" +
-                     "        \"- Dude, the Tulip is working fine on my system!!!\"\n" +
+                     "        \"- Dude, the Tulip is working fine <<on my system>>!!!\"\n" +
                      "       So, let's proof what he said before start using Tulip...\n" +
                      "    Maybe these tests can take some time, please be patient...\n" +
                      "        I am just a testholic monkey!!\n" +
@@ -60,11 +60,54 @@ function print_tester_monkey_banner() : result type string {
 function print_test_monkey_end_banner(tests_exit_code type int) : result type string {
     hefesto.sys.echo("\n________________________________________________________\n\n");
     if ($tests_exit_code == 0) {
-        hefesto.sys.echo("*** NICE: Rafael got reason, all is fine in Tulip! You can start using it just now! Enjoy it!\n");
+        hefesto.sys.echo("*** NICE: Rafael got reason, all is fine in Tulip! You can start using it just now!\n" +
+                         "          You can follow installing the Tulip using \"hefesto --install\" command if you want to...\n" +
+                         "          I hope you enjoy it!\n");
     } else {
         hefesto.sys.echo("~~~ Oops: I found some issues during the tests. It would be nice let Rafael know.\n");
-        hefesto.sys.echo("          Please, open a issue on https://github.com/rafael-santiago/tulip/issues.\n");
-        hefesto.sys.echo("          Attach to your issue the file test/test.log.\n");
+        hefesto.sys.echo("          Please, open an issue on https://github.com/rafael-santiago/tulip/issues, including your environment details.\n");
+        hefesto.sys.echo("          Additonally, attach to your issue " + get_relevant_test_logs_to_attach());
+        hefesto.sys.echo("          It will be helpful for him.\n");
         hefesto.sys.echo("    Thanks!\n");
     }
+}
+
+local function get_relevant_test_logs_to_attach() : result type string {
+    var RElevant_files type list;
+    #
+    # INFO(Santiago): If your new test creates a file using a file name not matched
+    #                 by the following regex patterns you must add this new one pattern below.
+    $RElevant_files.add_item(".*test\\.log$");
+    $RElevant_files.add_item(".*fuzz\\.tlp$");
+    $RElevant_files.add_item(".*output\\.txt$");
+    $RElevant_files.add_item(".*memcheck\\.log$");
+
+    var files_to_attach type list;
+
+    var r type int;
+    var oldcwd type string;
+    $oldcwd = hefesto.sys.pwd();
+    hefesto.sys.cd("test");
+    $r = 0;
+    while ($r < $RElevant_files.count()) {
+        $files_to_attach.ls($RElevant_files.item($r));
+        $r = $r + 1;
+    }
+    hefesto.sys.cd($oldcwd);
+
+    var listing type string;
+
+    if ($files_to_attach.count() == 1) {
+        $listing = "the file:\n";
+    } else {
+        $listing = "the files:\n";
+    }
+
+    $r = 0;
+    while ($r < $files_to_attach.count()) {
+        $listing = $listing + "\t\t" + $files_to_attach.item($r) + "\n";
+        $r = $r + 1;
+    }
+
+    result $listing;
 }
