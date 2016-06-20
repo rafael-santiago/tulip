@@ -326,6 +326,8 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
         { ".tremolopicking{60-------------", 0 },
         { ".vibratowbar{37****************", 0 },
         { ".literal{\"boo.\"", 0 },
+        { ".chord{60-52-42-31-20-10}-.part{E-Major}", 1 },
+        { ".chord{60-52-42-31-20-10}-.part{E-Major}-.chord{57-49-39-29-17}-.part{E-Major}", 0 },
         //  INFO(Santiago): Real world productions. All following must compile without any error.
         { ".chord{40-30}-.chord{43-33}-.chord{45-35}.chord{4:~3:~}-|-.chord{40-30}-.chord{43-33}-.chord{46-36}.chord{4:p3:p}.chord{45-35}.chord{4:~3:~}-|-.chord{40-30}-.chord{43-33}-.chord{45-35}-.chord{43-33}-.chord{40-30}-;", 1 },
         { ".letring{55-47-37-27---27-37-47-55-47-27--54-46-36-26--46-36-26--24h26h27-14--55-47-37-27--47-37-27--55-27-14b15r--54-46-36-26--46-36-26--26b27r};", 1 },
@@ -527,7 +529,7 @@ CUTE_TEST_CASE(processor_typesetters_txt_tablature_ctx_tests)
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(base_tulip_part_ctx_tests)
-    tulip_part_ctx *parts = NULL;
+    tulip_part_ctx *parts = NULL, *p = NULL;
     tulip_single_note_ctx *begin = (tulip_single_note_ctx *)0xdeadbeef;
     tulip_single_note_ctx *end   = (tulip_single_note_ctx *)0xbeefdead;
     parts = add_part_to_tulip_part_ctx(parts, NULL, begin, end);
@@ -544,6 +546,14 @@ CUTE_TEST_CASE(base_tulip_part_ctx_tests)
     CUTE_ASSERT(parts->next != NULL);
     CUTE_ASSERT(parts->next->label != NULL && parts->next->begin != NULL && parts->next->end != NULL);
     CUTE_ASSERT(strcmp(parts->next->label, "outro") == 0 && parts->next->begin == end && parts->next->end == begin);
+    p = get_tulip_part_ctx("intro", parts);
+    CUTE_ASSERT(p != NULL);
+    CUTE_ASSERT(strcmp(p->label, "intro") == 0);
+    p = get_tulip_part_ctx("outro", parts);
+    CUTE_ASSERT(p != NULL);
+    CUTE_ASSERT(strcmp(p->label, "outro") == 0);
+    p = get_tulip_part_ctx("solo", parts);
+    CUTE_ASSERT(p == NULL);
     free_tulip_part_ctx(parts);
 CUTE_TEST_CASE_END
 

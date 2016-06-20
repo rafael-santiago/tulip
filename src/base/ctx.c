@@ -139,7 +139,7 @@ tulip_part_ctx *add_part_to_tulip_part_ctx(tulip_part_ctx *parts, const char *la
     size_t s = 0;
 
     if (label == NULL || begin == NULL || end == NULL) {
-        return NULL;
+        return parts;
     }
 
     if (head == NULL) {

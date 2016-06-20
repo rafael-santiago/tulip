@@ -69,6 +69,10 @@ static tulip_single_note_ctx *find_oncemore_from_tlp_block(tulip_single_note_ctx
         return NULL;
     }
 
+    if (song->last == NULL) {
+        return song;
+    }
+
     sp = song;
 
     te_a = demux_tlp_commands(sp->techniques, &te_a_sz);
@@ -92,6 +96,10 @@ static tulip_single_note_ctx *find_oncemore_from_tlp_block(tulip_single_note_ctx
 
     free(te_a);
     free(te_b);
+
+    if (sp == NULL) {
+        return song;
+    }
 
     return sp;
 }

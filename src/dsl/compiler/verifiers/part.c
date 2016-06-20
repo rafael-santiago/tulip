@@ -56,6 +56,7 @@ int part_tag_verifier(const char *buf, char *error_message, tulip_single_note_ct
 
     if (get_tulip_part_ctx(label, get_parts_listing()) != NULL) {
         tlperr_s(error_message, "The part \"%s\" is being redeclared.", label);
+        return 0;
     }
 
     for (end = (*song); end->next != NULL; end = end->next);
@@ -69,7 +70,7 @@ int part_tag_verifier(const char *buf, char *error_message, tulip_single_note_ct
 
     set_parts_listing(add_part_to_tulip_part_ctx(get_parts_listing(), label, begin, end));
 
-    (*next) = bp_end + 1;
+   (*next) = bp_end + 1;
 
     return 1;
 }
