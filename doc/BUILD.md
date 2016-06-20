@@ -33,9 +33,9 @@ devel@tasman:~/src/tulip/src# hefesto --compile-model=debug
 
 ## Native build options
 
-Of course that you have additional options, take a look at the *Table 1* and *Table 2*.
+Of course that you have additional options, take a look at the **Table 1** and **Table 2**.
 
-*Table 1*: Native build options.
+**Table 1**: Native build options.
 
 |            *Option*               |                             *Utility*                                              |
 |:---------------------------------:|:----------------------------------------------------------------------------------:|
@@ -47,7 +47,7 @@ Of course that you have additional options, take a look at the *Table 1* and *Ta
 |           ``--install``           |        Installs Tulip                                                              |
 |           ``--uninstall``         |        Uninstalls Tulip                                                            |
 
-*Table 2*: Native testing build options.
+**Table 2**: Native testing build options.
 
 |            *Option*               |                             *Utility*                                              |
 |:---------------------------------:|:----------------------------------------------------------------------------------:|
