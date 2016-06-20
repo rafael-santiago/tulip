@@ -59,6 +59,11 @@ int part_tag_verifier(const char *buf, char *error_message, tulip_single_note_ct
         return 0;
     }
 
+    if ((*song) == NULL) {
+        tlperr_s(error_message, "There is nothing to be marked as a part here.");
+        return 0;
+    }
+
     for (end = (*song); end->next != NULL; end = end->next);
 
     if (end->last == NULL) {

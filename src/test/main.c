@@ -328,6 +328,11 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
         { ".literal{\"boo.\"", 0 },
         { ".chord{60-52-42-31-20-10}-.part{E-Major}", 1 },
         { ".chord{60-52-42-31-20-10}-.part{E-Major}-.chord{57-49-39-29-17}-.part{E-Major}", 0 },
+        { "@", 0 },
+        { ".part{null}", 0 },
+        { ".repeat{null}", 0 },
+        { ".repeat{null}.part{null}", 0 },
+        { "29-.part{null}.repeat{null}", 1 },
         //  INFO(Santiago): Real world productions. All following must compile without any error.
         { ".chord{40-30}-.chord{43-33}-.chord{45-35}.chord{4:~3:~}-|-.chord{40-30}-.chord{43-33}-.chord{46-36}.chord{4:p3:p}.chord{45-35}.chord{4:~3:~}-|-.chord{40-30}-.chord{43-33}-.chord{45-35}-.chord{43-33}-.chord{40-30}-;", 1 },
         { ".letring{55-47-37-27---27-37-47-55-47-27--54-46-36-26--46-36-26--24h26h27-14--55-47-37-27--47-37-27--55-27-14b15r--54-46-36-26--46-36-26--26b27r};", 1 },
