@@ -1,0 +1,21 @@
+#
+#                           Copyright (C) 2005-2016 by Rafael Santiago
+#
+# This is a free software. You can redistribute it and/or modify under
+# the terms of the GNU General Public License version 2.
+#
+#
+function help() : result type none {
+    var help type list;
+    $help = hefesto.sys.get_option("help");
+    if ($help.count() > 0) {
+        hefesto.sys.echo("--help -> You got the main info about these options\n" +
+                         "--devels-forge -> It runs a faster build. Desired while developing some stuff or maintaining\n" +
+                         "--test-options ->  Concentrates specific options to be passed to the testing build\n" + 
+                         "--sub-modules ->  Concentrates the relevant directories containing the Tulip's parts\n" +
+                         "--includes -> Specifies the additional include's path\n" + 
+                         "--install -> Installs Tulip\n" +
+                         "--uninstall -> Uninstalls Tulip\n");
+        hefesto.project.abort(0);
+    }
+}

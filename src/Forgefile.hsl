@@ -8,6 +8,7 @@
 include ~/toolsets/gcc/gcc-app.hsl
 include ~/toolsets/common/utils/lang/c/dependency_scanner.hsl
 include Install.hsl
+include Forgeutils.hsl
 
 var src type list;
 var inc type list;
@@ -89,6 +90,7 @@ function init_forge() : result type none {
 }
 
 tulip.prologue() {
+    help();
     installer();
     init_forge();
 }

@@ -18,6 +18,7 @@ var appname type string;
 project tulip-tests : toolset "gcc-c-app" : $src, $inc, $cflags, $lib, $ldflags, $appname ;
 
 tulip-tests.prologue() {
+    help();
     forge_libcutest();
     $ldflags = hefesto.sys.get_option("ldflags");
     if (hefesto.sys.os_name() == "linux") {
