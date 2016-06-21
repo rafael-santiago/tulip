@@ -50,3 +50,6 @@ context default
     keyword 		\\n		brightgreen
     keyword		\\t		brightgreen
 
+context exclusive .part*{ -            gray
+
+context exclusive .repeat*{ -          gray
