@@ -63,7 +63,7 @@ static void hash_techniques(tulip_command_t *array, size_t array_size) {
 static tulip_single_note_ctx *find_oncemore_from_tlp_block(tulip_single_note_ctx *song) {
     tulip_command_t *te_a = NULL, *te_b = NULL;
     size_t te_a_sz = 0, te_b_sz = 0, t = 0;
-    tulip_single_note_ctx *sp = NULL;
+    tulip_single_note_ctx *sp = NULL, *lp = NULL;
 
     if (song == NULL) {
         return NULL;
@@ -89,6 +89,7 @@ static tulip_single_note_ctx *find_oncemore_from_tlp_block(tulip_single_note_ctx
         if (sp == NULL) {
             continue;
         }
+        lp = sp;
         free(te_b);
         te_b = demux_tlp_commands(sp->techniques, &te_b_sz);
         hash_techniques(te_b, te_b_sz);
@@ -98,7 +99,7 @@ static tulip_single_note_ctx *find_oncemore_from_tlp_block(tulip_single_note_ctx
     free(te_b);
 
     if (sp == NULL) {
-        return song;
+        return lp;
     }
 
     return sp;
@@ -202,8 +203,10 @@ int oncemore_verifier(const char *buf, char *error_message, tulip_single_note_ct
     }
 
     mp_end = sp;
+
     mp = find_oncemore_begin(sp);
-    if (mp == NULL) {
+
+    if (mp == NULL) { //  WARN(Santiago): Paranoic care.
         mp = (*song);
     }
 

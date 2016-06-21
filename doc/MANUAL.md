@@ -1030,8 +1030,8 @@ something that you judge good enough. The tablature is what follows:
 
 Okay as we started to talk about ``jazz``, then let's pick up a nice ``jazz-funk`` by ``Grant Green``. The song is
 ``High Heeled Sneakers``. Originally, this song is an old ``blues`` song, recorded by a ``blues man`` called ``Tommy Tucker``.
-``Grant Green`` picked up the verses melody and made a dancing ``jazz-funk`` with this. I challenge you not to nod your
-head while listening to it. By the way, there is an interesting thing that I want to introduce you using this cool
-jazz theme:
+``Grant Green`` picked up the verses melody and made up a dancing ``jazz-funk`` with this. I challenge you not to nod your
+head or tap your feet while listening to it. By the way, there is an interesting thing that I want to introduce you using this
+cool jazz theme:
 
 ### Using Tulip's processors
