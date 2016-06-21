@@ -10,7 +10,7 @@ The indentation is done using 8 spaces.
 
 The include guards use the entire path until the file extension. Please, do not use underscore to start this include guard.
 The include guard should be started by the project name, in this case "TULIP". Yes, always capital letters.
-Supposing that we got a heder file under the path ``dsl/compiler/compiler.h``, the guard would be:
+Supposing that we got a header file under the path ``dsl/compiler/compiler.h``, the guard would be:
 
 ```
 #ifndef TULIP_DSL_COMPILER_COMPILER_H
@@ -33,9 +33,11 @@ to iterate over some thing:
 
 Use ``0`` as string delimiter.
 
-``function_name_should_be_in_this_way()`` but try to avoid excessive verbosity.
+``function_name_should_be_in_this_way()`` but try to avoid excessive verbosity. Do not be a fop:
 
-The variable are in the same way.
+![the-macaroni-by-philip-dawe-1773](https://github.com/rafael-santiago/tulip/blob/master/etc/the-macaroni.jpg)
+
+With the variables you should try the same.
 
 ``Free`` anything that you ``Alloc``.
 
@@ -63,6 +65,16 @@ It is better:
     }
 ```
 
+or
+
+```
+    int delta = 1;
+
+    if (delta == 1) {
+        (...)
+    }
+```
+
 The same for pointers:
 
 ```
@@ -85,10 +97,10 @@ Better:
 
 Always use NULL to indicate the "nullity" of some memory address.
 
-Do not reciclate a structure just because they have one memory slice that you can use to save your sloppiness. If really
+Do not reciclate a structure just because it has one memory slice that you can use to save your sloppiness. If really
 necessary, creates a new one.
 
-Structures should be post-fixed with ``_ctx``. Generally this would be implemented under the sub-module ``base/types.*``, ``base/ctx.*``.
+Public structures should be post-fixed with ``_ctx``. Generally, this would be implemented under the sub-module ``base/types.*``, ``base/ctx.*``.
 
 For pointers, used for iterating over some thing use ``p`` or ending the variable with ``p``:
 
@@ -100,8 +112,52 @@ You can use macros, however, write it and use it as a person with knowledge for 
 
 Use parenthesis to exactly communicate your intentions about the expression.
 
-Try to use ``ANSI C`` and ``Posix``. Maybe someone, somewhere, over some unknown rainbow wants to compile it.
-Let's make life easier for these people as much as we can.
+Try to use ``ANSI C`` the ``Posix``'s part relevant for us. Maybe someone, somewhere, over some unknown rainbow wants
+to compile it. Let's make life easier for these people as much as we can.
+
+Use blank spaces to separate the things logically.
+
+```
+    int i = 0;
+    for (i=0; i<10; i++) {
+        (...)
+    }
+    if (i == 0) {
+        (...)
+    }
+    while (i-- > 0) {
+        (...)
+    }
+    if ((a & mask) == 0 && (b & mask) == 0
+                   && (cc & mask) == 0 && (dd & mask) == 0) {
+        (...)
+    }
+    c(r(a(p)));
+```
+
+For sure that you hate reading books with poor typesetting. The main reason for reading is getting some information.
+What a nice thing when the text disposition guides you on it. Follows a better way:
+
+```
+    int i = 0;
+
+    for (i = 0; i < 10; i++) {
+        (...)
+    }
+
+    if (i == 0) {
+        (...)
+    }
+
+    while (i-- > 0) {
+        (...)
+    }
+
+    if ((a  & mask) == 0 && (b  & mask) == 0 &&
+        (cc & mask) == 0 && (dd & mask) == 0) {
+        (...)
+    }
+```
 
 ## Comments
 
@@ -125,15 +181,15 @@ for todo's:
 
 ## Tests
 
-You should write tests. However, try not be so pedantic. This is boring. For the tests writing [``cutest``](https://github.com/rafael-santiago/cutest) is being used.
+You should write tests. However, try not be so pedantic. This is boring. For the tests writing [cutest](https://github.com/rafael-santiago/cutest) is being used.
 
-If we are a little bit ``fop`` maybe you can faint when see that all tests are being write inside ``tests/main.c``.
-However, this is good to find and correct the issues. Another thing: this is not about to write a ``Software Illiad``.
-Here the goal is make a ``simple-sharp-useful-not bloated-software``. Maybe you should visit the site [suckless.org](http://suckless.org).
+If we are a little bit [fop](https://github.com/rafael-santiago/tulip/blob/master/etc/the-macaroni.jpg) maybe you can faint when see that all tests are being written inside ``tests/main.c``.
+However, this is good to find and correct the issues without get bored. Another thing: this is not about to write a ``Software Illiad``.
+Here the goal is to make a ``simple-sharp-useful-not bloated-software``. Maybe you should visit the site [suckless.org](http://suckless.org).
 
 ## Code constructions
 
-## If / else
+### If / else
 
 ```
     if (<expr>) {
@@ -154,7 +210,7 @@ Please, do not use:
 ```
 
 
-## While / Do...While
+### While / Do...While
 
 ```
     while (<expr>) {
@@ -175,7 +231,7 @@ Please, do not use:
         (...)
 ```
 
-## For
+### For
 
 ```
     for (i = 0; i < n; i++) {
@@ -191,7 +247,27 @@ Please, do not use:
     }]
 ```
 
-## Switches
+This is bad too:
+
+```
+    for (i = 0; i < n; i++)
+        (...);
+```
+
+Acceptable:
+
+```
+    for (i = 0; i < n; i);
+```
+
+or
+
+```
+    for (i = 0; i < n; i)
+        ;
+```
+
+### Switches
 
 ```
     switch (s) {

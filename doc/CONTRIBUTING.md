@@ -12,7 +12,7 @@ these following aspects:
 - I will re-implement a thing that is incorrect according to a book that I recently read.
 - I want to add some trend fancy testing idea here, because everyone is using.
 
-All listed aspects are bad... If your "idea" fits with or more of them, I still say thank you, but no.
+All listed aspects are bad... If your "idea" fits with one or more of them, I still say thank you, but no.
 
 If you have some idea but do not have any musical knowledge, you still can contribute open an [issue](https://github.com/rafael-santiago/tulip/issues)
 and talk about it. I will be really interested to known more.
@@ -34,7 +34,8 @@ Important things here:
 - Pull requests are welcome. Talk about your work on it is essential. You are still interested in what you did. Right?
 - This is about compilers, language, toy-programming. Point-and-click things already exist. If you really want to do a point-and-click stuff. Congrats, you got a new project or several projects to contribute outhere!
 - Tests are good.
-- Write tests seeking to garantee that no one (you, larry, curly, moe, your cat or fresh vegetables) can deploy what you wrote broke.
+- If you need a Human to test what you did, your work is probably wrong or at least incomplete.
+- Write tests seeking to garantee that no one (you, larry, curly, moe, your cat or fresh vegetables) can deploy what you wrote broken.
 - Paranoic, pedantic, useless tests are boring.
 - A memory leak is vulgar. Pretty vulgar.
 - "- Man, this memory leak tool is crazy!!!". Excuses are good to laugh at.

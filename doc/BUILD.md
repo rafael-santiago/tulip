@@ -13,13 +13,13 @@ Anyway, in terms of build, bear in mind that all here is set up to work finding 
 
 If you add a new code file to the pre-existent sub-directories under ``src`` sub-directory, you do not need to
 worry up with anything. However if you create some new sub-directory you need to edit the file ``src/.ivk``
-adding this new sub-diretory to the option ``--sub-modules``. Something like:
+adding this new sub-directory to the option ``--sub-modules``. Something like:
 
 ```
 (...) --sub-modules=blah,new,new/additional
 ```
 
-To run the build using in the default way:
+To run the build using the default way:
 
 ```
 devel@tasman:~/src/tulip/src# hefesto
@@ -33,7 +33,7 @@ devel@tasman:~/src/tulip/src# hefesto --compile-model=debug
 
 ## Native build options
 
-Of course that you have additional options, take a look at the **Table 1** and **Table 2**.
+Of course that we have additional options, take a look at the **Table 1** and **Table 2**.
 
 **Table 1**: Native build options.
 
