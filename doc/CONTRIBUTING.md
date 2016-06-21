@@ -30,7 +30,7 @@ Important things here:
 - If the knowledge that you need to put here is demading, do not be shy. If it is well-documented it is ok. Do not limit your code, just because someone will need to learn more before understanding you.
 - The only nice lazy creatures that I know are cats.
 - Reading before writing is essential.
-- New features, new documentation or a least the old documentation should be updated.
+- New features, new documentation or at least the old documentation should be updated.
 - Pull requests are welcome. Talk about your work on it is essential. You are still interested in what you did. Right?
 - This is about compilers, language, toy-programming. Point-and-click things already exist. If you really want to do a point-and-click stuff. Congrats, you got a new project or several projects to contribute outhere!
 - Tests are good.
