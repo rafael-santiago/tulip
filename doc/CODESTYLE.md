@@ -2,9 +2,9 @@
 
 Try to read the code and adapt yourself.
 
-I personally like some aspects present in ``Pike's style``. Take a look in it.
+I personally like some aspects present in [``Pike's style``](https://doc.cat-v.org/bell_labs/pikestyle). Take a look in it.
 
-Anyway, these are the main things to highlight...
+Anyway, there are the main things to highlight...
 
 The indentation is done using 8 spaces.
 
@@ -33,7 +33,7 @@ to iterate over some thing:
 
 Use ``0`` as string delimiter.
 
-``function_name_should_be_in_this_way()`` but try to avoid excessive verbosity. Do not be a fop:
+``functions_name_should_be_in_this_way()`` but try to avoid excessive verbosity. Do not be a fop:
 
 ![the-macaroni-by-philip-dawe-1773](https://github.com/rafael-santiago/tulip/blob/master/etc/the-macaroni.jpg)
 
@@ -45,7 +45,8 @@ Do not be afraid of pointers. This is an ``C`` project. If you are afraid of poi
 evil, take in consideration that undefined references inside someones mind about how to properly use pointers can be the real
 problem.
 
-Do not use things without "logic meaning" in logical expressions which tests if this thing is equals to ``1``. Look:
+Do not use things without "logical meaning" in logical expressions which tests if this thing is equals to ``1`` (implicitly).
+Look:
 
 ```
     int delta = 1;
@@ -95,12 +96,14 @@ Better:
     }
 ```
 
-Always use NULL to indicate the "nullity" of some memory address.
+Always use ``NULL`` to indicate the "nullity" of some memory address.
 
 Do not reciclate a structure just because it has one memory slice that you can use to save your sloppiness. If really
 necessary, creates a new one.
 
 Public structures should be post-fixed with ``_ctx``. Generally, this would be implemented under the sub-module ``base/types.*``, ``base/ctx.*``.
+
+Avoid using ``git-submodules``.
 
 For pointers, used for iterating over some thing use ``p`` or ending the variable with ``p``:
 
@@ -112,8 +115,8 @@ You can use macros, however, write it and use it as a person with knowledge for 
 
 Use parenthesis to exactly communicate your intentions about the expression.
 
-Try to use ``ANSI C`` the ``Posix``'s part relevant for us. Maybe someone, somewhere, over some unknown rainbow wants
-to compile it. Let's make life easier for these people as much as we can.
+Try to use ``ANSI C``, the ``Posix``'s part relevant for us. Maybe someone, somewhere, over some unknown rainbow wants
+to compile it. Let's make life easier for these lovelly obstinate people as much as we can.
 
 Use blank spaces to separate the things logically.
 
@@ -135,8 +138,11 @@ Use blank spaces to separate the things logically.
     c(r(a(p)));
 ```
 
-For sure that you hate reading books with poor typesetting. The main reason for reading is getting some information.
-What a nice thing when the text disposition guides you on it. Follows a better way:
+For sure that you hate reading books with poor typesetting. Huge blocks of information, all squeezed, looking like a drug
+leaflet. It saves space and waste your precious time. Do not be a drug leaflet writer. If you are using your time to write
+about a thing that you are hooked on... what about write a cool essay as code instead of a drug leaflet? The main reason
+for reading is getting some information. What a nice thing when the text disposition guides you on your discovery.
+Follows a better way:
 
 ```
     int i = 0;

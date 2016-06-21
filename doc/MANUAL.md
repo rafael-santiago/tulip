@@ -978,7 +978,7 @@ Follows the output tablature:
 
 Into the ``Feel me``'s solo code you could see that I introduced some ``save-points``. I did it seeking
 for a fancier typesetting. The ``Tulip`` tries to adjust the things by itself, however, sometimes you need to do it by
-your own. Keep in mind that internally we got some heuristics for best fitting but they are just heuristics. It is impossible
+your own. Bear in mind that internally we got some heuristics for best fitting but they are just heuristics. It is impossible
 handle all cases. Do not forget that you got control ``tags`` and ``separators`` to be in control. Your ``tab``, your rules.
 
 Continuing... Here goes one of the most popular bass lines of the Universe written by ``Charles Mingus``

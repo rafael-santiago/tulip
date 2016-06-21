@@ -1,6 +1,6 @@
 # Contributing guidelines
 
-First of all, thank you for being interested in contributing with your brain, fingers, experience and the most
+First of all, thank you for being interested in contributing for this project with your brain, fingers, experience and the most
 valuable thing: ``some time of your life``.
 
 Maybe you have a great idea to put working on here. Anyway, before starting to dive into the code, take in consideration
