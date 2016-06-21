@@ -1070,7 +1070,7 @@ cool jazz theme:
             .chord{27-37}-49-.chord{27-37}-49-.chord{27-37}-
         }-;
 
-The nice stuff are productions like: ``.chord{28-18}/.chord{200-100}``. When we have hammer-on's, pull-off's, slides
+The nice stuff above are productions like: ``.chord{28-18}/.chord{200-100}``. When we have hammer-on's, pull-off's, slides, etc
 between whole notes from a interval to another we can use this simpler construction instead of:
 ``chord{28-18}.chord{2:/1:/}.chord{200-100}``.
 
