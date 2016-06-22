@@ -37,7 +37,7 @@ Of course that we have additional options, take a look at the **Table 1** and **
 
 **Table 1**: Native build options.
 
-|           **Option* *             |                             **Utility**                                            |
+|           **Option**              |                             **Utility**                                            |
 |:---------------------------------:|:----------------------------------------------------------------------------------:|
 |           ``--help``              |        You got the main info about these options                                   |
 |           ``--devels-forge``      |        It runs a faster build. Desired while developing some stuff or maintaining  |
