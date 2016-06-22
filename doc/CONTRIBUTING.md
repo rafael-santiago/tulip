@@ -15,7 +15,7 @@ these following aspects:
 All listed aspects are bad... If your "idea" fits with one or more of them, I still say thank you, but no.
 
 If you have some idea but do not have any musical knowledge, you still can contribute open an [issue](https://github.com/rafael-santiago/tulip/issues)
-and talk about it. I will be really interested to known more.
+and talk about it. I will be really interested in knowing more.
 
 Otherwise if your idea still "remains the same" :) Welcome! The first thing to do is read the code and ask when you do not
 understand something.
