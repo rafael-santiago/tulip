@@ -13,7 +13,7 @@ Anyway, in terms of build, bear in mind that all here is set up to work finding 
 
 If you add a new code file to the pre-existent sub-directories under ``src`` sub-directory, you do not need to
 worry up with anything. However if you create some new sub-directory you need to edit the file ``src/.ivk``
-adding this new sub-directory to the option ``--sub-modules``. Something like:
+adding this new sub-directory to the custom option ``--sub-modules``. Something like:
 
 ```
 (...) --sub-modules=blah,new,new/additional
@@ -37,7 +37,7 @@ Of course that we have additional options, take a look at the **Table 1** and **
 
 **Table 1**: Native build options.
 
-|            *Option*               |                             *Utility*                                              |
+|           **Option* *             |                             **Utility**                                            |
 |:---------------------------------:|:----------------------------------------------------------------------------------:|
 |           ``--help``              |        You got the main info about these options                                   |
 |           ``--devels-forge``      |        It runs a faster build. Desired while developing some stuff or maintaining  |
@@ -49,7 +49,7 @@ Of course that we have additional options, take a look at the **Table 1** and **
 
 **Table 2**: Native testing build options.
 
-|            *Option*               |                             *Utility*                                              |
+|            **Option**             |                             **Utility**                                            |
 |:---------------------------------:|:----------------------------------------------------------------------------------:|
 |           ``--help``              |        You got the main info about these options                                   |
 |           ``--devels-forge``      |        It runs a faster build. Desired while developing some stuff or maintaining  |
@@ -62,7 +62,7 @@ Of course that we have additional options, take a look at the **Table 1** and **
 
 # Remarks
 
-- Do not disable the memory leak system, this includes ``cutest`` and ``valgrind``, this last one when installed (do not open pull requests with this disabled).
+- Do not disable the memory leak system, this includes ``cutest`` and ``valgrind``, this last one when installed (do not open pull requests with it disabled).
 - Do not add new native options to the build without make it public. Documenting, adding your remarks in ``--help`` output.
 - Do not strip off something just because you do not understand. In this case you should strip off your ignorance about the stuff which is challenging you.
 

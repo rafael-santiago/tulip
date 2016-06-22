@@ -32,12 +32,13 @@ Important things here:
 - Reading before writing is essential.
 - New features, new documentation or at least the old documentation should be updated.
 - Pull requests are welcome. Talk about your work on it is essential. You are still interested in what you did. Right?
-- This is about compilers, language, toy-programming. Point-and-click things already exist. If you really want to do a point-and-click stuff. Congrats, you got a new project or several projects to contribute outhere!
+- This is about compilers, language, toy-programming. Point-and-click things already exist. If you really want to do a point-and-click stuff... Congrats, you got a new project or several projects to contribute outhere!
 - Tests are good.
 - If you need a Human to test what you did, your work is probably wrong or at least incomplete.
+- If people involved with the code need you to understand what you did, your work is propably wrong or at least incomplete.
 - Write tests seeking to garantee that no one (you, larry, curly, moe, your cat or fresh vegetables) can deploy what you wrote broken.
 - Paranoic, pedantic, useless tests are boring.
 - A memory leak is vulgar. Pretty vulgar.
 - "- Man, this memory leak tool is crazy!!!". Excuses are good to laugh at.
 - A bureaucratic idea works better than chloroform.
-- [Suckless.org](http://suckless.org/philosophy) has a good point to consider.
+- [Suckless.org](http://suckless.org/philosophy) has good points to consider.

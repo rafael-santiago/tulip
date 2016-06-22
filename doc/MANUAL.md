@@ -253,7 +253,7 @@ Now the cool riff. You should wet it with a ``Fuzz`` if you have one...
 
 Yes, it is a little bit different from ``Jimi`` and a crap when compared with what he did...
 
-In the code shown above is using the ``separation bar`` or ``sep bar`` as I like to call. This is denoted
+The code shown above is using the ``separation bars`` or ``sep bars`` as I like to call. This is denoted
 by the ``pipe`` symbol. It is useful to separate things in logical blocks inside the tablature. Resulting visually as
 a vertical breaking in the ``tab diagram``.
 
@@ -275,7 +275,7 @@ about understanding the user intentions about...
 Follows the basic rules:
 
 - If we have a single note, only this note will be repeated.
-- If we have a tag, the tag and what this tag brings wrapped will be repeated.
+- If we have a tag, the tag and what this tag brings wrapped inside will be repeated.
 - If we have a sep bar before the once more, the ``once more`` will repeat everything inside the last logical block that you created including the ``sep bar``. By the way, this is what is happening in the ``Purple Haze's`` main riff previously shown.
 
 There is another way to indicate a repetition avoiding annoying ourselves with re-typing again and again. It is a special ``control tag``
@@ -318,6 +318,7 @@ to celebrate your caveman's inheritance, no theories, listen to the beat and go 
 
 Another nice thing that I like to do with this base is hold the triads root using my thumb at 6th instead of playing this root
 using the 4th string. So, I slide it down until the root and dive into the shortened triad holding its root with my thumb.
+I think maybe it is the base of what ``Hendrix`` does in this song record.
 
 I also use some kind of hybrid picking but its out of a tablature's scope. Again, the colors is up to you.
 
@@ -327,7 +328,7 @@ source. For doing it you must use a note that only indicates the string number a
 question mark. Then, we have ``6?``, ``5?``, ``4?``, ``3?``, ``2?`` and ``1?`` as possible abstractions.
 
 In the previous code we can see a "note" which acts as a ``string jump`` (in terms of code), we use a string jump to indicate
-to the ``Tulip`` where we want to put the next separator that complements this "jump". A jump is denoted by
+to the ``Tulip`` where (which string) we want to put the next separator that complements this "jump". A jump is denoted by
 ``<string-number>:<separator>``. It is possible to do things like ``3:~``, ``2:p``, etc.
 
 When there are pull-offs, hammer-ons or any single technique done using intervals and chords is important to build up
@@ -387,7 +388,7 @@ Then, do not try to learn how to play with me. Just learn how to use this ``soft
 
 A remark to Larry, Curly and Moe: To dump a whole song into a file without any logical layout is pretty dumb. The ``tlp``
 has a nice control tag called ``.literal``. Inside this tag you can introduce a human-readable text enclosed by double-quotes
-(what in programming we call ``string``). If you want to add a line break use ``\n`` sequence. For tabulations use ``\t``.
+(what in programming we call ``string``). If you want to add a line break, use ``\n`` sequence. For tabulations, use ``\t``.
 
 Another cool control sequence is the ``save-point`` denoted by a semicolon. When the ``Tulip's procesor`` find a semicolon all
 typesetting done until that point (including your remarks to the reader, using the ``.literal`` tag) is saved and a new one
@@ -643,7 +644,7 @@ This is pretty simple but I would like to use it to introduce you two nice new `
 
 In the previous code I am using the tags ``.part`` and ``.repeat``. This is useful when you got things that are repeated
 in a non-linear way. All you should do is "highlight" the part with ``.part{Name of this Part}`` and further when desired
-repeat this "highlighted" part using ``.repeat{Name of this Part}``. The code output is:
+repeat this "highlighted" part using ``.repeat{Name of this Part}``. The code output after processing is:
 
     Song: O Pato - (adapted from Stan Getz's version)
     Transcribed by: Rafael Santiago

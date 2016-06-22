@@ -2,7 +2,7 @@
 
 Try to read the code and adapt yourself.
 
-I personally like some aspects present in [``Pike's style``](https://doc.cat-v.org/bell_labs/pikestyle). Take a look in it.
+I personally like some aspects present in [``Pike's style``](http://doc.cat-v.org/bell_labs/pikestyle). Take a look in it.
 
 Anyway, there are the main things to highlight...
 
@@ -35,7 +35,7 @@ Use ``0`` as string delimiter.
 
 ``functions_name_should_be_in_this_way()`` but try to avoid excessive verbosity. Do not be a fop:
 
-![the-macaroni-by-philip-dawe-1773](https://github.com/rafael-santiago/tulip/blob/master/etc/the-macaroni.jpg)
+![the-macaroni-by-philip-dawe-1773](https://github.com/rafael-santiago/tulip/blob/master/etc/the-macaroni.jpg "'(...)It talks without meaning, it smiles without pleasantry, it eats without appetite(...)' - Art by Philip Dawe (3 July 1773) / Public Domain")
 
 With the variables you should try the same.
 
@@ -187,10 +187,10 @@ for todo's:
 
 ## Tests
 
-You should write tests. However, try not be so pedantic. This is boring. For the tests writing [cutest](https://github.com/rafael-santiago/cutest) is being used.
+You should write tests. However, try not be so pedantic. It is boring. For the tests writing [cutest](https://github.com/rafael-santiago/cutest) is being used.
 
 If we are a little bit [fop](https://github.com/rafael-santiago/tulip/blob/master/etc/the-macaroni.jpg) maybe you can faint when see that all tests are being written inside ``tests/main.c``.
-However, this is good to find and correct the issues without get bored. Another thing: this is not about to write a ``Software Illiad``.
+However, this is good to find and correct the issues without get bored. Another thing: this is not about to write a ``Software Odyssey`` (by the way, I have never seen one reflecting the Homer's Genius, however, commonly I find several reflecting the Homer Simpson's stupidity).
 Here the goal is to make a ``simple-sharp-useful-not bloated-software``. Maybe you should visit the site [suckless.org](http://suckless.org).
 
 ## Code constructions
@@ -263,13 +263,13 @@ This is bad too:
 Acceptable:
 
 ```
-    for (i = 0; i < n; i);
+    for (i = 0; i < n; i++);
 ```
 
 or
 
 ```
-    for (i = 0; i < n; i)
+    for (i = 0; i < n; i++)
         ;
 ```
 
