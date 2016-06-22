@@ -576,6 +576,8 @@ CUTE_TEST_CASE(processor_typesetters_txt_sustained_technique_ctx_tests)
 
     techniques = rm_technique_from_txttypesetter_sustained_technique_ctx(neck, techniques);
     CUTE_ASSERT(techniques == NULL);
+
+    //  INFO(Santiago): Now it is up to the memory leak system check stuff.
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(processor_typesetters_txt_tablature_ctx_tests)
