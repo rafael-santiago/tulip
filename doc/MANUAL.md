@@ -1050,7 +1050,7 @@ cool jazz theme:
         .letring {
             .chord{27-37}-49-.chord{27-37}-49-.chord{27-37}-
         }-
-        .chord{39-200}/.chord{300-201}\.chord{39-200}-.chord{37-200}-
+        .chord{39-200}/.chord{300-201}\.chord{200-39}--.chord{37-200}-
         .chord{39-200}-.chord{37-200}-49-
         .letring {
             .chord{27-37}-49-.chord{27-37}-49-.chord{27-37}-
@@ -1065,7 +1065,7 @@ cool jazz theme:
         .letring {
             .chord{27-37}-49-.chord{27-37}-49-.chord{27-37}-
         }-
-        .chord{39-200}/.chord{300-201}\.chord{39-200}-.chord{37-200}-
+        .chord{39-200}/.chord{300-201}\.chord{200-39}--.chord{37-200}-
         .chord{39-200}-.chord{37-200}-49-
         .letring {
             .chord{27-37}-49-.chord{27-37}-49-.chord{27-37}-
@@ -1092,11 +1092,11 @@ The output tablature result based on previous code would be:
             |--------------11--11-11-|----------------------------------|
             |------------------------|----------------------------------|
 
-              lr..........                     lr..........
+            lr..........                     lr..........
 
             |----------------------------------------------|
             |---7---7---7--10/11\10-10-10-10-----7---7---7-|
-            |---7---7---7---9/10\-9--7--9--7-----7---7---7-|
+            |---7---7---7---9/10\9---7--9--7-----7---7---7-|
             |-----9---9----------------------9-----9---9---|
             |----------------------------------------------|
             |----------------------------------------------|
@@ -1115,9 +1115,64 @@ The output tablature result based on previous code would be:
 
             |--------------------------------------------------------|
             |---7---7-----7---7---7--10/11\10-10-10-10-----7---7---7-|
-            |---7h8p7-7---7---7---7---9/10\-9--7--9--7-----7---7---7-|
+            |---7h8p7-7---7---7---7---9/10\9---7--9--7-----7---7---7-|
             |-9-------9-----9---9----------------------9-----9---9---|
             |--------------------------------------------------------|
             |--------------------------------------------------------|
+
+There is another nice (at least I judge) thing related with ``chords`` introduced with the last sample song.
+The ``Tulip`` when face chords made with notes mixing up frets less than fret #10 and greater or equal than fret #10,
+it try to adjust the notes considering your explicit preferences, for example, I think the following typesetting ugly:
+
+    |-10-----(...)
+    |-9------(...)
+    |-8------(...)
+    |--------(...)
+    |--------(...)
+    |--------(...)
+
+I prefer:
+
+    |-10-----(...)
+    |--9-----(...)
+    |--8-----(...)
+    |--------(...)
+    |--------(...)
+    |--------(...)
+
+However, it is just about a point of view. With this in mind I have decided to implement a implicity rule (to be signaled by you)
+for chords typesetting. This signal is done using the disposition of the notes. So when you use this ``.chord{100-29-38}``
+you have this:
+
+    |-10-----(...)
+    |-9------(...)
+    |-8------(...)
+    |--------(...)
+    |--------(...)
+    |--------(...)
+
+When you use this ``.chord{38-29-100}`` you have this:
+
+    |-10-----(...)
+    |--9-----(...)
+    |--8-----(...)
+    |--------(...)
+    |--------(...)
+    |--------(...)
+
+The first (using smaller note cipherings before) always will need a leading separator for compensate and keep the next production
+well separated from the current. In the ``High Heeled Sneakers`` we have a practical example. Furthermore, we have these
+two typesetting rules co-working for a fancier output. Take a look:
+
+    .chord{39-200}/.chord{300-201}\.chord{200-39}--.chord{37-200}-
+
+The above code produces:
+
+    |-------------|
+    |-10/11\10-10-|
+    |--9/10\9---7-|
+    |-------------|
+    |-------------|
+    |-------------|
 
 ### Using Tulip's processors
