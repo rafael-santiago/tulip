@@ -99,6 +99,35 @@ static txttypesetter_sustained_technique_ctx *get_txttypesetter_sustained_techni
     return tp;
 }
 
+txttypesetter_sustained_technique_ctx *rm_technique_from_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_technique_ctx *burn, txttypesetter_sustained_technique_ctx *techniques) {
+    txttypesetter_sustained_technique_ctx *head = NULL;
+
+    if (burn == NULL) {
+        return techniques;
+    }
+
+    if (burn->last != NULL) {
+        burn->last->next = burn->next;
+    }
+
+    if (burn->next != NULL) {
+        burn->next->last = burn->last;
+    }
+
+    if (burn == techniques) {
+        head = burn->next;
+    } else {
+        head = techniques;
+    }
+
+    burn->next = NULL;
+    burn->last = NULL;
+
+    free_txttypesetter_sustained_technique_ctx(burn);
+
+    return head;
+}
+
 /*txttypesetter_sustained_technique_ctx *pop_technique_from_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_technique_ctx *techniques) {
     txttypesetter_sustained_technique_ctx *top = NULL;
     if (techniques == NULL) {

@@ -17,6 +17,8 @@ void free_txttypesetter_comment_ctx(txttypesetter_comment_ctx *comments);
 
 txttypesetter_sustained_technique_ctx *add_technique_to_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_technique_ctx *techniques);
 
+txttypesetter_sustained_technique_ctx *rm_technique_from_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_technique_ctx *burn, txttypesetter_sustained_technique_ctx *techniques);
+
 void sustain_technique(txttypesetter_sustained_technique_ctx **technique);
 
 void free_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_technique_ctx *techniques);

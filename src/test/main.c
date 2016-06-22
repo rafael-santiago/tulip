@@ -524,6 +524,60 @@ CUTE_TEST_CASE(system_tulip_task_exec_tests)
     remove("ok.tlp");
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(processor_typesetters_txt_sustained_technique_ctx_tests)
+    txttypesetter_sustained_technique_ctx *techniques = NULL;
+    txttypesetter_sustained_technique_ctx *head = NULL, *neck = NULL, *body = NULL, *tail = NULL;
+
+    techniques = add_technique_to_txttypesetter_sustained_technique_ctx(techniques);
+    CUTE_ASSERT(techniques != NULL);
+    head = techniques;
+    techniques = add_technique_to_txttypesetter_sustained_technique_ctx(techniques);
+    CUTE_ASSERT(techniques == head);
+    techniques = add_technique_to_txttypesetter_sustained_technique_ctx(techniques);
+    CUTE_ASSERT(techniques == head);
+    techniques = add_technique_to_txttypesetter_sustained_technique_ctx(techniques);
+    CUTE_ASSERT(techniques == head);
+
+    //  INFO(Santiago): The following test will test indirectly the adding sequence and the
+    //                  free_txttypesetter_sustained_technique_ctx() because the "rm"
+    //                  internally uses it to free the passed memory address.
+
+    neck = head->next;
+
+    body = head->next->next;
+
+    tail = head->next->next->next;
+
+    techniques = rm_technique_from_txttypesetter_sustained_technique_ctx(NULL, techniques);
+
+    CUTE_ASSERT(techniques == head);
+    CUTE_ASSERT(techniques->next == neck);
+    CUTE_ASSERT(techniques->next->next == body);
+    CUTE_ASSERT(techniques->next->next->next == tail);
+    CUTE_ASSERT(techniques->next->next->next->next == NULL);
+
+    techniques = rm_technique_from_txttypesetter_sustained_technique_ctx(body, techniques);
+
+    CUTE_ASSERT(techniques == head);
+    CUTE_ASSERT(techniques->next == neck);
+    CUTE_ASSERT(techniques->next->next == tail);
+    CUTE_ASSERT(techniques->next->next->next == NULL);
+
+    techniques = rm_technique_from_txttypesetter_sustained_technique_ctx(tail, techniques);
+
+    CUTE_ASSERT(techniques == head);
+    CUTE_ASSERT(techniques->next == neck);
+    CUTE_ASSERT(techniques->next->next == NULL);
+
+    techniques = rm_technique_from_txttypesetter_sustained_technique_ctx(head, techniques);
+
+    CUTE_ASSERT(techniques == neck);
+    CUTE_ASSERT(techniques->next == NULL);
+
+    techniques = rm_technique_from_txttypesetter_sustained_technique_ctx(neck, techniques);
+    CUTE_ASSERT(techniques == NULL);
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(processor_typesetters_txt_tablature_ctx_tests)
     txttypesetter_tablature_ctx *tab = NULL, *head = NULL, *next = NULL;
     head = new_txttypesetter_tablature_ctx(&tab);
@@ -844,6 +898,7 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     //                  it with the another broken.
     CUTE_RUN_TEST(processor_oututils_get_technique_label_tests);
     CUTE_RUN_TEST(processor_oututils_single_note_to_tab_fret_nr_tests);
+    CUTE_RUN_TEST(processor_typesetters_txt_sustained_technique_ctx_tests);
     CUTE_RUN_TEST(processor_typesetters_txt_tablature_ctx_tests);
     CUTE_RUN_TEST(usrland_cmdlineoptions_tests);
     //  WARN(Santiago): The tests related with the system module should

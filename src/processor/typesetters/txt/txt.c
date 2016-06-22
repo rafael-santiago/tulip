@@ -56,6 +56,8 @@ static void txttypesetter_blockend_handler(txttypesetter_tablature_ctx **tab, co
 
 static void txttypesetter_chord_handler(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note);
 
+static void apply_final_output_brush_up(txttypesetter_tablature_ctx *tab);
+
 static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpSavePoint, txttypesetter_savepoint_printer),
     register_new_typesetter_printer(kTlpNoteSep, txttypesetter_notesep_printer),
@@ -332,6 +334,44 @@ static void trim_upper_data_from_tab(txttypesetter_tablature_ctx *tab) {
     }
 }
 
+static void apply_final_output_brush_up(txttypesetter_tablature_ctx *tab) {
+    txttypesetter_tablature_ctx *tp = NULL;
+    txttypesetter_sustained_technique_ctx *sp = NULL, *nsp = NULL;
+    char *dp = NULL;
+
+    if (tab == NULL) {
+        return;
+    }
+
+    trim_upper_data_from_tab(tab);
+
+    for (tp = tab; tp != NULL; tp = tp->next) {
+        if (tp->techniques == NULL) {
+            continue;
+        }
+
+        sp = tp->techniques;
+        nsp = sp->next;
+        while (sp != NULL) {
+            dp = sp->data;
+            while (*dp == ' ') {
+                dp++;
+            }
+
+            if (*dp == '.') {
+                tp->techniques = rm_technique_from_txttypesetter_sustained_technique_ctx(sp, tp->techniques);
+                sp = nsp;
+            } else {
+                sp = sp->next;
+            }
+
+            if (sp != NULL) {
+                nsp = sp->next;
+            }
+        }
+    }
+}
+
 int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     const tulip_single_note_ctx *sp = NULL;
     txttypesetter_tablature_ctx *tab = NULL, *tp = NULL;
@@ -384,7 +424,7 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
         return 1;
     }
 
-    trim_upper_data_from_tab(tab);
+    apply_final_output_brush_up(tab);
 
     has_error = (txttypesetter_inkspill(tabpath, tab, song) != 1);
 
