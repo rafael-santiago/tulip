@@ -1140,7 +1140,7 @@ I prefer:
     |--------(...)
     |--------(...)
 
-However, it is just about a point of view. With this in mind I have decided to implement a implicity rule (to be signaled by you)
+However, it is just about a point of view. With this in mind I have decided to implement a implicit rule (to be signaled by you)
 for chords typesetting. This signal is done using the disposition of the notes. So when you use this ``.chord{100-29-38}``
 you have this:
 
@@ -1160,7 +1160,7 @@ When you use this ``.chord{38-29-100}`` you have this:
     |--------(...)
     |--------(...)
 
-The first (using smaller note cipherings before) always will need a leading separator for compensate and keep the next production
+The first (using smaller note cipherings before) always will need a leading separator to compensate and keep the next production
 well separated from the current. In the ``High Heeled Sneakers`` we have a practical example. Furthermore, we have these
 two typesetting rules co-working for a fancier output. Take a look:
 
