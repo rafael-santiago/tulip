@@ -21,7 +21,10 @@ struct typesetter_fancy_outputs_assurance {
 
 struct typesetter_fancy_outputs_assurance g_fancy_outputs_test_vector[] = {
     add_new_output_fancy_testing_step(___purple_haze_tlp, ___purple_haze_txt),
-    add_new_output_fancy_testing_step(___o_pato_tlp, ___o_pato_txt)
+    add_new_output_fancy_testing_step(___o_pato_tlp, ___o_pato_txt),
+    add_new_output_fancy_testing_step(___feel_me_tlp, ___feel_me_txt),
+    add_new_output_fancy_testing_step(___haitian_fight_song_tlp, ___haitian_fight_song_txt),
+    add_new_output_fancy_testing_step(___high_heeled_sneakers_tlp, ___high_heeled_sneakers_txt)
 };
 
 size_t g_fancy_outputs_test_vector_nr = sizeof(g_fancy_outputs_test_vector) / sizeof(g_fancy_outputs_test_vector[0]);

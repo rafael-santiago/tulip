@@ -222,7 +222,7 @@ txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tabla
 }
 
 void free_txttypesetter_tablature_ctx(txttypesetter_tablature_ctx *tablature) {
-    txttypesetter_tablature_ctx *t, *p;
+    txttypesetter_tablature_ctx *t = NULL, *p = NULL;
     size_t s;
     for (t = p = tablature; t; p = t) {
         t = p->next;
