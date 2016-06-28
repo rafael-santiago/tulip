@@ -97,6 +97,7 @@ local function get_relevant_test_logs_to_attach() : result type string {
     $RElevant_files.add_item(".*fuzz\\.tlp$");
     $RElevant_files.add_item(".*output\\.txt$");
     $RElevant_files.add_item(".*memcheck\\.log$");
+    $RElevant_files.add_item(".*final\\.tlp$");
 
     var files_to_attach type list;
 

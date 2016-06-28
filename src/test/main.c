@@ -868,6 +868,100 @@ CUTE_TEST_CASE(processor_fancy_outputs_assurance)
     }
 CUTE_TEST_CASE_END
 
+CUTE_TEST_CASE(users_binary_tests)
+    const char *basepath = NULL;
+    char cmdline[255] = "";
+    int exit_code = 0;
+    size_t t = 0, o = 0;
+    FILE *output = NULL;
+    char *output_buf = NULL;
+    long osize = 0;
+    char *dummy_options[] = {
+        " --larry",
+        " --curly",
+        " --moe",
+        " --boo",
+        " --foo",
+        " --foo=bar",
+        " --bar=foo",
+        " --larry --curly --moe",
+        " --abc"
+    };
+    size_t dummy_options_sz = sizeof(dummy_options) / sizeof(dummy_options[0]);
+
+#ifndef _WIN32
+    basepath = "../../bin/tulip ";
+#else
+    basepath = "../../bin/tulip.exe ";
+#endif
+
+    printf("\n\tTULIP's TESTER MONKEY SAID: Hello, do not worry about the output..."
+           "\n\t                            Now I will effectively poke the binary that you will install & use.\n\n");
+
+    //  INFO(Santiago): Firstly, the compilation tests.
+    sprintf(cmdline, "%s%s", basepath, "--tlp=not-here.tlp");
+    exit_code = system(cmdline);
+    CUTE_ASSERT(exit_code != 0);
+
+    sprintf(cmdline, "%s%s", basepath, "--tlp=final.tlp");
+    for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
+        write_buffer_to_disk("final.tlp", g_fancy_outputs_test_vector[t].tlp_code, g_fancy_outputs_test_vector[t].tlp_code_sz);
+        CUTE_ASSERT(system(cmdline) == 0);
+        remove("final.tlp");
+    }
+
+    sprintf(cmdline, "%s", basepath);
+    exit_code = system(cmdline);
+    CUTE_ASSERT(exit_code != 0);
+
+    sprintf(cmdline, "%s --help", basepath);
+    exit_code = system(cmdline);
+    CUTE_ASSERT(exit_code == 0);
+
+    sprintf(cmdline, "%s --version", basepath);
+    exit_code = system(cmdline);
+    CUTE_ASSERT(exit_code == 0);
+
+    for (t = 0; t < dummy_options_sz; t++) {
+        sprintf(cmdline, "%s%s", basepath, dummy_options[rand() % dummy_options_sz]);
+        CUTE_ASSERT(system(cmdline) != 0);
+    }
+
+    //  INFO(Santiago): Now, the typesetting must be verified too.
+    sprintf(cmdline, "%s%s%s", basepath, "--tlp=final.tlp ", "--out=output.txt");
+    for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
+        write_buffer_to_disk("final.tlp", g_fancy_outputs_test_vector[t].tlp_code, g_fancy_outputs_test_vector[t].tlp_code_sz);
+
+        CUTE_ASSERT(system(cmdline) == 0);
+
+        output = fopen("output.txt", "rb");
+        CUTE_ASSERT(output != NULL);
+        fseek(output, 0L, SEEK_END);
+        osize = ftell(output);
+
+        CUTE_ASSERT(osize == g_fancy_outputs_test_vector[t].txt_output_sz);
+
+        fseek(output, 0L, SEEK_SET);
+
+        output_buf = (char *) getseg(osize + 1);
+        memset(output_buf, 0, osize + 1);
+        fread(output_buf, 1, osize, output);
+        fclose(output);
+
+        for (o = 0; o < g_fancy_outputs_test_vector[t].txt_output_sz; o++) {
+            CUTE_ASSERT(output_buf[o] == g_fancy_outputs_test_vector[t].txt_output[o]);
+        }
+
+        free(output_buf);
+        remove("final.tlp");
+        remove("output.txt");
+    }
+
+    printf("\n\tTULIP's TESTER MONKEY SAID: All done! All clean! All my tests said that this software is good for using."
+           "\n\t                            Go ahead, install and enjoy it!\n\n");
+
+CUTE_TEST_CASE_END
+
 CUTE_TEST_CASE(tulips_tester_monkey)
     CUTE_RUN_TEST(base_tulip_technique_stack_ctx_tests);
     CUTE_RUN_TEST(base_tulip_single_note_ctx_tests);
@@ -912,6 +1006,8 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     } else {
         printf("***\n*** WARNING: The fancy outputs assurance tests were skipped.\n***\n");
     }
+    //  WARN(Santiago): If all is ok, it is time to test the user's binary.
+    CUTE_RUN_TEST(users_binary_tests);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulips_tester_monkey);
