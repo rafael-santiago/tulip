@@ -1249,4 +1249,6 @@ And, of course the resultant tablature:
             |----------------------------------|--------------------------|
             |----------------------------------|--------------------------|
 
+The ``solos`` and ``Woooooos`` is up to you! ;)
+
 ### Using Tulip's processors
