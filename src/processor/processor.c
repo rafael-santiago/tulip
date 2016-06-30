@@ -68,6 +68,9 @@ int mktab(const tulip_single_note_ctx *song, const char *tabpath) {
     }
 
     for (p = 0; p < g_processors_nr; p++) {
+        if (g_processors[p].ext == NULL) {
+            continue;
+        }
         if (strcmp(g_processors[p].ext, tp) == 0) {
             return g_processors[p].typesetter(song, tabpath);
         }

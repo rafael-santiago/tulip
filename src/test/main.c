@@ -927,6 +927,12 @@ CUTE_TEST_CASE(users_binary_tests)
         CUTE_ASSERT(system(cmdline) != 0);
     }
 
+    write_buffer_to_disk("final.tlp", g_fancy_outputs_test_vector[0].tlp_code, g_fancy_outputs_test_vector[0].tlp_code_sz);
+    //  INFO(Santiago): It can not produce any Segmentation Fault.
+    sprintf(cmdline, "%s --tlp=final.tlp --out=final.tlp", basepath);
+    exit_code = system(cmdline);
+    CUTE_ASSERT(exit_code != 0);
+
     //  INFO(Santiago): Now, the typesetting must be verified too.
     sprintf(cmdline, "%s%s%s", basepath, "--tlp=final.tlp ", "--out=output.txt");
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
