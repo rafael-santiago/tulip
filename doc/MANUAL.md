@@ -1678,8 +1678,8 @@ Haha, here is the output tablature (two steps down, of course... I am crazy, do 
             |---------------------------------|
             |---------------------------------|
 
-If you had a military ``peaked cap`` and a alpine white ``SG Custom 1961``... go ahead... it is time to use it.
+If you have a military ``peaked cap`` and a alpine white ``SG Custom 1961``... go ahead... it is time to use it.
 
-No, the most important advice is: play it loud, distorted and fast. Otherwise will not work. This is ``"blitzrieg rock"`` kid!
+No, the most important advice is: play it loud, distorted and fast. Otherwise will not work. This is ``"blitzkrieg rock"`` kid!
 
 ### Using Tulip's processors
