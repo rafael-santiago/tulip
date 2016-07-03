@@ -68,13 +68,17 @@ void expand_chordextsep(const tulip_command_t separator, tulip_single_note_ctx *
         sp = sp->last;
     }
 
-    if (sp == NULL) {
-        return;
-    }
-
     //  INFO(Santiago): Let's build up the virtual .chord{n:sep...}.
 
-    sp = sp->next;
+    if (sp == NULL) {
+        sp = (*song);
+        if ((sp->techniques & kTlpChord) == 0) {
+            return;
+        }
+    } else {
+        sp = sp->next;
+    }
+
     //  INFO(Santiago): For sure that this is a chord beginning.
     (*song) = add_note_to_tulip_single_note_ctx((*song), sp->techniques, NULL);
     sp = sp->next;
