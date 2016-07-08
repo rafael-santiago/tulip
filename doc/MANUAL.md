@@ -1685,7 +1685,7 @@ No, the most important advice is: play it loud, distorted and fast. Otherwise wi
 I want to show you a nice way for using the ``part`` and ``repeat`` tags. For doing it I will pick a ``Motörhead``'s song
 called ``Whorehouse Blues``.
 
-This song closes them album ``Inferno``. It is basically a twelve-bar blues played with 3 acoustic guitars (I think).
+This song closes them album ``Inferno``. It is basically a twelve-bar blues (shuffle) played with 3 acoustic guitars (I think).
 I love this song. I personally dislike a bit acoustic guitars, but this song is pretty cool. So, I like to understand
 it as a "intro riff", "base", "solo", "base variation", "turnaround ending". I adjusted some things to fits better to
 my tunning and preferences ;-P... If you want to use it good luck!
@@ -1784,7 +1784,7 @@ The entire script for this ``badass`` blues:
 
     .literal{"<Base>"}
 
-    .literal{"\tBasically you should \"boogie\" twice and back to the intro riff."}
+    .literal{"\tBasically you should \"shuffle\" twice and back to the intro riff."}
     .literal{"\tThe ***whole base*** is done twice."}
 
         .chord{53-43-35}-.chord{53-43-35}---.chord{53-43-37}---.chord{43-33-24}---.chord{53-43-37}-.chord{53-43-35}.times{2}-|-
@@ -1879,7 +1879,7 @@ The resultant tablature is what follows:
             |---------|-----------------|-------------|
 
     <Base>
-	    Basically you should "boogie" twice and back to the intro riff.
+	    Basically you should "shuffle" twice and back to the intro riff.
 	    The ***whole base*** is done twice.
 
                                                                   lr......
