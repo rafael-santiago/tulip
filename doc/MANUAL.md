@@ -1682,7 +1682,7 @@ If you have a military ``peaked cap`` and a alpine white ``SG Custom 1961``... g
 
 No, the most important advice is: play it loud, distorted and fast. Otherwise will not work. This is ``"blitzkrieg rock"`` kid! ;)
 
-I want to show you a nice way of use the ``part`` and ``repeat`` tags. For doing it I will pick a ``Motörhead``'s song
+I want to show you a nice way for using the ``part`` and ``repeat`` tags. For doing it I will pick a ``Motörhead``'s song
 called ``Whorehouse Blues``.
 
 This song closes them album ``Inferno``. It is basically a twelve-bar blues played with 3 acoustic guitars (I think).
