@@ -1687,8 +1687,8 @@ called ``Whorehouse Blues``.
 
 This song closes them album ``Inferno``. It is basically a twelve-bar blues played with 3 acoustic guitars (I think).
 I love this song. I personally dislike a bit acoustic guitars, but this song is pretty cool. So, I like to understand
-it as a "intro riff", "base", "solo", "base variation", "turnaround ending". I was adjusted everything to fits better to
-my tunning and preferences ;-P... I you and to use it good luck.
+it as a "intro riff", "base", "solo", "base variation", "turnaround ending". I adjusted some things to fits better to
+my tunning and preferences ;-P... If you want to use it good luck!
 
 For the ``intro riff`` we have the following:
 
