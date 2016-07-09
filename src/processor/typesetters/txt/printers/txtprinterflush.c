@@ -10,7 +10,7 @@
 #include <processor/oututils.h>
 #include <dsl/utils.h>
 #include <stdlib.h>
-#include <string.h>
+#include <base/libc/string.h>
 #include <ctype.h>
 #include <stdio.h>
 

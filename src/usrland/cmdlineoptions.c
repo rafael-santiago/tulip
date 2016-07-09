@@ -6,7 +6,7 @@
  *
  */
 #include <usrland/cmdlineoptions.h>
-#include <string.h>
+#include <base/libc/string.h>
 
 static int g_argc = 0;
 

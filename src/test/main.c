@@ -807,7 +807,7 @@ CUTE_TEST_CASE(dsl_compiler_fuzz_tests)
     size_t b = 0;
     tulip_single_note_ctx *song = NULL;
 
-    srand(stime(0));
+    srand(time(0));
 
     buf = CUTE_GET_OPTION("fuzz-nr");
 
@@ -892,7 +892,7 @@ CUTE_TEST_CASE(users_binary_tests)
 #ifndef _WIN32
     basepath = "../../bin/tulip ";
 #else
-    basepath = "../../bin/tulip.exe ";
+    basepath = "..\\..\\bin\\tulip.exe ";
 #endif
 
     printf("\n\tTULIP's TESTER MONKEY SAID: Hello, do not worry about the output..."

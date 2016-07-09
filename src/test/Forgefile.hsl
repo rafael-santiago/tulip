@@ -136,18 +136,27 @@ function get_master_project_objects(ldflags type list) : result type list {
     if ($master_project_obj_dir.count() > 0) {
         $oldcwd = hefesto.sys.pwd();
         $m = 0;
+        var objs type list;
         while ($m < $master_project_obj_dir.count()) {
             if (hefesto.sys.cd($master_project_obj_dir.item($m))) {
-                $ldflags.ls(".*\\.o$");
+                $objs.ls(".*\\.o$");
                 hefesto.sys.cd($oldcwd);
             }
+            $m = $m + 1;
+        }
+        #
+        # WARN(Santiago): Maybe some people like to use project's directory names with spaces.
+        #
+        $m = 0;
+        while ($m < $objs.count()) {
+            $ldflags.add_item("\"" + $objs.item($m) + "\"");
             $m = $m + 1;
         }
         $m = 0;
         while ($m < $ldflags.count()) {
             var citem type string;
             $citem = $ldflags.item($m);
-            if ($citem.match(".*main\\.o$") == 1) {
+            if ($citem.match(".*main\\.o\"$") == 1) {
                 $ldflags.del_item($citem);
                 break;
             }

@@ -10,6 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef _WIN32
+#include <sys/types.h>
+#endif
 
 struct tulip_command_table_ctx {
     const char *tag;
