@@ -186,7 +186,7 @@ local function install() : result type int {
 
     var dst_dir type string;
     $d = 0;
-    while ($d < $d_end) {
+    while ($d <= $d_end) {
         $dst_dir = $dst_dir + $bin_dst.at($d);
         $d = $d + 1;
     }
@@ -223,6 +223,10 @@ local function install() : result type int {
         hefesto.sys.echo("INSTALL WARNING: the additional files were not completely installed.\n");
     }
 
+    if (hefesto.sys.os_name() == "windows") {
+        export_binary_path($bin_dst);
+    }
+
     result $exit_code;
 }
 
@@ -239,6 +243,9 @@ local function uninstall_additional_files() : result type int {
     $add_dst.add_item(hefesto.sys.make_path($basepath, "doc/MANUAL.md"));
     $add_dst.add_item(hefesto.sys.make_path($basepath, "doc/DSL.md"));
     $add_dst.add_item(hefesto.sys.make_path($basepath, "doc"));
+    if (hefesto.sys.os_name() == "windows") {
+        $add_dst.add_item(hefesto.sys.make_path($basepath, "bin"));
+    }
     $add_dst.add_item(hefesto.sys.make_path($basepath, ""));
 
     var exit_code type int;
@@ -249,6 +256,7 @@ local function uninstall_additional_files() : result type int {
     while ($a < $add_dst.count() && $exit_code == 0) {
         var path type string;
         $path = $add_dst.item($a);
+
         if (isfile($path)) {
             $exit_code = hefesto.sys.rm($add_dst.item($a));
         } else {
@@ -322,5 +330,94 @@ local function uninstall() : result type int {
         }
     }
 
+    if (hefesto.sys.os_name() == "windows") {
+        unexport_binary_path($bin_dst);
+    }
+
     result $exit_code;
+}
+
+local function export_binary_path(basepath type string) : result type none {
+    UNExport_binary_path($basepath, 1);
+}
+
+local function unexport_binary_path(basepath type string) : result type none {
+    UNExport_binary_path($basepath, 0);
+}
+
+local function UNExport_binary_path(basepath type string, export type int) : result type none {
+    var env_path type list;
+    $env_path = get_windows_path_data();
+
+    $basepath.replace("tulip\\.exe", "");
+
+    var action_cond type int;
+    if ($export == 1) {
+        $action_cond = ($env_path.index_of($basepath) == -1);
+    } else {
+        $action_cond = ($env_path.index_of($basepath) > -1);
+    }
+    if ($action_cond) {
+        if ($export == 1) {
+            $env_path.add_item($basepath);
+        } else {
+            while ($env_path.index_of($basepath) > -1) {
+                $env_path.del_item($basepath);
+            }
+        }
+        set_windows_path_data($env_path);
+        if ($export == 1) {
+            hefesto.sys.echo("INSTALL INFO: the binary was exported. Try to log-off and log-on again in order to reload your PATH environment variable.\n");
+        } else {
+            hefesto.sys.echo("UNINSTALL INFO: the binary was unexported.\n");
+        }
+    } else {
+        if ($export == 1) {
+            hefesto.sys.echo("INSTALL WARNING: the binary was previously exported.\n");
+        } else {
+            hefesto.sys.echo("UNINSTALL INFO: the binary was not exported.\n");
+        }
+    }
+}
+
+local function set_windows_path_data(data type list) : result type none {
+    var env_path_buf type string;
+    var d type int;
+
+    $d = 0;
+    while ($d < $data.count()) {
+        $env_path_buf = $env_path_buf + $data.item($d) + ";";
+        $d = $d + 1;
+    }
+
+    if ($env_path_buf.len() > 0) {
+        hefesto.sys.setenv("WINREG:HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment\\PATH", $env_path_buf);
+    }
+}
+
+local function get_windows_path_data() : result type list {
+    var env_path_data type list;
+    var buf type string;
+
+    $buf = hefesto.sys.env("WINREG:HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment\\PATH");
+
+    var b type int;
+    var item type string;
+
+    $b = 0;
+    while ($b < $buf.len()) {
+        if ($buf.at($b) == ";") {
+            $env_path_data.add_item($item);
+            $item = "";
+        } else {
+            $item = $item + $buf.at($b);
+        }
+        $b = $b + 1;
+    }
+
+    if ($item.len() > 0) {
+        $env_path_data.add_item($item);
+    }
+
+    result $env_path_data;
 }
