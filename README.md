@@ -88,3 +88,12 @@ Now everything using extension ``.tlp`` will be highlighted:
 ![mcedit-after-before](https://github.com/rafael-santiago/tulip/blob/master/etc/mcedit-high.gif)
 
 Done!
+
+### Adding tulip's syntax highlighting to the notepad++
+
+For doing it we need to access the menu option ``Language | Define your language...`` and click on ``Export...`` button. Choose the file ``etc/TLP.xml``
+under this repo's root. After it all files having ``.tlp`` extension will be colorized as follows:
+
+![npp-after-before](https://github.com/rafael-santiago/tulip/blob/master/etc/npp-high.gif)
+
+Done!
