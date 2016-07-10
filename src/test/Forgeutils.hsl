@@ -20,7 +20,7 @@ function has_valgrind() : result type int {
 }
 
 function wrap_cmdline_with_valgrind(cmdline type string, logpath type string) : result type string {
-    result "valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --log-file=" + $logpath + " " + $cmdline;
+    result "valgrind --tool=memcheck --leak-check=full --log-file=" + $logpath + " " + $cmdline;
 }
 
 function help() : result type none {
