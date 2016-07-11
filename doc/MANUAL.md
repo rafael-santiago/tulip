@@ -12,7 +12,7 @@ software. If you are in a rush, I suggest you jump to "The Tulip system" section
 ## My motivations
 
 I have been playing (or at least trying) the guitar since my twelve years old, during these years I had only two teachers.
-When I started my studies the ``Standard Music Notation`` was unknown to me. The curious thing about these two teachers
+When I started my studies the ``Standard Music Notation (Sheet Music)`` was unknown to me. The curious thing about these two teachers
 was the choice for the same alternative music notation based on numbers. I said "curious" because since I learned this I have
 not met anyone abroad whom know this same "numeric notation".
 
@@ -1258,7 +1258,7 @@ Now, going back to the rock tunes... Let's see a cool song from a cool band. The
 is one of my favorite from them, ``Better than you``. The main thing that I like in the songs made by them is the simplicity
 and the sense of what a rock n' roll song should be: ``simple, cool & fast``. In terms of ``guitars`` this band always had a quite nice
 ``two-guitar`` work. The guitar solos & riffs used to complement each other, continuing the talk... This song is a nice sample
-of it. You can find out live versions from this song where he promoted fun guitar battles. You should watch it.
+of it. You can find out live versions from this song where he promoted interesting guitar battles. You should watch it.
 
 Well, just starting, in the introduction we get a nice ``Chuck Berry-like`` lick/riff. The cool thing here is listening to one
 guitar overlapping another one with the same idea but using a little different interval. I am not your teacher, so the theory
@@ -1332,7 +1332,7 @@ We get a break/bridge before the guitar solos. By the way, pretty nice:
     58h500-.chord{48-38}-.chord{48-38}-500-.chord{48-38}-|-
     .chord{302-202}.chord{3:b2:b}-.chord{302-202}.chord{3:r2:r}-.chord{300-200}~~~~-;
 
-The solos are divided into two but in the end is a fun talk between the musicians:
+The solos are divided into two but in the end is a interesting talk between the musicians:
 
     .chord{302-200}.chord{3:b}-.chord{200-100}-203-200-302-300-402-300-303-302-300~-|-
     /300-29-200-101b-|-101~~--101~~-|-101b102r101p18-101p18-29-300-|-307-206-208-106-109-108-106-
@@ -2003,5 +2003,314 @@ The resultant tablature is what follows:
             |-3/5-------3-1-----3-1-1h3-|-----------------------------------------|
             |---------------3-----------|-----------------------------------------|
 
+Let's end with a ``standard rock`` called ``Louie Louie``, this song is pretty known. Maybe, in a galaxy far, far away, Aliens
+can be listening to it loudly while getting crazy with virtuous ``air-guitar`` sessions.
+
+For this last sample I will do something different. I will show you parts of the song previously written down using "numeric
+cipher" and so I will let for the interested reader the task of comparing my drafts over the shown ``Tulip`` code. In the
+end they will cracked the code of the code from the code. Or more or less it! ;)
+
+The used version of ``Louie Louie`` is the ``Motörhead``'s alternate version (I love the guitar solo from this one).
+
+My *shitty-drafts* for this song (do not mind I transcribed the solo first, sometimes, I am such a crazy person) follows
+depicted in the **Figure 2**, **Figure 3**, **Figure 4**, **Figure 5** and **Figure 6**.
+
+**Figure 2**: See? I told you...
+
+![Louie Louie transcription personal draft part i](https://github.com/rafael-santiago/tulip/blob/master/etc/louie-louie-draft-0.jpg)
+
+**Figure 3**: Here goes my guitar solo approximation.
+
+![Louie Louie transcription personal draft part ii](https://github.com/rafael-santiago/tulip/blob/master/etc/louie-louie-draft-1.jpg)
+
+**Figure 4**: Continuing the guitar solo.
+
+![Louie Louie transcription personal draft part iii](https://github.com/rafael-santiago/tulip/blob/master/etc/louie-louie-draft-2.jpg)
+
+**Figure 5**: Here you can see the intro riff and the chorus.
+
+![Louie Louie transcription personal draft part iv](https://github.com/rafael-santiago/tulip/blob/master/etc/louie-louie-draft-3.jpg)
+
+**Figure 6**: What you should do during the verses and a general idea for the ending lick.
+
+![Louie Louie transcription personal draft part v](https://github.com/rafael-santiago/tulip/blob/master/etc/louie-louie-draft-4.jpg)
+
+Here is the entire ``Tulip`` code for this song (two whole steps down, you already know why...):
+
+    .song{"Louie Louie (Alternate Version) / Motorhead [Some EP which I can not rememeber by now, around 1979]"}
+    .transcriber{"Rafael Santiago"}
+
+    .literal{"[Riff intro]"}
+        .literal{"\tRepeats it over and over..."}
+        .chord{59-401-301}-|-.chord{69-401-501}-.chord{69-401-501}-.chord{69-401-501}-|-
+        .chord{59-401-301}-.chord{59-401-301}-|-.chord{501-403-303}-.chord{501-403-303}-.chord{501-403-303}-|-
+        .chord{59-401-301}-;
+
+    .literal{"[Verses]"}
+        .literal{"\tThere are some open intervals here. It is just a personal preference..."}
+        .chord{60-50}-.chord{69-501-401}-|-.chord{69-501-401}-.chord{59-501-401}-|-
+        .chord{50-40}-.chord{501-403-303}-.chord{501-403-303}-.chord{501-403-303}-|-
+        .chord{59-401-301}-;
+
+    .literal{"[Chorus]"}
+        .literal{"\tHere you can also omit the open intervals."}
+        .chord{60-50}-.chord{69-501-401}-.chord{69-501-401}-.chord{69-501-401}-|-
+        .chord{59-401-301}-.chord{59-401-301}-|-.chord{50-40}-.chord{501-403-303}-.chord{501-403-303}-.chord{501-403-303}-|-
+        .chord{59-401-301}-.chord{59-401-301}-;
+
+    .literal{"[Solo]"}
+        59-501-49-401-.chord{39-29}b-401-.times{2}-|-
+
+        59-501-49-401-39-302~~~~-|-
+
+        .chord{19-29}-.chord{202-302}-.chord{301-201}-.chord{39-29}-401-.chord{301-201}-
+        .chord{29-39}-401-49-401-49-501-500-59-57-59-47-49-.chord{3:/2:/}.chord{303-202}~~-|-
+
+        .letring {
+            .chord{302-201}/.chord{303-202}-202~-303~-
+            .chord{302-201}/.chord{303-202}-202-.chord{302-201}/.chord{303-202}-.chord{302-201}/.chord{303-202}
+        }-.times{3}-|-
+
+        3:/308-207-209b--209r-207-209-308-|-
+
+        207-209b--209r-207-209-.chord{209-106}.chord{2:b}--207-308-207-209p207-308-207-308~~-|-/308-207-209-;-
+        .letring {
+            209b--109
+        }-.times{10}-|-
+
+        104b---104r-104p102-204-.times{3}-|-
+
+        301/303-202-102-204~-|-
+
+        3:/308-207-209-;-
+
+        .letring {
+            209b--111
+        }-.times{70000}-;-
+
+        109b----------110~~~~~~~~-|-
+        111-109-106-.chord{209-106}.chord{2:b}-210-|-
+        106-111-109-106-.chord{209-106}.chord{2:b}-106-.chord{209-106}.chord{2:b}-.chord{209-106}.chord{2:~}.chord{2:~}-;
+
+        .literal{"[Final lick]"}
+            .literal{"\tSomething to be developed over.\n"}
+            59-501-49-401-39-301-302-200-202-204-102-104-104b----104r-104p102-204~~-
+
+
+It is a simple and cool song. Sorry for my solo approximations, etc, etc... Follows the tab for it:
+
+    Song: Louie Louie (Alternate Version) / Motorhead [Some EP which I can not rememeber by now, around 1979]
+    Transcribed by: Rafael Santiago
+
+    [Riff intro]
+	    Repeats it over and over...
+
+            |----|----------|-------|----------|----|
+            |----|----------|-------|----------|----|
+            |-11-|----------|-11-11-|-13-13-13-|-11-|
+            |-11-|-11-11-11-|-11-11-|-13-13-13-|-11-|
+            |--9-|-11-11-11-|--9--9-|-11-11-11-|--9-|
+            |----|--9--9--9-|-------|----------|----|
+
+    [Verses]
+    	    There are some open intervals here. It is just a personal preference...
+
+            |------|-------|------------|----|
+            |------|-------|------------|----|
+            |------|-------|---13-13-13-|-11-|
+            |---11-|-11-11-|-0-13-13-13-|-11-|
+            |-0-11-|-11-11-|-0-11-11-11-|--9-|
+            |-0--9-|--9----|------------|----|
+
+    [Chorus]
+	    Here you can also omit the open intervals.
+
+            |------------|-------|------------|-------|
+            |------------|-------|------------|-------|
+            |------------|-11-11-|---13-13-13-|-11-11-|
+            |---11-11-11-|-11-11-|-0-13-13-13-|-11-11-|
+            |-0-11-11-11-|--9--9-|-0-11-11-11-|--9--9-|
+            |-0--9--9--9-|-------|------------|-------|
+
+    [Solo]
+
+                              2X
+            |------------------|--------------------|-9-------------------------------------|
+            |-----------9b-----|--------------------|-9-12-11-9----11-9---------------------|
+            |-----------9b-----|-----------9-12~~~~-|---12-11-9----11-9---------------------|
+            |------9-11----11--|------9-11----------|-----------11------11-9-11-9-----------|
+            |-9-11-------------|-9-11---------------|-----------------------------11-10-9-7-|
+            |------------------|--------------------|---------------------------------------|
+
+                            lr....................................
+
+                                                                 3X
+            |-------------|---------------------------------------|-----------------------|
+            |-------/12~~-|---11/12-12~-----11/12-12-11/12-11/12--|-----17-19b--19r-17-19-|
+            |-------/13~~-|---12/13-----13~-12/13----12/13-12/13--|-/18-------------------|
+            |---7-9-------|---------------------------------------|-----------------------|
+            |-9-----------|---------------------------------------|-----------------------|
+            |-------------|---------------------------------------|-----------------------|
+
+            |----|-------------------16-----------------------------|-----------|
+            |----|-17-19b--19r-17-19-19b--17----17-19p17----17------|-----17-19-|
+            |-18-|---------------------------18----------18----18~~-|-/18-------|
+            |----|--------------------------------------------------|-----------|
+            |----|--------------------------------------------------|-----------|
+            |----|--------------------------------------------------|-----------|
+
+              lr.........
+
+                        10X                   3X
+            |--------19--|-14b---14r-14p12-----|----------12-----|-----------|
+            |---19b------|-----------------14--|-------12----14~-|-----17-19-|
+            |------------|---------------------|-11/13-----------|-/18-------|
+            |------------|---------------------|-----------------|-----------|
+            |------------|---------------------|-----------------|-----------|
+            |------------|---------------------|-----------------|-----------|
+
+              lr.........
+
+                        70000X
+            |--------21--|
+            |---19b------|
+            |------------|
+            |------------|
+            |------------|
+            |------------|
+
+            |-19b----------20~~~~~~~~-|-21-19-16-16-----|-16-21-19-16-16--16-16--16---|
+            |-------------------------|----------19b-20-|-------------19b----19b-19~~-|
+            |-------------------------|-----------------|-----------------------------|
+            |-------------------------|-----------------|-----------------------------|
+            |-------------------------|-----------------|-----------------------------|
+            |-------------------------|-----------------|-----------------------------|
+
+    [Final lick]
+    	    Something to be developed over.
+
+
+            |----------------------------12-14-14b----14r-14p12------|
+            |-------------------10-12-14------------------------14~~-|
+            |-----------9-11-12--------------------------------------|
+            |------9-11----------------------------------------------|
+            |-9-11---------------------------------------------------|
+            |--------------------------------------------------------|
+
+I think it is enough. With the presented samples you can easily master the ``Tulip`` if you really wants to.
+
+Now you need to know how to process the code written inside the ``Tulip`` in order to produce your tabs.
+
+Keep reading...
+
+### How to verify a TLP file?
+
+In order to generate a tablature from a ``tlp`` source code, this code needs to be correct. Any error can exist inside
+of it, otherwise the tablature will not be generated. The way to verify it is calling ``Tulip`` with the following command line:
+
+```
+tulip-user@SOMEWHERE:~/over/the/rainbow# tulip --tlp=sample-song.tlp
+```
+
+This could be called ``the compilation command``.
+
+In the file is ok nothing will be returned by the ``Tulip`` and it exits with zero code. Otherwise if found any error, this
+error will be reported and the ``Tulip`` will exit with a non-zero code.
+
+The above shown command only will compile your ``Tulip`` source code, no tablature will be maked.
+
+This command tends to be useful only when you just want to know that any change in the code has no errors. In fact, the
+output tablature can be easily re-assembled. By this fact, if you are intending to versioning your codes with some
+``source control management tool``, obviously you do not need for versioning the tablatures, only the ``.tlp`` source files.
 
 ### Using Tulip's processors
+
+The ``Tulip``'s processors are invoked through the option ``--out=<file>``. They must be used when you intends to generate
+some tablature output from your input code. The following command should be used to generated a tablature:
+
+```
+tulip-user@SOMEWHERE:~/over/the/rainbow# tulip --tlp=sample-song.tlp --out=sample-song.txt
+```
+
+This could be called ``the typesetting command``.
+
+According to the above command sample, the code ``sample-song.tlp`` will be compiled and if it has no errors the tablature
+``sample-song.txt`` will be generated under the current directory.
+
+The type of processors are chosen by the output extension, so a ``.txt`` output produces a tablature text-based.
+
+If you chose a unsupported file extension for the output you are warned about. Until now we have the ``.txt`` processor,
+the processors related with ``postscript (.ps)`` and ``portable document file (.pdf)`` are still being developed. You still
+do not have any code related with them here in this public repository.
+
+Then after all, the generation of a tablature file also involves the compilation of the source which will be used for this
+generation.
+
+### Changing the behavior of the processor
+
+It is possible to change the behavior of the processor in some cases using explict options.
+
+Fistly, let's see what behavoir's changes we can apply for a ``Tulip`` processor. It follows listed into the **Table 4**.
+Inside the ``Tulip`` a processor is responsible to care about the tablature typesetting, so when you use an option present
+in the **Table 4** you are directly influencing the output typesetting.
+
+**Table 4**: Options for processor's behavior changing.
+|       **Option**                 |           **Handy for**                                                                  |        **Setting sample**                                   |
+|:--------------------------------:|-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------:|
+| ``fretboard-size``               | Expresses the size of the fretboard diagram in columns                                   | ``fretboard-size=320``                                      |
+| ``fretboard-style``              | Sets one of the two available styles of fretboard                                        | ``fretboard-style=normal`` or ``fretboard-style=continuous``|
+| ``close-tab-to-save``            | Sets/Unsets the option which flags the closement of a fretboard diagram before saving it | ``close-tab-to-save=no``                                    |
+| ``indentation-deepness``         | Indicates the amount of spaces added in order to indent the tablature                    | ``indentation-deepness=2``                                  |
+| ``include-tab-notation``         | Includes at the beginning of the tablature an used-techniques reference table            | ``include-tab-notation=yes``                                |
+| ``cut-tab-on-the-last-note``     | Cuts the tablature output based on the effective last note put on it                     | ``cut-tab-on-the-last-note=no``                             |
+| ``add-tunning-to-the-fretboard`` | Adds the tunning of each string in the fretboard diagram                                 | ``add-tunning-to-the-fretboard=yes``                        |
+| ``tunning``                      | When you want to add it to the fretboard and you are using an alternate tunning          | ``tunning=D-G-D-G-B-d``                                     |
+
+The ``tunning`` option must be expressed from the sixth string to the first. Using note ciphers separated by single dashes.
+
+When the ``fretboard-style`` is set to ``continous`` the processor does not mind for closing the saved tab diagram (with bars)
+unless it is the last one.
+
+These options can be stored into a special file called ``.tulipprefs``. Each line of this file should be a valid option setting.
+Follows a content sample of it:
+
+```
+fretboard-size=320
+add-tunning-to-the-fretboard=yes
+tunning=Eb-Ab-Db-Gb-Bb-Eb
+fretboard-style=continuous
+```
+
+The file ``.tulipprefs`` should be created under the path where you intend to call the ``Tulip``.
+
+By the way, if you are wanting to be tidy, using some ``SCM`` software, the ``.tulipprefs`` could be a relevant file for
+versioning with them besides the own source codes, of course.
+
+Another way to set this options is supplying them for the ``Tulip`` through the command line. In this case, you need to add
+double dashes to these options as a prefix, take a look:
+
+```
+tulip-user@SOMEWHERE:~/over/the/rainbow# tulip --tlp=sample.tlp --out=sample.txt --fretboard-size=180 --tunning=E-A-D-G-B-e
+```
+
+An important thing to say here is that an option supplied by command line overwrites an option set into the ``.tulipprefs``.
+Then, even with a ``.tulipprefs`` under the current directory, for a specific typesetting task, you still can change the
+processor behavior using directly the command line.
+
+## And so?
+
+Well, I hope you enjoy using this software. Maybe at the beginning, seeing a bunch of numbers, mixed up with crazy tags
+could make you a little bit dizzy. Bear in mind that once learned the numeric cipher and the possible control tags,
+the ``Tulip`` could be not useful but can make the transcription process much more entertaining, because you will start
+seeing it in a more programmatic way, instead of dummy clicks on a simulated fretboard. In addition, it can bring more
+method to your transcription workflow. Because you can add some version control over it. Looks, here is about producing
+well-structured codes instead of abstract clicks chained on a "luser" interface, so you can edit this plain-file codes
+everywhere you want to. Then, what about be more free and tidy with your transcriptions?
+
+However, do not avoid learning about the ``Standard Music Notation (Sheet Music)``. It is rather important for any ``Musician`` whom wants
+to evolute more and more. In fact, the tablature is a quite limited transcription form it is nice only to know about what you
+"previously know" or at least have a far idea about what it should be.
+
+That's all folks. Enjoy!
+
+*By now turn off this tedious flat-computer and go playing your gorgeous-interesting-curvilinear-guitar, hurry up! ;)*
