@@ -2319,7 +2319,7 @@ downloaded copy if you want to.
 
 ### How to create Forgefiles to process my tlp source code base?
 
-Well I am taking in consideration that you know the essential of ``Hefesto``. Then, a basic ``Forgefile`` for ``Tulip`` code
+Well, I am taking in consideration that you know the essential of ``Hefesto``. Then, a basic ``Forgefile`` for ``Tulip`` code
 processing would be something like:
 
 ```
@@ -2342,20 +2342,20 @@ mytabs.prologue() {
 }
 ```
 
-So, after compose the above file all you should do is to run the following command:
+So, after composing the above file all you should do is to run the following command:
 
 ```
 tulip-user@SOMEWHERE:~/over/the/rainbow/mytabs# hefesto --forgefiles=Forgefile.hsl --Forgefile-projects=mytabs
 ```
 
-For avoiding typing the ``Hefesto`` invocation everytime you should compose an invocation file. For doing it create a file
-called ``.ivk`` adding the invocation command:
+For avoiding typing the ``Hefesto``'s invocation everytime, you should compose an invocation file. For doing it just create a file
+called ``.ivk`` adding what should be the default invocation command inside of it:
 
 ```
 --forgefiles=Forgefile.hsl --Forgefile-projects=mytabs
 ```
 
-Now, the ``Hefesto`` invocation became simpler than the previous one:
+Now, the ``Hefesto`` invocation became simpler than the previous one. Follows our new ``abracadabra`` for the desired task:
 
 ```
 tulip-user@SOMEWHERE:~/over/the/rainbow/mytabs# hefesto
