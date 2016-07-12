@@ -48,7 +48,7 @@ However, in the fret number case we have some particularities. Some people when 
 ``10`` and others numbered it as ``00``, fret number eleven as ``01``, fifteen as ``05`` and so on. I use this second one and
 as an effect this is what ``Tulip`` implements.
 
-When we have intervals or chords it should be written down using stacked numbers. A kind of this: "53/42/30/21/10".
+When we have intervals (harmonics) or chords it should be written down using stacked numbers. A kind of this: "53/42/30/21/10".
 The hammer-ons, pull-offs can be noted using a simple arc between the parts.
 
 Let's take a look at the **Table 1** in order to review your new knowledges about a new simple notation that you just have been
@@ -192,7 +192,7 @@ All ``tlp tag`` must be followed by a code listing. A code listing is a variable
 As said before, between the brackets we can have other tags, notes and separators (to be continued, hold on).
 As a result, our musical intentions will follow coded inside.
 
-There is another important thing that is expressed as a tag: ``chords`` and ``intervals``. But this is not a specific guitar
+There is another important thing that is expressed as a tag: ``chords`` and ``intervals (harmonics)``. But this is not a specific guitar
 technique. Inside a ``chord tag`` can exist only notes and single separators (to be continued, hold on). The
 important thing to know by now is that the ``chord tag`` is represented by ``.chord``.
 
@@ -331,7 +331,7 @@ In the previous code we can see a "note" which acts as a ``string jump`` (in ter
 to the ``Tulip`` where (which string) we want to put the next separator that complements this "jump". A jump is denoted by
 ``<string-number>:<separator>``. It is possible to do things like ``3:~``, ``2:p``, etc.
 
-When there are pull-offs, hammer-ons or any single technique done using intervals and chords is important to build up
+When there are pull-offs, hammer-ons or any single technique done using intervals (harmonics) and chords is important to build up
 this song block using three or more chord tags in order to wrap these things. This guarantees a fancier typesetting.
 
 Now, the second part from verses is related with a break done at the end of the last verse:
@@ -606,7 +606,7 @@ By now we will abstract how this code should be passed to the ``Tulip``. After p
             |---?/10----------------------?/12----------------------?/-8-----------|
             |----------------------------------------------------------------------|
 
-Okay, now let's see a song which uses more single notes than intervals. For doing it I will take a nice interpretation
+Okay, now let's see a song which uses more single notes than intervals (harmonics). For doing it I will take a nice interpretation
 by ``Stan Getz`` of a famous ``Brazilian song`` called ``O Pato`` (a.k.a ``The duck``). Here goes my humble ``Stan Getz``
 solo's adaptation for the guitar. I think that any brazilian child (at least from my childhood's time) should know this.
 This is pretty simple but I would like to use it to introduce you two nice new ``tags``:
@@ -1359,7 +1359,7 @@ I love the easy way we fell down of the solo falling into the ``calm part``. Her
 
 This is a nice base for noodling your guitar all day long. Find for videos from this song with "battles"... You can not be sorry.
 
-The end of the song is just a pentatonic lick using intervals:
+The end of the song is just a pentatonic lick using intervals (harmonics):
 
     .chord{2:/1:/}.chord{203-103}-.chord{203-103}-
     .chord{201-101}-.chord{201-101}-.chord{201-101}-
