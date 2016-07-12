@@ -24,14 +24,14 @@ Important things here:
 
 - Be creative. You are not a robot.
 - Give focus to the concepts not to the "bread pan". Again, you are not a robot.
-- Code to transfer to the binary some aspects of your own knownledge. By the way, this is the primary reason for being code something.
+- Code to transfer to the binary some aspects of your own knowledge. By the way, this is the primary reason for being code something.
 - Use what you write. Really! Install it! Annoy yourself before annoying other people!
 - Be clearer but not boring.
 - If the knowledge that you need to put here is demading, do not be shy. If it is well-documented it is ok. Do not limit your code, just because someone will need to learn more before understanding you.
 - The only nice lazy creatures that I know are cats.
 - Reading before writing is essential.
 - New features, new documentation or at least the old documentation should be updated.
-- Pull requests are welcome. Talk about your work on it is essential. You are still interested in what you did. Right?
+- Pull requests are welcome. Talk about your work on it is essential. Are you still interested in what you did. Right?
 - This is about compilers, language, toy-programming. Point-and-click things already exist. If you really want to do a point-and-click stuff... Congrats, you got a new project or several projects to contribute outhere!
 - Tests are good.
 - If you need a Human to test what you did, your work is probably wrong or at least incomplete.

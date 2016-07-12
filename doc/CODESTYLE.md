@@ -103,7 +103,7 @@ necessary, creates a new one.
 
 Public structures should be post-fixed with ``_ctx``. Generally, this would be implemented under the sub-module ``base/types.*``, ``base/ctx.*``.
 
-Avoid using ``git-submodules``.
+By the way, avoid using ``git-submodules``.
 
 For pointers, used for iterating over some thing use ``p`` or ending the variable with ``p``:
 
@@ -115,13 +115,14 @@ You can use macros, however, write it and use it as a person with knowledge for 
 
 Use parenthesis to exactly communicate your intentions about the expression.
 
-Try to use ``ANSI C``, the ``Posix``'s part relevant for us. Maybe someone, somewhere, over some unknown rainbow wants
-to compile it. Let's make life easier for these lovelly obstinate people as much as we can.
+Try to use ``ANSI C``, the ``Posix``'s part relevant for us, etc. Maybe someone, somewhere, over some unknown rainbow wants
+to compile it. Let's make life easier for these lovely obstinate people as much as we can.
 
-Use blank spaces to separate the things logically.
+Use blank spaces to logically separate the things.
 
 ```
     int i = 0;
+    int p                       =                       1;
     for (i=0; i<10; i++) {
         (...)
     }
@@ -190,7 +191,7 @@ for todo's:
 You should write tests. However, try not be so pedantic. It is boring. For the tests writing [cutest](https://github.com/rafael-santiago/cutest) is being used.
 
 If we are a little bit [fop](https://github.com/rafael-santiago/tulip/blob/master/etc/the-macaroni.jpg) maybe you can faint when see that all tests are being written inside ``tests/main.c``.
-However, this is good to find and correct the issues without get bored. Another thing: this is not about to write a ``Software Odyssey`` (by the way, I have never seen one reflecting the Homer's Genius, however, commonly I find several reflecting the Homer Simpson's stupidity).
+However, this is good to find and correct the issues without getting bored. Another thing: this is not about to write a ``Software Odyssey`` (by the way, I have never seen one reflecting the Homer's Genius, however, commonly I find several reflecting the Homer Simpson's stupidity).
 Here the goal is to make a ``simple-sharp-useful-not bloated-software``. Maybe you should visit the site [suckless.org](http://suckless.org).
 
 ## Code constructions

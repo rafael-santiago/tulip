@@ -3,7 +3,7 @@
 The ``Tulip`` uses [``Hefesto``](https://github.com/rafael-santiago/hefesto) as its build system.
 
 Maybe you should think that I am crazy, because this project is based on three ``DSL``s that I have been developing over
-these years:
+the years:
 
 1. The external build system's ``DSL``.
 2. The unit testing internal ``DSL``.
@@ -12,7 +12,7 @@ these years:
 Anyway, in terms of build, bear in mind that all here is set up to work finding to keep the things simple to extend.
 
 If you add a new code file to the pre-existent sub-directories under ``src`` sub-directory, you do not need to
-worry up with anything. However if you create some new sub-directory you need to edit the file ``src/.ivk``
+worry about with anything. However, if you create some new sub-directory you need to edit the file ``src/.ivk``
 adding this new sub-directory to the custom option ``--sub-modules``. Something like:
 
 ```
@@ -62,8 +62,6 @@ Of course that we have additional options, take a look at the **Table 1** and **
 
 # Remarks
 
-- Do not disable the memory leak system, this includes ``cutest`` and ``valgrind``, this last one when installed (do not open pull requests with it disabled).
-- Do not add new native options to the build without make it public. Documenting, adding your remarks in ``--help`` output.
-- Do not strip off something just because you do not understand. In this case you should strip off your ignorance about the stuff which is challenging you.
-
-
+- Do not disable the memory leak check system, this includes ``cutest`` and ``valgrind``, this last one when installed (do not open pull requests with them disabled).
+- Do not add new native options to the build without making it public. Documenting, adding your remarks to the ``--help`` output.
+- Do not strip off something just because you do not understand. In this case, you should strip off your ignorance about the stuff which is challenging you.
