@@ -2297,6 +2297,72 @@ An important thing to say here is that an option supplied by command line overwr
 Then, even with a ``.tulipprefs`` under the current directory, for a specific typesetting task, you still can change the
 processor behavior using directly the command line.
 
+## How to automate the processing of my tlp codes?
+
+You can use any ``build system`` of your choice, taking in consideration the command line usage and the ``Tulip``'s exit codes
+for them. However, if you want to use [``hefesto``](https://github.com/rafael-santiago/hefesto) for doing it. First of all,
+you need to build and install the ``hefesto`` onto your system. Once it done, you need to install the Hefesto's tulip v3 toolset.
+
+In order to install the ``tulip-v3 toolset`` you need to clone another repository of mine called [``helios``](https://github.com/rafael-santiago/helios).
+
+Supposing that you got the following state of thing on your environment:
+
+```
+tulip-user@SOMEWHERE:~/over/the/rainbow# git clone https://github.com/rafael-santiago/helios helios
+tulip-user@SOMEWHERE:~/over/the/rainbow# cd helios
+tulip-user@SOMEWHERE:~/over/the/rainbow/helios# hefesto --install=tlpv3-toolset
+```
+
+After performing the above command you probably enabled ``Hefesto`` to process ``tlp`` files. You can remove your ``helios``
+downloaded copy if you want to.
+
+### How to create Forgefiles to process my tlp source code base?
+
+Well I am taking in consideration that you know the essential of ``Hefesto``. Then, a basic ``Forgefile`` for ``Tulip`` code
+processing would be something like:
+
+```
+# Forgefile.hsl
+
+include ~/toolsets/tulip/tulip-v3.hsl
+include ~/toolsets/tulip/get_tlp_deps.hsl
+
+var sources type list;
+var deps type string;
+
+project mytabs : toolset "tulip-v3" : dependencies $deps : $sources ;
+
+mytabs.prologue() {
+    #
+    # WARN(Santiago): Well, here I am assuming that your code files are laying on the CWD.
+    #
+    $sources.ls(".*\\.tlp$");
+    $deps = get_tlp_deps($sources);
+}
+```
+
+So, after compose the above file all you should do is to run the following command:
+
+```
+tulip-user@SOMEWHERE:~/over/the/rainbow/mytabs# hefesto --forgefiles=Forgefile.hsl --Forgefile-projects=mytabs
+```
+
+For avoiding typing the ``Hefesto`` invocation everytime you should compose an invocation file. For doing it create a file
+called ``.ivk`` adding the invocation command:
+
+```
+--forgefiles=Forgefile.hsl --Forgefile-projects=mytabs
+```
+
+Now, the ``Hefesto`` invocation became simpler than the previous one:
+
+```
+tulip-user@SOMEWHERE:~/over/the/rainbow/mytabs# hefesto
+```
+
+There are other cool options that you can use with this ``Hefesto's toolset for tulip-v3``. However, if you are interested
+you should read this toolset's [README.md](https://github.com/rafael-santiago/helios/blob/master/src/include/doc/toolsets/tulip/README.md) file.
+
 ## And so?
 
 Well, I hope you enjoy using this software. Maybe at the beginning, seeing a bunch of numbers, mixed up with crazy tags
