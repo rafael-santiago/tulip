@@ -2037,7 +2037,7 @@ depicted in the **Figure 2**, **Figure 3**, **Figure 4**, **Figure 5** and **Fig
 
 Here is the entire ``Tulip`` code for this song (two whole steps down, you already know why...):
 
-    .song{"Louie Louie (Alternate Version) / Motorhead [Some EP which I can not rememeber by now, around 1979]"}
+    .song{"Louie Louie (Alternate Version) / Motorhead [Some EP which I can not remember by now, around 1979]"}
     .transcriber{"Rafael Santiago"}
 
     .literal{"[Riff intro]"}
@@ -2099,7 +2099,7 @@ Here is the entire ``Tulip`` code for this song (two whole steps down, you alrea
 
 It is a simple and cool song. Sorry for my solo approximations, etc, etc... Follows the tab for it:
 
-    Song: Louie Louie (Alternate Version) / Motorhead [Some EP which I can not rememeber by now, around 1979]
+    Song: Louie Louie (Alternate Version) / Motorhead [Some EP which I can not remember by now, around 1979]
     Transcribed by: Rafael Santiago
 
     [Riff intro]
@@ -2214,7 +2214,7 @@ tulip-user@SOMEWHERE:~/over/the/rainbow# tulip --tlp=sample-song.tlp
 
 This could be called ``the compilation command``.
 
-In the file is ok nothing will be returned by the ``Tulip`` and it exits with zero code. Otherwise if found any error, this
+If the file is ok nothing will be returned by the ``Tulip`` and it exits with zero code. Otherwise if found any error, this
 error will be reported and the ``Tulip`` will exit with a non-zero code.
 
 The above shown command only will compile your ``Tulip`` source code, no tablature will be maked.
