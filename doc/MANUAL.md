@@ -2302,11 +2302,11 @@ processor behavior using directly the command line.
 
 You can use any ``build system`` of your choice, taking in consideration the command line usage and the ``Tulip``'s exit codes
 for them. However, if you want to use [``hefesto``](https://github.com/rafael-santiago/hefesto) for doing it. First of all,
-you need to build and install the ``hefesto`` onto your system. Once it done, you need to install the Hefesto's tulip v3 toolset.
+you need to build and install the ``hefesto`` onto your system. Once it done, you need to install the ``Hefesto's tulip v3 toolset``.
 
 In order to install the ``tulip-v3 toolset`` you need to clone another repository of mine called [``helios``](https://github.com/rafael-santiago/helios).
 
-Supposing that you got the following state of thing on your environment:
+Supposing that you got the following state of things on your environment:
 
 ```
 tulip-user@SOMEWHERE:~/over/the/rainbow# git clone https://github.com/rafael-santiago/helios helios
