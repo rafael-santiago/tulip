@@ -242,7 +242,14 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
                 }
             }
 
+        } else {
+            //  INFO(Santiago): In fact it is not so useful for the Tulip while an application. Because in this "sense" the
+            //                  compiler is called once, not being used as a function into a library. Anyway, it can "leak"
+            //                  and I personally think that it is ugly.
+            free_technique_stack_ctx(g_techniques);
+            g_techniques = NULL;
         }
+
         free_parts_listing();
     } else if (next_codebuf != NULL) {
         *next_codebuf = cp;

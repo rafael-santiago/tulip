@@ -104,45 +104,65 @@ int is_single_note(const char *buf) {
     size_t offset = 0; //  WARN(Santiago): Nasty trick to support bass tabs, 7-string guitars in the future.
     char string[2] = "";
     int fret = 0;
+
     if (bp == NULL) {
         return 0;
     }
+
     if (strlen(buf) < 2) {
         return 0;
     }
+
     string[0] = *bp;
     string[1] = 0;
     if (strstr(strings + offset, string) == NULL) {
         return 0;
     }
+
     bp++;
     if (*bp == 0) {
         return 0;
     }
+
     if ((*(bp) == 'X' || *(bp) == ':') || *(bp) == '?') {
-        if (*bp == 'X' && (*(bp + 1) == 0 || is_blank(*(bp + 1)))) {
+
+        if (*bp == 'X' && ( *(bp + 1) == 0                   ||
+                            is_blank(*(bp + 1))              ||
+                            is_note_sep(*(bp + 1))           ||
+                            is_technique_block_end(*(bp + 1))  ) ) {
             return 1;
         }
-        if (*bp == '?' && (*(bp + 1) == 0 || is_blank(*(bp + 1)))) {
+
+        if (*bp == '?' && ( *(bp + 1) == 0                   ||
+                            is_blank(*(bp + 1))              ||
+                            is_note_sep(*(bp + 1))           ||
+                            is_technique_block_end(*(bp + 1))  ) ) {
             return 1;
         }
+
         bp++;
         if (!is_note_sep(*bp)) {
             return 0;
         }
+
         return 1;
     }
+
     while (*bp != 0) {
         if (!isdigit(*bp)) {
-            if (fret > 0 && (is_note_sep(*bp) || is_technique_block_end(*bp) || is_blank(*bp))) {
+
+            if (fret > 0 && ( is_note_sep(*bp) || is_technique_block_end(*bp) || is_blank(*bp) ) ) {
                 return 1;
             }
+
             return 0;
         } else {
             fret++;
         }
+
         bp++;
     }
+
     return 1;
 }
 
