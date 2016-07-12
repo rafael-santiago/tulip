@@ -2255,6 +2255,7 @@ Inside the ``Tulip`` a processor is responsible to care about the tablature type
 in the **Table 4** you are directly influencing the output typesetting.
 
 **Table 4**: Options for processor's behavior changing.
+
 |       **Option**                 |           **Handy for**                                                                  |        **Setting sample**                                   |
 |:--------------------------------:|-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------:|
 | ``fretboard-size``               | Expresses the size of the fretboard diagram in columns                                   | ``fretboard-size=320``                                      |
