@@ -2368,14 +2368,14 @@ you should read this toolset's [README.md](https://github.com/rafael-santiago/he
 
 Well, I hope you enjoy using this software. Maybe at the beginning, seeing a bunch of numbers, mixed up with crazy tags
 could make you a little bit dizzy. Bear in mind that once learned the numeric cipher and the possible control tags,
-the ``Tulip`` could be not useful but can make the transcription process much more entertaining, because you will start
+the ``Tulip`` could be not only useful but also can make the transcription process much more entertaining, because you will start
 seeing it in a more programmatic way, instead of dummy clicks on a simulated fretboard. In addition, it can bring more
-method to your transcription workflow. Because you can add some version control over it. Looks, here is about producing
+method to your transcription workflow. Because you can add some version control over it. Look, here is about producing
 well-structured codes instead of abstract clicks chained on a "luser" interface, so you can edit this plain-file codes
 everywhere you want to. Then, what about be more free and tidy with your transcriptions?
 
 However, do not avoid learning about the ``Standard Music Notation (Sheet Music)``. It is rather important for any ``Musician`` whom wants
-to evolute more and more. In fact, the tablature is a quite limited transcription form it is nice only to know about what you
+to evolute more and more. In fact, the tablature is a quite limited transcription form. It is nice only to know about what you
 "previously know" or at least have a far idea about what it should be.
 
 That's all folks. Enjoy!
