@@ -2381,4 +2381,4 @@ to evolute more and more. In fact, the tablature is a quite limited transcriptio
 
 That's all folks. Enjoy!
 
-*By now turn off this tedious flat-computer and go playing your gorgeous-interesting-curvilinear-guitar, hurry up! ;)*
+*By now turn off this tedious flat-computer and go to play your gorgeous-interesting-curvilinear-guitar, hurry up! ;)*
