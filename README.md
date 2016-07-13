@@ -57,7 +57,7 @@ fits to your environment is a good practice to check if your copy has the same r
 
 |                **File**              |   **Platform**      |                    **MD5 hash**               |
 |:------------------------------------:|:-------------------:|:---------------------------------------------:|
-| ``prebuilt/tulip-bin-linux.zip`` | ``linux`` | ``eb2aca8d4cd0c867d5f0047ec5d62262`` |
+| ``prebuilt/tulip-bin-linux.zip`` | ``linux`` | ``92cac624ce210c6bb9d259ac3b2762a2`` |
 | ``prebuilt/tulip-bin-freebsd.zip`` | ``freebsd`` | ``d2539b2ba108696c5fe969a930752bd7`` |
 | ``prebuilt/tulip-bin-windows.zip`` | ``windows`` | ``(not-yet-coming-soon)`` |
 
