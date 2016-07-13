@@ -24,7 +24,15 @@ function help() : result type none {
 }
 
 local function can_perform_pack_and_go() : result type int {
-    if (hefesto.sys.run("md5sum --version >/dev/null 2>&1") != 0) {
+    var md5cmdline type string;
+
+    if (hefesto.sys.os_name() != "freebsd") {
+        $md5cmdline = "md5sum --version >/dev/null 2>&1";
+    } else {
+        $md5cmdline = "md5 -s abc >/dev/null 2>&1";
+    }
+
+    if (hefesto.sys.run($md5cmdline) != 0) {
         hefesto.sys.echo("PACK AND GO WARN: Sorry kid but you are in a lousy environment for doing the pack and go. You do not have the md5sum application required to perform this task.\n");
         result 0;
     }
@@ -81,7 +89,7 @@ local function refresh_prebuilt_md5sum(dst_bin_path type string) : result type i
     if (isfile("../README.md~")) {
         var option type string;
 
-        $option = hefesto.sys.prompt("PACK AND GO QUESTION: Human, it seems that you already try to run it and maybe do not succeeded... Maybe would be a good idea to restore the ../README.md using ../README.md~ before proceding. Do you want to restore it? [y/n/c] ");
+        $option = hefesto.sys.prompt("PACK AND GO QUESTION: Human, it seems that you already try to run it and maybe it did not work... Maybe would be a good idea to restore the ../README.md using ../README.md~ before proceeding. Do you want to restore it? [y/n/c] ");
 
         hefesto.sys.echo("\n");
 
@@ -100,10 +108,14 @@ local function refresh_prebuilt_md5sum(dst_bin_path type string) : result type i
         hefesto.sys.rm("../README.md~");
     }
 
-    $exit_code = hefesto.sys.run("md5sum " + $dst_bin_path + ">.-md5sum-");
+    if (hefesto.sys.os_name() != "freebsd") {
+        $exit_code = hefesto.sys.run("md5sum " + $dst_bin_path + ">.-md5sum-");
+    } else {
+        $exit_code = hefesto.sys.run("md5 " + $dst_bin_path + ">.-md5sum-");
+    }
 
     if ($exit_code != 0) {
-        hefesto.sys.echo("PACK AND GO WARN: Error during md5sum call.\n");
+        hefesto.sys.echo("PACK AND GO WARN: Error during md5 evaluation.\n");
         result 0;
     }
 
@@ -121,15 +133,20 @@ local function refresh_prebuilt_md5sum(dst_bin_path type string) : result type i
     var md5hash type string;
 
     $md5hash = $md5sum_out.item(0);
-    $md5hash.replace(" .*$", "");
+
+    if (hefesto.sys.os_name() != "freebsd") {
+        $md5hash.replace(" .*$", "");
+    } else {
+        $md5hash.replace("^MD5.*= ", "");
+    }
 
     var search_pattern type string;
 
-    $search_pattern = "| ``prebuilt/tulip-bin-" + hefesto.sys.os_name() + ".zip``     | ``" + hefesto.sys.os_name() + "``           |.*|";
+    $search_pattern = "| ``prebuilt/tulip-bin-" + hefesto.sys.os_name() + ".zip`` | ``" + hefesto.sys.os_name() + "`` |.*|";
 
     var replacement_data type string;
 
-    $replacement_data = "| ``prebuilt/tulip-bin-" + hefesto.sys.os_name() + ".zip``     | ``linux``           | ``" + $md5hash + "``          |";
+    $replacement_data = "| ``prebuilt/tulip-bin-" + hefesto.sys.os_name() + ".zip`` | ``" + hefesto.sys.os_name() +  "`` | ``" + $md5hash + "`` |";
 
     if (hefesto.sys.cp("../README.md", "../README.md~")) {
         var replacement_count type int;
