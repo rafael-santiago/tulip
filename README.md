@@ -45,6 +45,34 @@ emmettbrown@DELOREAN:~/internet/github.com/src/tulip/src# _
 Yes, the ``Tulip``'s binary should be inside ``../bin`` sub-directory and you should visit the sub-directory [``doc``](https://github.com/rafael-santiago/tulip/tree/master/doc) before
 starting.
 
+### Okay, but I am not so habituated with software building...
+
+Maybe people without experience in software development but still wanting to use this software can arrive here. If you do not
+have an environment well-prepared for building this software (e.g.: git and GCC well-installed) you can use the pre-builts
+located under the subdirectory ``prebuilts``. In this case, you will get only the executable file, the exportation of this
+executable is up to you. The **Table 1** brings the ``MD5`` hashes of these packages after downloading the file which
+fits to your environment is a good practice to check if your copy has the same related hash according to the **Table 1**.
+
+**Table 1**: Pre-builts MD5 hashes.
+
+|                **File**              |   **Platform**      |                    **MD5 hash**               |
+|:------------------------------------:|:-------------------:|:---------------------------------------------:|
+| ``prebuilt/tulip-bin-linux.zip``     | ``linux``           | ``eb2aca8d4cd0c867d5f0047ec5d62262``          |
+| ``prebuilt/tulip-bin-freebsd.zip``   | ``freebsd``         | ``(not-yet-coming-soon)``                     |
+| ``prebuilt/tulip-bin-windows.zip``   | ``windows``         | ``(not-yet-coming-soon)``                     |
+
+All executables listed in the **Table 1** are ``32-bit`` based.
+
+After downloading the correspondent file you need to unzip it into a specific directory. Maybe you should create a new one
+for doing it. However, ``Linux`` and ``FreeBSD`` users should unzip it to the ``local/bin`` directory (or equivalent) and for
+them any additional action is necessary.
+
+Now, for ``Windows`` users: once the executable unzipped into some place on your computer, you need to "export" this
+executable, in order to be able to call this program from everywhere. Under ``Windows`` it should be done adding to
+the ``PATH`` environment variable the directory path where the ``tulip.exe`` is laying on. Tip: if you do not know
+how to do it, try to search for "how to set the PATH variable in Windows". Once it done, if you re-open a command prompt
+the ``tulip.exe`` probably will be accessible.
+
 ## Can I install this software using its own build scripts?
 
 Yes, you can. For doing this you should call ``hefesto`` passing the option ``--install`` (being under ``src`` sub-directory,

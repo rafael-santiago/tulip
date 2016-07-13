@@ -36,11 +36,16 @@ tulip-tests.prologue() {
 
 tulip-tests.epilogue() {
     var exit_code type int;
+
     $exit_code = 1;
+
     if (hefesto.sys.last_forge_result() == 0) {
         $exit_code = runtests();
     }
-    hefesto.sys.exit($exit_code);
+
+    if ($exit_code != 0) {
+        hefesto.sys.exit($exit_code);
+    }
 }
 
 function forge_libcutest() : result type none {

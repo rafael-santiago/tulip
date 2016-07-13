@@ -57,7 +57,9 @@ function runtests() : result type int {
     var test_options type list;
     var test_options_data type string;
     var t type int;
+
     $oldcwd = hefesto.sys.pwd();
+
     hefesto.sys.cd("test");
     $test_options = hefesto.sys.get_option("test-options");
     if ($test_options.count() > 0) {
@@ -79,8 +81,31 @@ function runtests() : result type int {
     }
 
     hefesto.sys.forge("tulip-tests", "Forgefile.hsl", "--obj-output-dir=o --bin-output-dir=bin --master-project-obj-dir=../o --includes=cutest/src,../. --ldflags=-lcutest --libraries=cutest/src/lib" + $test_options_data);
+
     hefesto.sys.cd($oldcwd);
-    result hefesto.sys.last_forge_result();
+
+    var tests_forge_result type int;
+
+    $tests_forge_result = hefesto.sys.last_forge_result();
+
+    if ($tests_forge_result == 0) {
+        var pack_and_go type list;
+
+        $pack_and_go = hefesto.sys.get_option("pack-and-go");
+
+        if ($pack_and_go.count() > 0) {
+            hefesto.sys.echo("\n___\n");
+            if (set_prebuilt() == 0) {
+                hefesto.sys.echo("PACK AND GO WARN: Nothing was done. Try to fix the related issues and return later.\n");
+            } else {
+                hefesto.sys.echo("PACK AND GO INFO: A new pre-built for " + hefesto.sys.os_name() + " was generated. Do not forget to commit/push it if you really want to.\n" +
+                                 "                  After committing you should remove the rescue copy of the old README.md done under the path \"../README.md~\".\n");
+            }
+            hefesto.sys.echo("___\n");
+        }
+    }
+
+    result $tests_forge_result;
 }
 
 function init_forge() : result type none {

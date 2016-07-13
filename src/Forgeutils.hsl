@@ -5,12 +5,15 @@
 # the terms of the GNU General Public License version 2.
 #
 #
+include ~/fsutil.hsl
+
 function help() : result type none {
     var help type list;
     $help = hefesto.sys.get_option("help");
     if ($help.count() > 0) {
         hefesto.sys.echo("--help -> You got the main info about these options\n" +
                          "--devels-forge -> It runs a faster build. Desired while developing some stuff or maintaining\n" +
+                         "--pack-and-go -> It generates a prebuilt for the current platform under prebuilt sub-directory and updates README.md\n" +
                          "--test-options ->  Concentrates specific options to be passed to the testing build\n" + 
                          "--sub-modules ->  Concentrates the relevant directories containing the Tulip's parts\n" +
                          "--includes -> Specifies the additional include's path\n" + 
@@ -18,4 +21,125 @@ function help() : result type none {
                          "--uninstall -> Uninstalls Tulip\n");
         hefesto.project.abort(0);
     }
+}
+
+local function can_perform_pack_and_go() : result type int {
+    if (hefesto.sys.run("md5sum --version >/dev/null 2>&1") != 0) {
+        hefesto.sys.echo("PACK AND GO WARN: Sorry kid but you are in a lousy environment for doing the pack and go. You do not have the md5sum application required to perform this task.\n");
+        result 0;
+    }
+
+    if (hefesto.sys.run("zip --version >/dev/null 2>&1") != 0) {
+        hefesto.sys.echo("PACK AND GO WARN: Sorry kid but you are in a lousy environment for doing the pack and go. You do not have the zip application required to perform this task.\n");
+        result 0;
+    }
+    result 1;
+}
+
+function set_prebuilt() : result type int {
+
+    if (can_perform_pack_and_go() == 0) {
+        result 0;
+    }
+
+    var oldcwd type string;
+
+    $oldcwd = hefesto.sys.pwd();
+
+    if (hefesto.sys.cd("../prebuilt") == 0) {
+        hefesto.sys.mkdir("../prebuilt");
+    } else {
+        hefesto.sys.cd($oldcwd);
+    }
+
+    var src_bin type string;
+    var dst_bin type string;
+
+    $src_bin = "../bin/tulip";
+    $dst_bin = "../prebuilt/tulip-bin-" + hefesto.sys.os_name() + ".zip";
+
+    if (hefesto.sys.os_name() == "windows") {
+        $src_bin = $src_bin + ".exe";
+    }
+
+    if (isfile($src_bin) == 0) {
+        hefesto.sys.echo("PACK AND GO WARN: The src " + $src_bin + " is unaccessible.\n");
+        result 0;
+    }
+
+    if (hefesto.sys.run("zip -qr " + $dst_bin + " " + $src_bin) != 0) {
+        hefesto.sys.echo("PACK AND GO WARN: Unable to zip the file " + $src_bin + " into " + $dst_bin + "\n");
+        result 0;
+    }
+
+    result refresh_prebuilt_md5sum($dst_bin);
+}
+
+local function refresh_prebuilt_md5sum(dst_bin_path type string) : result type int {
+    var exit_code type int;
+
+    if (isfile("../README.md~")) {
+        var option type string;
+
+        $option = hefesto.sys.prompt("PACK AND GO QUESTION: Human, it seems that you already try to run it and maybe do not succeeded... Maybe would be a good idea to restore the ../README.md using ../README.md~ before proceding. Do you want to restore it? [y/n/c] ");
+
+        hefesto.sys.echo("\n");
+
+        if ($option == "c") {
+            hefesto.sys.echo("PACK AND GO WARN: Okay, we will abort from here.\n");
+            result 0;
+        }
+
+        if ($option == "y") {
+            if (hefesto.sys.cp("../README.md~", "../README.md") == 0) {
+                hefesto.sys.echo("PACK AND GO WARN: Error while trying to copy ../README.md~ to ../README.md.\n");
+                result 0;
+            }
+        }
+
+        hefesto.sys.rm("../README.md~");
+    }
+
+    $exit_code = hefesto.sys.run("md5sum " + $dst_bin_path + ">.-md5sum-");
+
+    if ($exit_code != 0) {
+        hefesto.sys.echo("PACK AND GO WARN: Error during md5sum call.\n");
+        result 0;
+    }
+
+    var md5sum_out type list;
+
+    $md5sum_out = hefesto.sys.lines_from_file(".-md5sum-", ".*");
+
+    hefesto.sys.rm(".-md5sum-");
+
+    if ($md5sum_out.count() == 0) {
+        hefesto.sys.echo("PACK AND GO WARN: Unable to evaluate the MD5 Sum of " + $dst_bin_path + "\n");
+        result 0;
+    }
+
+    var md5hash type string;
+
+    $md5hash = $md5sum_out.item(0);
+    $md5hash.replace(" .*$", "");
+
+    var search_pattern type string;
+
+    $search_pattern = "| ``prebuilt/tulip-bin-" + hefesto.sys.os_name() + ".zip``     | ``" + hefesto.sys.os_name() + "``           |.*|";
+
+    var replacement_data type string;
+
+    $replacement_data = "| ``prebuilt/tulip-bin-" + hefesto.sys.os_name() + ".zip``     | ``linux``           | ``" + $md5hash + "``          |";
+
+    if (hefesto.sys.cp("../README.md", "../README.md~")) {
+        var replacement_count type int;
+        $replacement_count = hefesto.sys.replace_in_file("../README.md", $search_pattern, $replacement_data);
+        if ($replacement_count != 1) {
+            hefesto.sys.echo("PACK AND GO WARN: Something seems to be gone wrong during the README.md updating. It is better you get a diff of it after committing/pushing.\n");
+            result 0;
+        }
+    }
+
+
+    result 1;
 }
