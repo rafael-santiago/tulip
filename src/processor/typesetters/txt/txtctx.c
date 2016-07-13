@@ -33,9 +33,23 @@ static txttypesetter_sustained_technique_ctx *get_txttypesetter_sustained_techni
 
 txttypesetter_comment_ctx *add_comment_to_txttypesetter_comment_ctx(txttypesetter_comment_ctx *comments, const char *comment, const size_t fretboard_sz) {
     txttypesetter_comment_ctx *head = comments, *p = NULL;
+    const char *cp = NULL, *cp_end = NULL;
+
     if (comment == NULL) {
         return comments;
     }
+
+    cp = comment;
+    cp_end = comment + strlen(comment);
+
+    while (cp != cp_end) {
+        if (*cp == ' ' && strlen(cp + 1) > ( (cp + 1 - comment) - fretboard_sz )) {
+            break;
+        }
+        cp++;
+    }
+    cp = cp_end;
+
     if (head == NULL) {
         new_txttypesetter_comment_ctx(head);
         p = head;
@@ -44,9 +58,20 @@ txttypesetter_comment_ctx *add_comment_to_txttypesetter_comment_ctx(txttypesette
         new_txttypesetter_comment_ctx(p->next);
         p = p->next;
     }
+
     p->data = (char *) getseg(fretboard_sz + 1);
+
     memset(p->data, 0, fretboard_sz + 1);
-    strncpy(p->data, comment, fretboard_sz);
+
+    strncpy(p->data, comment, cp - comment);
+
+    if (cp != cp_end) {
+        if (comments == NULL) {
+            comments = head;
+        }
+        head = add_comment_to_txttypesetter_comment_ctx(comments, cp + 1, fretboard_sz);
+    }
+
     return head;
 }
 
