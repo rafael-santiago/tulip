@@ -2205,7 +2205,7 @@ Keep reading...
 
 ### How to verify a TLP file?
 
-In order to generate a tablature from a ``tlp`` source code, this code needs to be correct. Any error can exist inside
+In order to generate a tablature from a ``tlp`` source code, this code needs to be correct. No error can exist inside
 of it, otherwise the tablature will not be generated. The way to verify it is calling ``Tulip`` with the following command line:
 
 ```
@@ -2214,14 +2214,15 @@ tulip-user@SOMEWHERE:~/over/the/rainbow# tulip --tlp=sample-song.tlp
 
 This could be called ``the compilation command``.
 
-If the file is ok nothing will be returned by the ``Tulip`` and it exits with zero code. Otherwise if found any error, this
+If the file is ok nothing will be returned by the ``Tulip`` and it exits with zero code. Otherwise, if some error has found, this
 error will be reported and the ``Tulip`` will exit with a non-zero code.
 
-The above shown command only will compile your ``Tulip`` source code, no tablature will be maked.
+The command shown above only will compile your ``Tulip`` source code, no tablature will be produced based on it.
 
-This command tends to be useful only when you just want to know that any change in the code has no errors. In fact, the
+This command tends to be useful only when you just want to know if some change in the code has errors. In fact, the
 output tablature can be easily re-assembled. By this fact, if you are intending to versioning your codes with some
-``source control management tool``, obviously you do not need for versioning the tablatures, only the ``.tlp`` source files.
+``source control management tool``, obviously you do not need for versioning the generated tablatures, only the ``.tlp``
+source files.
 
 ### Using Tulip's processors
 
@@ -2239,7 +2240,7 @@ According to the above command sample, the code ``sample-song.tlp`` will be comp
 
 The type of processors are chosen by the output extension, so a ``.txt`` output produces a tablature text-based.
 
-If you chose a unsupported file extension for the output you are warned about. Until now we have the ``.txt`` processor,
+If you chose an unsupported file extension for the output you are warned about. Until now we have the ``.txt`` processor,
 the processors related with ``postscript (.ps)`` and ``portable document file (.pdf)`` are still being developed. You still
 do not have any code related with them here in this public repository.
 
@@ -2250,7 +2251,7 @@ generation.
 
 It is possible to change the behavior of the processor in some cases using explict options.
 
-Fistly, let's see what behavoir's changes we can apply for a ``Tulip`` processor. It follows listed into the **Table 4**.
+Firstly, let's see what behavior's changes we can apply for a ``Tulip`` processor. It follows listed into the **Table 4**.
 Inside the ``Tulip`` a processor is responsible to care about the tablature typesetting, so when you use an option present
 in the **Table 4** you are directly influencing the output typesetting.
 
@@ -2269,7 +2270,7 @@ in the **Table 4** you are directly influencing the output typesetting.
 
 The ``tunning`` option must be expressed from the sixth string to the first. Using note ciphers separated by single dashes.
 
-When the ``fretboard-style`` is set to ``continous`` the processor does not mind for closing the saved tab diagram (with bars)
+When the ``fretboard-style`` is set to ``continuous`` the processor does not mind for closing the saved tab diagram (with bars)
 unless it is the last one.
 
 These options can be stored into a special file called ``.tulipprefs``. Each line of this file should be a valid option setting.
