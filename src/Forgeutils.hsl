@@ -6,6 +6,9 @@
 #
 #
 include ~/fsutil.hsl
+include on linux forgesupp/linux/pack_and_go_funcs.hsl
+include on freebsd forgesupp/freebsd/pack_and_go_funcs.hsl
+include on windows forgesupp/windows/pack_and_go_funcs.hsl
 
 function help() : result type none {
     var help type list;
@@ -21,27 +24,6 @@ function help() : result type none {
                          "--uninstall -> Uninstalls Tulip\n");
         hefesto.project.abort(0);
     }
-}
-
-local function can_perform_pack_and_go() : result type int {
-    var md5cmdline type string;
-
-    if (hefesto.sys.os_name() != "freebsd") {
-        $md5cmdline = "md5sum --version >/dev/null 2>&1";
-    } else {
-        $md5cmdline = "md5 -s abc >/dev/null 2>&1";
-    }
-
-    if (hefesto.sys.run($md5cmdline) != 0) {
-        hefesto.sys.echo("PACK AND GO WARN: Sorry kid but you are in a lousy environment for doing the pack and go. You do not have the md5sum application required to perform this task.\n");
-        result 0;
-    }
-
-    if (hefesto.sys.run("zip --version >/dev/null 2>&1") != 0) {
-        hefesto.sys.echo("PACK AND GO WARN: Sorry kid but you are in a lousy environment for doing the pack and go. You do not have the zip application required to perform this task.\n");
-        result 0;
-    }
-    result 1;
 }
 
 function set_prebuilt() : result type int {
@@ -75,7 +57,7 @@ function set_prebuilt() : result type int {
         result 0;
     }
 
-    if (hefesto.sys.run("zip -qr " + $dst_bin + " " + $src_bin) != 0) {
+    if (pack_stuff($src_bin, $dst_bin) != 0) {
         hefesto.sys.echo("PACK AND GO WARN: Unable to zip the file " + $src_bin + " into " + $dst_bin + "\n");
         result 0;
     }
@@ -89,7 +71,10 @@ local function refresh_prebuilt_md5sum(dst_bin_path type string) : result type i
     if (isfile("../README.md~")) {
         var option type string;
 
-        $option = hefesto.sys.prompt("PACK AND GO QUESTION: Human, it seems that you already try to run it and maybe it did not work... Maybe would be a good idea to restore the ../README.md using ../README.md~ before proceeding. Do you want to restore it? [y/n/c] ");
+        $option = "?";
+        while ($option != "y" && $option != "n" && $option != "c") {
+            $option = hefesto.sys.prompt("PACK AND GO QUESTION: Human, it seems that you have already tried to run it and maybe it did not work... Maybe would be a good idea to restore the ../README.md from ../README.md~ before proceeding. Do you want to restore it? [y/n/c] ");
+        }
 
         hefesto.sys.echo("\n");
 
@@ -108,36 +93,11 @@ local function refresh_prebuilt_md5sum(dst_bin_path type string) : result type i
         hefesto.sys.rm("../README.md~");
     }
 
-    if (hefesto.sys.os_name() != "freebsd") {
-        $exit_code = hefesto.sys.run("md5sum " + $dst_bin_path + ">.-md5sum-");
-    } else {
-        $exit_code = hefesto.sys.run("md5 " + $dst_bin_path + ">.-md5sum-");
-    }
-
-    if ($exit_code != 0) {
-        hefesto.sys.echo("PACK AND GO WARN: Error during md5 evaluation.\n");
-        result 0;
-    }
-
-    var md5sum_out type list;
-
-    $md5sum_out = hefesto.sys.lines_from_file(".-md5sum-", ".*");
-
-    hefesto.sys.rm(".-md5sum-");
-
-    if ($md5sum_out.count() == 0) {
-        hefesto.sys.echo("PACK AND GO WARN: Unable to evaluate the MD5 Sum of " + $dst_bin_path + "\n");
-        result 0;
-    }
-
     var md5hash type string;
 
-    $md5hash = $md5sum_out.item(0);
-
-    if (hefesto.sys.os_name() != "freebsd") {
-        $md5hash.replace(" .*$", "");
-    } else {
-        $md5hash.replace("^MD5.*= ", "");
+    if (eval_md5_file_hash($dst_bin_path, $md5hash) != 0) {
+        hefesto.sys.echo("PACK AND GO WARN: Error during md5 hash evaluation.\n");
+        result 0;
     }
 
     var search_pattern type string;
@@ -156,7 +116,6 @@ local function refresh_prebuilt_md5sum(dst_bin_path type string) : result type i
             result 0;
         }
     }
-
 
     result 1;
 }

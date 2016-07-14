@@ -1,0 +1,52 @@
+#
+#                           Copyright (C) 2005-2016 by Rafael Santiago
+#
+# This is a free software. You can redistribute it and/or modify under
+# the terms of the GNU General Public License version 2.
+#
+#
+
+function can_perform_pack_and_go() : result type int {
+    if (hefesto.sys.run("md5sum --version >/dev/null 2>&1") != 0) {
+        hefesto.sys.echo("PACK AND GO WARN: Sorry kid but you are in a lousy environment for doing the pack and go. You do not have the md5sum application required to perform this task.\n");
+        result 0;
+    }
+
+    if (hefesto.sys.run("zip --version >/dev/null 2>&1") != 0) {
+        hefesto.sys.echo("PACK AND GO WARN: Sorry kid but you are in a lousy environment for doing the pack and go. You do not have the zip application required to perform this task.\n");
+        result 0;
+    }
+    result 1;
+}
+
+function pack_stuff(src type string, dst type string) : result type int {
+    result hefesto.sys.run("zip -qr " + $dst + " " + $src);
+}
+
+function eval_md5_file_hash(filepath type string, hash_result type string) : result type int {
+    var exit_code type int;
+    
+    $exit_code = hefesto.sys.run("md5sum " + $filepath + ">.-md5sum-");
+    
+    if ($exit_code != 0) {
+        result $exit_code;
+    }
+    
+    var md5sum_out type list;
+
+    $md5sum_out = hefesto.sys.lines_from_file(".-md5sum-", ".*");
+
+    hefesto.sys.rm(".-md5sum-");
+    
+    if ($md5sum_out.count() == 0) {
+        result 1;
+    }
+    
+    $hash_result = $md5sum_out.item(0);
+    
+    $hash_result.replace(" .*$", "");
+    
+    hefesto.sys.byref($hash_result);
+        
+    result 0;
+}

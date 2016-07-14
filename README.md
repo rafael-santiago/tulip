@@ -59,7 +59,7 @@ fits to your environment is a good practice to check if your copy has the same r
 |:------------------------------------:|:-------------------:|:---------------------------------------------:|
 | ``prebuilt/tulip-bin-linux.zip`` | ``linux`` | ``92cac624ce210c6bb9d259ac3b2762a2`` |
 | ``prebuilt/tulip-bin-freebsd.zip`` | ``freebsd`` | ``d2539b2ba108696c5fe969a930752bd7`` |
-| ``prebuilt/tulip-bin-windows.zip`` | ``windows`` | ``(not-yet-coming-soon)`` |
+| ``prebuilt/tulip-bin-windows.zip`` | ``windows`` | ``a111d3fbf60a48728867c22949618cf0`` |
 
 All executables listed in the **Table 1** are ``32-bit`` based.
 
