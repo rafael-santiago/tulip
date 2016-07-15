@@ -6,10 +6,20 @@
 #
 #
 
+local function has_md5sum() : result type int {
+    result (hefesto.sys.run("md5sum --version >nul 2>&1") == 0);
+}
+
+local function has_fciv() : result type int {
+    result (hefesto.sys.run("fciv ? >nul 2>&1") == 0);
+}
+
 function can_perform_pack_and_go() : result type int {
-    if (hefesto.sys.run("md5sum --version >nul 2>&1") != 0) {
-        hefesto.sys.echo("PACK AND GO WARN: Sorry kid but you are in a lousy environment for doing the pack and go. You do not have the md5sum application required to perform this task.\n");
-        result 0;
+    if (has_md5sum() != 0) {
+        if (has_fciv() != 0) {
+            hefesto.sys.echo("PACK AND GO WARN: Sorry kid but you are in a lousy environment for doing the pack and go. You do not have the md5sum/fciv application required to perform this task.\n");
+            result 0;
+        }
     }
 
     if (hefesto.sys.run("zip -v >nul 2>&1") != 0) {
@@ -25,8 +35,15 @@ function pack_stuff(src type string, dst type string) : result type int {
 
 function eval_md5_file_hash(filepath type string, hash_result type string) : result type int {
     var exit_code type int;
+    var has_md5sum type int;
     
-    $exit_code = hefesto.sys.run("md5sum " + $filepath + ">.-md5sum-");
+    $has_md5sum = has_md5sum();
+
+    if ($has_md5sum) {
+        $exit_code = hefesto.sys.run("md5sum " + $filepath + ">.-md5sum-");
+    } else {
+        $exit_code = hefesto.sys.run("fciv -md5 " + $filepath + ">.-md5sum-");
+    }
     
     if ($exit_code != 0) {
         result $exit_code;
@@ -34,7 +51,7 @@ function eval_md5_file_hash(filepath type string, hash_result type string) : res
     
     var md5sum_out type list;
 
-    $md5sum_out = hefesto.sys.lines_from_file(".-md5sum-", ".*");
+    $md5sum_out = hefesto.sys.lines_from_file(".-md5sum-", "^[0123456789abcdefABCDEF]");
 
     hefesto.sys.rm(".-md5sum-");
     
@@ -43,10 +60,10 @@ function eval_md5_file_hash(filepath type string, hash_result type string) : res
     }
     
     $hash_result = $md5sum_out.item(0);
-    
+
     $hash_result.replace(" .*$", "");
-    
+
     hefesto.sys.byref($hash_result);
-        
+
     result 0;
 }
