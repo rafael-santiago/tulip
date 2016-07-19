@@ -190,7 +190,7 @@ for todo's:
 
 You should write tests. However, try not be so pedantic. It is boring. For the tests writing [cutest](https://github.com/rafael-santiago/cutest) is being used.
 
-If we are a little bit [fop](https://github.com/rafael-santiago/tulip/blob/master/etc/the-macaroni.jpg) maybe you can faint when see that all tests are being written inside ``tests/main.c``.
+If you are a little bit [fop](https://github.com/rafael-santiago/tulip/blob/master/etc/the-macaroni.jpg) maybe you can faint when see that all tests are being written inside ``tests/main.c``.
 However, this is good to find and correct the issues without getting bored. Another thing: this is not about to write a ``Software Odyssey`` (by the way, I have never seen one reflecting the Homer's Genius, however, commonly I find several reflecting the Homer Simpson's stupidity).
 Here the goal is to make a ``simple-sharp-useful-not bloated-software``. Maybe you should visit the site [suckless.org](http://suckless.org).
 
