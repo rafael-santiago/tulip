@@ -73,18 +73,9 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
     size_t i = 0;
     ssize_t s_limit = -1, real_s_limit = -1;
     txttypesetter_sustained_technique_ctx *tp = NULL;
-    int is_empty = 0;
 
-    //  WARN(Santiago): A leading ';' at the end of a tlp script or a automatic break just after
-    //                  the last song note can cause this dummy empty tab diagram.
-    if (tab->curr_row == 1) {
-        is_empty = 1;
-        for (s = 0; s < tab->string_nr && is_empty; s++) {
-            is_empty = (tab->strings[s][0] == '-');
-        }
-        if (is_empty) {
-            return;
-        }
+    if (is_tab_empty(tab)) {
+        return;
     }
 
     if (g_txttypesetter_settings.prefs & kTlpPrefsCutTabOnTheLastNote) {
@@ -148,13 +139,7 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
 static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     const txttypesetter_sustained_technique_ctx *tp = NULL;
     size_t i = 0;
-    int has_half_step_notes = 0;
-
-    if (g_txttypesetter_settings.prefs & kTlpPrefsShowTunning) {
-        for (i = 0; i < 6 && !has_half_step_notes; i++) {
-            has_half_step_notes = (strlen(tab->tunning[i]) == 2);
-        }
-    }
+    int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, g_txttypesetter_settings.prefs);
 
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
         for (i = 0; i < g_txttypesetter_settings.indentation_deepness; i++) {
@@ -193,16 +178,10 @@ static void txttypesetter_spill_times(FILE *fp, const char *times, const char tu
     const char *tp = times;
     int print_times = 0;
     size_t i = 0;
-    int has_half_step_notes = 0;
+    int has_half_step_notes = tunning_has_half_step_notes(NULL, tunning, g_txttypesetter_settings.prefs);
 
     if (tp == NULL) {
         return;
-    }
-
-    if (g_txttypesetter_settings.prefs & kTlpPrefsShowTunning) {
-        for (i = 0; i < 6 && !has_half_step_notes; i++) {
-            has_half_step_notes = (strlen(tunning[i]) == 2);
-        }
     }
 
     while (*tp != 0 && !print_times) {

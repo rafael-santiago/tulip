@@ -95,3 +95,37 @@ int single_note_to_tab_fret_nr(const char *single_note) {
 char *get_technique_notation_label(const tulip_command_t command) {
     return &g_tlp_technique_notation_label[tlp_cmd_code_to_plain_index(command) % g_tlp_technique_label_nr][0];
 }
+
+int is_tab_empty(const txttypesetter_tablature_ctx *tab) {
+    size_t s = 0;
+    int is_empty = 0;
+    //  WARN(Santiago): A leading ';' at the end of a tlp script or a automatic break just after
+    //                  the last song note can cause this dummy empty tab diagram.
+    if (tab->curr_row == 1) {
+        is_empty = 1;
+        for (s = 0; s < tab->string_nr && is_empty; s++) {
+            is_empty = (tab->strings[s][0] == '-');
+        }
+    }
+
+    return is_empty;
+}
+
+int tunning_has_half_step_notes(const txttypesetter_tablature_ctx *tab, const char tunning_buffer[6][4], const tulip_prefs_map_t prefs) {
+    int has_half_step_notes = 0;
+    size_t i = 0;
+    const char **tunning = NULL;
+
+    if (prefs & kTlpPrefsShowTunning) {
+        if (tab != NULL) {
+            tunning = &tab->tunning[0];
+        } else {
+            tunning = &tunning_buffer[0];
+        }
+        for (i = 0; i < 6 && !has_half_step_notes; i++) {
+            has_half_step_notes = (strlen(tunning[i]) == 2);
+        }
+    }
+
+    return has_half_step_notes;
+}
