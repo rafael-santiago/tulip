@@ -22,6 +22,8 @@ static void pstypesetter_init(void);
 
 static FILE *pstypesetter_newps(const char *filepath);
 
+static void pstypesetter_closeps(FILE *fp);
+
 static void pstypesetter_newpage(FILE *fp);
 
 static void pstypesetter_showpage(FILE *fp);
@@ -47,6 +49,11 @@ static FILE *pstypesetter_newps(const char *filepath) {
     }
     fprintf(fp, "%%!PS-Adobe-3.0\n");
     return fp;
+}
+
+static void pstypesetter_closeps(FILE *fp) {
+    fprintf(fp, "showpage\n");
+    fclose(fp);
 }
 
 static void pstypesetter_newpage(FILE *fp) {
@@ -101,5 +108,7 @@ int pstypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ct
         pstypesetter_proc_tabchunk(tp);
     }
 
-    return 0;
+    pstypesetter_closeps(fp);
+
+    return 1;
 }
