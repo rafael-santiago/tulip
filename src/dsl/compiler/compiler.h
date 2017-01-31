@@ -24,6 +24,6 @@ int has_some_sustained_technique();
 
 tulip_part_ctx *get_parts_listing();
 
-void set_parts2_listing(tulip_part_ctx *parts);
+void set_parts_listing(tulip_part_ctx *parts);
 
 #endif

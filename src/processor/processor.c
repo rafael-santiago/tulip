@@ -31,7 +31,7 @@ static struct tlp_processor_ctx g_processors[] = {
     register_new_tlp_processor(NULL, blackhole_processor)
 };
 
-static const g_processors_nr = sizeof(g_processors) / sizeof(g_processors[0]);
+static const size_t g_processors_nr = sizeof(g_processors) / sizeof(g_processors[0]);
 
 static int coming_soon(const tulip_single_note_ctx *song, const char *tabpath) {
     printf("WARNING: the processor to produce the file \"%s\" is not totally implemented yet! coming soon!\n", tabpath);

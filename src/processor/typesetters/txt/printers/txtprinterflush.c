@@ -7,6 +7,7 @@
  */
 #include <processor/typesetters/txt/printers/txtprinterflush.h>
 #include <processor/typesetters/txt/txt.h>
+#include <processor/typesetters/txt/txtctx.h>
 #include <processor/oututils.h>
 #include <dsl/utils.h>
 #include <stdlib.h>

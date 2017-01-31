@@ -6,6 +6,7 @@
  *
  */
 #include <dsl/compiler/verifiers/letring.h>
+#include <dsl/compiler/compiler.h>
 #include <dsl/compiler/verifiers/undo_recursion.h>
 #include <dsl/utils.h>
 

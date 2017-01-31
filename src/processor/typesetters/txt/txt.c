@@ -113,7 +113,7 @@ static void txttypesetter_chord_handler(txttypesetter_tablature_ctx **tab, const
     g_txttypesetter_has_active_chord = 1;
 }
 
-void txttypesetter_print_sustained_technique_mark(const tulip_command_t command, txttypesetter_tablature_ctx **tab, const row_usage) {
+void txttypesetter_print_sustained_technique_mark(const tulip_command_t command, txttypesetter_tablature_ctx **tab, const int row_usage) {
     txttypesetter_active_technique_ctx *ap = NULL;
     txttypesetter_tablature_ctx *tp = NULL;
 

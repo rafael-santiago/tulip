@@ -6,6 +6,7 @@
  *
  */
 #include <dsl/compiler/verifiers/times.h>
+#include <dsl/utils.h>
 #include <dsl/compiler/compiler.h>
 #include <dsl/parser/parser.h>
 #include <base/ctx.h>

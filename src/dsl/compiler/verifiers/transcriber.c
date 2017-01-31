@@ -6,6 +6,7 @@
  *
  */
 #include <dsl/compiler/verifiers/transcriber.h>
+#include <dsl/compiler/compiler.h>
 #include <dsl/compiler/verifiers/datatag.h>
 #include <stdlib.h>
 

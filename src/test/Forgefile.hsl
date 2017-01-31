@@ -21,6 +21,7 @@ tulip-tests.prologue() {
     help();
     forge_libcutest();
     $ldflags = hefesto.sys.get_option("ldflags");
+    $ldflags.add_item("-lpthread");
     if (hefesto.sys.os_name() == "linux") {
         $ldflags.add_item("-ldl");
     } else if (hefesto.sys.os_name() == "freebsd") {

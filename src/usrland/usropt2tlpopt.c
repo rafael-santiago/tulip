@@ -8,7 +8,9 @@
 #include <usrland/usropt2tlpopt.h>
 #include <base/memory.h>
 #include <base/types.h>
+#include <base/ctx.h>
 #include <dsl/compiler/compiler.h>
+#include <ctype.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -40,7 +42,7 @@ static struct get_tlpopt_callvect g_tlpopt_callvect[] = {
     register_new_tlpopt_callout("tunning", get_tunning),
 };
 
-static const g_tlpopt_callvect_nr = sizeof(g_tlpopt_callvect) / sizeof(g_tlpopt_callvect[0]);
+static const size_t g_tlpopt_callvect_nr = sizeof(g_tlpopt_callvect) / sizeof(g_tlpopt_callvect[0]);
 
 static struct usropt2tlpopt_ctx *get_tlpopt(const char *option, const char *entire_buf) {
     const char *op = option;
@@ -78,7 +80,7 @@ static struct usropt2tlpopt_ctx *get_tunning(const char *option, const char *ent
     sprintf(buf, ".tunning{%s}", entire_buf);
     is_ok = compile_tulip_codebuf(buf, NULL, &tunning, &bp);
     if (!is_ok) {
-        return;
+        return NULL;
     }
     free_tulip_single_note_ctx(tunning);
 
@@ -147,7 +149,7 @@ static struct usropt2tlpopt_ctx *get_tulip_prefs_map_t(const char *option, const
     struct usropt2tlpopt_ctx *opt = NULL;
 
     if (option == NULL || entire_buf == NULL) {
-        return;
+        return NULL;
     }
 
     for (b = 0; b < bitmap_options_nr; b++) {

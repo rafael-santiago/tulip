@@ -89,7 +89,7 @@ void *get_processor_setting(const char *setting, size_t *dsize) {
     void *data = NULL;
     struct processor_setting_handler_ctx *handler = NULL;
     if (setting == NULL) {
-        return;
+        return NULL;
     }
     handler = get_setting_handler(setting);
     return (handler != NULL && handler->get != NULL) ? handler->get(dsize) : NULL;

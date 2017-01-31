@@ -6,6 +6,7 @@
  *
  */
 #include <processor/typesetters/txt/printers/singletxt.h>
+#include <processor/typesetters/txt/printers/txtprinterflush.h>
 #include <processor/typesetters/txt/txt.h>
 #include <stdlib.h>
 

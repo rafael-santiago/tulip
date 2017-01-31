@@ -8,6 +8,7 @@
 #include <cutest.h>
 #include <base/types.h>
 #include <base/ctx.h>
+#include <base/memory.h>
 #include <dsl/utils.h>
 #include <dsl/str/strutils.h>
 #include <dsl/parser/parser.h>
@@ -20,6 +21,7 @@
 #include <processor/typesetters/txt/txtctx.h>
 #include <processor/processor.h>
 #include "fancytesting.h"
+#include <time.h>
 #include <string.h>
 #include <stdlib.h>
 

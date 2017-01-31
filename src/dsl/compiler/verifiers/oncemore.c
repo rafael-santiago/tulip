@@ -6,6 +6,7 @@
  *
  */
 #include <dsl/compiler/verifiers/oncemore.h>
+#include <dsl/compiler/compiler.h>
 #include <dsl/utils.h>
 #include <base/ctx.h>
 

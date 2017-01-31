@@ -114,13 +114,13 @@ int is_tab_empty(const txttypesetter_tablature_ctx *tab) {
 int tunning_has_half_step_notes(const txttypesetter_tablature_ctx *tab, const char tunning_buffer[6][4], const tulip_prefs_map_t prefs) {
     int has_half_step_notes = 0;
     size_t i = 0;
-    const char **tunning = NULL;
+    char tunning[6][4];
 
     if (prefs & kTlpPrefsShowTunning) {
         if (tab != NULL) {
-            tunning = &tab->tunning[0];
+            memcpy(tunning, tab->tunning, sizeof(tunning));
         } else {
-            tunning = &tunning_buffer[0];
+            memcpy(tunning, tunning_buffer, sizeof(tunning));
         }
         for (i = 0; i < 6 && !has_half_step_notes; i++) {
             has_half_step_notes = (strlen(tunning[i]) == 2);
