@@ -372,17 +372,12 @@ static void apply_final_output_brush_up(txttypesetter_tablature_ctx *tab) {
     }
 }
 
-int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
+txttypesetter_tablature_ctx *txt_typesetter_gettab(const tulip_single_note_ctx *song) {
     const tulip_single_note_ctx *sp = NULL;
     txttypesetter_tablature_ctx *tab = NULL, *tp = NULL;
     txttypesetter_print_func print;
     tulip_command_t *demuxes = NULL;
     size_t demuxes_nr = 0;
-    int has_error = 1;
-
-    if (song == NULL || tabpath == NULL) {
-        return 0;
-    }
 
     tp = tab;
 
@@ -420,7 +415,18 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
         }
     }
 
-    if (tab == NULL) {
+    return tab;
+}
+
+int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
+    txttypesetter_tablature_ctx *tab = NULL;
+    int has_error = 1;
+
+    if (song == NULL || tabpath == NULL) {
+        return 0;
+    }
+
+    if ((tab = txt_typesetter_gettab(song)) == NULL) {
         return 1;
     }
 

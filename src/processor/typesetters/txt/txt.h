@@ -11,6 +11,8 @@
 #include <base/types.h>
 #include <processor/typesetters/txt/txttypes.h>
 
+txttypesetter_tablature_ctx *txt_typesetter_gettab(const tulip_single_note_ctx *song);
+
 int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath);
 
 txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage);
