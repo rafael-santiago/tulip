@@ -78,6 +78,8 @@ static void pstypesetter_newtabdiagram(FILE *fp) {
         pstypesetter_showpage(fp);
     }
 
+    g_ps_ctab.cy += PSTYPESETTER_NEXT_TABCHUNK;
+
     for (s = 0; s < 6; s++) {
         fprintf(fp, "%d %d moveto\n"
                     "%d %d lineto\n", g_ps_ctab.cxl, g_ps_ctab.cy, g_ps_ctab.cxr, g_ps_ctab.cy);
