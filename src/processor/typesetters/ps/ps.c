@@ -8,9 +8,11 @@
 #include <processor/typesetters/ps/ps.h>
 #include <processor/typesetters/txt/txtctx.h>
 #include <processor/typesetters/txt/txt.h>
+#include <processor/typesetters/ps/psinkspill.h>
 
 int ps_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     txttypesetter_tablature_ctx *tab = NULL;
+    int has_error = 1;
 
     if (song == NULL || tabpath == NULL) {
         return 0;
@@ -20,9 +22,11 @@ int ps_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
         return 0;
     }
 
-    // TODO(Rafael): Some incantations goes here.
+    apply_final_output_brush_up(tab);
+
+    has_error = (pstypesetter_inkspill(tabpath, tab, song) == 0);
 
     free_txttypesetter_tablature_ctx(tab);
 
-    return 0;
+    return has_error;
 }

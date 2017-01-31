@@ -56,8 +56,6 @@ static void txttypesetter_blockend_handler(txttypesetter_tablature_ctx **tab, co
 
 static void txttypesetter_chord_handler(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note);
 
-static void apply_final_output_brush_up(txttypesetter_tablature_ctx *tab);
-
 static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpSavePoint, txttypesetter_savepoint_printer),
     register_new_typesetter_printer(kTlpNoteSep, txttypesetter_notesep_printer),
@@ -334,7 +332,7 @@ static void trim_upper_data_from_tab(txttypesetter_tablature_ctx *tab) {
     }
 }
 
-static void apply_final_output_brush_up(txttypesetter_tablature_ctx *tab) {
+void apply_final_output_brush_up(txttypesetter_tablature_ctx *tab) {
     txttypesetter_tablature_ctx *tp = NULL;
     txttypesetter_sustained_technique_ctx *sp = NULL, *nsp = NULL;
     char *dp = NULL;
