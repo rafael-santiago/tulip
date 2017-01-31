@@ -427,7 +427,7 @@ int txt_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     }
 
     if ((tab = txt_typesetter_gettab(song)) == NULL) {
-        return 1;
+        return 0;
     }
 
     apply_final_output_brush_up(tab);
