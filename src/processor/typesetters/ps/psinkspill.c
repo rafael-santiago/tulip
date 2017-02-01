@@ -124,18 +124,33 @@ static void pstypesetter_proc_tabchunk(FILE *fp, const txttypesetter_tablature_c
 
 static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     size_t s, o;
-    int x = g_ps_ctab.cx, sy = 0;
+    int x = g_ps_ctab.cx, py = 0;
 
     for (o = 0; o < tab->fretboard_sz; o++) {
 
         for (s = 0; s < tab->string_nr; s++) {
 
-            sy = pstypesetter_string_y(s, g_ps_ctab.cy);
+            switch (tab->strings[s][o]) {
+                case 'h':
+                case 'p':
+                    py = pstypesetter_pinch_y(s, g_ps_ctab.cy);
+                    // TODO(Rafael): Ligados. Rotacionar '('...
+                    break;
 
-            if (tab->strings[s][o] != '-' && tab->strings[s][o] != 'h' && tab->strings[s][o] != 'p') {
-                fprintf(fp, "%d %d moveto (%c) show\n", x, sy, tab->strings[s][o]);
-            } else if (tab->strings[s][0] != '-') {
-                // TODO(Rafael): Ligados. Rotacionar '('...
+                case '-':
+                    break;
+
+                case '|':
+                    py = pstypesetter_pinch_y(s, g_ps_ctab.cy);
+                    // TODO(Rafael): Vertical bar.
+                    s = tab->string_nr + 1;
+                    continue;
+
+                default:
+                    fprintf(fp, "%d %d moveto (%c) show\n", x,
+                        pstypesetter_pinch_y(s, g_ps_ctab.cy),
+                                           tab->strings[s][o]);
+                    break;
             }
 
         }
