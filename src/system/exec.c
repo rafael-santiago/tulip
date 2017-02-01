@@ -80,7 +80,7 @@ static int tulip_task_help() {
 }
 
 static int tulip_task_notask() {
-    printf("tulip: What do you mean? Try to call me again using --help option. Maybe we will can understand each other in a better way.\n");
+    printf("tulip: What do you mean? Try to call me again using --help option.\n");
     return 1;
 }
 

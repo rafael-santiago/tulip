@@ -11,8 +11,12 @@
 #define PSTYPESETTER_PAGEXL                 40
 #define PSTYPESETTER_PAGEXR                560
 #define PSTYPESETTER_PAGEY                 700
+#define PSTYPESETTER_PAGEY_LIMIT            10
 #define PSTYPESETTER_NEXT_STRING            -8
 #define PSTYPESETTER_TABLINE_W             0.1
 #define PSTYPESETTER_NEXT_TABCHUNK         -50
+#define PSTYPESETTER_ONTO_STRING_DELTA      -4
+#define PSTYPESETTER_CARRIAGEX              42
+#define PSTYPESETTER_CARRIAGE_STEP           6
 
 #endif
