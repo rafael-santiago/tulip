@@ -19,4 +19,8 @@
 #define PSTYPESETTER_CARRIAGEX              42
 #define PSTYPESETTER_CARRIAGE_STEP           6
 
+#define PSTYPESETTER_ADDINFOY              850
+#define PSTYPESETTER_NEXT_ADDINFO          -16
+#define PSTYPESETTER_ADDINFO_LINEBREAK      -8
+
 #endif
