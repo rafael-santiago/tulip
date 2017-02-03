@@ -89,7 +89,8 @@ static FILE *pstypesetter_newps(const char *filepath) {
         return NULL;
     }
     fprintf(fp, "%%!PS-Adobe-3.0\n"
-                "/Courier-Bold 11 selectfont\n");
+                "/Courier-Bold 11 selectfont\n"
+                "0.1 setlinewidth\n");
     return fp;
 }
 
@@ -208,6 +209,8 @@ static void pstypesetter_newtabdiagram(FILE *fp, const int sn) {
         fprintf(fp, "%d %d moveto\n"
                     "%d %d lineto\n", g_ps_ctab.cxl, sy, g_ps_ctab.cxr, sy);
     }
+
+    fprintf(fp, "stroke\n");
 }
 
 static int pstypesetter_string_y(const int sn, const int cy) {
@@ -215,7 +218,7 @@ static int pstypesetter_string_y(const int sn, const int cy) {
 }
 
 static int pstypesetter_pinch_y(const int sn, const int cy) {
-    return (pstypesetter_string_y(sn, cy) - PSTYPESETTER_ONTO_STRING_DELTA);
+    return (pstypesetter_string_y(sn + 1, cy) - PSTYPESETTER_ONTO_STRING_DELTA);
 }
 
 static void pstypesetter_proc_tabchunk(FILE *fp, const txttypesetter_tablature_ctx *tab) {
@@ -227,6 +230,12 @@ static void pstypesetter_proc_tabchunk(FILE *fp, const txttypesetter_tablature_c
 
     pstypesetter_newtabdiagram(fp, tab->string_nr);
     pstypesetter_flush_fretboard_pinches(fp, tab);
+}
+
+static void pstypesetter_vertbar(FILE *fp, const int x, const int y) {
+    fprintf(fp, "%d %d moveto\n"
+                "%d %d lineto\n"
+                "stroke\n", x, pstypesetter_string_y(0, y), x, pstypesetter_string_y(5, y));
 }
 
 static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab) {
@@ -249,8 +258,9 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
 
                 case '|':
                     py = pstypesetter_pinch_y(s, g_ps_ctab.cy);
-                    // TODO(Rafael): Vertical bar.
+                    pstypesetter_vertbar(fp, x, g_ps_ctab.cy);
                     s = tab->string_nr + 1;
+                    x -= 1;
                     continue;
 
                 default:
