@@ -260,7 +260,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                     py = pstypesetter_pinch_y(s, g_ps_ctab.cy);
                     pstypesetter_vertbar(fp, x, g_ps_ctab.cy);
                     s = tab->string_nr + 1;
-                    x -= 1;
+                    x -= PSTYPESETTER_CARRIAGE_STEP;
                     continue;
 
                 default:
