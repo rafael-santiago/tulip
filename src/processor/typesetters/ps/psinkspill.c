@@ -90,7 +90,7 @@ static FILE *pstypesetter_newps(const char *filepath) {
     }
     fprintf(fp, "%%!PS-Adobe-3.0\n"
                 "/Courier-Bold 11 selectfont\n"
-                "0.1 setlinewidth\n");
+                "%.1f setlinewidth\n", PSTYPESETTER_TABLINE_W);
     return fp;
 }
 
