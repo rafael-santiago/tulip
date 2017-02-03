@@ -273,6 +273,10 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
         }
 
         x += PSTYPESETTER_CARRIAGE_STEP;
+
+        if (x >= g_ps_ctab.cxr) {
+            pstypesetter_newtabdiagram(fp, tab->string_nr);
+        }
     }
 
     g_ps_ctab.cx = PSTYPESETTER_CARRIAGEX;
