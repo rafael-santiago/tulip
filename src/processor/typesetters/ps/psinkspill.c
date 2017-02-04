@@ -14,29 +14,10 @@
 
 static int g_ps_cpage = 0;
 
-struct pstypesetters_addinfo_y_ctx {
-    int song;
-    int transcriber;
-    int tabnotation;
-    int comments;
-    int sustained_techniques;
-    int times;
-}; // WARN(Rafael): --DEPRECATED BULLSHIT--
-
 struct pstypesetter_tab_diagram_ctx {
     int cxl, cxr;
     int cy, cx;
-    struct pstypesetters_addinfo_y_ctx addinfo_y; // WARN(Rafael): --DEPRECATED BULLSHIT--
 };
-
-typedef enum _pstypesetter_addinfo { // WARN(Rafael): --DEPRECATED BULLSHIT--
-    kSong,
-    kTranscriber,
-    kTabNotation,
-    kComments,
-    kSustainedTechniques,
-    kTimes
-}pstypesetter_addinfo_t;
 
 static struct pstypesetter_tab_diagram_ctx g_ps_ctab;
 
@@ -60,8 +41,6 @@ static int pstypesetter_pinch_y(const int sn, const int cy);
 
 static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
-static int pstypesetter_addinfo_y(const pstypesetter_addinfo_t addinfo); // WARN(Rafael): --DEPRECATED BULLSHIT--
-
 static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
 static void pstypesetter_spill_times(FILE *fp, const char *times, const char tunning[6][4]);
@@ -82,7 +61,6 @@ static void pstypesetter_pageinit(void) {
     g_ps_ctab.cxl = PSTYPESETTER_PAGEXL;
     g_ps_ctab.cxr = PSTYPESETTER_PAGEXR;
     g_ps_ctab.cy = PSTYPESETTER_PAGEY;
-    memset(&g_ps_ctab.addinfo_y, 0, sizeof(g_ps_ctab.addinfo_y));
 }
 
 static FILE *pstypesetter_newps(const char *filepath) {
@@ -112,77 +90,6 @@ static void pstypesetter_newpage(FILE *fp) {
 
 static void pstypesetter_showpage(FILE *fp) {
     fprintf(fp, "showpage\n");
-}
-
-static int pstypesetter_addinfo_y(const pstypesetter_addinfo_t addinfo) { // WARN(Rafael): --DEPRECATED BULLSHIT--
-    int y = g_ps_ctab.cy;
-    int n = 0;
-    int *sv = &n;
-
-    switch (addinfo) {
-        case kSong:
-            sv = &g_ps_ctab.addinfo_y.song;
-            break;
-
-        case kTranscriber:
-            n = g_ps_ctab.addinfo_y.song;
-            sv = &g_ps_ctab.addinfo_y.transcriber;
-            break;
-
-        case kTabNotation:
-            if (g_ps_ctab.addinfo_y.transcriber > 0) {
-                n = g_ps_ctab.addinfo_y.transcriber;
-            } else {
-                n = g_ps_ctab.addinfo_y.song;
-            }
-            sv = &g_ps_ctab.addinfo_y.tabnotation;
-            break;
-
-        case kComments:
-            if (g_ps_ctab.addinfo_y.tabnotation > 0) {
-                n = g_ps_ctab.addinfo_y.tabnotation;
-            } else if (g_ps_ctab.addinfo_y.transcriber > 0) {
-                n = g_ps_ctab.addinfo_y.transcriber;
-            } else {
-                n = g_ps_ctab.addinfo_y.song;
-            }
-            sv = &g_ps_ctab.addinfo_y.comments;
-            break;
-
-        case kSustainedTechniques:
-            if (g_ps_ctab.addinfo_y.comments > 0) {
-                n = g_ps_ctab.addinfo_y.comments;
-            } else if (g_ps_ctab.addinfo_y.tabnotation > 0) {
-                n = g_ps_ctab.addinfo_y.tabnotation;
-            } else if  (g_ps_ctab.addinfo_y.transcriber > 0) {
-                n = g_ps_ctab.addinfo_y.transcriber;
-            } else {
-                n = g_ps_ctab.addinfo_y.song;
-            }
-            sv = &g_ps_ctab.addinfo_y.sustained_techniques;
-            break;
-
-        case kTimes:
-            if (g_ps_ctab.addinfo_y.sustained_techniques > 0) {
-                n = g_ps_ctab.addinfo_y.sustained_techniques;
-            } else if (g_ps_ctab.addinfo_y.comments > 0) {
-                n = g_ps_ctab.addinfo_y.comments;
-            } else if (g_ps_ctab.addinfo_y.tabnotation > 0) {
-                n = g_ps_ctab.addinfo_y.tabnotation;
-            } else if (g_ps_ctab.addinfo_y.transcriber > 0) {
-                n = g_ps_ctab.addinfo_y.transcriber;
-            } else {
-                n = g_ps_ctab.addinfo_y.song;
-            }
-            sv = &g_ps_ctab.addinfo_y.times;
-            break;
-
-    }
-
-    n += PSTYPESETTER_NEXT_ADDINFO;
-    *sv = y;
-
-    return *sv;
 }
 
 static void pstypesetter_newtabdiagram(FILE *fp, const int sn) {
@@ -285,14 +192,14 @@ static void pstypesetter_spill_song_title(FILE *fp, const char *song) {
     if (song == NULL) {
         return;
     }
-    fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, pstypesetter_addinfo_y(kSong), song);
+    fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.cy, song);
 }
 
 static void pstypesetter_spill_transcribers_name(FILE *fp, const char *transcriber) {
     if (transcriber == NULL) {
         return;
     }
-    fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, pstypesetter_addinfo_y(kTranscriber), transcriber);
+    fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.cy, transcriber);
 }
 
 static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song) {
