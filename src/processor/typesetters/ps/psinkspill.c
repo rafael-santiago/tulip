@@ -213,10 +213,14 @@ static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ct
         return;
     }
 
+    fprintf(fp, "/Times-Italic 11 selectfont\n");
+
     for (cp = comments; cp != NULL; cp = cp->next) {
         fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.cy, cp->data);
         g_ps_ctab.cy += PSTYPESETTER_ADDINFO_LINEBREAK;
     }
+
+    fprintf(fp, "/Times-Bold 11 selectfont\n");
 
     g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
 }
