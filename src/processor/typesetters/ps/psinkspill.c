@@ -192,14 +192,20 @@ static void pstypesetter_spill_song_title(FILE *fp, const char *song) {
     if (song == NULL) {
         return;
     }
+    fprintf(fp, "/Times-Bold 20 selectfont\n");
     fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.cy, song);
+    fprintf(fp, "/Times-Bold 11 selectfont\n");
+    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
 }
 
 static void pstypesetter_spill_transcribers_name(FILE *fp, const char *transcriber) {
     if (transcriber == NULL) {
         return;
     }
-    fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.cy, transcriber);
+    fprintf(fp, "/Times-Bold-Italic 11 selectfont\n");
+    fprintf(fp, "%d %d moveto (transcribed by %s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.cy, transcriber);
+    fprintf(fp, "/Times-Bold 11 selectfont\n");
+    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO * 3;
 }
 
 static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song) {
