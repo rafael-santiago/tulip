@@ -7,6 +7,8 @@
  */
 #include <processor/typesetters/ps/psinkspill.h>
 #include <processor/typesetters/ps/psboundaries.h>
+#include <processor/oututils.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -19,15 +21,15 @@ struct pstypesetters_addinfo_y_ctx {
     int comments;
     int sustained_techniques;
     int times;
-};
+}; // WARN(Rafael): --DEPRECATED BULLSHIT--
 
 struct pstypesetter_tab_diagram_ctx {
     int cxl, cxr;
     int cy, cx;
-    struct pstypesetters_addinfo_y_ctx addinfo_y;
+    struct pstypesetters_addinfo_y_ctx addinfo_y; // WARN(Rafael): --DEPRECATED BULLSHIT--
 };
 
-typedef enum _pstypesetter_addinfo {
+typedef enum _pstypesetter_addinfo { // WARN(Rafael): --DEPRECATED BULLSHIT--
     kSong,
     kTranscriber,
     kTabNotation,
@@ -58,7 +60,7 @@ static int pstypesetter_pinch_y(const int sn, const int cy);
 
 static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
-static int pstypesetter_addinfo_y(const pstypesetter_addinfo_t addinfo);
+static int pstypesetter_addinfo_y(const pstypesetter_addinfo_t addinfo); // WARN(Rafael): --DEPRECATED BULLSHIT--
 
 static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
@@ -89,7 +91,7 @@ static FILE *pstypesetter_newps(const char *filepath) {
         return NULL;
     }
     fprintf(fp, "%%!PS-Adobe-3.0\n"
-                "/Courier-Bold 11 selectfont\n"
+                "/Times-Bold 11 selectfont\n"
                 "%.1f setlinewidth\n", PSTYPESETTER_TABLINE_W);
     return fp;
 }
@@ -112,7 +114,7 @@ static void pstypesetter_showpage(FILE *fp) {
     fprintf(fp, "showpage\n");
 }
 
-static int pstypesetter_addinfo_y(const pstypesetter_addinfo_t addinfo) {
+static int pstypesetter_addinfo_y(const pstypesetter_addinfo_t addinfo) { // WARN(Rafael): --DEPRECATED BULLSHIT--
     int y = g_ps_ctab.cy;
     int n = 0;
     int *sv = &n;
@@ -178,7 +180,7 @@ static int pstypesetter_addinfo_y(const pstypesetter_addinfo_t addinfo) {
     }
 
     n += PSTYPESETTER_NEXT_ADDINFO;
-    *sv = y + n;
+    *sv = y;
 
     return *sv;
 }
@@ -186,12 +188,6 @@ static int pstypesetter_addinfo_y(const pstypesetter_addinfo_t addinfo) {
 static void pstypesetter_newtabdiagram(FILE *fp, const int sn) {
     int s = 0;
     int sy = 0;
-
-    if (g_ps_cpage == 0) {
-        pstypesetter_newpage(fp);
-    }
-
-    g_ps_ctab.cy = pstypesetter_addinfo_y(kTimes) + PSTYPESETTER_NEXT_TABCHUNK;
 
     for (s = 0; s < sn; s++) {
         if (pstypesetter_string_y(s, g_ps_ctab.cy) < PSTYPESETTER_PAGEY_LIMIT) {
@@ -222,13 +218,16 @@ static int pstypesetter_pinch_y(const int sn, const int cy) {
 }
 
 static void pstypesetter_proc_tabchunk(FILE *fp, const txttypesetter_tablature_ctx *tab) {
+    if (g_ps_cpage == 0) {
+        pstypesetter_newpage(fp);
+    }
+
     pstypesetter_spill_comments(fp, tab->comments);
-
     pstypesetter_spill_sustained_techniques(fp, tab);
-
     pstypesetter_spill_times(fp, tab->times, tab->tunning);
 
     pstypesetter_newtabdiagram(fp, tab->string_nr);
+
     pstypesetter_flush_fretboard_pinches(fp, tab);
 }
 
@@ -302,18 +301,17 @@ static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
 
 static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ctx *comments) {
     const txttypesetter_comment_ctx *cp = NULL;
-    int y = 0;
 
     if (comments == NULL) {
         return;
     }
 
-    y = pstypesetter_addinfo_y(kComments);
-
     for (cp = comments; cp != NULL; cp = cp->next) {
-        fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, y, cp->data);
-        y += PSTYPESETTER_ADDINFO_LINEBREAK;
+        fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.cy, cp->data);
+        g_ps_ctab.cy += PSTYPESETTER_ADDINFO_LINEBREAK;
     }
+
+    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
 }
 
 static void pstypesetter_spill_times(FILE *fp, const char *times, const char tunning[6][4]) {
@@ -321,7 +319,47 @@ static void pstypesetter_spill_times(FILE *fp, const char *times, const char tun
 }
 
 static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab) {
-    // TODO(Rafael): Later.
+    const txttypesetter_sustained_technique_ctx *tp = NULL;
+    //int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, 0);  Not yet coming soon.
+    int has_half_step_notes = 0;
+    int x = PSTYPESETTER_CARRIAGEX, y = g_ps_ctab.cy;
+    char *dp = NULL, *dp_end = NULL;
+    size_t s = 0;
+
+    for (tp = tab->techniques; tp != NULL; tp = tp->next) {
+        if (has_half_step_notes) {
+            x += PSTYPESETTER_CARRIAGE_STEP;
+        }
+
+        dp = &tp->data[0];
+        dp_end = dp + strlen(dp);
+
+        while (dp != dp_end) {
+            fprintf(fp, "%d %d moveto ", x, g_ps_ctab.cy);
+
+            if ((*dp != '.' && *dp != ' ') || dp == &tp->data[0] || isalpha(*(dp-1))) {
+                fprintf(fp, "(%c) show\n", *dp);
+            } else {
+                fprintf(fp, "(-) show\n");
+            }
+
+
+            for (s = 0; s < tab->string_nr; s++) {
+                if (tab->strings[s][dp_end - dp] == '|') {
+                    x -= PSTYPESETTER_CARRIAGE_STEP;
+                    break;
+                }
+            }
+
+            x += PSTYPESETTER_CARRIAGE_STEP;
+            dp++;
+        }
+
+        g_ps_ctab.cy += PSTYPESETTER_ADDINFO_LINEBREAK;
+        x = PSTYPESETTER_CARRIAGEX;
+    }
+
+    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
 }
 
 int pstypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab, const tulip_single_note_ctx *song) {
