@@ -43,7 +43,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
 
 static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
-static void pstypesetter_spill_times(FILE *fp, const char *times, const char tunning[6][4]);
+static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
 static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ctx *comments);
 
@@ -131,7 +131,7 @@ static void pstypesetter_proc_tabchunk(FILE *fp, const txttypesetter_tablature_c
 
     pstypesetter_spill_comments(fp, tab->comments);
     pstypesetter_spill_sustained_techniques(fp, tab);
-    pstypesetter_spill_times(fp, tab->times, tab->tunning);
+    pstypesetter_spill_times(fp, tab);
 
     pstypesetter_newtabdiagram(fp, tab->string_nr);
 
@@ -225,8 +225,56 @@ static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ct
     g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
 }
 
-static void pstypesetter_spill_times(FILE *fp, const char *times, const char tunning[6][4]) {
-    // TODO(Rafael): Later.
+static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx *tab) {
+    const char *tp = tab->times;
+    const char *tp_end = NULL;
+    int x = PSTYPESETTER_CARRIAGEX;
+    size_t s = 0;
+    //int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, 0); Not yet coming soon.
+    int has_half_step_notes = 0;
+    int print_times = 0;
+
+    if (tp == NULL) {
+        return;
+    }
+
+    tp_end = tp + strlen(tp);
+
+    while (tp != tp_end && !print_times) {
+        print_times = isdigit(*tp);
+        tp++;
+    }
+
+    if (!print_times) {
+        return;
+    }
+
+    tp = tab->times;
+
+    if (has_half_step_notes) {
+        x += PSTYPESETTER_CARRIAGE_STEP;
+    }
+
+    while (tp != tp_end) {
+
+        if (*tp != ' ') {
+            fprintf(fp, "%d %d moveto (%c) show\n", x, g_ps_ctab.cy, *tp);
+        }
+
+        for (s = 0; s < tab->string_nr; s++) {
+            if (tab->strings[s][tp_end - tp] == '|') {
+                x -= PSTYPESETTER_CARRIAGE_STEP;
+                break;
+            }
+        }
+
+        x += PSTYPESETTER_CARRIAGE_STEP;
+
+        tp++;
+    }
+
+    g_ps_ctab.cy += PSTYPESETTER_NEXT_STRING;
+
 }
 
 static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab) {
