@@ -7,6 +7,7 @@
  */
 #include <processor/typesetters/ps/psinkspill.h>
 #include <processor/typesetters/ps/psboundaries.h>
+#include <processor/typesetters/typeprefs.h>
 #include <processor/oututils.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -236,8 +237,7 @@ static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx
     const char *tp_end = NULL;
     int x = PSTYPESETTER_CARRIAGEX;
     size_t s = 0;
-    //int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, 0); Not yet coming soon.
-    int has_half_step_notes = 0;
+    int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, typesetter_settings().prefs);
     int print_times = 0;
 
     if (tp == NULL) {
@@ -285,8 +285,7 @@ static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx
 
 static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     const txttypesetter_sustained_technique_ctx *tp = NULL;
-    //int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, 0);  Not yet coming soon.
-    int has_half_step_notes = 0;
+    int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, typesetter_settings().prefs);
     int x = PSTYPESETTER_CARRIAGEX, y = g_ps_ctab.cy;
     char *dp = NULL, *dp_end = NULL;
     size_t s = 0;
