@@ -6,6 +6,7 @@
  *
  */
 #include <processor/typesetters/txt/txtinkspill.h>
+#include <processor/typesetters/typeprefs.h>
 #include <processor/settings.h>
 #include <processor/oututils.h>
 #include <dsl/utils.h>
@@ -44,41 +45,20 @@ static void txttypesetter_spill_transcribers_name(FILE *fp, const char *transcri
 
 static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song);
 
-static void txttypesetter_init_settings();
-
-struct txttypesetter_curr_settings {
-    tulip_prefs_map_t prefs;
-    size_t indentation_deepness;
-};
-
-static struct txttypesetter_curr_settings g_txttypesetter_settings;
-
-static void txttypesetter_init_settings() {
-    void *data = NULL;
-
-    g_txttypesetter_settings.prefs = 0;
-
-    data = get_processor_setting("indentation-deepness", NULL);
-
-    g_txttypesetter_settings.indentation_deepness = ( data == NULL) ? 0 : *(size_t *)data;
-
-    data = get_processor_setting("prefs", NULL);
-    if (data != NULL) {
-        g_txttypesetter_settings.prefs = *(tulip_prefs_map_t *)data;
-    }
-}
-
 static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     size_t s = 0;
     size_t i = 0;
     ssize_t s_limit = -1, real_s_limit = -1;
     txttypesetter_sustained_technique_ctx *tp = NULL;
+    struct typesetter_curr_settings cset;
 
     if (is_tab_empty(tab)) {
         return;
     }
 
-    if (g_txttypesetter_settings.prefs & kTlpPrefsCutTabOnTheLastNote) {
+    cset = typesetter_settings();
+
+    if (cset.prefs & kTlpPrefsCutTabOnTheLastNote) {
         for (s = 0; s < tab->string_nr; s++) {
 
             for (i = strlen(tab->strings[s]) - 1; i > 0 && is_sep(tab->strings[s][i]); i--);
@@ -99,11 +79,11 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
 
     for (s = 0; s < tab->string_nr; s++) {
 
-        for (i = 0; i < g_txttypesetter_settings.indentation_deepness; i++) {
+        for (i = 0; i < cset.indentation_deepness; i++) {
             fprintf(fp, " ");
         }
 
-        if (g_txttypesetter_settings.prefs & kTlpPrefsShowTunning) {
+        if (cset.prefs & kTlpPrefsShowTunning) {
             fprintf(fp, "%s", tab->tunning[s]);
         } else {
             fprintf(fp, "|");
@@ -124,9 +104,9 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
             fwrite(tab->strings[s], 1, real_s_limit, fp);
         }
 
-        if ((g_txttypesetter_settings.prefs  & kTlpPrefsFretboardStyleNormal    ) ||
-            (g_txttypesetter_settings.prefs  & kTlpPrefsCloseTabToSave          ) ||
-            ((g_txttypesetter_settings.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
+        if ((cset.prefs  & kTlpPrefsFretboardStyleNormal    ) ||
+            (cset.prefs  & kTlpPrefsCloseTabToSave          ) ||
+            ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
             fprintf(fp, "|");
         }
 
@@ -139,10 +119,11 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
 static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     const txttypesetter_sustained_technique_ctx *tp = NULL;
     size_t i = 0;
-    int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, g_txttypesetter_settings.prefs);
+    struct typesetter_curr_settings cset = typesetter_settings();
+    int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, cset.prefs);
 
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
-        for (i = 0; i < g_txttypesetter_settings.indentation_deepness; i++) {
+        for (i = 0; i < cset.indentation_deepness; i++) {
             fprintf(fp, " ");
         }
         fprintf(fp, " ");
@@ -178,7 +159,8 @@ static void txttypesetter_spill_times(FILE *fp, const char *times, const char tu
     const char *tp = times;
     int print_times = 0;
     size_t i = 0;
-    int has_half_step_notes = tunning_has_half_step_notes(NULL, tunning, g_txttypesetter_settings.prefs);
+    struct typesetter_curr_settings cset = typesetter_settings();
+    int has_half_step_notes = tunning_has_half_step_notes(NULL, tunning, cset.prefs);
 
     if (tp == NULL) {
         return;
@@ -190,7 +172,7 @@ static void txttypesetter_spill_times(FILE *fp, const char *times, const char tu
     }
 
     if (print_times) {
-        for (i = 0; i < g_txttypesetter_settings.indentation_deepness; i++) {
+        for (i = 0; i < cset.indentation_deepness; i++) {
             fprintf(fp, " ");
         }
         fprintf(fp, " ");
@@ -225,8 +207,9 @@ static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_c
     char **tunning = NULL;
     int has_muffled = 0;
     int has_anyfret = 0;
+    struct typesetter_curr_settings cset = typesetter_settings();
 
-    if ((g_txttypesetter_settings.prefs & kTlpPrefsIncludeTabNotation) == 0) {
+    if ((cset.prefs & kTlpPrefsIncludeTabNotation) == 0) {
         return;
     }
 
@@ -277,7 +260,7 @@ static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_c
         fprintf(fp, "\n");
     }
 
-    if ((g_txttypesetter_settings.prefs & kTlpPrefsShowTunning) == 0) {
+    if ((cset.prefs & kTlpPrefsShowTunning) == 0) {
         tunning = get_processor_setting("tunning", &d);
 
         fprintf(fp, "Tunning [%d-1]: ", d);
@@ -314,8 +297,6 @@ int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
     if (fp == NULL) {
         return 0;
     }
-
-    txttypesetter_init_settings();
 
     txttypesetter_spill_song_title(fp, tab->song);
     txttypesetter_spill_transcribers_name(fp, tab->transcriber);
