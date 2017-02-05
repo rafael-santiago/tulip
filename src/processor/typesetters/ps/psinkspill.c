@@ -156,24 +156,36 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
             switch (tab->strings[s][o]) {
                 case 'h':
                 case 'p':
-                    py = pstypesetter_pinch_y(s, g_ps_ctab.cy);
-                    // TODO(Rafael): Ligados. Rotacionar '('...
+                    x += PSTYPESETTER_CARRIAGE_STEP + 2;
+                    fprintf(fp, "gsave %d %d moveto 90 rotate (\\)) show grestore\n", x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5);
+                    x -= PSTYPESETTER_CARRIAGE_STEP - 1;
+                    break;
+
+                case '~':
+                    fprintf(fp, "%d %d moveto (\\~) show\n", x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5);
                     break;
 
                 case '-':
                     break;
 
                 case '|':
-                    py = pstypesetter_pinch_y(s, g_ps_ctab.cy);
                     pstypesetter_vertbar(fp, x, g_ps_ctab.cy);
                     s = tab->string_nr + 1;
                     x -= PSTYPESETTER_CARRIAGE_STEP;
                     continue;
 
                 default:
+                    if (tab->strings[s][o] == '/' || tab->strings[s][o] == '\\') {
+                        x += 1;
+                    }
+
                     fprintf(fp, "%d %d moveto (%c) show\n", x,
                         pstypesetter_pinch_y(s, g_ps_ctab.cy),
                                            tab->strings[s][o]);
+
+                    if (tab->strings[s][o] == '/' || tab->strings[s][o] == '\\') {
+                        x -= 1;
+                    }
                     break;
             }
 
@@ -187,6 +199,8 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
     }
 
     g_ps_ctab.cx = PSTYPESETTER_CARRIAGEX;
+
+    g_ps_ctab.cy += PSTYPESETTER_NEXT_TABCHUNK;
 }
 
 static void pstypesetter_spill_song_title(FILE *fp, const char *song) {
@@ -296,7 +310,7 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
         }
 
         dp = &tp->data[0];
-        dp_end = dp + strlen(dp);
+        dp_end = dp + strlen(dp) - 2;
 
         while (dp != dp_end) {
             fprintf(fp, "%d %d moveto ", x, g_ps_ctab.cy);
