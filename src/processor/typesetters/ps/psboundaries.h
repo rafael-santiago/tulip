@@ -10,7 +10,7 @@
 
 #define PSTYPESETTER_PAGEXL                 40
 #define PSTYPESETTER_PAGEXR                560
-#define PSTYPESETTER_PAGEY                 750
+#define PSTYPESETTER_PAGEY                 720
 #define PSTYPESETTER_PAGEY_LIMIT            10
 #define PSTYPESETTER_NEXT_STRING            -8
 #define PSTYPESETTER_TABLINE_W             0.1
