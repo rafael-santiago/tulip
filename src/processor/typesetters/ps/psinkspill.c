@@ -165,6 +165,34 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                     fprintf(fp, "%d %d moveto (\\~) show\n", x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5);
                     break;
 
+                case 'b':
+                    py = pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5;
+                    fprintf(fp, "/Times-Italic 25 selectfont\n"
+                                "gsave %d %d moveto -5 rotate (\\)) show grestore\n"
+                                "newpath\n"
+                                "%d.5 %d moveto\n"
+                                "%d.5 %d lineto\n"
+                                "%d.5 %d lineto\n"
+                                "closepath\n"
+                                "fill\n"
+                                "/Times-Bold 11 selectfont\n", x, py,
+                                                               x + 3, py + 14, x + 6, py + 19, x + 9, py + 14);
+                    break;
+
+                case 'r':
+                    py = pstypesetter_pinch_y(s, g_ps_ctab.cy);
+                    fprintf(fp, "/Times-Italic 25 selectfont\n"
+                                "gsave %d %d moveto -150 rotate (\\() show grestore\n"
+                                "newpath\n"
+                                "%d.5 %d moveto\n"
+                                "%d.5 %d lineto\n"
+                                "%d.5 %d lineto\n"
+                                "closepath\n"
+                                "fill\n"
+                                "/Times-Bold 11 selectfont\n", x + 6, py, x + 4, py - 15, x + 7, py - 20, x + 10, py - 15);
+
+                    break;
+
                 case '-':
                     break;
 
