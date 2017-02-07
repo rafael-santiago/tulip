@@ -206,12 +206,51 @@ static void pstypesetter_pinch_release_bend(FILE *fp, const int x, const int y, 
     fprintf(fp, "/Times-Bold 11 selectfont\n");
 }
 
+static void pstypesetter_close_tab(FILE *fp, const int x, const int sn) {
+    int s = 0, sy = 0;
+
+    /* WARN(Rafael): !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                     -------- HANNA BARBERA's NASTY DICK WAS HERE --------
+                     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! >:) Hahaha!!
+    */
+
+    fprintf(fp, "1 1 1 setrgbcolor\n");
+
+    fprintf(fp, "newpath\n"
+                "%d %d moveto\n"
+                "%d %d lineto\n"
+                "%d %d lineto\n"
+                "closepath\n"
+                "fill\n"
+                "newpath\n"
+                "%d %d moveto\n"
+                "%d %d lineto\n"
+                "%d %d lineto\n"
+                "closepath\n"
+                "fill\n", x, pstypesetter_string_y(0, g_ps_ctab.cy) + 10,
+                          x, pstypesetter_string_y(sn - 1, g_ps_ctab.cy) - 10,
+                          g_ps_ctab.cxr, pstypesetter_string_y(0, g_ps_ctab.cy) + 10,
+                          g_ps_ctab.cxr, pstypesetter_string_y(sn - 1, g_ps_ctab.cy) - 10,
+                          g_ps_ctab.cxr, pstypesetter_string_y(0, g_ps_ctab.cy) + 10,
+                          x, pstypesetter_string_y(sn - 1, g_ps_ctab.cy) - 10);
+
+    fprintf(fp, "0 0 0 setrgbcolor\n");
+
+    pstypesetter_vertbar(fp, x, g_ps_ctab.cy, sn);
+}
+
 static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     size_t s, o;
     int x = g_ps_ctab.cx, py = 0;
     int pointed = 0;
+    struct typesetter_curr_settings cset = typesetter_settings();
+    size_t s_limit = tab->fretboard_sz;
 
-    for (o = 0; o < tab->fretboard_sz; o++) {
+    if (cset.prefs & kTlpPrefsCutTabOnTheLastNote) {
+        s_limit = get_fretboard_usage_limit(tab);
+    }
+
+    for (o = 0; o < s_limit; o++) {
 
         for (s = 0; s < tab->string_nr; s++) {
 
@@ -266,8 +305,20 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
         x += PSTYPESETTER_CARRIAGE_STEP;
 
         if (x >= g_ps_ctab.cxr) {
+            if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
+                (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
+                ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
+                pstypesetter_close_tab(fp, x, tab->string_nr);
+            }
+
             pstypesetter_newtabdiagram(fp, tab->string_nr);
         }
+    }
+
+    if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
+        (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
+        ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
+        pstypesetter_close_tab(fp, x, tab->string_nr);
     }
 
     g_ps_ctab.cx = PSTYPESETTER_CARRIAGEX;

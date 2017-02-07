@@ -21,4 +21,6 @@ int is_tab_empty(const txttypesetter_tablature_ctx *tab);
 
 int tunning_has_half_step_notes(const txttypesetter_tablature_ctx *tab, const char tunning_buffer[6][4], const tulip_prefs_map_t prefs);
 
+ssize_t get_fretboard_usage_limit(const txttypesetter_tablature_ctx *tab);
+
 #endif

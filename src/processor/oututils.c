@@ -129,3 +129,29 @@ int tunning_has_half_step_notes(const txttypesetter_tablature_ctx *tab, const ch
 
     return has_half_step_notes;
 }
+
+ssize_t get_fretboard_usage_limit(const txttypesetter_tablature_ctx *tab) {
+    size_t s = 0;
+    size_t i = 0;
+    ssize_t f_limit = -1;
+
+    while (s < tab->string_nr) {
+        for (i = strlen(tab->strings[s]) - 1; i > 0 && is_sep(tab->strings[s][i]); i--);
+
+        i++;
+
+        if (!is_sep(tab->strings[s][i - 1]) && !is_sep_bar(tab->strings[s][i - 1])) {
+            i++;
+        } else if (is_sep_bar(tab->strings[s][i - 1])) {
+            i--;
+        }
+
+        if ((ssize_t)i > f_limit) {
+            f_limit = (ssize_t)i;
+        }
+
+        s++;
+    }
+
+    return f_limit;
+}
