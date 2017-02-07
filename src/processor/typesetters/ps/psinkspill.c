@@ -54,6 +54,16 @@ static void pstypesetter_spill_transcribers_name(FILE *fp, const char *transcrib
 
 static void pstypesetter_spill_song_title(FILE *fp, const char *song);
 
+static void pstypesetter_vertbar(FILE *fp, const int x, const int y, const int sn);
+
+static void pstypesetter_pinch_hammer_on_pull_off(FILE *fp, const int x, const int y);
+
+static void pstypesetter_pinch_vibrato(FILE *fp, const int x, const int y);
+
+static void pstypesetter_pinch_bend(FILE *fp, const int x, const int y, const int pointed);
+
+static void pstypesetter_pinch_release_bend(FILE *fp, const int x, const int y, const int pointed);
+
 static void pstypesetter_init(void) {
     g_ps_cpage = 0;
 }
@@ -76,7 +86,7 @@ static FILE *pstypesetter_newps(const char *filepath) {
 }
 
 static void pstypesetter_closeps(FILE *fp) {
-    fprintf(fp, "showpage\n");
+    pstypesetter_showpage(fp);
     fclose(fp);
 }
 
@@ -90,7 +100,18 @@ static void pstypesetter_newpage(FILE *fp) {
 }
 
 static void pstypesetter_showpage(FILE *fp) {
-    fprintf(fp, "showpage\n");
+    char pn[255];
+
+    // WARN(Rafael): The right way of centering it is to load the font width from the acrobat font info file and so
+    //               do all the math based on this besides the current font size... however the things here is kind
+    //               of "static" then this heuristic works pretty well.
+
+    sprintf(pn, "%d", g_ps_cpage);
+    fprintf(fp, "/Times-Italic 11 selectfont\n"
+                "%d %d moveto (%s) show\n"
+                "showpage\n"
+                "/Times-Bold 11 selectfont\n", (PSTYPESETTER_PAGEXR / 2) - strlen(pn) - 1,
+                                                PSTYPESETTER_PAGEY_LIMIT + 20, pn);
 }
 
 static void pstypesetter_newtabdiagram(FILE *fp, const int sn) {
@@ -139,15 +160,56 @@ static void pstypesetter_proc_tabchunk(FILE *fp, const txttypesetter_tablature_c
     pstypesetter_flush_fretboard_pinches(fp, tab);
 }
 
-static void pstypesetter_vertbar(FILE *fp, const int x, const int y) {
+static void pstypesetter_vertbar(FILE *fp, const int x, const int y, const int sn) {
     fprintf(fp, "%d %d moveto\n"
                 "%d %d lineto\n"
-                "stroke\n", x, pstypesetter_string_y(0, y), x, pstypesetter_string_y(5, y));
+                "stroke\n", x, pstypesetter_string_y(0, y), x, pstypesetter_string_y(sn - 1, y));
+}
+
+static void pstypesetter_pinch_hammer_on_pull_off(FILE *fp, const int x, const int y) {
+    fprintf(fp, "gsave %d %d moveto 90 rotate (\\)) show grestore\n", x, y);
+}
+
+static void pstypesetter_pinch_vibrato(FILE *fp, const int x, const int y) {
+    fprintf(fp, "%d %d moveto (\\~) show\n", x, y);
+}
+
+static void pstypesetter_pinch_bend(FILE *fp, const int x, const int y, const int pointed) {
+    fprintf(fp, "/Times-Italic 25 selectfont\n"
+                "gsave %d %d moveto %d rotate (\\)) show grestore\n", x, y, (pointed) ? -5 : -7);
+
+    if (pointed) {
+        fprintf(fp, "newpath\n"
+                    "%d.5 %d moveto\n"
+                    "%d.5 %d lineto\n"
+                    "%d.5 %d lineto\n"
+                    "closepath\n"
+                    "fill\n", x + 3, y + 14, x + 6, y + 19, x + 9, y + 14);
+    }
+
+    fprintf(fp, "/Times-Bold 11 selectfont\n");
+}
+
+static void pstypesetter_pinch_release_bend(FILE *fp, const int x, const int y, const int pointed) {
+    fprintf(fp, "/Times-Italic 25 selectfont\n"
+                "gsave %d %d moveto -150 rotate (\\() show grestore\n", x + 6, y);
+
+    if (pointed) {
+        fprintf(fp, "newpath\n"
+                    "%d.5 %d moveto\n"
+                    "%d.5 %d lineto\n"
+                    "%d.5 %d lineto\n"
+                    "closepath\n"
+                    "fill\n", x + 4, y - 15, x + 7, y - 20, x + 10, y - 15);
+    }
+
+    fprintf(fp, "/Times-Bold 11 selectfont\n");
 }
 
 static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     size_t s, o;
     int x = g_ps_ctab.cx, py = 0;
+    int pointed = 0;
 
     for (o = 0; o < tab->fretboard_sz; o++) {
 
@@ -157,47 +219,29 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                 case 'h':
                 case 'p':
                     x += PSTYPESETTER_CARRIAGE_STEP + 2;
-                    fprintf(fp, "gsave %d %d moveto 90 rotate (\\)) show grestore\n", x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5);
+                    pstypesetter_pinch_hammer_on_pull_off(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5);
                     x -= PSTYPESETTER_CARRIAGE_STEP - 1;
                     break;
 
                 case '~':
-                    fprintf(fp, "%d %d moveto (\\~) show\n", x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5);
+                    pstypesetter_pinch_vibrato(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5);
                     break;
 
                 case 'b':
-                    py = pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5;
-                    fprintf(fp, "/Times-Italic 25 selectfont\n"
-                                "gsave %d %d moveto -5 rotate (\\)) show grestore\n"
-                                "newpath\n"
-                                "%d.5 %d moveto\n"
-                                "%d.5 %d lineto\n"
-                                "%d.5 %d lineto\n"
-                                "closepath\n"
-                                "fill\n"
-                                "/Times-Bold 11 selectfont\n", x, py,
-                                                               x + 3, py + 14, x + 6, py + 19, x + 9, py + 14);
+                    pointed = (s == 0 || tab->strings[s - 1][o] != 'b');
+                    pstypesetter_pinch_bend(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5, pointed);
                     break;
 
                 case 'r':
-                    py = pstypesetter_pinch_y(s, g_ps_ctab.cy);
-                    fprintf(fp, "/Times-Italic 25 selectfont\n"
-                                "gsave %d %d moveto -150 rotate (\\() show grestore\n"
-                                "newpath\n"
-                                "%d.5 %d moveto\n"
-                                "%d.5 %d lineto\n"
-                                "%d.5 %d lineto\n"
-                                "closepath\n"
-                                "fill\n"
-                                "/Times-Bold 11 selectfont\n", x + 6, py, x + 4, py - 15, x + 7, py - 20, x + 10, py - 15);
-
+                    pointed = (s == tab->string_nr - 1 || tab->strings[s + 1][o] != 'r');
+                    pstypesetter_pinch_release_bend(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy), pointed);
                     break;
 
                 case '-':
                     break;
 
                 case '|':
-                    pstypesetter_vertbar(fp, x, g_ps_ctab.cy);
+                    pstypesetter_vertbar(fp, x, g_ps_ctab.cy, tab->string_nr);
                     s = tab->string_nr + 1;
                     x -= PSTYPESETTER_CARRIAGE_STEP;
                     continue;
