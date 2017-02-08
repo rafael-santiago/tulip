@@ -150,7 +150,7 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
 static void pstypesetter_spill_tunning(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     size_t s = 0, maxlen = 1, clen = 0;
 
-    for (s = 0; s < tab->string_nr; s++) {
+    for (s = 0; s < tab->string_nr && maxlen != 2; s++) {
         if ((clen = strlen(tab->tunning[s])) > maxlen) {
             maxlen = clen;
         }
