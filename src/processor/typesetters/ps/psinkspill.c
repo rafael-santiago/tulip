@@ -369,7 +369,82 @@ static void pstypesetter_spill_transcribers_name(FILE *fp, const char *transcrib
 }
 
 static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song) {
-    // TODO(Rafael): Later.
+    struct typesetter_curr_settings cset = typesetter_settings();
+    tulip_command_t used_techniques[31];
+    size_t used_techniques_nr = 0, u = 0;
+    int has_muffled = 0, has_anyfret = 0;
+    int hp_done = 0;
+
+    if ((cset.prefs & kTlpPrefsIncludeTabNotation) == 0 || song == NULL) {
+        return;
+    }
+
+    g_ps_ctab.cy -= PSTYPESETTER_NEXT_ADDINFO;
+
+    get_all_used_techniques(song, used_techniques, &used_techniques_nr, &has_muffled, &has_anyfret);
+
+    if (used_techniques_nr > 0 || has_muffled || has_anyfret) {
+        for (u = 0; u < used_techniques_nr; u++) {
+            switch (used_techniques[u]) {
+                case kTlpHammerOn:
+                case kTlpPullOff:
+                    if (!hp_done) {
+                        hp_done = 1;
+                        pstypesetter_pinch_hammer_on_pull_off(fp, PSTYPESETTER_CARRIAGEX + 20, g_ps_ctab.cy);
+                        fprintf(fp, "%d %d moveto (= %s/%s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25,
+                                                                     g_ps_ctab.cy,
+                                                                     get_technique_notation_label(kTlpHammerOn),
+                                                                     get_technique_notation_label(kTlpPullOff));
+                        g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+                    }
+                    continue;
+
+                case kTlpBend:
+                    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+                    pstypesetter_pinch_bend(fp, PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy, 1);
+                    fprintf(fp, "%d %d moveto (= %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy,
+                                                      get_technique_notation_label(kTlpBend));
+                    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+                    continue;
+
+                case kTlpReleaseBend:
+                    pstypesetter_pinch_release_bend(fp, PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy, 1);
+                    fprintf(fp, "%d %d moveto (= %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy - 10,
+                                                      get_technique_notation_label(kTlpReleaseBend));
+                    g_ps_ctab.cy += (2 * PSTYPESETTER_NEXT_ADDINFO);
+                    continue;
+
+                case kTlpSlideUp:
+                        fprintf(fp, "%d %d moveto (\\\\) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy);
+                    break;
+
+                default:
+                    fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy, get_technique_label(used_techniques[u]));
+                    break;
+            }
+
+            fprintf(fp, "%d %d moveto (= %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy,
+                                                      get_technique_notation_label(used_techniques[u]));
+
+
+            g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+        }
+
+        if (has_muffled) {
+            fprintf(fp, "%d %d moveto (X) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy);
+            fprintf(fp, "%d %d moveto (= Muffled note) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy);
+            g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+        }
+
+        if (has_anyfret) {
+            fprintf(fp, "%d %d moveto (?) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy);
+            fprintf(fp, "%d %d moveto (= From any fret) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy);
+            g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+        }
+    }
+
+    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+
 }
 
 static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ctx *comments) {

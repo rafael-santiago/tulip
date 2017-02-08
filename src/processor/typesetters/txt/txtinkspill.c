@@ -14,23 +14,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#define is_relevant_technique(t) ( (t) == kTlpHammerOn           ||\
-                                   (t) == kTlpPullOff            ||\
-                                   (t) == kTlpVibrato            ||\
-                                   (t) == kTlpSlideDown          ||\
-                                   (t) == kTlpSlideUp            ||\
-                                   (t) == kTlpBend               ||\
-                                   (t) == kTlpReleaseBend        ||\
-                                   (t) == kTlpTapping            ||\
-                                   (t) == kTlpNaturalHarmonic    ||\
-                                   (t) == kTlpArtificialHarmonic ||\
-                                   (t) == kTlpMute               ||\
-                                   (t) == kTlpLetRing            ||\
-                                   (t) == kTlpStrum              ||\
-                                   (t) == kTlpTremoloPicking     ||\
-                                   (t) == kTlpVibratoWBar        ||\
-                                   (t) == kTlpTrill )
-
 static void txttypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ctx *comments);
 
 static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab);
@@ -199,11 +182,8 @@ static void txttypesetter_spill_transcribers_name(FILE *fp, const char *transcri
 
 static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song) {
     tulip_command_t used_techniques[31];
-    size_t used_techniques_nr = 0, u = 0;
-    tulip_command_t *demuxes = NULL;
-    size_t demuxes_nr = 0, d = 0;
-    const tulip_single_note_ctx *sp = NULL;
-    int found = 0, s = 0;
+    size_t used_techniques_nr = 0, u = 0, d = 0;
+    int s = 0;
     char **tunning = NULL;
     int has_muffled = 0;
     int has_anyfret = 0;
@@ -217,33 +197,9 @@ static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_c
         return;
     }
 
-    for (sp = song; sp != NULL && used_techniques_nr < sizeof(used_techniques); sp = sp->next) {
-        demuxes = demux_tlp_commands(sp->techniques, &demuxes_nr);
+    get_all_used_techniques(song, used_techniques, &used_techniques_nr, &has_muffled, &has_anyfret);
 
-        for (d = 0; d < demuxes_nr; d++) {
-            if (is_relevant_technique(demuxes[d])) {
-                found = 0;
-                for (u = 0; u < used_techniques_nr && !found; u++) {
-                    found = (demuxes[d] == used_techniques[u]);
-                }
-                if (!found) {
-                    used_techniques[used_techniques_nr] = demuxes[d];
-                    used_techniques_nr++;
-                }
-            } else if (sp->buf[0] != 0) {
-                if (!has_muffled) {
-                    has_muffled = (strstr(sp->buf, "X") != NULL);
-                }
-                if (!has_anyfret) {
-                    has_anyfret = (strstr(sp->buf, "?") != NULL);
-                }
-            }
-        }
-
-        free(demuxes);
-    }
-
-    if (used_techniques_nr > 0) {
+    if (used_techniques_nr > 0 || has_muffled || has_anyfret) {
         for (u = 0; u < used_techniques_nr; u++) {
             fprintf(fp, "%s = %s\n", get_technique_label(used_techniques[u]),
                                      get_technique_notation_label(used_techniques[u]));

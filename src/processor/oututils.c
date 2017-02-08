@@ -155,3 +155,60 @@ ssize_t get_fretboard_usage_limit(const txttypesetter_tablature_ctx *tab) {
 
     return f_limit;
 }
+
+
+void get_all_used_techniques(const tulip_single_note_ctx *song, tulip_command_t used_techniques[31], size_t *used_techniques_nr, int *has_muffled, int *has_anyfret) {
+    size_t u = 0, demuxes_nr = 0, d = 0, u_nr = 0;
+    const tulip_single_note_ctx *sp = NULL;
+    int found = 0;
+    tulip_command_t *demuxes = NULL;
+
+#define is_relevant_technique(t) ( (t) == kTlpHammerOn           ||\
+                                   (t) == kTlpPullOff            ||\
+                                   (t) == kTlpVibrato            ||\
+                                   (t) == kTlpSlideDown          ||\
+                                   (t) == kTlpSlideUp            ||\
+                                   (t) == kTlpBend               ||\
+                                   (t) == kTlpReleaseBend        ||\
+                                   (t) == kTlpTapping            ||\
+                                   (t) == kTlpNaturalHarmonic    ||\
+                                   (t) == kTlpArtificialHarmonic ||\
+                                   (t) == kTlpMute               ||\
+                                   (t) == kTlpLetRing            ||\
+                                   (t) == kTlpStrum              ||\
+                                   (t) == kTlpTremoloPicking     ||\
+                                   (t) == kTlpVibratoWBar        ||\
+                                   (t) == kTlpTrill )
+
+    for (sp = song; sp != NULL && u_nr < 32; sp = sp->next) {
+        demuxes = demux_tlp_commands(sp->techniques, &demuxes_nr);
+
+        for (d = 0; d < demuxes_nr; d++) {
+            if (is_relevant_technique(demuxes[d])) {
+                found = 0;
+                for (u = 0; u < u_nr && !found; u++) {
+                    found = (demuxes[d] == used_techniques[u]);
+                }
+                if (!found) {
+                    used_techniques[u] = demuxes[d];
+                    u_nr++;
+                }
+            } else if (sp->buf[0] != 0) {
+                if (has_muffled != NULL && !(*has_muffled)) {
+                    *has_muffled = (strstr(sp->buf, "X") != NULL);
+                }
+                if (has_anyfret != NULL && !(*has_anyfret)) {
+                    *has_anyfret = (strstr(sp->buf, "?") != NULL);
+                }
+            }
+        }
+
+        free(demuxes);
+    }
+
+#undef is_relevant_technique
+
+    if (used_techniques_nr != NULL) {
+        *used_techniques_nr = u_nr;
+    }
+}

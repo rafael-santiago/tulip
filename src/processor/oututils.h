@@ -23,4 +23,6 @@ int tunning_has_half_step_notes(const txttypesetter_tablature_ctx *tab, const ch
 
 ssize_t get_fretboard_usage_limit(const txttypesetter_tablature_ctx *tab);
 
+void get_all_used_techniques(const tulip_single_note_ctx *song, tulip_command_t used_techniques[31], size_t *used_techniques_nr, int *has_muffled, int *has_anyfret);
+
 #endif
