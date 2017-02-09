@@ -140,6 +140,14 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
 
     fprintf(fp, "stroke\n");
 
+    fprintf(fp, "/Times-Bold 13 selectfont\n");
+
+    fprintf(fp, "%d %d moveto (T) show\n", PSTYPESETTER_PAGEXL + 2, pstypesetter_pinch_y(1, g_ps_ctab.cy) + 1);
+    fprintf(fp, "%d %d moveto (A) show\n", PSTYPESETTER_PAGEXL + 2, pstypesetter_pinch_y(3, g_ps_ctab.cy) + 2);
+    fprintf(fp, "%d %d moveto (B) show\n", PSTYPESETTER_PAGEXL + 2, pstypesetter_pinch_y(5, g_ps_ctab.cy) + 4);
+
+    fprintf(fp, "/Times-Bold 11 selectfont\n");
+
     if (cset.prefs & kTlpPrefsShowTunning) {
         pstypesetter_spill_tunning(fp, tab);
     } else if (cset.prefs & kTlpPrefsFretboardStyleNormal) {
@@ -391,7 +399,7 @@ static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
                     if (!hp_done) {
                         hp_done = 1;
                         pstypesetter_pinch_hammer_on_pull_off(fp, PSTYPESETTER_CARRIAGEX + 20, g_ps_ctab.cy);
-                        fprintf(fp, "%d %d moveto (= %s/%s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25,
+                        fprintf(fp, "%d %d moveto (=   %s/%s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25,
                                                                      g_ps_ctab.cy,
                                                                      get_technique_notation_label(kTlpHammerOn),
                                                                      get_technique_notation_label(kTlpPullOff));
@@ -402,14 +410,14 @@ static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
                 case kTlpBend:
                     g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
                     pstypesetter_pinch_bend(fp, PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy, 1);
-                    fprintf(fp, "%d %d moveto (= %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy,
+                    fprintf(fp, "%d %d moveto (=   %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy,
                                                       get_technique_notation_label(kTlpBend));
                     g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
                     continue;
 
                 case kTlpReleaseBend:
                     pstypesetter_pinch_release_bend(fp, PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy, 1);
-                    fprintf(fp, "%d %d moveto (= %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy - 10,
+                    fprintf(fp, "%d %d moveto (=   %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy - 10,
                                                       get_technique_notation_label(kTlpReleaseBend));
                     g_ps_ctab.cy += (2 * PSTYPESETTER_NEXT_ADDINFO);
                     continue;
@@ -423,7 +431,7 @@ static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
                     break;
             }
 
-            fprintf(fp, "%d %d moveto (= %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy,
+            fprintf(fp, "%d %d moveto (=   %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy,
                                                       get_technique_notation_label(used_techniques[u]));
 
 
@@ -432,13 +440,13 @@ static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
 
         if (has_muffled) {
             fprintf(fp, "%d %d moveto (X) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy);
-            fprintf(fp, "%d %d moveto (= Muffled note) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy);
+            fprintf(fp, "%d %d moveto (=   Muffled note) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy);
             g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
         }
 
         if (has_anyfret) {
             fprintf(fp, "%d %d moveto (?) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy);
-            fprintf(fp, "%d %d moveto (= From any fret) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy);
+            fprintf(fp, "%d %d moveto (=   From any fret) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy);
             g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
         }
     }

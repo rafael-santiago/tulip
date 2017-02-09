@@ -16,7 +16,7 @@
 #define PSTYPESETTER_TABLINE_W             0.1
 #define PSTYPESETTER_NEXT_TABCHUNK         -50
 #define PSTYPESETTER_ONTO_STRING_DELTA      -4
-#define PSTYPESETTER_CARRIAGEX              42
+#define PSTYPESETTER_CARRIAGEX              52
 #define PSTYPESETTER_CARRIAGE_STEP           6
 
 #define PSTYPESETTER_ADDINFOY               850
