@@ -199,7 +199,9 @@ static void pstypesetter_vertbar(FILE *fp, const int x, const int y, const int s
 }
 
 static void pstypesetter_pinch_hammer_on_pull_off(FILE *fp, const int x, const int y) {
+    fprintf(fp, "/Times-Bold 20 selectfont\n");
     fprintf(fp, "gsave %d %d moveto 90 rotate (\\)) show grestore\n", x, y);
+    fprintf(fp, "/Times-Bold 11 selectfont\n");
 }
 
 static void pstypesetter_pinch_vibrato(FILE *fp, const int x, const int y) {
@@ -287,9 +289,8 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
             switch (tab->strings[s][o]) {
                 case 'h':
                 case 'p':
-                    x += PSTYPESETTER_CARRIAGE_STEP + 2;
+                    x += PSTYPESETTER_CARRIAGE_STEP + 10;
                     pstypesetter_pinch_hammer_on_pull_off(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5);
-                    x -= PSTYPESETTER_CARRIAGE_STEP - 1;
                     break;
 
                 case '~':
