@@ -194,7 +194,7 @@ void get_all_used_techniques(const tulip_single_note_ctx *song, tulip_command_t 
                     u_nr++;
                 }
             } else if (sp->buf[0] != 0) {
-                if (has_muffled != NULL && !(*has_muffled)) {
+                if (has_muffled != NULL && !(*has_muffled) && (sp->techniques & kTlpTimes) == 0) {
                     *has_muffled = (strstr(sp->buf, "X") != NULL);
                 }
                 if (has_anyfret != NULL && !(*has_anyfret)) {
