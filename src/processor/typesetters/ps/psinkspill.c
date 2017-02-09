@@ -9,6 +9,7 @@
 #include <processor/typesetters/ps/psboundaries.h>
 #include <processor/typesetters/typeprefs.h>
 #include <processor/oututils.h>
+#include <processor/settings.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -156,17 +157,11 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
 }
 
 static void pstypesetter_spill_tunning(FILE *fp, const txttypesetter_tablature_ctx *tab) {
-    size_t s = 0, maxlen = 1, clen = 0;
-
-    for (s = 0; s < tab->string_nr && maxlen != 2; s++) {
-        if ((clen = strlen(tab->tunning[s])) > maxlen) {
-            maxlen = clen;
-        }
-    }
+    size_t s;
 
     for (s = 0; s < tab->string_nr; s++) {
-        fprintf(fp, "%d %d moveto (%s) show\n", g_ps_ctab.cxl - PSTYPESETTER_CARRIAGE_STEP * maxlen,
-                                                pstypesetter_pinch_y(s, g_ps_ctab.cy), tab->tunning[s]);
+        fprintf(fp, "%d %d moveto (%s) show\n", g_ps_ctab.cxl - PSTYPESETTER_CARRIAGE_STEP - 10,
+                                                pstypesetter_pinch_y(s, g_ps_ctab.cy) + 2, tab->tunning[s]);
     }
 }
 
@@ -393,8 +388,10 @@ static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
     struct typesetter_curr_settings cset = typesetter_settings();
     tulip_command_t used_techniques[31];
     size_t used_techniques_nr = 0, u = 0;
+    int t = 0, t_nr = 0;
     int has_muffled = 0, has_anyfret = 0;
     int hp_done = 0;
+    char **tunning = NULL;
 
     if ((cset.prefs & kTlpPrefsIncludeTabNotation) == 0 || song == NULL) {
         return;
@@ -462,6 +459,26 @@ static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
             fprintf(fp, "%d %d moveto (=   From any fret) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy);
             g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
         }
+    }
+
+    if (cset.prefs & kTlpPrefsShowTunning) {
+        g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+
+        tunning = get_processor_setting("tunning", &t_nr);
+
+        fprintf(fp, "%d %d moveto (Tunning [%d-1] = ", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy, t_nr);
+
+        for (t = t_nr - 1; t >= 0; t--) {
+            fprintf(fp, "%s", tunning[t]);
+            if (t != 0) {
+                fprintf(fp, ", ");
+            }
+        }
+
+        fprintf(fp, ") show\n");
+
+        g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+
     }
 
     g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;

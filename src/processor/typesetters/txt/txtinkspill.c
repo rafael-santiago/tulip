@@ -222,7 +222,7 @@ static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_c
         fprintf(fp, "\n");
     }
 
-    if ((cset.prefs & kTlpPrefsShowTunning) == 0) {
+    if (cset.prefs & kTlpPrefsShowTunning) {
         tunning = get_processor_setting("tunning", &d);
 
         fprintf(fp, "Tunning [%d-1]: ", d);
