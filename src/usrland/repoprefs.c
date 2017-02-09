@@ -7,6 +7,7 @@
  */
 #include <usrland/repoprefs.h>
 #include <usrland/usropt2tlpopt.h>
+#include <base/types.h>
 #include <base/memory.h>
 #include <processor/settings.h>
 #include <stdio.h>
@@ -18,6 +19,9 @@ void ld_repo_prefs() {
     char *file_buffer = NULL, *fb = NULL, *fb_end = NULL;
     long file_size = 0;
     struct usropt2tlpopt_ctx *setting = NULL;
+    tulip_prefs_map_t prefs = 0;
+    void *data = NULL;
+    size_t dsize = 0;
     if (fp == NULL) {
         return;
     }
@@ -44,7 +48,13 @@ void ld_repo_prefs() {
             if (setting == NULL) {
                 continue;
             }
-            set_processor_setting(setting->option, setting->data, setting->dsize);
+            if (strcmp(setting->option, "prefs") != 0) {
+                set_processor_setting(setting->option, setting->data, setting->dsize);
+            } else {
+                prefs = get_prefs_mask(setting->option, setting->data);
+                data = &prefs;
+                dsize = sizeof(prefs);
+            }
             free_usropt2tlpopt_ctx(setting);
         } else {
             if (lp < lp_end && *fb != '\n' && *fb != '\r') {

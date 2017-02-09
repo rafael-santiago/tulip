@@ -7,9 +7,9 @@
  */
 #include <usrland/usropt2tlpopt.h>
 #include <base/memory.h>
-#include <base/types.h>
 #include <base/ctx.h>
 #include <dsl/compiler/compiler.h>
+#include <processor/settings.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
@@ -40,6 +40,7 @@ static struct get_tlpopt_callvect g_tlpopt_callvect[] = {
     register_new_tlpopt_callout("cut-tab-on-the-last-note", get_tulip_prefs_map_t),
     register_new_tlpopt_callout("add-tunning-to-the-fretboard", get_tulip_prefs_map_t),
     register_new_tlpopt_callout("tunning", get_tunning),
+    register_new_tlpopt_callout("show-tunning", get_tulip_prefs_map_t)
 };
 
 static const size_t g_tlpopt_callvect_nr = sizeof(g_tlpopt_callvect) / sizeof(g_tlpopt_callvect[0]);
@@ -250,4 +251,34 @@ struct usropt2tlpopt_ctx *usropt2tlpopt(const char *data) {
     memset(option, 0, sizeof(option));
     memcpy(option, data, dp - data);
     return get_tlpopt(option, dp + (*dp == '='));
+}
+
+tulip_prefs_map_t get_prefs_mask(const char *option, const char *data) {
+    int deactivate = 0;
+    tulip_prefs_map_t prefs = 0, cpref = 0;
+    size_t dsize = 0;
+
+    deactivate = (strcmp(data,  "yes") == 0 ||
+                  strcmp(data,    "1") == 0 ||
+                  strcmp(data, "true") == 0);
+    prefs = *(tulip_prefs_map_t *)get_processor_setting("prefs", &dsize);
+    if (strcmp(option, "close-tab-to-save") == 0) {
+        cpref = (deactivate) ? ~(kTlpPrefsCloseTabToSave) : kTlpPrefsCloseTabToSave;
+    } else if (strcmp(option, "include-tab-notation") == 0) {
+        cpref = (deactivate) ? ~(kTlpPrefsIncludeTabNotation) : kTlpPrefsIncludeTabNotation;
+    } else if (strcmp(option, "cut-tab-on-the-last-note") == 0) {
+        cpref = (deactivate) ? ~(kTlpPrefsCutTabOnTheLastNote) : kTlpPrefsCutTabOnTheLastNote;
+    } else if (strcmp(option, "add-tunning-to-the-fretboard") == 0) {
+        cpref = (deactivate) ? ~(kTlpPrefsAddTunningToTheFretboard) : kTlpPrefsAddTunningToTheFretboard;
+    } else if (strcmp(option, "show-tunning") == 0) {
+        cpref = (deactivate) ? ~(kTlpPrefsShowTunning) : kTlpPrefsShowTunning;
+    }
+
+    if (deactivate) {
+        prefs &= cpref;
+    } else {
+        prefs |= prefs;
+    }
+
+    return prefs;
 }

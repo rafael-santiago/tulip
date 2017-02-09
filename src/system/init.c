@@ -10,7 +10,9 @@
 #include <usrland/cmdlineoptions.h>
 #include <usrland/repoprefs.h>
 #include <usrland/usropt2tlpopt.h>
+#include <base/types.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 
 void tulip_system_init(int argc, char **argv) {
@@ -22,12 +24,17 @@ void tulip_system_init(int argc, char **argv) {
         "indentation-deepness",
         "include-tab-notation",
         "cut-tab-on-the-last-note",
-        "add-tunning-to-the-fretboard"
+        "add-tunning-to-the-fretboard",
+        "show-tunning"
     };
     const size_t overwritten_options_nr = sizeof(overwritten_options) / sizeof(overwritten_options[0]);
     size_t o = 0;
     char usroption[255] = "";
     struct usropt2tlpopt_ctx *setting = NULL;
+    tulip_prefs_map_t prefs = 0;
+    int deactivate = 0;
+    void *data = NULL;
+    size_t dsize = 0;
 
     ld_repo_prefs();
 
@@ -41,7 +48,18 @@ void tulip_system_init(int argc, char **argv) {
             if (setting == NULL) {
                 continue;
             }
-            set_processor_setting(setting->option, setting->data, setting->dsize);
+            if (strcmp(setting->option, "fretboard-size")       == 0  ||
+                strcmp(setting->option, "fretboard-style")      == 0  ||
+                strcmp(setting->option, "indentation-deepness") == 0) {
+                set_processor_setting(setting->option, setting->data, setting->dsize);
+            } else {
+                prefs = get_prefs_mask(setting->option, setting->data);
+
+                data = &prefs;
+                dsize = sizeof(prefs);
+
+                set_processor_setting(setting->option, data, dsize);
+            }
             free_usropt2tlpopt_ctx(setting);
         }
     }
