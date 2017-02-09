@@ -290,6 +290,12 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                 case 'h':
                 case 'p':
                     x += PSTYPESETTER_CARRIAGE_STEP + 10;
+
+                    if (x >= g_ps_ctab.cxr) {
+                        pstypesetter_newtabdiagram(fp, tab);
+                        x = g_ps_ctab.cx;
+                    }
+
                     pstypesetter_pinch_hammer_on_pull_off(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5);
                     break;
 
@@ -319,6 +325,11 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                 default:
                     if (tab->strings[s][o] == '/' || tab->strings[s][o] == '\\') {
                         x += 1;
+
+                        if (x >= g_ps_ctab.cxr) {
+                            pstypesetter_newtabdiagram(fp, tab);
+                            x = g_ps_ctab.cx;
+                        }
                     }
 
                     fprintf(fp, "%d %d moveto (%c) show\n", x,
@@ -343,6 +354,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
             }
 
             pstypesetter_newtabdiagram(fp, tab);
+            x = g_ps_ctab.cx;
         }
     }
 
