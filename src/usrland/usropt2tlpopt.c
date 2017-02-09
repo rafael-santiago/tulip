@@ -46,9 +46,10 @@ static const size_t g_tlpopt_callvect_nr = sizeof(g_tlpopt_callvect) / sizeof(g_
 
 static struct usropt2tlpopt_ctx *get_tlpopt(const char *option, const char *entire_buf) {
     const char *op = option;
+    char temp[255] = "", *tp = NULL;
     size_t c = 0;
 
-    if (op == NULL || entire_buf == NULL) {
+    if (option == NULL || entire_buf == NULL) {
         return NULL;
     }
 
@@ -56,8 +57,15 @@ static struct usropt2tlpopt_ctx *get_tlpopt(const char *option, const char *enti
         op++;
     }
 
+    sprintf(temp, "%s", op);
+
+    tp = strstr(temp, "=");
+    if (tp != NULL) {
+        *tp = 0;
+    }
+
     for (c = 0; c < g_tlpopt_callvect_nr; c++) {
-        if (strcmp(op, g_tlpopt_callvect[c].option) == 0) {
+        if (strcmp(temp, g_tlpopt_callvect[c].option) == 0) {
             return g_tlpopt_callvect[c].get(op, entire_buf);
         }
     }
@@ -68,7 +76,7 @@ static struct usropt2tlpopt_ctx *get_tlpopt(const char *option, const char *enti
 static struct usropt2tlpopt_ctx *get_tunning(const char *option, const char *entire_buf) {
     struct usropt2tlpopt_ctx *opt = NULL;
     size_t t = 0;
-    char buf[255] = "";
+    char buf[255];
     const char *bp = NULL;
     tulip_single_note_ctx *tunning = NULL;
     int is_ok = 0;
@@ -77,6 +85,7 @@ static struct usropt2tlpopt_ctx *get_tunning(const char *option, const char *ent
         return NULL;
     }
 
+    memset(buf, 0, sizeof(buf));
     sprintf(buf, ".tunning{%s}", entire_buf);
     is_ok = compile_tulip_codebuf(buf, NULL, &tunning, &bp);
     if (!is_ok) {
