@@ -24,12 +24,13 @@ void txttypesetter_tunning_printer(txttypesetter_tablature_ctx **tab, const tuli
     t = 0;
     s = 0;
     n = 0;
-    while (note->buf[n] != 0 && s < 6) {
+    while (note->buf[n] != 0 && s < (*tab)->string_nr) {
         if (note->buf[n] == '-') {
             t = 0;
             s++;
         } else {
             tp->tunning[s][t++] = note->buf[n];
+            tp->tunning[s][t] = 0;
         }
         n++;
     }

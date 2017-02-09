@@ -34,6 +34,7 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
     ssize_t s_limit = -1, real_s_limit = -1;
     txttypesetter_sustained_technique_ctx *tp = NULL;
     struct typesetter_curr_settings cset;
+    int half_step_notes = 0;
 
     if (is_tab_empty(tab)) {
         return;
@@ -60,6 +61,8 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
         }
     }
 
+    half_step_notes = tunning_has_half_step_notes(tab, NULL, cset.prefs);
+
     for (s = 0; s < tab->string_nr; s++) {
 
         for (i = 0; i < cset.indentation_deepness; i++) {
@@ -68,6 +71,9 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
 
         if (cset.prefs & kTlpPrefsShowTunning) {
             fprintf(fp, "%s", tab->tunning[s]);
+            if (half_step_notes && strlen(tab->tunning[s]) == 1) {
+                fprintf(fp, " ");
+            }
         } else {
             fprintf(fp, "|");
         }

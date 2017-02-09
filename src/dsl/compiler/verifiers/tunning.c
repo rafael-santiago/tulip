@@ -71,7 +71,7 @@ int tunning_tag_verifier(const char *buf, char *error_message, tulip_single_note
         bp++;
     }
 
-    (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpTunning, cipher);
+    (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpTunning, tunning);
     (*next) = bp_end + 1;
 
     return 1;
