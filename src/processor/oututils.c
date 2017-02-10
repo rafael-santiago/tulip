@@ -9,6 +9,7 @@
 #include <dsl/utils.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 static char *g_tlp_technique_label[] = {
     "",
@@ -211,4 +212,26 @@ void get_all_used_techniques(const tulip_single_note_ctx *song, tulip_command_t 
     if (used_techniques_nr != NULL) {
         *used_techniques_nr = u_nr;
     }
+}
+
+char *tlptemp(void) {
+    static char tempfilename[255];
+    int t = 0;
+    FILE *fp = NULL;
+
+
+    do {
+        if (fp != NULL) {
+            fclose(fp);
+        }
+        sprintf(tempfilename, ".tlptemp%d", t++);
+        fp = fopen(tempfilename, "r");
+    } while (fp != NULL && t < 0xffffffff);
+
+    if (fp != NULL) {
+        fclose(fp);
+        sprintf(tempfilename, ".tlptemp.ahhhhhhh");
+    }
+
+    return &tempfilename[0];
 }
