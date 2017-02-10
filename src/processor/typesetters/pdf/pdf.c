@@ -39,5 +39,3 @@ ___pdf_typesetter_epilogue:
 
     return (has_error != 0);
 }
-
-
