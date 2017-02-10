@@ -21,6 +21,4 @@ void free_usropt2tlpopt_ctx(struct usropt2tlpopt_ctx *p);
 
 struct usropt2tlpopt_ctx *usropt2tlpopt(const char *data);
 
-tulip_prefs_map_t get_prefs_mask(const char *option, const char *data);
-
 #endif

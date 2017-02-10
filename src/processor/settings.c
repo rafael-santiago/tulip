@@ -184,23 +184,7 @@ static void *get_indentation_deepness(size_t *dsize) {
 }
 
 static void set_tulip_bitmap(const void *data, const size_t dsize) {
-    tulip_prefs_map_t temp = 0;
-
-    if (data == NULL) {
-        return;
-    }
-
-    temp = *(tulip_prefs_map_t *)data;
-
-    while ((temp & 0xf) != 0xf && temp > 0)  {
-        temp = temp >> 4;
-    }
-
-    if ((temp & 0xf)) {
-        g_processor_settings.prefs &= *(tulip_prefs_map_t *)data;
-    } else {
-        g_processor_settings.prefs |= *(tulip_prefs_map_t *)data;
-    }
+    g_processor_settings.prefs = *(tulip_prefs_map_t *)data;
 }
 
 static void *get_tulip_bitmap(size_t *dsize) {

@@ -51,9 +51,23 @@ void ld_repo_prefs() {
             if (strcmp(setting->option, "prefs") != 0) {
                 set_processor_setting(setting->option, setting->data, setting->dsize);
             } else {
-                prefs = get_prefs_mask(setting->option, setting->data);
+                //printf("%s (%s %.8X)\n", line, setting->option, *(tulip_prefs_map_t *)setting->data);
+                data = get_processor_setting("prefs", &dsize);
+                lp = strstr(line, "=");
+                if (lp != NULL) {
+                    lp++;
+                }
+                if (strcmp(lp, "no")    == 0 ||
+                    strcmp(lp, "0")     == 0 ||
+                    strcmp(lp, "false") == 0) {
+                    prefs = (*(tulip_prefs_map_t *)data) & (*(tulip_prefs_map_t *)setting->data);
+                } else {
+                    prefs = (*(tulip_prefs_map_t *)data) | (*(tulip_prefs_map_t *)setting->data);
+                }
                 data = &prefs;
                 dsize = sizeof(prefs);
+                set_processor_setting("prefs", data, dsize);
+                lp = &line[0];
             }
             free_usropt2tlpopt_ctx(setting);
         } else {

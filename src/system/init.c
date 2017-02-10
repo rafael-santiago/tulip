@@ -32,7 +32,6 @@ void tulip_system_init(int argc, char **argv) {
     char usroption[255] = "";
     struct usropt2tlpopt_ctx *setting = NULL;
     tulip_prefs_map_t prefs = 0;
-    int deactivate = 0;
     void *data = NULL;
     size_t dsize = 0;
 
@@ -48,17 +47,23 @@ void tulip_system_init(int argc, char **argv) {
             if (setting == NULL) {
                 continue;
             }
-            if (strcmp(setting->option, "fretboard-size")       == 0  ||
-                strcmp(setting->option, "fretboard-style")      == 0  ||
-                strcmp(setting->option, "indentation-deepness") == 0) {
+            if (strcmp(setting->option, "prefs") != 0) {
                 set_processor_setting(setting->option, setting->data, setting->dsize);
             } else {
-                prefs = get_prefs_mask(setting->option, setting->data);
+                data = get_processor_setting("prefs", &dsize);
+
+                if (strcmp(value, "no")    == 0  ||
+                    strcmp(value,  "0")    == 0  ||
+                    strcmp(value, "false") == 0) {
+                    prefs = *(tulip_prefs_map_t *)data & *(tulip_prefs_map_t *)setting->data;
+                } else {
+                    prefs = *(tulip_prefs_map_t *)data | *(tulip_prefs_map_t *)setting->data;
+                }
 
                 data = &prefs;
                 dsize = sizeof(prefs);
 
-                set_processor_setting(setting->option, data, dsize);
+                set_processor_setting("prefs", data, dsize);
             }
             free_usropt2tlpopt_ctx(setting);
         }

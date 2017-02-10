@@ -148,10 +148,11 @@ static struct usropt2tlpopt_ctx *get_tulip_prefs_map_t(const char *option, const
     char *bitmap_options[] = {
         "cut-tab-on-the-last-note",
         "close-tab-to-save",
-        "add-tunning-to-the-fretboard",
+        "show-tunning",
         NULL,
         NULL,
-        "include-tab-notation"
+        "include-tab-notation",
+        "add-tunning-to-the-fretboard"
     };
     const size_t bitmap_options_nr = sizeof(bitmap_options) / sizeof(bitmap_options[0]);
     size_t b;
@@ -251,34 +252,4 @@ struct usropt2tlpopt_ctx *usropt2tlpopt(const char *data) {
     memset(option, 0, sizeof(option));
     memcpy(option, data, dp - data);
     return get_tlpopt(option, dp + (*dp == '='));
-}
-
-tulip_prefs_map_t get_prefs_mask(const char *option, const char *data) {
-    int deactivate = 0;
-    tulip_prefs_map_t prefs = 0, cpref = 0;
-    size_t dsize = 0;
-
-    deactivate = (strcmp(data,  "yes") == 0 ||
-                  strcmp(data,    "1") == 0 ||
-                  strcmp(data, "true") == 0);
-    prefs = *(tulip_prefs_map_t *)get_processor_setting("prefs", &dsize);
-    if (strcmp(option, "close-tab-to-save") == 0) {
-        cpref = (deactivate) ? ~(kTlpPrefsCloseTabToSave) : kTlpPrefsCloseTabToSave;
-    } else if (strcmp(option, "include-tab-notation") == 0) {
-        cpref = (deactivate) ? ~(kTlpPrefsIncludeTabNotation) : kTlpPrefsIncludeTabNotation;
-    } else if (strcmp(option, "cut-tab-on-the-last-note") == 0) {
-        cpref = (deactivate) ? ~(kTlpPrefsCutTabOnTheLastNote) : kTlpPrefsCutTabOnTheLastNote;
-    } else if (strcmp(option, "add-tunning-to-the-fretboard") == 0) {
-        cpref = (deactivate) ? ~(kTlpPrefsAddTunningToTheFretboard) : kTlpPrefsAddTunningToTheFretboard;
-    } else if (strcmp(option, "show-tunning") == 0) {
-        cpref = (deactivate) ? ~(kTlpPrefsShowTunning) : kTlpPrefsShowTunning;
-    }
-
-    if (deactivate) {
-        prefs &= cpref;
-    } else {
-        prefs |= prefs;
-    }
-
-    return prefs;
 }
