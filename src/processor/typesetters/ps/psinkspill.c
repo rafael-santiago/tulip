@@ -10,6 +10,7 @@
 #include <processor/typesetters/typeprefs.h>
 #include <processor/oututils.h>
 #include <processor/settings.h>
+#include <system/version.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -83,8 +84,9 @@ static FILE *pstypesetter_newps(const char *filepath) {
         return NULL;
     }
     fprintf(fp, "%%!PS-Adobe-3.0\n"
+                "%%Generated with tulip-%s\n"
                 "/Times-Bold 11 selectfont\n"
-                "%.1f setlinewidth\n", PSTYPESETTER_TABLINE_W);
+                "%.1f setlinewidth\n", get_tulip_system_version(), PSTYPESETTER_TABLINE_W);
     return fp;
 }
 
