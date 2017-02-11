@@ -200,7 +200,9 @@ static void pstypesetter_pinch_hammer_on_pull_off(FILE *fp, const int x, const i
 }
 
 static void pstypesetter_pinch_vibrato(FILE *fp, const int x, const int y) {
-    fprintf(fp, "%d %d moveto (\\~) show\n", x, y);
+    fprintf(fp, "/Times-Bold 20 selectfont\n"
+                "%d %d moveto (\\~) show\n"
+                "/Times-Bold 11 selectfont\n", x, y);
 }
 
 static void pstypesetter_pinch_bend(FILE *fp, const int x, const int y, const int pointed) {
@@ -295,7 +297,8 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                     break;
 
                 case '~':
-                    pstypesetter_pinch_vibrato(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5);
+                    pstypesetter_pinch_vibrato(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 3);
+                    x += PSTYPESETTER_CARRIAGE_STEP;
                     break;
 
                 case 'b':
@@ -415,6 +418,13 @@ static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
                                                                      get_technique_notation_label(kTlpPullOff));
                         g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
                     }
+                    continue;
+
+                case kTlpVibrato:
+                    pstypesetter_pinch_vibrato(fp, PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy);
+                    fprintf(fp, "%d %d moveto (=   %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy,
+                                                      get_technique_notation_label(kTlpVibrato));
+                    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
                     continue;
 
                 case kTlpBend:
