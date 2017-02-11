@@ -9,6 +9,7 @@
 #include <processor/typesetters/txt/txt.h>
 #include <processor/typesetters/ps/ps.h>
 #include <processor/typesetters/pdf/pdf.h>
+#include <processor/typesetters/md/md.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -30,6 +31,7 @@ static struct tlp_processor_ctx g_processors[] = {
     register_new_tlp_processor(".txt", txt_typesetter),
     register_new_tlp_processor(".ps", ps_typesetter),
     register_new_tlp_processor(".pdf", pdf_typesetter),
+    register_new_tlp_processor(".md", md_typesetter),
     register_new_tlp_processor(NULL, blackhole_processor)
 };
 
