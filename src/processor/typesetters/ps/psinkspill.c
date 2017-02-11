@@ -149,7 +149,7 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
 
     fprintf(fp, "/Times-Bold 11 selectfont\n");
 
-    if (cset.prefs & kTlpPrefsShowTunning) {
+    if (cset.prefs & kTlpPrefsAddTunningToTheFretboard) {
         pstypesetter_spill_tunning(fp, tab);
     } else if (cset.prefs & kTlpPrefsFretboardStyleNormal) {
         pstypesetter_vertbar(fp, g_ps_ctab.cxl, g_ps_ctab.cy, tab->string_nr);

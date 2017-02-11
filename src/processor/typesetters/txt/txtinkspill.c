@@ -69,7 +69,7 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
             fprintf(fp, " ");
         }
 
-        if (cset.prefs & kTlpPrefsShowTunning) {
+        if (cset.prefs & kTlpPrefsAddTunningToTheFretboard) {
             fprintf(fp, "%s", tab->tunning[s]);
             if (half_step_notes && strlen(tab->tunning[s]) == 1) {
                 fprintf(fp, " ");

@@ -117,7 +117,7 @@ int tunning_has_half_step_notes(const txttypesetter_tablature_ctx *tab, const ch
     size_t i = 0;
     char tunning[6][4];
 
-    if (prefs & kTlpPrefsShowTunning) {
+    if (prefs & kTlpPrefsAddTunningToTheFretboard) {
         if (tab != NULL) {
             memcpy(tunning, tab->tunning, sizeof(tunning));
         } else {
