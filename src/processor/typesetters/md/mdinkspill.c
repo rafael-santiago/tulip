@@ -21,6 +21,8 @@ static void mdtypesetter_spill_transcribers_name(FILE *fp, const char *name);
 
 static void mdtypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song);
 
+static void mdtypesetter_spill_tunning(FILE *fp);
+
 static void mdtypesetter_spill_song(FILE *fp, const tulip_single_note_ctx *song);
 
 static void mdtypesetter_spill_song_title(FILE *fp, const char *title) {
@@ -43,8 +45,7 @@ static void mdtypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
     tulip_command_t used_techniques[31];
     size_t used_techniques_nr = 0, u = 0;
     int has_muffled = 0, has_anyfret = 0;
-    int d = 0, s = 0;
-    char **tunning = NULL;
+    int s = 0;
 
     if ((cset.prefs & kTlpPrefsIncludeTabNotation) == 0 || song == NULL) {
         return;
@@ -72,7 +73,15 @@ static void mdtypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
         fprintf(fp, "\n");
     }
 
-    if (cset.prefs & kTlpPrefsShowTunning) {
+}
+
+static void mdtypesetter_spill_tunning(FILE *fp) {
+    char **tunning = NULL;
+    size_t d = 0;
+    int s = 0;
+    struct typesetter_curr_settings cset = typesetter_settings();
+
+    if ((cset.prefs & kTlpPrefsShowTunning) && !(cset.prefs & kTlpPrefsAddTunningToTheFretboard)) {
         tunning = get_processor_setting("tunning", &d);
 
         fprintf(fp, "**Tunning [%d-1]**: ", d);
@@ -101,6 +110,8 @@ static void mdtypesetter_spill_song(FILE *fp, const tulip_single_note_ctx *song)
     char *data = NULL;
     long dsize = 0;
     tulip_single_note_ctx *sp, *song_tag = NULL, *transcriber_tag = NULL;
+    struct typesetter_curr_settings cset = typesetter_settings();
+    tulip_prefs_map_t oldprefs = cset.prefs;
 
     if (tempfile == NULL) {
         return;
@@ -115,6 +126,8 @@ static void mdtypesetter_spill_song(FILE *fp, const tulip_single_note_ctx *song)
         }
     }
 
+    // INFO(Rafael): Nasty tricks for not doing these things twice with txttypesetting and mdtypesetting.
+
     if (song_tag != NULL) {
         song_tag->techniques = kTlpNone;
     }
@@ -123,9 +136,14 @@ static void mdtypesetter_spill_song(FILE *fp, const tulip_single_note_ctx *song)
         transcriber_tag->techniques = kTlpNone;
     }
 
+    cset.prefs = cset.prefs & ~(kTlpPrefsShowTunning | kTlpPrefsIncludeTabNotation);
+    set_processor_setting("prefs", &cset.prefs, sizeof(cset.prefs));
+
     if (txt_typesetter(song, tempfile) != 0) {
         goto ___mdtypesetter_spill_song_epilogue;
     }
+
+    set_processor_setting("prefs", &oldprefs, sizeof(oldprefs));
 
     if (song_tag != NULL) {
         song_tag->techniques = kTlpSong;
@@ -190,6 +208,8 @@ int mdtypesetter_inkspill(const char *filepath, const tulip_single_note_ctx *son
     free_txttypesetter_tablature_ctx(txttab);
 
     mdtypesetter_spill_tab_notation(fp, song);
+
+    mdtypesetter_spill_tunning(fp);
 
     mdtypesetter_spill_song(fp, song);
 

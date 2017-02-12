@@ -13,16 +13,13 @@ static struct typesetter_curr_settings g_typesetter_settings = { 0 };
 struct typesetter_curr_settings  typesetter_settings() {
     void *data = NULL;
 
-    if (g_typesetter_settings.prefs == 0) {
+    data = get_processor_setting("indentation-deepness", NULL);
 
-        data = get_processor_setting("indentation-deepness", NULL);
+    g_typesetter_settings.indentation_deepness = (data == NULL) ? 0 : *(size_t *)data;
 
-        g_typesetter_settings.indentation_deepness = ( data == NULL) ? 0 : *(size_t *)data;
-
-        data = get_processor_setting("prefs", NULL);
-        if (data != NULL) {
-            g_typesetter_settings.prefs = *(tulip_prefs_map_t *)data;
-        }
+    data = get_processor_setting("prefs", NULL);
+    if (data != NULL) {
+        g_typesetter_settings.prefs = *(tulip_prefs_map_t *)data;
     }
 
     return g_typesetter_settings;

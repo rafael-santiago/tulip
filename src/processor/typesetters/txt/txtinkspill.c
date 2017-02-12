@@ -26,6 +26,8 @@ static void txttypesetter_spill_song_title(FILE *fp, const char *song);
 
 static void txttypesetter_spill_transcribers_name(FILE *fp, const char *transcriber);
 
+static void txttypesetter_spill_tunning(FILE *fp);
+
 static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song);
 
 static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab) {
@@ -186,11 +188,39 @@ static void txttypesetter_spill_transcribers_name(FILE *fp, const char *transcri
     fprintf(fp, "Transcribed by: %s\n\n", transcriber);
 }
 
+static void txttypesetter_spill_tunning(FILE *fp) {
+    char **tunning = NULL;
+    size_t d = 0;
+    int s = 0;
+    struct typesetter_curr_settings cset = typesetter_settings();
+
+    if ((cset.prefs & kTlpPrefsShowTunning) && !(cset.prefs & kTlpPrefsAddTunningToTheFretboard)) {
+        tunning = get_processor_setting("tunning", &d);
+
+        fprintf(fp, "Tunning [%d-1]: ", d);
+
+        for (s = d - 1; s >= 0; s--) {
+            fprintf(fp, "%c", tunning[s][0]);
+
+            if (tunning[s][1] != 0 && tunning[s][1] != ' ') {
+                fprintf(fp, "%c", tunning[s][1]);
+            }
+
+            if (s != 0) {
+                fprintf(fp, ", ");
+            } else {
+                fprintf(fp, "\n");
+            }
+        }
+
+        fprintf(fp, "\n");
+    }
+}
+
 static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song) {
     tulip_command_t used_techniques[31];
-    size_t used_techniques_nr = 0, u = 0, d = 0;
+    size_t used_techniques_nr = 0, u = 0;
     int s = 0;
-    char **tunning = NULL;
     int has_muffled = 0;
     int has_anyfret = 0;
     struct typesetter_curr_settings cset = typesetter_settings();
@@ -222,28 +252,6 @@ static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_c
         fprintf(fp, "\n");
     }
 
-    if (cset.prefs & kTlpPrefsShowTunning) {
-        tunning = get_processor_setting("tunning", &d);
-
-        fprintf(fp, "Tunning [%d-1]: ", d);
-
-        for (s = d - 1; s >= 0; s--) {
-            fprintf(fp, "%c", tunning[s][0]);
-
-            if (tunning[s][1] != 0 && tunning[s][1] != ' ') {
-                fprintf(fp, "%c", tunning[s][1]);
-            }
-
-            if (s != 0) {
-                fprintf(fp, ", ");
-            } else {
-                fprintf(fp, "\n");
-            }
-        }
-
-        fprintf(fp, "\n");
-    }
-
 }
 
 int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab, const tulip_single_note_ctx *song) {
@@ -267,6 +275,8 @@ int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
     }
 
     txttypesetter_spill_tab_notation(fp, song);
+
+    txttypesetter_spill_tunning(fp);
 
     for (tp = tab; tp != NULL; tp = tp->next) {
         txttypesetter_spill_comments(fp, tp->comments);
