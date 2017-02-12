@@ -21,7 +21,7 @@
 
 #define PSTYPESETTER_ADDINFOY               850
 #define PSTYPESETTER_NEXT_ADDINFO           -16
-#define PSTYPESETTER_ADDINFO_LINEBREAK       -8
+#define PSTYPESETTER_ADDINFO_LINEBREAK      -10
 
 
 #endif

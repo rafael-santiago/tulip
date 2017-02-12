@@ -511,6 +511,9 @@ static void pstypesetter_spill_tunning(FILE *fp) {
 
 static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ctx *comments) {
     const txttypesetter_comment_ctx *cp = NULL;
+    char *dp = NULL, *dp_end = NULL;
+    char comment[65535] = "";
+    size_t c = 0;
 
     if (comments == NULL) {
         return;
@@ -519,8 +522,20 @@ static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ct
     fprintf(fp, "/Times-Italic 11 selectfont\n");
 
     for (cp = comments; cp != NULL; cp = cp->next) {
-        fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.cy, cp->data);
-        g_ps_ctab.cy += PSTYPESETTER_ADDINFO_LINEBREAK;
+        dp = cp->data;
+        dp_end = dp + strlen(dp);
+        while (dp < dp_end) {
+            c = 0;
+            while (dp != dp_end && *dp != '\n') {
+                comment[c] = *dp;
+                c = (c + 1) % sizeof(comment);
+                dp++;
+            }
+            comment[c] = 0;
+            fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.cy, comment);
+            g_ps_ctab.cy += PSTYPESETTER_ADDINFO_LINEBREAK;
+            dp++;
+        }
     }
 
     fprintf(fp, "/Times-Bold 11 selectfont\n");
