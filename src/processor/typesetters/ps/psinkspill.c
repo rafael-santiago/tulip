@@ -48,7 +48,7 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
 
 static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
-static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ctx *comments);
+static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
 static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song);
 
@@ -87,8 +87,7 @@ static FILE *pstypesetter_newps(const char *filepath) {
     }
     fprintf(fp, "%%!PS-Adobe-3.0\n"
                 "%%Generated with tulip-%s\n"
-                "/Times-Bold 11 selectfont\n"
-                "%.1f setlinewidth\n", get_tulip_system_version(), PSTYPESETTER_TABLINE_W);
+                "/Times-Bold 11 selectfont\n", get_tulip_system_version());
     return fp;
 }
 
@@ -126,6 +125,10 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
     int sy = 0;
     struct typesetter_curr_settings cset = typesetter_settings();
 
+    if (is_tab_empty(tab)) {
+        return;
+    }
+
     for (s = 0; s < tab->string_nr; s++) {
         if (pstypesetter_string_y(s, g_ps_ctab.cy) < PSTYPESETTER_PAGEY_LIMIT) {
             pstypesetter_pageinit();
@@ -134,6 +137,9 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
             break;
         }
     }
+
+
+    fprintf(fp, "%.1f setlinewidth\n", PSTYPESETTER_TABLINE_W);
 
     g_ps_ctab.cx = PSTYPESETTER_CARRIAGEX;
 
@@ -182,7 +188,7 @@ static void pstypesetter_proc_tabchunk(FILE *fp, const txttypesetter_tablature_c
         pstypesetter_newpage(fp);
     }
 
-    pstypesetter_spill_comments(fp, tab->comments);
+    pstypesetter_spill_comments(fp, tab);
     pstypesetter_spill_sustained_techniques(fp, tab);
     pstypesetter_spill_times(fp, tab);
 
@@ -279,6 +285,10 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
     struct typesetter_curr_settings cset = typesetter_settings();
     size_t s_limit = tab->fretboard_sz;
 
+    if (is_tab_empty(tab)) {
+        return;
+    }
+
     if (cset.prefs & kTlpPrefsCutTabOnTheLastNote) {
         s_limit = get_fretboard_usage_limit(tab);
     }
@@ -334,9 +344,9 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                         }
                     }
 
-                    fprintf(fp, "%d %d moveto (%c) show\n", x,
-                        pstypesetter_pinch_y(s, g_ps_ctab.cy),
-                                           tab->strings[s][o]);
+                    fprintf(fp, "%d %d moveto (%s%c) show\n", x, pstypesetter_pinch_y(s, g_ps_ctab.cy),
+                                                            (tab->strings[s][o] == '\\') ? "\\" : "",
+                                                                tab->strings[s][o]);
 
                     if (tab->strings[s][o] == '/' || tab->strings[s][o] == '\\') {
                         x -= 1;
@@ -509,19 +519,23 @@ static void pstypesetter_spill_tunning(FILE *fp) {
     g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
 }
 
-static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_comment_ctx *comments) {
+static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     const txttypesetter_comment_ctx *cp = NULL;
     char *dp = NULL, *dp_end = NULL;
     char comment[65535] = "";
     size_t c = 0;
 
-    if (comments == NULL) {
+    if (tab == NULL || tab->comments == NULL) {
         return;
     }
 
     fprintf(fp, "/Times-Italic 11 selectfont\n");
 
-    for (cp = comments; cp != NULL; cp = cp->next) {
+    if (tab->last != NULL) {
+        g_ps_ctab.cy += (2 * PSTYPESETTER_NEXT_ADDINFO);
+    }
+
+    for (cp = tab->comments; cp != NULL; cp = cp->next) {
         dp = cp->data;
         dp_end = dp + strlen(dp);
         while (dp < dp_end) {
@@ -579,6 +593,15 @@ static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx
         }
 
         for (s = 0; s < tab->string_nr; s++) {
+            switch (tab->strings[s][tp_end - tp]) {
+                case 'h':
+                case 'p':
+                    x += PSTYPESETTER_CARRIAGE_STEP + 10;
+                    continue;
+            }
+        }
+
+        for (s = 0; s < tab->string_nr; s++) {
             if (tab->strings[s][tp_end - tp] == '|') {
                 x -= PSTYPESETTER_CARRIAGE_STEP;
                 break;
@@ -600,6 +623,7 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
     int x = PSTYPESETTER_CARRIAGEX, y = g_ps_ctab.cy;
     char *dp = NULL, *dp_end = NULL;
     size_t s = 0;
+    int alpha_has_printed = 0;
 
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
         if (has_half_step_notes) {
@@ -609,13 +633,19 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
         dp = &tp->data[0];
         dp_end = dp + strlen(dp) - 2;
 
+        alpha_has_printed = 0;
         while (dp != dp_end) {
             fprintf(fp, "%d %d moveto ", x, g_ps_ctab.cy);
 
-            if ((*dp != '.' && *dp != ' ') || dp == &tp->data[0] || isalpha(*(dp-1))) {
+            if ((*dp != '.' && *dp != ' ') || dp == &tp->data[0]) {
                 fprintf(fp, "(%c) show\n", *dp);
+                if (!alpha_has_printed) {
+                    alpha_has_printed = isalpha(*(dp));
+                }
             } else {
-                fprintf(fp, "(-) show\n");
+                if (alpha_has_printed) {
+                    fprintf(fp, "(-) show\n");
+                }
             }
 
 
@@ -625,7 +655,9 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
                     break;
                 }
             }
-
+            if (isalpha(*dp) && *(dp + 1) == '.') {
+                x += 5;
+            }
             x += PSTYPESETTER_CARRIAGE_STEP;
             dp++;
         }
