@@ -17,6 +17,8 @@
 
 static int g_ps_cpage = 0;
 
+static int g_ps_ctab_sustained_techniques_y = 0;
+
 struct pstypesetter_tab_diagram_ctx {
     int cxl, cxr;
     int cy, cx;
@@ -249,11 +251,15 @@ static void pstypesetter_pinch_release_bend(FILE *fp, const int x, const int y, 
 
 static void pstypesetter_close_tab(FILE *fp, const int x, const int sn) {
     int s = 0, sy = 0;
+    int yt = 0, yb = 0;
 
     /* WARN(Rafael): !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                      -------- HANNA-BARBERA's DASTARDLY DICK WAS HERE --------
                      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! >:) Hahaha!!
     */
+
+    yt = g_ps_ctab_sustained_techniques_y + 10;
+    yb = pstypesetter_string_y(sn - 1, g_ps_ctab.cy) - 10;
 
     fprintf(fp, "1 1 1 setrgbcolor\n"
                 "newpath\n"
@@ -268,12 +274,12 @@ static void pstypesetter_close_tab(FILE *fp, const int x, const int sn) {
                 "%d %d lineto\n"
                 "closepath\n"
                 "fill\n"
-                "0 0 0 setrgbcolor\n", x, pstypesetter_string_y(0, g_ps_ctab.cy) + 10,
-                                       x, pstypesetter_string_y(sn - 1, g_ps_ctab.cy) - 10,
-                                       g_ps_ctab.cxr, pstypesetter_string_y(0, g_ps_ctab.cy) + 10,
-                                       g_ps_ctab.cxr, pstypesetter_string_y(sn - 1, g_ps_ctab.cy) - 10,
-                                       g_ps_ctab.cxr, pstypesetter_string_y(0, g_ps_ctab.cy) + 10,
-                                       x, pstypesetter_string_y(sn - 1, g_ps_ctab.cy) - 10);
+                "0 0 0 setrgbcolor\n", x, yt,
+                                       x, yb,
+                                       g_ps_ctab.cxr, yt,
+                                       g_ps_ctab.cxr, yb,
+                                       g_ps_ctab.cxr, yt,
+                                       x, yb);
 
     pstypesetter_vertbar(fp, x, g_ps_ctab.cy, sn);
 }
@@ -638,10 +644,16 @@ static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx
 static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     const txttypesetter_sustained_technique_ctx *tp = NULL;
     int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, typesetter_settings().prefs);
-    int x = PSTYPESETTER_CARRIAGEX, y = g_ps_ctab.cy;
+    int x = PSTYPESETTER_CARRIAGEX;
     char *dp = NULL, *dp_end = NULL;
     size_t s = 0;
     int alpha_has_printed = 0;
+
+    g_ps_ctab_sustained_techniques_y = g_ps_ctab.cy;
+
+    if (is_tab_empty(tab)) {
+        return;
+    }
 
     if (tab->comments == NULL) {
         g_ps_ctab.cy += (2 * PSTYPESETTER_NEXT_ADDINFO);
@@ -650,6 +662,7 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
             pstypesetter_showpage(fp);
             pstypesetter_newpage(fp);
         }
+        g_ps_ctab_sustained_techniques_y = g_ps_ctab.cy;
     }
 
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {

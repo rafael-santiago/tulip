@@ -62,7 +62,7 @@ txttypesetter_comment_ctx *add_comment_to_txttypesetter_comment_ctx(txttypesette
 
     memset(p->data, 0, fretboard_sz + 1);
 
-    memcpy(p->data, comment, cp_end - cp - 1 - (comment[cp_end - cp - 2] == ' ' ? 1 : 0));
+    memcpy(p->data, comment, cp_end - cp - ( (strlen(comment) > fretboard_sz) ? 2 : 0 ));
 
     if ((cp_end - cp) < strlen(comment)) {
         if (comments == NULL) {
