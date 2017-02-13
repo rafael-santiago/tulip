@@ -358,6 +358,14 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
 
         x += PSTYPESETTER_CARRIAGE_STEP;
 
+
+        if (tab->techniques != NULL) {
+            if (o > 0 && tab->techniques->data != NULL &&
+                tab->techniques->data[o] != '.' && tab->techniques->data[o-1] == '.') {
+                x += PSTYPESETTER_CARRIAGE_STEP;
+            }
+        }
+
         if (x >= g_ps_ctab.cxr) {
             if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
                 (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
@@ -635,13 +643,22 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
     size_t s = 0;
     int alpha_has_printed = 0;
 
+    if (tab->comments == NULL) {
+        g_ps_ctab.cy += (2 * PSTYPESETTER_NEXT_ADDINFO);
+        if (g_ps_ctab.cy < (PSTYPESETTER_PAGEY_LIMIT + 20)) {
+            pstypesetter_pageinit();
+            pstypesetter_showpage(fp);
+            pstypesetter_newpage(fp);
+        }
+    }
+
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
         if (has_half_step_notes) {
             x += PSTYPESETTER_CARRIAGE_STEP;
         }
 
         dp = &tp->data[0];
-        dp_end = dp + strlen(dp) - 2;
+        dp_end = dp + strlen(dp) - 1;
 
         alpha_has_printed = 0;
         while (dp != dp_end) {
@@ -658,13 +675,32 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
                 }
             }
 
-
             for (s = 0; s < tab->string_nr; s++) {
-                if (tab->strings[s][dp_end - dp] == '|') {
-                    x -= PSTYPESETTER_CARRIAGE_STEP;
-                    break;
+                switch (tab->strings[s][dp_end - dp]) {
+                    case '|':
+                        if (!alpha_has_printed) {
+                            x -= PSTYPESETTER_CARRIAGE_STEP;
+                            s = tab->string_nr + 1;
+                        }
+                        break;
+
+                    case 'h':
+                    case 'p':
+                        if (!alpha_has_printed) {
+                            x += PSTYPESETTER_CARRIAGE_STEP + 10;
+                            s = tab->string_nr + 1;
+                        }
+                        break;
+
+                    case '~':
+                        if (!alpha_has_printed) {
+                            x += PSTYPESETTER_CARRIAGE_STEP;
+                            s = tab->string_nr + 1;
+                        }
+                        break;
                 }
             }
+
             if (isalpha(*dp) && *(dp + 1) == '.') {
                 x += 5;
             }
@@ -694,6 +730,7 @@ int pstypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ct
     pstypesetter_init();
 
     pstypesetter_pageinit();
+    pstypesetter_newpage(fp);
 
     pstypesetter_spill_song_title(fp, tab->song);
     pstypesetter_spill_transcribers_name(fp, tab->transcriber);
