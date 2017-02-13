@@ -33,22 +33,21 @@ static txttypesetter_sustained_technique_ctx *get_txttypesetter_sustained_techni
 
 txttypesetter_comment_ctx *add_comment_to_txttypesetter_comment_ctx(txttypesetter_comment_ctx *comments, const char *comment, const size_t fretboard_sz) {
     txttypesetter_comment_ctx *head = comments, *p = NULL;
-    const char *cp = NULL, *cp_end = NULL;
+    const char *cp = NULL, *cp_end = NULL, *curr_comment = NULL;;
 
     if (comment == NULL) {
         return comments;
     }
 
-    cp = comment;
     cp_end = comment + strlen(comment);
+    cp = comment;
 
-    while (cp != cp_end) {
-        if (*cp == ' ' && strlen(cp + 1) > ( (cp + 1 - comment) - fretboard_sz )) {
-            break;
+    while (cp != cp_end && strlen(cp) > fretboard_sz) {
+        while (cp != cp_end && *cp != ' ') {
+            cp++;
         }
         cp++;
     }
-    cp = cp_end;
 
     if (head == NULL) {
         new_txttypesetter_comment_ctx(head);
@@ -63,13 +62,13 @@ txttypesetter_comment_ctx *add_comment_to_txttypesetter_comment_ctx(txttypesette
 
     memset(p->data, 0, fretboard_sz + 1);
 
-    strncpy(p->data, comment, cp - comment);
+    memcpy(p->data, comment, cp_end - cp);
 
-    if (cp != cp_end) {
+    if ((cp_end - cp) < strlen(comment)) {
         if (comments == NULL) {
             comments = head;
         }
-        head = add_comment_to_txttypesetter_comment_ctx(comments, cp + 1, fretboard_sz);
+        head = add_comment_to_txttypesetter_comment_ctx(comments, &comment[cp_end - cp + 1], fretboard_sz);
     }
 
     return head;

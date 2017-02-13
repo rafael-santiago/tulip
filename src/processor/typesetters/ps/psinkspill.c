@@ -529,11 +529,17 @@ static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_tablature_
         return;
     }
 
-    fprintf(fp, "/Times-Italic 11 selectfont\n");
-
     if (tab->last != NULL) {
         g_ps_ctab.cy += (2 * PSTYPESETTER_NEXT_ADDINFO);
     }
+
+    if (g_ps_ctab.cy < (PSTYPESETTER_PAGEY_LIMIT + 20)) {
+        pstypesetter_pageinit();
+        pstypesetter_showpage(fp);
+        pstypesetter_newpage(fp);
+    }
+
+    fprintf(fp, "/Times-Italic 11 selectfont\n");
 
     for (cp = tab->comments; cp != NULL; cp = cp->next) {
         dp = cp->data;
@@ -597,6 +603,10 @@ static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx
                 case 'h':
                 case 'p':
                     x += PSTYPESETTER_CARRIAGE_STEP + 10;
+                    continue;
+
+                case '~':
+                    x += PSTYPESETTER_CARRIAGE_STEP;
                     continue;
             }
         }

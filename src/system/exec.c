@@ -99,6 +99,7 @@ int tulip_task_exec() {
 
     if (tlp != NULL) {
         exit_code = tulip_task_compile(tlp, &song);
+
         if (exit_code == 0 && (out = get_option("out", NULL)) != NULL) {
             exit_code = tulip_task_typeset(out, song);
         }

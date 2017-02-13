@@ -44,14 +44,15 @@ char *expand_string(const char *buf) {
     const char *bp = NULL;
     const char *bp_end = NULL;
     char *string = NULL;
-    char *sp = NULL;
+    char *sp = NULL, *sp_end = NULL;
     if (buf == NULL) {
         return 0;
     }
     bp_end = buf + strlen(buf) - 1;
     string = (char *) getseg(strlen(buf) + 1);
     sp = string;
-    for (bp = buf + 1; bp != bp_end; bp++, sp++) {
+    sp_end = sp + strlen(buf);
+    for (bp = buf + 1; bp < bp_end && sp < sp_end; bp++, sp++) {
         if (*bp == '\\') {
             bp++;
             switch (*bp) {
