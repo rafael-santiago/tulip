@@ -33,7 +33,7 @@ static void txttypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_c
 static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     size_t s = 0;
     size_t i = 0;
-    ssize_t s_limit = -1, real_s_limit = -1;
+    ssize_t s_limit = -1;
     txttypesetter_sustained_technique_ctx *tp = NULL;
     struct typesetter_curr_settings cset;
     int half_step_notes = 0;
@@ -45,22 +45,7 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
     cset = typesetter_settings();
 
     if (cset.prefs & kTlpPrefsCutTabOnTheLastNote) {
-        for (s = 0; s < tab->string_nr; s++) {
-
-            for (i = strlen(tab->strings[s]) - 1; i > 0 && is_sep(tab->strings[s][i]); i--);
-
-            i++;
-
-            if (!is_sep(tab->strings[s][i - 1]) && !is_sep_bar(tab->strings[s][i - 1])) {
-                i++;
-            } else if (is_sep_bar(tab->strings[s][i - 1])) {
-                i--;
-            }
-
-            if ((ssize_t)i > s_limit) {
-                s_limit = (ssize_t)i;
-            }
-        }
+        s_limit = get_fretboard_usage_limit(tab);
     }
 
     half_step_notes = tunning_has_half_step_notes(tab, NULL, cset.prefs);
@@ -83,7 +68,7 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
         if (s_limit == -1) {
             fprintf(fp, "%s", tab->strings[s]);
         } else {
-            real_s_limit = s_limit;
+            /*real_s_limit = s_limit;
             for (tp = tab->techniques; tp != NULL; tp = tp->next) {
                 if (tp->data == NULL) {
                     continue;
@@ -91,8 +76,8 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
                 while (is_sustain(tp->data[real_s_limit])) {
                     real_s_limit++;
                 }
-            }
-            fwrite(tab->strings[s], 1, real_s_limit, fp);
+            }*/
+            fwrite(tab->strings[s], 1, s_limit, fp);
         }
 
         if ((cset.prefs  & kTlpPrefsFretboardStyleNormal    ) ||
@@ -112,6 +97,15 @@ static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesett
     size_t i = 0;
     struct typesetter_curr_settings cset = typesetter_settings();
     int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, cset.prefs);
+    ssize_t usage_limit = -1;
+
+    if (is_tab_empty(tab)) {
+        return;
+    }
+
+    if (cset.prefs & kTlpPrefsCutTabOnTheLastNote) {
+        usage_limit = get_fretboard_usage_limit(tab);
+    }
 
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
         for (i = 0; i < cset.indentation_deepness; i++) {
@@ -125,6 +119,9 @@ static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesett
             if (tab->strings[0][i] == '|' && tp->data[i] == '.') {
                 tp->data[i] = (tp->data[i+1] == '.') ? ' ' : 0;
             }
+        }
+        if (usage_limit > -1) {
+            tp->data[usage_limit] = 0;
         }
         fprintf(fp, "%s\n", tp->data);
     }
@@ -281,7 +278,9 @@ int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
     for (tp = tab; tp != NULL; tp = tp->next) {
         txttypesetter_spill_comments(fp, tp->comments);
         txttypesetter_spill_sustained_techniques(fp, tp);
-        txttypesetter_spill_times(fp, tp->times, tp->tunning);
+        if (!is_tab_empty(tp)) {
+            txttypesetter_spill_times(fp, tp->times, tp->tunning);
+        }
         txttypesetter_spill_fretboard_pinches(fp, tp);
     }
 
