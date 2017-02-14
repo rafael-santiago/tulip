@@ -274,12 +274,21 @@ static void pstypesetter_close_tab(FILE *fp, const int x, const int sn) {
                 "%d %d lineto\n"
                 "closepath\n"
                 "fill\n"
+                "newpath\n"
+                "%d.5 %d.5 moveto\n"
+                "%d.5 %d.5 lineto\n"
+                "%d.5 %d.5 lineto\n"
+                "closepath\n"
+                "fill\n"
                 "0 0 0 setrgbcolor\n", x, yt,
                                        x, yb,
                                        g_ps_ctab.cxr, yt,
                                        g_ps_ctab.cxr, yb,
                                        g_ps_ctab.cxr, yt,
-                                       x, yb);
+                                       x, yb,
+                                       x - 2, yt,
+                                       x - 2, pstypesetter_string_y(0, g_ps_ctab.cy) + 10,
+                                       g_ps_ctab.cxr, yt);
 
     pstypesetter_vertbar(fp, x, g_ps_ctab.cy, sn);
 }
