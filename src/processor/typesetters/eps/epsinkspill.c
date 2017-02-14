@@ -98,7 +98,7 @@ int epstypesetter_inkspill(const char *tabpath, const tulip_single_note_ctx *son
     pstypesetter_disable_pagenumbering();
 
     if ((has_error = ps_typesetter(song, tempfile)) != 0) {
-        goto ___eps_typesetter_epilogue;
+        goto ___epstypesetter_inkspill_epilogue;
     }
 
     psdata = epstypesetter_getpsdata(tempfile, &dsize);
@@ -107,19 +107,19 @@ int epstypesetter_inkspill(const char *tabpath, const tulip_single_note_ctx *son
     if (psdata == NULL) {
         printf("ERROR: empty Postscript output.\n");
         has_error = 1;
-        goto ___eps_typesetter_epilogue;
+        goto ___epstypesetter_inkspill_epilogue;
     }
 
     if ((page_nr = epstypesetter_get_page_nr(psdata)) != 1) {
         printf("ERROR: the tablature file is not a single page document, for this reason it cannot be exported as EPS (the output has %d pages).\n", page_nr);
         has_error = 1;
-        goto ___eps_typesetter_epilogue;
+        goto ___epstypesetter_inkspill_epilogue;
     }
 
     if ((fp = fopen(tabpath, "w")) == NULL) {
         printf("ERROR: unable to create \"%s\".\n", tabpath);
         has_error = 1;
-        goto ___eps_typesetter_epilogue;
+        goto ___epstypesetter_inkspill_epilogue;
     }
 
     epstypesetter_mkheader(fp);
@@ -128,7 +128,7 @@ int epstypesetter_inkspill(const char *tabpath, const tulip_single_note_ctx *son
 
     epstypesetter_mktrailer(fp);
 
-___eps_typesetter_epilogue:
+___epstypesetter_inkspill_epilogue:
 
     pstypesetter_enable_pagenumbering();
 
