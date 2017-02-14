@@ -865,24 +865,24 @@ CUTE_TEST_CASE(processor_fancy_outputs_assurance)
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
         CUTE_ASSERT(compile_tulip_codebuf(g_fancy_outputs_test_vector[t].tlp_code, NULL, &song, NULL) == 1);
         CUTE_ASSERT(song != NULL);
-        CUTE_ASSERT(mktab(song, "output.txt") == 0);
+        CUTE_ASSERT(mktab(song, g_fancy_outputs_test_vector[t].filepath) == 0);
         free_tulip_single_note_ctx(song);
         song = NULL;
-        output = fopen("output.txt", "rb");
+        output = fopen(g_fancy_outputs_test_vector[t].filepath, "rb");
         CUTE_ASSERT(output != NULL);
         fseek(output, 0L, SEEK_END);
         output_buf_sz = (size_t) ftell(output);
         fseek(output, 0L, SEEK_SET);
-        CUTE_ASSERT(output_buf_sz == g_fancy_outputs_test_vector[t].txt_output_sz);
+        CUTE_ASSERT(output_buf_sz == g_fancy_outputs_test_vector[t].output_sz);
         output_buf = (char *) getseg(output_buf_sz + 1);
         memset(output_buf, 0, output_buf_sz + 1);
         fread(output_buf, 1, output_buf_sz, output);
         fclose(output);
         for (b = 0; b < output_buf_sz; b++) {
-            CUTE_ASSERT(output_buf[b] == g_fancy_outputs_test_vector[t].txt_output[b]);
+            CUTE_ASSERT(output_buf[b] == g_fancy_outputs_test_vector[t].output[b]);
         }
         free(output_buf);
-        remove("output.txt");
+        remove(g_fancy_outputs_test_vector[t].filepath);
     }
 CUTE_TEST_CASE_END
 
@@ -952,18 +952,19 @@ CUTE_TEST_CASE(users_binary_tests)
     CUTE_ASSERT(exit_code != 0);
 
     //  INFO(Santiago): Now, the typesetting must be verified too.
-    sprintf(cmdline, "%s%s%s", basepath, "--tlp=final.tlp ", "--out=output.txt");
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
+        sprintf(cmdline, "%s --tlp=final.tlp --out=%s", basepath, g_fancy_outputs_test_vector[t].filepath);
+
         write_buffer_to_disk("final.tlp", g_fancy_outputs_test_vector[t].tlp_code, g_fancy_outputs_test_vector[t].tlp_code_sz);
 
         CUTE_ASSERT(system(cmdline) == 0);
 
-        output = fopen("output.txt", "rb");
+        output = fopen(g_fancy_outputs_test_vector[t].filepath, "rb");
         CUTE_ASSERT(output != NULL);
         fseek(output, 0L, SEEK_END);
         osize = ftell(output);
 
-        CUTE_ASSERT(osize == g_fancy_outputs_test_vector[t].txt_output_sz);
+        CUTE_ASSERT(osize == g_fancy_outputs_test_vector[t].output_sz);
 
         fseek(output, 0L, SEEK_SET);
 
@@ -972,13 +973,13 @@ CUTE_TEST_CASE(users_binary_tests)
         fread(output_buf, 1, osize, output);
         fclose(output);
 
-        for (o = 0; o < g_fancy_outputs_test_vector[t].txt_output_sz; o++) {
-            CUTE_ASSERT(output_buf[o] == g_fancy_outputs_test_vector[t].txt_output[o]);
+        for (o = 0; o < g_fancy_outputs_test_vector[t].output_sz; o++) {
+            CUTE_ASSERT(output_buf[o] == g_fancy_outputs_test_vector[t].output[o]);
         }
 
         free(output_buf);
         remove("final.tlp");
-        remove("output.txt");
+        remove(g_fancy_outputs_test_vector[t].filepath);
     }
 
     printf("\n\tTULIP's TESTER MONKEY SAID: All done! All clean! All my tests said that this software is good for using."
