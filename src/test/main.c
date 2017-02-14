@@ -1026,13 +1026,13 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     CUTE_RUN_TEST(system_get_tulip_system_version_tests);
     CUTE_RUN_TEST(system_tulip_task_exec_tests);
     // TODO(Rafael): The vectors must be updated due to improvements done in txttypesetter.
-    //if (CUTE_GET_OPTION("skip-fancy-outputs-assurance") == NULL) {
-    //    CUTE_RUN_TEST(processor_fancy_outputs_assurance);
-    //} else {
-    //    printf("***\n*** WARNING: The fancy outputs assurance tests were skipped.\n***\n");
-    //}
+    if (CUTE_GET_OPTION("skip-fancy-outputs-assurance") == NULL) {
+        CUTE_RUN_TEST(processor_fancy_outputs_assurance);
+    } else {
+        printf("***\n*** WARNING: The fancy outputs assurance tests were skipped.\n***\n");
+    }
     //  WARN(Santiago): If all is ok, it is time to test the user's binary.
-    //CUTE_RUN_TEST(users_binary_tests);
+    CUTE_RUN_TEST(users_binary_tests);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulips_tester_monkey);
