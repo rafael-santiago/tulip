@@ -24,6 +24,8 @@ struct pstypesetter_tab_diagram_ctx {
     int cy, cx;
 };
 
+static int g_ps_pagenumbering = 1;
+
 static struct pstypesetter_tab_diagram_ctx g_ps_ctab;
 
 static void pstypesetter_init(void);
@@ -108,18 +110,20 @@ static void pstypesetter_newpage(FILE *fp) {
 }
 
 static void pstypesetter_showpage(FILE *fp) {
-    char pn[255];
+    char pn[255] = "";
 
     // WARN(Rafael): The right way of centering it is to load the font width from the acrobat font info file and so
     //               do all the math based on this besides the current font size... however the things here is kind
     //               of "static" then this heuristic works pretty well.
+    if (g_ps_pagenumbering) {
+        sprintf(pn, "%d", g_ps_cpage);
+        fprintf(fp, "/Times-Italic 11 selectfont\n"
+                    "%d %d moveto (%s) show\n"
+                    "/Times-Bold 11 selectfont\n", (PSTYPESETTER_PAGEXR / 2) - strlen(pn) - 1,
+                                                    PSTYPESETTER_PAGEY_LIMIT + 20, pn);
+    }
 
-    sprintf(pn, "%d", g_ps_cpage);
-    fprintf(fp, "/Times-Italic 11 selectfont\n"
-                "%d %d moveto (%s) show\n"
-                "showpage\n"
-                "/Times-Bold 11 selectfont\n", (PSTYPESETTER_PAGEXR / 2) - strlen(pn) - 1,
-                                                PSTYPESETTER_PAGEY_LIMIT + 20, pn);
+    fprintf(fp, "showpage\n");
 }
 
 static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_ctx *tab) {
@@ -768,4 +772,12 @@ int pstypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ct
     pstypesetter_closeps(fp);
 
     return 1;
+}
+
+void pstypesetter_disable_pagenumbering(void) {
+    g_ps_pagenumbering = 0;
+}
+
+void pstypesetter_enable_pagenumbering(void) {
+    g_ps_pagenumbering = 1;
 }

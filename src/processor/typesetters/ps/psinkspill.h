@@ -12,4 +12,8 @@
 
 int pstypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab, const tulip_single_note_ctx *song);
 
+void pstypesetter_disable_pagenumbering(void);
+
+void pstypesetter_enable_pagenumbering(void);
+
 #endif

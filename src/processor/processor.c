@@ -8,39 +8,43 @@
 #include <processor/processor.h>
 #include <processor/typesetters/txt/txt.h>
 #include <processor/typesetters/ps/ps.h>
+#include <processor/typesetters/eps/eps.h>
 #include <processor/typesetters/pdf/pdf.h>
 #include <processor/typesetters/md/md.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-typedef int (*typesetter_callout)(const tulip_single_note_ctx *song, const char *tabpath);
+#define register_tulip_processors typedef int (*typesetter_callout)(const tulip_single_note_ctx *song, const char *tabpath);\
+                                  struct tlp_processor_ctx {\
+                                    const char *ext;\
+                                    typesetter_callout typesetter;\
+                                  };\
+                                  static struct tlp_processor_ctx g_processors[] = {
 
-struct tlp_processor_ctx {
-    const char *ext;
-    typesetter_callout typesetter;
-};
+#define register_new_tlp_processor(e) { "."#e, e ##_typesetter }
 
-#define register_new_tlp_processor(e, t) { (e), (t) }
+#define register_tulip_processors_end { NULL, blackhole_processor } };\
+                                        static const size_t g_processors_nr = sizeof(g_processors) / sizeof(g_processors[0]);
 
 static int blackhole_processor(const tulip_single_note_ctx *song, const char *tabpath);
 
-static int coming_soon(const tulip_single_note_ctx *song, const char *tabpath);
+//static int coming_soon(const tulip_single_note_ctx *song, const char *tabpath);
 
-static struct tlp_processor_ctx g_processors[] = {
-    register_new_tlp_processor(".txt", txt_typesetter),
-    register_new_tlp_processor(".ps", ps_typesetter),
-    register_new_tlp_processor(".pdf", pdf_typesetter),
-    register_new_tlp_processor(".md", md_typesetter),
-    register_new_tlp_processor(NULL, blackhole_processor)
-};
+register_tulip_processors
+    register_new_tlp_processor(txt),
+    register_new_tlp_processor(pdf),
+    register_new_tlp_processor(ps),
+    register_new_tlp_processor(eps),
+    register_new_tlp_processor(md),
+register_tulip_processors_end
 
-static const size_t g_processors_nr = sizeof(g_processors) / sizeof(g_processors[0]);
-
+/*
 static int coming_soon(const tulip_single_note_ctx *song, const char *tabpath) {
     printf("WARNING: the processor to produce the file \"%s\" is not totally implemented yet! coming soon!\n", tabpath);
     return 1;
 }
+*/
 
 int blackhole_processor(const tulip_single_note_ctx *song, const char *tabpath) {
     printf("processor ERROR: Tulip has no processor capable of producing the file \"%s\".\n", tabpath);
