@@ -11,6 +11,7 @@
 #include <processor/typesetters/eps/eps.h>
 #include <processor/typesetters/pdf/pdf.h>
 #include <processor/typesetters/md/md.h>
+#include <processor/typesetters/html/html.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -25,7 +26,7 @@
 #define register_new_tlp_processor(e) { "."#e, e ##_typesetter }
 
 #define register_tulip_processors_end { NULL, blackhole_processor } };\
-                                        static const size_t g_processors_nr = sizeof(g_processors) / sizeof(g_processors[0]);
+                                         static const size_t g_processors_nr = sizeof(g_processors) / sizeof(g_processors[0]);
 
 static int blackhole_processor(const tulip_single_note_ctx *song, const char *tabpath);
 
@@ -37,6 +38,7 @@ register_tulip_processors
     register_new_tlp_processor(ps),
     register_new_tlp_processor(eps),
     register_new_tlp_processor(md),
+    register_new_tlp_processor(html),
 register_tulip_processors_end
 
 /*

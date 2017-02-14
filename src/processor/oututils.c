@@ -6,7 +6,10 @@
  *
  */
 #include <processor/oututils.h>
+#include <processor/settings.h>
+#include <processor/typesetters/typeprefs.h>
 #include <dsl/utils.h>
+#include <base/memory.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -233,4 +236,77 @@ char *tlptemp(void) {
     }
 
     return &tempfilename[0];
+}
+
+char *typesetter_raw_output(const tulip_single_note_ctx *song, size_t *osize, int (*typesetter)(const tulip_single_note_ctx *song, const char *tempfile)) {
+    char *tempfile = tlptemp();
+    struct typesetter_curr_settings cset = typesetter_settings();
+    char *data = NULL;
+    long dsize = 0;
+    tulip_single_note_ctx *sp, *song_tag = NULL, *transcriber_tag = NULL;
+    tulip_prefs_map_t oldprefs = cset.prefs;
+    FILE *tp = NULL;
+
+    if (tempfile == NULL) {
+        return NULL;
+    }
+
+    // INFO(Rafael): The song title/transcriber's name are useless at this point.
+    for (sp = (tulip_single_note_ctx *)song; sp != NULL && (song_tag == NULL || transcriber_tag == NULL); sp = sp->next) {
+        if (sp->techniques == kTlpSong) {
+            song_tag = sp;
+        } else if (sp->techniques == kTlpTranscriber) {
+            transcriber_tag = sp;
+        }
+    }
+
+    // INFO(Rafael): Nasty tricks for not doing these things twice with txttypesetting and mdtypesetting.
+
+    if (song_tag != NULL) {
+        song_tag->techniques = kTlpNone;
+    }
+
+    if (transcriber_tag != NULL) {
+        transcriber_tag->techniques = kTlpNone;
+    }
+
+    cset.prefs = cset.prefs & ~(kTlpPrefsShowTunning | kTlpPrefsIncludeTabNotation);
+    set_processor_setting("prefs", &cset.prefs, sizeof(cset.prefs));
+
+    if (typesetter(song, tempfile) != 0) {
+        goto ___typesetter_raw_output_epilogue;
+    }
+
+    set_processor_setting("prefs", &oldprefs, sizeof(oldprefs));
+
+    if (song_tag != NULL) {
+        song_tag->techniques = kTlpSong;
+    }
+
+    if (transcriber_tag != NULL) {
+        transcriber_tag->techniques = kTlpTranscriber;
+    }
+
+    if ((tp = fopen(tempfile, "r")) == NULL) {
+        goto ___typesetter_raw_output_epilogue;
+    }
+
+    fseek(tp, 0L, SEEK_END);
+    dsize = ftell(tp);
+    fseek(tp, 0L, SEEK_SET);
+
+    data = (char *) getseg(dsize + 1);
+    memset(data, 0, dsize + 1);
+
+    fread(data, 1, dsize, tp);
+
+    if (osize != NULL) {
+        *osize = dsize;
+    }
+
+___typesetter_raw_output_epilogue:
+
+    remove(tempfile);
+
+    return data;
 }

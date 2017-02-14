@@ -10,6 +10,7 @@
 
 #include <base/types.h>
 #include <processor/typesetters/txt/txttypes.h>
+#include <stdlib.h>
 
 char *get_technique_label(const tulip_command_t command);
 
@@ -26,5 +27,7 @@ ssize_t get_fretboard_usage_limit(const txttypesetter_tablature_ctx *tab);
 void get_all_used_techniques(const tulip_single_note_ctx *song, tulip_command_t used_techniques[31], size_t *used_techniques_nr, int *has_muffled, int *has_anyfret);
 
 char *tlptemp(void);
+
+char *typesetter_raw_output(const tulip_single_note_ctx *song, size_t *osize, int (*typesetter)(const tulip_single_note_ctx *song, const char *tempfile));
 
 #endif

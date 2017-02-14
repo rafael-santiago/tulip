@@ -10,6 +10,7 @@
 #include <processor/settings.h>
 #include <processor/oututils.h>
 #include <dsl/utils.h>
+#include <base/memory.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
