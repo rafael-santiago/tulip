@@ -53,7 +53,8 @@ static void htmltypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_
             fprintf(fp, "  <TR><TD>?</TD><TD>From any fret</TD></TR>\n");
         }
 
-        fprintf(fp, " </TABLE>\n");
+        fprintf(fp, " </TABLE>\n"
+                    " <BR>\n");
     }
 }
 
@@ -61,7 +62,7 @@ static void htmltypesetter_spill_transcribers_name(FILE *fp, const char *name) {
     if (name == NULL) {
         return;
     }
-    fprintf(fp, " <SMALL><I>%s</I></SMALL><BR><BR>\n", name);
+    fprintf(fp, " <SMALL><I>transcribed by %s</I></SMALL><BR><BR>\n", name);
 }
 
 static void htmltypesetter_spill_song_title(FILE *fp, const char *title) {
