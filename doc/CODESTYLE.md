@@ -2,7 +2,7 @@
 
 Try to read the code and adapt yourself.
 
-I personally like some aspects present in [``Pike's style``](http://doc.cat-v.org/bell_labs/pikestyle). Take a look in it.
+I personally like some aspects present in [``Pike's style``](http://doc.cat-v.org/bell_labs/pikestyle). Take a look at on it.
 
 Anyway, there are the main things to highlight...
 
@@ -22,7 +22,7 @@ Always define it as ``1``.
 It is important to add the copyright disclaimer into the header and implementation files.
 
 Try to initialize your variables even if this variable is being used (at least until now) just after inside a for, in order
-to iterate over some thing:
+to iterate:
 
 ```
     char *p = NULL;
@@ -41,7 +41,7 @@ With the variables you should try the same.
 
 ``Free`` anything that you ``Alloc``.
 
-Do not be afraid of pointers. This is an ``C`` project. If you are afraid of pointers because someone told you that they are
+Do not be afraid of pointers. This is about ``C``. If you are afraid of pointers because someone told you that they are
 evil, take in consideration that undefined references inside someones mind about how to properly use pointers can be the real
 problem.
 
@@ -105,7 +105,7 @@ Public structures should be post-fixed with ``_ctx``. Generally, this would be i
 
 By the way, avoid using ``git-submodules``.
 
-For pointers, used for iterating over some thing use ``p`` or ending the variable with ``p``:
+For pointers, used for iterating over something use ``p`` or ending the variable with ``p``:
 
 ```
     tulip_single_note_ctx *np = NULL, *p = NULL, *curr_note_p = NULL;
@@ -192,7 +192,7 @@ You should write tests. However, try not be so pedantic. It is boring. For the t
 
 If you are a little bit [fop](https://github.com/rafael-santiago/tulip/blob/master/etc/the-macaroni.jpg) maybe you can faint when see that all tests are being written inside ``tests/main.c``.
 However, this is good to find and correct the issues without getting bored. Another thing: this is not about to write a ``Software Odyssey`` (by the way, I have never seen one reflecting the Homer's Genius, however, commonly I find several reflecting the Homer Simpson's stupidity).
-Here the goal is to make a ``simple-sharp-useful-not bloated-software``. Maybe you should visit the site [suckless.org](http://suckless.org).
+Here the goal is to make a ``simple-sharp-useful-non-bloated-software``. Maybe you should visit the site [suckless.org](http://suckless.org).
 
 ## Code constructions
 

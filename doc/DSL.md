@@ -1,20 +1,21 @@
 # The Tulip Language
 
 Well, I created this tiny ``DSL`` in ``2005`` based on my personal preferences about ``music transcribing`` but I have never
-formalized anything about since then.
+formalized anything about this ``DSL`` since then.
 
 The Language is a mix of an ancient music notation with some tablature notation and still some tag recursion. The details
 about the design and choices can be found in the [``User Manual``](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md).
 
 ## The *BNF*
 
-Basically, these are the possible productions that you should be able to do. The following *BNF data* it is not so well
-normalized but I think that it is possible to produce a parser or at least avoid reading the ``User Manual`` in order to learn
+Basically, these are the possible productions that you should be able to make. The following *BNF data* is not so well
+normalized but I think that is possible to produce a parser or at least avoid reading the ``User Manual`` in order to learn
 how to produce some ``Tulip code``, if you have some formal knowledge about compilers, of course. Otherwise do not waste your
-time freaking out your brain, it is better skip to the [User's Manual](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md)
+time freaking out your brain, in this case is better skip to the [User's Manual](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md)
 and forget about tech stuff.
 
-        <tlp-code>                ::= (<note> | <sep> | <save-point> | <once-more> | <tag-announce> <tag-code>)(<tlp-code)* |
+        <tlp-code>                ::= (<note> | <sep> | <save-point> | <once-more> |
+                                      <tag-announce> <tag-code>)(<tlp-code)* |
                                       (<tlp-code>)*
         <note>                    ::= <string-number> <fret-number>
         <string-number>           ::= "1" | "2" | "3" | "4" | "5" | "6"
@@ -65,10 +66,10 @@ and forget about tech stuff.
         <tag-end>                 ::= "}"
         <recursive-tag-stmt-list> ::= <tag-begin> <tlp-code> <tag-end>
 
-As you can see it is a pretty compact Language. To parse it is very straightforward.
+As you can see it is about a pretty compact Language. To parse it is very straightforward.
 
 Excepting the tags ``chord``, ``tunning``, ``literal``, ``song``, ``transcriber``, ``part``, ``repeat`` and ``times`` any other
 should support fully recursion. What means to allow a more internal definition of ``<tlp-code>`` as the tag's production.
 
 The production ``<note-cipher>`` does not disallow the usage of a lower-case cipher in order to express a lower string tunning.
-Nevertheless I think that use it in this way is ugly as hell.
+Nevertheless I think that use it is ugly as hell.

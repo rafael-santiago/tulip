@@ -6,7 +6,7 @@
 
 This software works based on a ``DSL`` designed taking in consideration my own preferences and necessities on this subject.
 
-You can follow reading the [user's manual](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md) in order to known more about.
+You can follow reading the [user's manual](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md) in order to know more about.
 
 ## How to clone this repo?
 
@@ -34,6 +34,7 @@ Something like this:
 ```
 emmmetbrown@DELOREAN:~/internet/github.com/src/tulip# cd src
 emmettbrown@DELOREAN:~/internet/github.com/src/tulip/src# hefesto
+(...)
 emmettbrown@DELOREAN:~/internet/github.com/src/tulip/src# ls ../bin
 tulip*
 emmettbrown@DELOREAN:~/internet/github.com/src/tulip/src# echo EUREKA
@@ -48,8 +49,8 @@ starting.
 ### Okay, but I am not so habituated with software building...
 
 Maybe people without experience in software development but still wanting to use this software can arrive here. If you do not
-have an environment well-prepared for building this software (e.g.: git and GCC well-installed) you can use the pre-builts
-located under the subdirectory ``prebuilts``. In this case, you will get only the executable file, the exportation of this
+have an environment well-prepared for building the software (e.g.: git and GCC well-installed) you can use the pre-builts
+located under the subdirectory ``prebuilts``. In this case, you will get only the executable file, the exportation of its
 executable is up to you. The **Table 1** brings the ``MD5`` hashes of these packages after downloading the file which
 fits to your environment is a good practice to check if your copy has the same related hash according to the **Table 1**.
 
@@ -63,11 +64,11 @@ fits to your environment is a good practice to check if your copy has the same r
 
 All executables listed in the **Table 1** are ``32-bit`` based.
 
-After downloading the correspondent file you need to unzip it into a specific directory. Maybe you should create a new one
+After downloading the correspondent file you need to unzip it into a specific directory. Maybe you should create a new directory
 for doing it. However, ``Linux`` and ``FreeBSD`` users should unzip it to the ``local/bin`` directory (or equivalent) and for
-them any additional action is necessary.
+them any additional action is unnecessary.
 
-Now, for ``Windows`` users: once the executable unzipped into some place on your computer, you need to "export" this
+Now, for ``Windows`` users: once the executable unzipped into some place on your computer filesystem, you need to "export" this
 executable, in order to be able to call this program from everywhere. Under ``Windows`` it should be done adding to
 the ``PATH`` environment variable the directory path where the ``tulip.exe`` is laying on. Tip: if you do not know
 how to do it, try to search for "how to set the PATH variable in Windows". Once it done, if you re-open a command prompt
@@ -75,7 +76,7 @@ the ``tulip.exe`` probably will be accessible.
 
 ## Can I install this software using its own build scripts?
 
-Yes, you can. For doing this you should call ``hefesto`` passing the option ``--install`` (being under ``src`` sub-directory,
+Yes, you can. For doing it you should call ``hefesto`` passing the option ``--install`` (being under ``src`` sub-directory,
 of course).
 
 Actually the following commands are what you should execute. Being you inside the root project's directory:
@@ -91,7 +92,7 @@ For uninstalling, you should do almost the same. You should pass the ``--uninsta
 
 ## Using syntax highlighting
 
-I am a ``mcedit`` user. Due to it by now only syntax highlighting for this editor is implemented and can be found under the
+I am a ``mcedit`` user. Due to it a syntax highlighting configuration file for this editor can be found under the
 ``sub-path etc/tulip.syntax``.
 
 ### Adding tulip's syntax highlighting to the mcedit
@@ -103,7 +104,7 @@ emmetbrown@DELOREAN:~/internet/github.com/src/tulip# cp etc/tulip.syntax /usr/sh
 ```
 
 After doing it you should tell to ``mcedit`` about your intentions of highlighting tulip's code. It should be done adding
-a pattern into the ``mcedit's Syntax`` file (It depends on your editor installation details). For instance, my ``Linux distro``
+a pattern into the ``mcedit's Syntax`` file (It depends on your editor installation details). My ``Linux distro``
 brings it under the path ``/etc/mc/Syntax``. Follows what should be added to this editor's configuration file:
 
 ```
@@ -119,8 +120,9 @@ Done!
 
 ### Adding tulip's syntax highlighting to the notepad++
 
-For doing it we need to access the menu option ``Language | Define your language...`` and click on ``Export...`` button. Choose the file ``etc/TLP.xml``
-under this repo's root. After it all files having ``.tlp`` extension will be colorized as follows:
+For doing it we need to access the menu option ``Language | Define your language...`` and click on ``Export...`` button.
+Now choose the file ``etc/TLP.xml`` under this repo's root. After doing it all files having ``.tlp`` extension will be
+colorized as follows:
 
 ![npp-after-before](https://github.com/rafael-santiago/tulip/blob/master/etc/npp-high.gif)
 

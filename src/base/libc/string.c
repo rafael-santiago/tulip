@@ -9,16 +9,16 @@
 
 #ifdef _WIN32
 
-//  WARN(Santiago): Certain MINGW's versions does not have this so let's garantee this function by ourselves.
+//  WARN(Santiago): Certain MINGW's versions does not have this so let's guarantee this function by ourselves.
 
 size_t strnlen(const char *str, const size_t maxlen) {
     const char *sp = NULL;
     const char *sp_end = NULL;
-    
+
     if (str == NULL) {
         return 0;
     }
-    
+
     sp = str;
     sp_end = str + maxlen;
     while (sp != sp_end && *sp != 0) {
