@@ -12,6 +12,10 @@
 #include <processor/typesetters/txt/txttypes.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
+#include <sys/types.h>
+#endif
+
 char *get_technique_label(const tulip_command_t command);
 
 char *get_technique_notation_label(const tulip_command_t command);

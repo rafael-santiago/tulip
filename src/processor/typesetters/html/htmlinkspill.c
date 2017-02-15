@@ -80,7 +80,8 @@ static void htmltypesetter_spill_song_title(FILE *fp, const char *title) {
 
 static void htmltypesetter_spill_tunning(FILE *fp) {
     struct typesetter_curr_settings cset = typesetter_settings();
-    ssize_t s = 0, d = 0;
+    ssize_t s = 0;
+    size_t d = 0;
     char **tunning = NULL;
 
     if ((cset.prefs & kTlpPrefsShowTunning) && !(cset.prefs & kTlpPrefsAddTunningToTheFretboard)) {

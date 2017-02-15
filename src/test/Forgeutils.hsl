@@ -76,14 +76,14 @@ function print_tester_monkey_banner() : result type string {
 function print_test_monkey_end_banner(tests_exit_code type int) : result type string {
     hefesto.sys.echo("\n________________________________________________________\n\n");
     if ($tests_exit_code == 0) {
-        hefesto.sys.echo("*** NICE: Rafael got reason, all is fine in Tulip! You can start using it just now!\n" +
+        hefesto.sys.echo("*** NICE: Rafael got reason, all is fine in Tulip! You can start using it right now!\n" +
                          "          You can follow installing the Tulip using \"hefesto --install\" command if you want to...\n" +
                          "          I hope you enjoy it!\n");
     } else {
         hefesto.sys.echo("~~~ Oops: I found some issues during the tests. It would be nice let Rafael know.\n");
         hefesto.sys.echo("          Please, open an issue on https://github.com/rafael-santiago/tulip/issues, including your environment details.\n");
         hefesto.sys.echo("          Additonally, attach to your issue " + get_relevant_test_logs_to_attach());
-        hefesto.sys.echo("          It will be helpful for him.\n");
+        hefesto.sys.echo("          It will be helpful to him.\n");
         hefesto.sys.echo("    Thanks!\n");
     }
 }
