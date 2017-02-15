@@ -9,7 +9,8 @@
 #include <processor/typesetters/txt/txtctx.h>
 #include <processor/typesetters/txt/txt.h>
 
-int metatypesetter_inkspill(const char *tabpath, const tulip_single_note_ctx *song, const char *linebreaking,
+int metatypesetter_inkspill(const char *tabpath, const tulip_single_note_ctx *song,
+                            const char *linebreaking,
                             song_title_spill_func metatypesetter_spill_song_title,
                             transcribers_name_spill_func metatypesetter_spill_transcribers_name,
                             tab_notation_spill_func metatypesetter_spill_tab_notation,
@@ -56,6 +57,10 @@ int metatypesetter_inkspill(const char *tabpath, const tulip_single_note_ctx *so
     }
 
 ___metatypesetter_inkspill_epilogue:
+
+    if (fp != NULL) {
+        fclose(fp);
+    }
 
     return has_error;
 }
