@@ -72,9 +72,9 @@ static int tulip_task_help() {
            "  This is located under the sub-path doc/MANUAL.md in the repo's tree.\n\n"
            "Tulip is licensed under GPLv2. This is a free software.\n"
            "You can redistribute it and/or modify under the terms of the GNU General Public License version 2.\n\n"
-           "Tulip language is Copyright (C) 2005-2016 by Rafael Santiago.\n"
-           "Tulip compiler is Copyright (C) 2005-2016 by Rafael Santiago.\n"
-           "Tulip txt typesetter is Copyright (C) 2005-2016 by Rafael Santiago.\n\n"
+           "Tulip language is Copyright (C) 2005-2017 by Rafael Santiago.\n"
+           "Tulip compiler is Copyright (C) 2005-2017 by Rafael Santiago.\n"
+           "Tulip txt typesetter is Copyright (C) 2005-2017 by Rafael Santiago.\n\n"
            "Bug reports, feedback, etc: <voidbrainvoid@gmail.com> or <https://github.com/rafael-santiago/tulip/issues>\n\n");
     return 0;
 }
