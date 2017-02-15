@@ -2,10 +2,10 @@
 
 ----
 
-**Abstract**: ``Tulip`` is an application which implements a ``Language`` and some ``processors`` in order to generate
+**Abstract**: ``Tulip`` is an application that implements a ``Language`` and some ``processors`` in order to generate
 ``Guitar`` tablatures. This document shows the main aspects of the implemented ``Language`` and also aspects that involves
 the output production a.k.a the ``processors``. Here you can find something about my motivations on writing this
-software. If you are in a rush, I suggest you jump to "The Tulip system" section.
+software. If you are in a rush, I suggest you jump to ["The Tulip system"](#the-tulip-system) section.
 
 ----
 
@@ -24,15 +24,14 @@ important things related with the basics of the guitar playing from that *papyru
 
 I could say that the curious numeric notation is what I use the most. This numeric notation is handy and allows you
 to transcribe your ideas to the paper very quickly. In my opinion when you are transcribing things, specially by ear,
-a kind of notation that does not consume you on a *"pencil-time"* is rather useful because your ideas and mind need to flow
-more freely.
+a kind of notation that does not consume you on a *"pencil-time"* is rather useful because your ideas and mind need to flow.
 
 Okay, you do not know this kind of notation, right? Until now...
 
 ### The numeric notation
 
 As I said I could not be able to find anything about this in English or any other Language besides Portuguese. I am afraid
-of this is used only by brazilians or portugueses but I am not so sure about (take a look at this [discussion on the Reddit](https://www.reddit.com/r/musictheory/comments/4hqic2/what_is_the_name_of_this_kind_of_notation/)).
+of this is used only by Portuguese or Brazilian people but I am not so sure about (take a look at this [discussion on the Reddit](https://www.reddit.com/r/musictheory/comments/4hqic2/what_is_the_name_of_this_kind_of_notation/)).
 
 This notation is the main idea behind ``Tulip's DSL`` so if you want to master ``Tulip`` you must master this notation before.
 
@@ -48,7 +47,7 @@ However, in the fret number case we have some particularities. Some people when 
 ``10`` and others numbered it as ``00``, fret number eleven as ``01``, fifteen as ``05`` and so on. I use this second one and
 as an effect this is what ``Tulip`` implements.
 
-When we have intervals (harmonics) or chords it should be written down using stacked numbers. A kind of this: "53/42/30/21/10".
+When we have intervals (e.g. double-stops) or chords it should be written down using stacked numbers. A kind of this: "53/42/30/21/10".
 The hammer-ons, pull-offs can be noted using a simple arc between the parts.
 
 Let's take a look at the **Table 1** in order to review your new knowledges about a new simple notation that you just have been
@@ -85,10 +84,10 @@ teenagerhood. As a result during these years I have been producing huge stacks o
 ``Tulip`` (still in ``2005``) was an effort in order to stop with this mess. The truth is that I did not stop pushing papers
 to my endless little stack but I would say that I stopped with my sloppiness. Now I am stacking ``notebooks`` ;)
 
-Even today I use pencil and paper and then I create a ``Tulip code`` for. This is my basic workflow on it. Truly, to be
-translating my drafts into the ``Tulip's DSL`` is pretty confortable besides the fact that I can add some versioning on it,
-managing the transcription improvements. If you transcribe/adapt things you should know that we are constantly evoluting our
-work, because we are always learning and evoluting ourselves.
+Even today I use pencil and paper and then I create a ``Tulip code`` for. This is my basic workflow on it. Truly, to
+translate my drafts into the ``Tulip's DSL`` is pretty confortable besides the fact that I can add some versioning on it,
+managing the transcription improvements. If you transcribe/adapt things you should know that we are constantly evolving our
+work, because we are always learning and evolving ourselves.
 
 Contradicting myself, in the **Figure 1**, you can see a part of an adaptation from an ``Albert King``'s solo on a
 napkin that I recently did these days.
@@ -97,24 +96,24 @@ napkin that I recently did these days.
 
 ![Sample of my mess direct from my desk](https://github.com/rafael-santiago/tulip/blob/master/etc/draft.jpg)
 
-According to the **Figure 1** is possible to see that I like to use arrows to express bending cases and tilde
-to vibrato cases and also the way how the chords are expressed in this kind of notation. However, on ``Tulip``
-these things are a little bit more structured. Nevertheless, this is the base for the Language discussed here.
+According to the **Figure 1** is possible to see that I like to use arrows for expressing bends and tilde
+for vibrato issues and also the way how the chords are expressed in this kind of notation. However, on ``Tulip``
+these things are a little bit more structured. Nevertheless, this is the basis of the Language discussed here.
 
 ### Understanding my versioning
 
 I use this software since ``2005`` when I had written its first version. Here in this code repository you have a
 reincarnation of the main idea. The major differences that I would highlight are some changes in the ``DSL``,
-the new processors addition and a new user's manual. The code was re-written from the scratch too but I will
+the new processors and a new user's manual. The code was re-written from the scratch too but I will
 not annoy you with ``Compilers Theory``. Take it easy, by now you are safe.
 
 Since ``2005`` I had done two major improvements on this project. So the first version (``v1``) brought the basic Language
 definition and its text output producing. After I added a tiny ``MIDI`` processor which was able to filter the main ideas from
 an input song translating it as a ``Tulip code``. I called it ``v2``. What I could learned from ``v2`` is that parse ``MIDI``
 files is painful. It is astonishing how people do not follow any standard... We have several sub-standards (depending on the
-manufacturers) inside the main standard and it is such a mess. Now the current version is ``v3``. This version brings a
+manufacturers) inside the main standard and it is such a mess. Now the current version is ``v4``. This version brings a
 ``postscript`` and ``PDF`` processor in addition to the standard ``plain-text`` processor. The ``MIDI`` processor is still
-not integrated in ``v3``. Maybe ``v4``.
+not integrated in ``v4``. Maybe ``v5``.
 
 Then, here is the main versioning idea:
 
@@ -128,7 +127,7 @@ I must confess that I can see beauty on this way of thinking.
 
 ## The Tulip system
 
-``Tulip`` is an idea/software which can be splitted and understood on a two main parts:
+``Tulip`` is an idea/software which can be splitted and understood on two main parts:
 
 - The ``DSL`` that you use to express your ``Musical intentions`` (maybe previously transcribed using "numeric ciphering").
 - The processor that you use to produce a ``tablature`` output from your ``"tlp notation"``.
@@ -140,37 +139,37 @@ at the previous section called ``The numeric notation``. A previous knowledge ab
 
 The presented ``DSL`` has strong influences from ``TeX/LaTeX`` specially when talking about recursion in order to compose
 combined playing techniques. Do not worrying if you do not know anything about ``TeX/LaTeX`` or even ``typesetting``. It is not
-needed here.
+necessary here.
 
 From now on, sometimes I will refer to the implemented ``DSL`` as ``tlp``.
 
 Perhaps it will be read by people that have some experience with computer programming and by people that do not.
 Regardless, I am sure that these both kinds of people have one aspect in common: some level of ``musical knowledge``, specially
-``guitar playing``. Thinking about this, I decided to introduce the ``DSL`` concepts showing real examples of some well-known songs.
-I find be in touch with real world transcriptions, talking about ``Music`` will certainly deviate us from a terrible boredom.
+``guitar playing``. Thinking about it, I have decided to introduce the ``DSL`` concepts showing real examples of some well-known songs.
+I find that be in touch with real world transcriptions, talking about ``Music`` will certainly deviate us from a terrible boredom.
 
-All songs shown here are in the way which I am currently playing. I am saying it because I like to use an ``alternate``
+All songs shown here are in the way that I am currently playing. I am saying it because I like to use an ``alternate``
 tunning instead of the ``standard``. For the following code samples ``it is important`` you considering that all is done in a
-guitar tunned ``two steps down``. Why? I am crazy, just accept this.
+guitar tunned ``two steps down``. Why? I am crazy, just accept it.
 
->Last thing: all here is about approximations and adaptations. Do not expect note-by-note things. Let's free ourselves from
-obligations and have some fun with. I invite you...
+>Last thing: all here is about approximation and adaptations. Do not expect note-by-note things. Let's free ourselves from
+obligations and have some fun with it. I invite you...
 
 The ``guitar`` is a fascinating musical instrument not because is loud or distorted, well, this feature sometimes can make the things
 cooler, exciting. The most fascinating thing about the guitar is how it can be a range of sounds. A note is a note but it
 depends on how you attack (if you attack) this note, if you slide it or hammer it on or pull it off. For instance, the approach
-that you use to perform a bend can actually change your tone. The way how you hold the neck to "blow up" a vibrato.
+that you use to perform a bend can actually change your tone. The way how you hold the neck to "blow up" a vibrato...
 Still, you can make it soft and sweet instead of angry. Etc, etc. For this reason, I like to say that the guitar is a musical
 instrument driven by mood. Maybe any musical instrument could be but string instruments are pretty organic, you really gives
-your body (maybe your soul, ha-ha) on it. What say about your precious calluses?
+your body (maybe your soul, ha-ha) on it. What to say about your precious calluses?
 
 Express this techniques details is quite hard even using our natural language. However, on the guitar we got several
 techniques that isolated do not have much sense but ``when combined`` can produce interesting sounds. The ``tlp`` uses ``tags``
 in order to indicate some isolated techniques. The nice thing about these tags is that we can put one inside another to
 produce a technique combination. These recursions make the implemented ``DSL`` very powerful in terms of expressivity
 besides being instinctive for any guitar player. Well, maybe you can be wondering about how much possible
-combinations can be made. Actually, your own playing will guide you for getting this answer. What can I say is that I did
-care about this feature for letting the song writing the most natural for us while musicians.
+combinations can be made. Actually, your own playing will guide you for getting this answer. I took care about this feature
+to let the song writing the most natural for us while musicians.
 
 A ``tag`` is a word sequence with a special meaning. It is preceded by a single ``period``. The **Table 2** lists the supported
 tags until now.
@@ -221,8 +220,10 @@ our guitar tablature. During this time, I will introduce you some techniques and
 
 Let's go...
 
+### Hello Purple World!
+
 The ``Purple Haze's`` introduction has a pretty interesting thing. Originally, the introduction is made by
-``bass`` and ``guitar`` playing different things together. So, the guitar does this (ok, here goes our first code):
+``bass`` and ``guitar`` playing different things together. So, the guitar does it (ok, here goes our first code):
 
         69-401--69-401--69-401--69-401
 
@@ -234,17 +235,18 @@ or still:
 
         63-45--63-45--63-45--63-45
 
-These layers of sound produce a "thing" called ``tritone``. ``Tritones`` are commonly referenced as a way to add
-tension or "frightening ambiences" for the listeners. In fact, if you do only the guitar's part coded above, you will
-not be able to achieve this "tension". Actually, it will be sound pretty unexpressive. So, what about combining these
-two worlds?
+These layers of notes produce a "thing" called ``tritone``. ``Tritones`` are commonly referenced as a way to add
+tension or "frightening ambiences" for the listeners. It also was considered "evil" (truly just because people did
+know how to harmonize it so well, of course, in that times people were still living in a flat-Earth). In fact, if you
+do only the guitar's part coded above, you will not be able to achieve this "tension". Actually, it will be sound pretty
+unexpressive. So, what about combining these two worlds?
 
         69-.chord{500-401}--69-.chord{500-401}--69-.chord{500-401}--69-.chord{500-401}-
 
 Better? I think so... Remembering that everything is taking in consideration my personal preference for tunning
 the guitar ``two steps down``.
 
-Now the cool riff. You should wet it with a ``Fuzz`` if you have one...
+Now the cool riff. If you have one, you should "wet" this riff on a ``Fuzz``...
 
     400h402-300-201-400~~~~~-46/.letring{48-58}-63-45~~-|-
     400h402-300-201-400~~~~~-46/.letring{48-58}-63-45~~-|-
@@ -259,7 +261,7 @@ a vertical breaking in the ``tab diagram``.
 
 Note that in the previous code we have a repetion in the second "bar" (forget about sheets here,
 ok? no time divisions, it is just about tablatures). I hate using copy and paste, it is boring. In ``Tulip`` there is a smart
-symbol which you use to say: "hey guy, here you will repeat the same that I did just before."
+symbol that you use to say: "well, here you will repeat the same that I did just before."
 
 For doing it you should use the ``at`` symbol. So, the lazy version would be:
 
@@ -323,16 +325,16 @@ I think maybe it is the base of what ``Hendrix`` does in this song record.
 I also use some kind of hybrid picking but its out of a tablature's scope. Again, the colors is up to you.
 
 We got new ``tlp`` stuff in the presented base pattern. The first is the "fret abstraction". The guitar is not a science
-this is an art due to it several times we face imprecise things. Sometimes slides have destination but can be done from any
-source. For doing it you must use a note that only indicates the string number and replaces the fret region by a suggestive
-question mark. Then, we have ``6?``, ``5?``, ``4?``, ``3?``, ``2?`` and ``1?`` as possible abstractions.
+this is an art. Due to it several times we face imprecise things. Sometimes slides have destination but can start from any
+source. For abstracting a thing you must use a note that only indicates the string number and replaces the fret region by a suggestive
+question mark. Then, we have ``6?``, ``5?``, ``4?``, ``3?``, ``2?`` and ``1?`` as possible abstractions of a note.
 
 In the previous code we can see a "note" which acts as a ``string jump`` (in terms of code), we use a string jump to indicate
 to the ``Tulip`` where (which string) we want to put the next separator that complements this "jump". A jump is denoted by
 ``<string-number>:<separator>``. It is possible to do things like ``3:~``, ``2:p``, etc.
 
-When there are pull-offs, hammer-ons or any single technique done using intervals (harmonics) and chords is important to build up
-this song block using three or more chord tags in order to wrap these things. This guarantees a fancier typesetting.
+When there are pull-offs, hammer-ons or any single technique done using intervals (harmonics, double-stops...) and chords is important to build up
+this song block using three or more chord tags in order to wrap these things. It will guarantee a fancier typesetting.
 
 Now, the second part from verses is related with a break done at the end of the last verse:
 
@@ -340,9 +342,9 @@ Now, the second part from verses is related with a break done at the end of the 
     .letring{4?/400-39}-.chord{400-39-200}.chord{2:p}.chord{400-39-28}-|-
     .chord{500-49}.chord{5:\4:\}-
 
-Anyway, as I said before this is just a little window about what ``Hendrix`` was able to do with. The truth is that
+Anyway, as I said before this is just a little window of what ``Hendrix`` was able to do with. The truth is that
 he naturally used to add new little random things at each turn, producing a richer accompanying. As a result what we feel while
-listeners is that there is a secondary song evoluting inside the main. It can be a nice challenge for you and your creativity.
+listeners is that there is a secondary song being played inside the main. It can be a nice challenge for you and your creativity.
 
 In terms of code, nothing new was presented above. The following is related to the bridge and then all verses are played again:
 
@@ -373,7 +375,7 @@ In order to get a complete transcription we need to the "exit solo". Follows:
     206-208-209-208--206-307-305--.chord{209-106}.chord{2:b}-.chord{209-106}.chord{2:~}.chord{2:~}-|-
     .tremolopicking{1?/106~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~}-
 
-Another great guitar player called ``Eric Gales`` does a nice ending using the eighth intervals from the bridge.
+Another great guitar player called ``Eric Gales`` does a nice ending using the eighth intervals from the bridge idead.
 ``Strumming`` more or less in this way:
 
     .strum{5?/.chord{500-302}----------------------5?/.chord{502-304}----------------------5?/.chord{58-300}-----------}
@@ -384,7 +386,7 @@ complications, saying only where to put the fingers and strum the notes followin
 All done! Now we get a complete song.
 
 >WARNING: Please do not take my assumptions as an absolute truth. This came from a lot of bad playing and preferences.
-Then, do not try to learn how to play with me. Just learn how to use this ``software``!!!
+Then, do not try to learn how to play with me. Just learn ``how to use this software``!!!
 
 A remark to Larry, Curly and Moe: To dump a whole song into a file without any logical layout is pretty dumb. The ``tlp``
 has a nice control tag called ``.literal``. Inside this tag you can introduce a human-readable text enclosed by double-quotes
@@ -395,7 +397,7 @@ typesetting done until that point (including your remarks to the reader, using t
 tablature diagram is used.
 
 Still, there are two useful control tags for defining the ``song's title`` and the ``transcriber's name``. These tags are
-respectively ``.song`` and ``.transcriber``. They receive a ``string`` as the ``.literal`` tag expects.
+respectively ``.song`` and ``.transcriber``. They receive a ``string`` as the same way of the ``.literal`` tag.
 
 Then, here is our ``Purple Haze`` interpretation coded into ``Tulip's DSL``:
 
@@ -606,9 +608,9 @@ By now we will abstract how this code should be passed to the ``Tulip``. After p
             |---?/10----------------------?/12----------------------?/-8-----------|
             |----------------------------------------------------------------------|
 
-Okay, now let's see a song which uses more single notes than intervals (harmonics). For doing it I will take a nice interpretation
+Okay, now let's see a song that uses more single notes than intervals (double-stops). For doing it I will take a nice interpretation
 by ``Stan Getz`` of a famous ``Brazilian song`` called ``O Pato`` (a.k.a ``The duck``). Here goes my humble ``Stan Getz``
-solo's adaptation for the guitar. I think that any brazilian child (at least from my childhood's time) should know this.
+solo's adaptation for the guitar. I think that any brazilian child (at least from my childhood's time) should know it.
 This is pretty simple but I would like to use it to introduce you two nice new ``tags``:
 
     .song{"O Pato - (adapted from Stan Getz's version)"}
@@ -719,7 +721,7 @@ So... This song starts with a nice "piano's riff", I approximate it as follows:
             60--.chord{401-302-202-102}-.chord{305-205}-.chord{302-202}-.chord{304-204}-.chord{302-202}--
             502-504-402-404-.chord{302-202}-;
 
-The base is a mix of fingering and strumming, I think that the better way is listen to it and try to figure out:
+The base is a mix of finger-style and strumming, I think that the better way is listen to it and try to figure out:
 
     .literal{"Base:\n"}
 
@@ -764,7 +766,7 @@ the better way is listen to it:
             .chord{404-304-204}-.chord{402-302-202}-.chord{406-306-206}-
             .chord{402-302-202}-.strum{.chord{501-400-301}-----.chord{57-49-39-28-17}------}-;
 
-Here goes my bad guitar solo's approximation. Add your improvements according to your own preferences and skills:
+Here goes my bad guitar solo approximation. Add your improvements according to your own preferences and skills:
 
     .literal{"Solo:\n"}
 
@@ -980,7 +982,7 @@ Follows the output tablature:
 Into the ``Feel me``'s solo code you could see that I introduced some ``save-points``. I did it seeking
 for a fancier typesetting. The ``Tulip`` tries to adjust the things by itself, however, sometimes you need to do it by
 your own. Bear in mind that internally we got some heuristics for best fitting but they are just heuristics. It is impossible
-handle all cases. Do not forget that you got control ``tags`` and ``separators`` to be in control. Your ``tab``, your rules.
+to handle all cases. Do not forget that you got control ``tags`` and ``separators`` to be in control ;) Your ``tab``, your rules.
 
 Continuing... Here goes one of the most popular bass lines of the Universe written by ``Charles Mingus``
 (``Haitian Fight Song``), screwed up in my lousy ``walking bass guitar`` way:
@@ -1121,8 +1123,8 @@ The output tablature result based on previous code would be:
             |--------------------------------------------------------|
 
 There is another nice (at least I judge) thing related with ``chords`` introduced with the last sample song.
-The ``Tulip`` when face chords made with notes mixing up frets less than fret #10 and greater or equal than fret #10,
-it try to adjust the notes considering your explicit preferences, for example, I think the following typesetting ugly:
+The ``Tulip`` when facing chords made with notes mixing up frets less than fret #10 and greater or equal than fret #10,
+try to adjust the notes considering your explicit preferences, for example, I think the following typesetting ugly:
 
     |-10-----(...)
     |-9------(...)
@@ -1160,9 +1162,9 @@ When you use this ``.chord{38-29-100}`` you have this:
     |--------(...)
     |--------(...)
 
-The first (using smaller note cipherings before) always will need a leading separator to compensate and keep the next production
-well separated from the current. In the ``High Heeled Sneakers`` we have a practical example. Furthermore, we have these
-two typesetting rules co-working for a fancier output. Take a look:
+The first always will need a leading separator to compensate and keep the next production well separated from the current.
+In the ``High Heeled Sneakers`` we have a practical example. Furthermore, we have these two typesetting rules co-working
+for a fancier output. Take a look:
 
     .chord{39-200}/.chord{300-201}\.chord{200-39}--.chord{37-200}-
 
@@ -1257,7 +1259,7 @@ not so sure about this fact.
 Now, going back to the rock tunes... Let's see a cool song from a cool band. The band is ``The Hellacopters`` and the song
 is one of my favorite from them, ``Better than you``. The main thing that I like in the songs made by them is the simplicity
 and the sense of what a rock n' roll song should be: ``simple, cool & fast``. In terms of ``guitars`` this band always had a quite nice
-``two-guitar`` work. The guitar solos & riffs used to complement each other, continuing the talk... This song is a nice sample
+``two-guitar`` work. The guitar solos & riffs used to complement each other, continuing the talk... This song is a nice example
 of it. You can find out live versions from this song where he promoted interesting guitar battles. You should watch it.
 
 Well, just starting, in the introduction we get a nice ``Chuck Berry-like`` lick/riff. The cool thing here is listening to one
@@ -1273,7 +1275,7 @@ stops here...
     .chord{305-205}.chord{3:b2:b}-.chord{305-205}.chord{3:r2:r}-
     .chord{303-203}-.chord{305-205}-.chord{303-203}-405-;
 
-Then, we are pushed by a badass ``base riff``. The problem here is that I transcribed this, with my lazy chords constructions...
+Then, we are pushed by a badass ``base riff``. The problem here is that I transcribed it, with my lazy chords constructions...
 I will let you figure out about the chords used here. Beware for not learning my bad practices... Anyway, the
 ``base riff`` using ``"Garfield hands"`` would be:
 
@@ -1332,7 +1334,7 @@ We get a break/bridge before the guitar solos. By the way, pretty nice:
     58h500-.chord{48-38}-.chord{48-38}-500-.chord{48-38}-|-
     .chord{302-202}.chord{3:b2:b}-.chord{302-202}.chord{3:r2:r}-.chord{300-200}~~~~-;
 
-The solos are divided into two but in the end is a interesting talk between the musicians:
+The solos are divided into two but it is a interesting talk between the musicians:
 
     .chord{302-200}.chord{3:b}-.chord{200-100}-203-200-302-300-402-300-303-302-300~-|-
     /300-29-200-101b-|-101~~--101~~-|-101b102r101p18-101p18-29-300-|-307-206-208-106-109-108-106-
@@ -1346,7 +1348,7 @@ The second solo starts with a classical rockabilly stuff:
     .letring{203h206p203-305b}-.times{3}-|-206/208~~-|-307-208-106-208-108/110\108-|-
     .chord{305-203}.chord{3:b}-203-305-303-305-303-.times{2}-;-405-403-403h405-.letring{303b---101------}-;
 
-I love the easy way we fell down of the solo falling into the ``calm part``. Here is essential "got your mojo working"...
+I love the easy way we fell down from the solo into the ``calm part``.
 
     .letring{
         .chord{53-43-35-26}-26-35-.chord{53-43-33-24}-.chord{53-43-33-24}-.chord{53-43-33-24}
@@ -1359,7 +1361,7 @@ I love the easy way we fell down of the solo falling into the ``calm part``. Her
 
 This is a nice base for noodling your guitar all day long. Find for videos from this song with "battles"... You can not be sorry.
 
-The end of the song is just a pentatonic lick using intervals (harmonics):
+The end of the song is just a pentatonic lick using intervals (double-stops):
 
     .chord{2:/1:/}.chord{203-103}-.chord{203-103}-
     .chord{201-101}-.chord{201-101}-.chord{201-101}-
@@ -1466,7 +1468,7 @@ As ``Dewey Finn`` would say:
 >>"Now rise your goblet of rock. It's toast to those who rock!"
 >>>![school-of-rock-scene](https://github.com/rafael-santiago/tulip/blob/master/etc/school-of-rock.gif "A famous funny scene from the movie School of Rock")
 
-Haha, here is the output tablature (two steps down, of course... I am crazy, do you remember?):
+Here is the output tablature (two steps down, of course... I am crazy, do you remember?):
 
     Song: Better than you / The Hellacopters [By the grace of God]
     Transcribed by: Rafael Santiago
@@ -1678,11 +1680,9 @@ Haha, here is the output tablature (two steps down, of course... I am crazy, do 
             |---------------------------------|
             |---------------------------------|
 
-If you have a military ``peaked cap`` and a alpine white ``SG Custom 1961``... go ahead... it is time to use it.
+If you have a military ``peaked cap`` and a alpine white ``SG Custom 1961``... go ahead... it is time to use it. ;)
 
-No, the most important advice is: play it loud, distorted and fast. Otherwise will not work. This is ``"blitzkrieg rock"`` kid! ;)
-
-I want to show you a nice way for using the ``part`` and ``repeat`` tags. For doing it I will pick a ``Motörhead``'s song
+Now I want to show you a nice way for using the ``part`` and ``repeat`` tags. For doing it I will pick a ``Motörhead``'s song
 called ``Whorehouse Blues``.
 
 This song closes them album ``Inferno``. It is basically a twelve-bar blues (shuffle) played with 3 acoustic guitars (I think).
@@ -1704,7 +1704,7 @@ The ``base`` constantly backs to the ``intro riff``. Then I found this way to de
     .repeat{intro&riff_2}
     .repeat{intro&riff_3}-;
 
-This differs a bit from the original way of playing the chorus. But this way mix up some "rockabilly" echoes into the chorus:
+It differs a bit from the original way of playing the chorus. But this way mix up some "rockabilly" echoes into the chorus:
 
     63-63-51-52-.times{3}-|-41-53-51-63-|-
 
@@ -1713,7 +1713,7 @@ This differs a bit from the original way of playing the chorus. But this way mix
     .repeat{intro&riff_3}-;
 
 
-Well, the solo is a far approximation ;)
+Well, the solo is a far approximation....
 
     300/302-203-302-201-39-28-400-300-400-38~~-400~~-|-
 
@@ -1771,7 +1771,7 @@ I like the ending in the following way:
 
     .letring{.chord{35-18}-------------------------------------}
 
-The entire script for this ``badass`` blues:
+The entire script for this cool blues:
 
     .song{"Whorehouse Blues - Motörhead [Inferno]"}
     .transcriber{"Rafael Santiago"}
@@ -1862,7 +1862,7 @@ The entire script for this ``badass`` blues:
         .letring{.chord{35-18}-------------------------------------}
 
 
-The resultant tablature is what follows:
+The resultant tablature is:
 
     Song: Whorehouse Blues - Motörhead [Inferno]
     Transcribed by: Rafael Santiago
@@ -2007,8 +2007,8 @@ Let's end with a ``standard rock`` called ``Louie Louie``, this song is pretty k
 can be listening to it loudly while getting crazy with virtuous ``air-guitar`` sessions.
 
 For this last sample I will do something different. I will show you parts of the song previously written down using "numeric
-cipher" and so I will let for the interested reader the task of comparing my drafts over the shown ``Tulip`` code. In the
-end they will cracked the code of the code from the code. Or more or less it! ;)
+cipher" and so I will let for the interested reader the task of comparing my drafts over the shown ``Tulip`` code. As a result
+they will cracked the code of the code from the code. More or less it! ;)
 
 The used version of ``Louie Louie`` is the ``Motörhead``'s alternate version (I love the guitar solo from this one).
 
