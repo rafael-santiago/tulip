@@ -322,6 +322,12 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                     x += PSTYPESETTER_CARRIAGE_STEP + 10;
 
                     if (x >= g_ps_ctab.cxr) {
+                        if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
+                            (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
+                            ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
+                                pstypesetter_close_tab(fp, x, tab->string_nr);
+                        }
+
                         pstypesetter_newtabdiagram(fp, tab);
                         x = g_ps_ctab.cx;
                     }
@@ -358,6 +364,12 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                         x += 1;
 
                         if (x >= g_ps_ctab.cxr) {
+                            if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
+                                (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
+                                ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
+                                    pstypesetter_close_tab(fp, x, tab->string_nr);
+                            }
+
                             pstypesetter_newtabdiagram(fp, tab);
                             x = g_ps_ctab.cx;
                         }
@@ -662,21 +674,20 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
     size_t s = 0;
     int alpha_has_printed = 0;
 
-    g_ps_ctab_sustained_techniques_y = g_ps_ctab.cy;
-
     if (is_tab_empty(tab)) {
         return;
     }
 
     if (tab->comments == NULL) {
         g_ps_ctab.cy += (2 * PSTYPESETTER_NEXT_ADDINFO);
-        if (g_ps_ctab.cy < (PSTYPESETTER_PAGEY_LIMIT + 20)) {
-            pstypesetter_pageinit();
-            pstypesetter_showpage(fp);
-            pstypesetter_newpage(fp);
-        }
-        g_ps_ctab_sustained_techniques_y = g_ps_ctab.cy;
     }
+
+    if (g_ps_ctab.cy < (PSTYPESETTER_PAGEY_LIMIT + 60)) {
+        pstypesetter_pageinit();
+        pstypesetter_showpage(fp);
+        pstypesetter_newpage(fp);
+    }
+    g_ps_ctab_sustained_techniques_y = g_ps_ctab.cy;
 
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
         if (has_half_step_notes) {
@@ -696,7 +707,7 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
                     alpha_has_printed = isalpha(*(dp));
                 }
             } else {
-                if (alpha_has_printed) {
+                if (alpha_has_printed && (*(dp - 1) == '.' || *(dp + 1) == '.')) { // WARN(Rafael): Yes, just accept it.
                     fprintf(fp, "(-) show\n");
                 }
             }
