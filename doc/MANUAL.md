@@ -1686,9 +1686,9 @@ Now I want to show you a nice way for using the ``part`` and ``repeat`` tags. Fo
 called ``Whorehouse Blues``.
 
 This song closes them album ``Inferno``. It is basically a twelve-bar blues (shuffle) played with 3 acoustic guitars (I think).
-I love this song. I personally dislike a bit acoustic guitars, but this song is pretty cool. So, I like to understand
-it as a "intro riff", "base", "solo", "base variation", "turnaround ending". I adjusted some things to fits better to
-my tunning and preferences ;-P... If you want to use it good luck!
+I love this song. I personally dislike a bit acoustic guitars, but this song is pretty cool. I like to understand
+it as a "intro riff", "base", "solo", "base variation", "turnaround ending". I adjusted the things to fit better to
+my way of playing.... If you want to use it good luck!
 
 For the ``intro riff`` we have the following:
 
@@ -1696,7 +1696,7 @@ For the ``intro riff`` we have the following:
     51-53-51-53-43-41-51-53-|.part{intro&riff_2}-
     33h35-.letring{24-35~~}-|.part{intro&riff_3}-;
 
-The ``base`` constantly backs to the ``intro riff``. Then I found this way to denote it:
+The ``base`` constantly backs to the ``intro riff``. Then I found this way in order to denote it:
 
     .chord{53-43-35}-.chord{53-43-35}---.chord{53-43-37}---.chord{43-33-24}---.chord{53-43-37}-.chord{53-43-35}.times{2}-|-
 
@@ -1704,7 +1704,7 @@ The ``base`` constantly backs to the ``intro riff``. Then I found this way to de
     .repeat{intro&riff_2}
     .repeat{intro&riff_3}-;
 
-It differs a bit from the original way of playing the chorus. But this way mix up some "rockabilly" echoes into the chorus:
+It differs a bit from the original way of playing the chorus. But this adds some "rockabilly" echoes into the chorus:
 
     63-63-51-52-.times{3}-|-41-53-51-63-|-
 
@@ -1765,7 +1765,7 @@ The base variation is pretty simple:
 
     .chord{53-43-35}-.chord{53-43-35}---.chord{53-43-37}---.chord{51-41-33-24}--.chord{51-41-33-24}-|-;
 
-I like the ending in the following way:
+I like the song ending in the following way:
 
     53/55-45-43-41-53-51-63-41-53-51-51h53-|-
 
@@ -2008,11 +2008,11 @@ can be listening to it loudly while getting crazy with virtuous ``air-guitar`` s
 
 For this last sample I will do something different. I will show you parts of the song previously written down using "numeric
 cipher" and so I will let for the interested reader the task of comparing my drafts over the shown ``Tulip`` code. As a result
-they will cracked the code of the code from the code. More or less it! ;)
+they will cracked the code of the code from the code. ;)
 
 The used version of ``Louie Louie`` is the ``Motörhead``'s alternate version (I love the guitar solo from this one).
 
-My *shitty-drafts* for this song (do not mind I transcribed the solo first, sometimes, I am such a crazy person) follows
+My *shitty-drafts* based on this song (do not mind I transcribed the solo first, sometimes, I am such a crazy person) follows
 depicted in the **Figure 2**, **Figure 3**, **Figure 4**, **Figure 5** and **Figure 6**.
 
 **Figure 2**: See? I told you...
@@ -2035,7 +2035,7 @@ depicted in the **Figure 2**, **Figure 3**, **Figure 4**, **Figure 5** and **Fig
 
 ![Louie Louie transcription personal draft part v](https://github.com/rafael-santiago/tulip/blob/master/etc/louie-louie-draft-4.jpg)
 
-Here is the entire ``Tulip`` code for this song (two whole steps down, you already know why...):
+Here is the entire ``Tulip`` code of this song (two whole steps down, you already know why...):
 
     .song{"Louie Louie (Alternate Version) / Motorhead [Some EP which I can not remember by now, around 1979]"}
     .transcriber{"Rafael Santiago"}
@@ -2197,16 +2197,17 @@ It is a simple and cool song. Sorry for my solo approximations, etc, etc... Foll
             |-9-11---------------------------------------------------|
             |--------------------------------------------------------|
 
-I think it is enough. With the presented samples you can easily master the ``Tulip`` if you really wants to.
+I think it is enough. With the presented samples you can easily master the ``Tulip`` if you really want to.
 
-Now you need to know how to process the code written inside the ``Tulip`` in order to produce your tabs.
+Now you need to know how to process the code written in ``Tulip``'s Language in order to produce your tabs.
 
 Keep reading...
 
 ### How to verify a TLP file?
 
-In order to generate a tablature from a ``tlp`` source code, this code needs to be correct. No error can exist inside
-of it, otherwise the tablature will not be generated. The way to verify it is calling ``Tulip`` with the following command line:
+In order to generate a tablature from a ``tlp`` source code, this code needs to be correct. No error can exist in
+this file, otherwise the tablature will not be generated. The way of verifying it is to call ``Tulip`` with the
+following command line:
 
 ```
 tulip-user@SOMEWHERE:~/over/the/rainbow# tulip --tlp=sample-song.tlp
@@ -2214,20 +2215,20 @@ tulip-user@SOMEWHERE:~/over/the/rainbow# tulip --tlp=sample-song.tlp
 
 This could be called ``the compilation command``.
 
-If the file is ok nothing will be returned by the ``Tulip`` and it exits with zero code. Otherwise, if some error has found, this
-error will be reported and the ``Tulip`` will exit with a non-zero code.
+If the file is ok nothing will be returned by the ``Tulip`` and it exits with zero code. Otherwise, if some error has found,
+this error will be reported and ``Tulip`` will exit with a non-zero code.
 
-The command shown above only will compile your ``Tulip`` source code, no tablature will be produced based on it.
+The command shown above only compiles your ``Tulip`` source code, no tablature is produced based on it.
 
-This command tends to be useful only when you just want to know if some change in the code has errors. In fact, the
-output tablature can be easily re-assembled. By this fact, if you are intending to versioning your codes with some
-``source control management tool``, obviously you do not need for versioning the generated tablatures, only the ``.tlp``
-source files.
+This command tends to be useful only when you want to know if some new change in the code can produce errors. In fact, the
+output tablature is easily re-assembled. Due to it, if you are intending to apply some versioning on your codes with some
+``source control management tool``, obviously you do not need to manage the generated tablatures. Only the ``.tlp``
+source files should be.
 
 ### Using Tulip's processors
 
-The ``Tulip``'s processors are invoked through the option ``--out=<file>``. They must be used when you intends to generate
-some tablature output from your input code. The following command should be used to generated a tablature:
+The ``Tulip``'s processors are invoked through the option ``--out=<file>``. They must be used when the user intends to generate
+some tablature output from your input code. The following command should be used:
 
 ```
 tulip-user@SOMEWHERE:~/over/the/rainbow# tulip --tlp=sample-song.tlp --out=sample-song.txt
@@ -2235,27 +2236,37 @@ tulip-user@SOMEWHERE:~/over/the/rainbow# tulip --tlp=sample-song.tlp --out=sampl
 
 This could be called ``the typesetting command``.
 
-According to the above command sample, the code ``sample-song.tlp`` will be compiled and if it has no errors the tablature
+According to the command sample above, the code ``sample-song.tlp`` will be compiled and if it has no errors the tablature
 ``sample-song.txt`` will be generated under the current directory.
 
-The type of processors are chosen by the output extension, so a ``.txt`` output produces a tablature text-based.
+The type of processors are chosen by the output extension, so a ``.txt`` output produces a text-based tablature.
 
-If you chose an unsupported file extension for the output you are warned about. Until now we have the ``.txt`` processor,
-the processors related with ``postscript (.ps)`` and ``portable document file (.pdf)`` are still being developed. You still
-do not have any code related with them here in this public repository.
+If you chose an unsupported file extension for the output you will be warned about. The **Table 4** lists all processors
+currently implemented in ``Tulip``.
 
-Then after all, the generation of a tablature file also involves the compilation of the source which will be used for this
-generation.
+**Table 4**: Available processors.
+
+|   **Processor/Format name**   |**Extension**|
+|:-----------------------------:|:-----------:|
+|     ``text/based``            |    ``txt``  |
+|     ``Postscript``            |     ``ps``  |
+|     ``Encapsulated Postcript``|    ``eps``  |
+|     ``Portable document file``|    ``pdf``  |
+|     ``Markdown``              |     ``md``  |
+|     ``HTML``                  |    ``html`` |
+
+The ``PDF`` processor depends on an external application called ``pspdf``, commonly it can be found in ``TeX/Live`` or even
+``MikTeX`` if you are on ``Windows``.
 
 ### Changing the behavior of the processor
 
 It is possible to change the behavior of the processor in some cases using explict options.
 
-Firstly, let's see what behavior's changes we can apply for a ``Tulip`` processor. It follows listed into the **Table 4**.
+Firstly, let's see what behavior changes we can apply on a ``Tulip`` processor. It follows listed into the **Table 5**.
 Inside the ``Tulip`` a processor is responsible to care about the tablature typesetting, so when you use an option present
-in the **Table 4** you are directly influencing the output typesetting.
+in the **Table 5** you are directly influencing the output typesetting.
 
-**Table 4**: Options for processor's behavior changing.
+**Table 5**: Options for processor's behavior changing.
 
 |       **Option**                 |           **Handy for**                                                                  |        **Setting sample**                                   |
 |:--------------------------------:|-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------:|
@@ -2263,36 +2274,37 @@ in the **Table 4** you are directly influencing the output typesetting.
 | ``fretboard-style``              | Sets one of the two available styles of fretboard                                        | ``fretboard-style=normal`` or ``fretboard-style=continuous``|
 | ``close-tab-to-save``            | Sets/Unsets the option which flags the closement of a fretboard diagram before saving it | ``close-tab-to-save=no``                                    |
 | ``indentation-deepness``         | Indicates the amount of spaces added in order to indent the tablature                    | ``indentation-deepness=2``                                  |
-| ``include-tab-notation``         | Includes at the beginning of the tablature an used-techniques reference table            | ``include-tab-notation=yes``                                |
+| ``include-tab-notation``         | Includes at the beginning of the tablature a used-techniques reference table             | ``include-tab-notation=yes``                                |
 | ``cut-tab-on-the-last-note``     | Cuts the tablature output based on the effective last note put on it                     | ``cut-tab-on-the-last-note=no``                             |
 | ``add-tunning-to-the-fretboard`` | Adds the tunning of each string in the fretboard diagram                                 | ``add-tunning-to-the-fretboard=yes``                        |
 | ``tunning``                      | When you want to add it to the fretboard and you are using an alternate tunning          | ``tunning=D-G-D-G-B-d``                                     |
+| ``show-tunning``                 | Shows the master tunning before the song listing                                         | ``show-tunning=yes``                                        |
 
 The ``tunning`` option must be expressed from the sixth string to the first. Using note ciphers separated by single dashes.
 
 When the ``fretboard-style`` is set to ``continuous`` the processor does not mind for closing the saved tab diagram (with bars)
-unless it is the last one.
+unless when it is about the last one diagram.
 
 These options can be stored into a special file called ``.tulipprefs``. Each line of this file should be a valid option setting.
 Follows a content sample of it:
 
 ```
-fretboard-size=320
+fretboard-size=100
 add-tunning-to-the-fretboard=yes
 tunning=Eb-Ab-Db-Gb-Bb-Eb
 fretboard-style=continuous
 ```
 
-The file ``.tulipprefs`` should be created under the path where you intend to call the ``Tulip``.
+The file ``.tulipprefs`` should be created under the path where you intend to call ``Tulip``.
 
-By the way, if you are wanting to be tidy, using some ``SCM`` software, the ``.tulipprefs`` could be a relevant file for
-versioning with them besides the own source codes, of course.
+By the way, if you are wanting to be tidy, using some ``SCM`` software, the ``.tulipprefs`` could be a relevant file to manage.
 
-Another way to set this options is supplying them for the ``Tulip`` through the command line. In this case, you need to add
-double dashes to these options as a prefix, take a look:
+Another way to set this options is supplying them through the command line. In this case, you need to add double dashes to these
+ options as a prefix, take a look:
 
 ```
-tulip-user@SOMEWHERE:~/over/the/rainbow# tulip --tlp=sample.tlp --out=sample.txt --fretboard-size=180 --tunning=E-A-D-G-B-e
+tulip-user@SOMEWHERE:~/over/the/rainbow# tulip --tlp=sample.tlp \
+> --out=sample.txt --fretboard-size=180 --tunning=E-A-D-G-B-e
 ```
 
 An important thing to say here is that an option supplied by command line overwrites an option set into the ``.tulipprefs``.
@@ -2301,18 +2313,18 @@ processor behavior using directly the command line.
 
 ## How to automate the processing of my tlp codes?
 
-You can use any ``build system`` of your choice, taking in consideration the command line usage and the ``Tulip``'s exit codes
-for them. However, if you want to use [``hefesto``](https://github.com/rafael-santiago/hefesto) for doing it. First of all,
-you need to build and install the ``hefesto`` onto your system. Once it done, you need to install the ``Hefesto's tulip v3 toolset``.
+You can use any ``build system`` of your choice, taking in consideration the command line usage and the ``Tulip``'s exit codes.
+However, if you want to use [``hefesto``](https://github.com/rafael-santiago/hefesto) to do it. First of all,
+you need to build and install the ``hefesto`` on your system. Once it done, you need to install the ``Hefesto's tulip v4 toolset``.
 
-In order to install the ``tulip-v3 toolset`` you need to clone another repository of mine called [``helios``](https://github.com/rafael-santiago/helios).
+In order to install the ``tulip-v4 toolset`` you need to clone another repository of mine called [``helios``](https://github.com/rafael-santiago/helios).
 
 Supposing that you got the following state of things on your environment:
 
 ```
 tulip-user@SOMEWHERE:~/over/the/rainbow# git clone https://github.com/rafael-santiago/helios helios
 tulip-user@SOMEWHERE:~/over/the/rainbow# cd helios
-tulip-user@SOMEWHERE:~/over/the/rainbow/helios# hefesto --install=tlpv3-toolset
+tulip-user@SOMEWHERE:~/over/the/rainbow/helios# hefesto --install=tlpv4-toolset
 ```
 
 After performing the above command you probably enabled ``Hefesto`` to process ``tlp`` files. You can remove your ``helios``
@@ -2326,13 +2338,13 @@ processing would be something like:
 ```
 # Forgefile.hsl
 
-include ~/toolsets/tulip/tulip-v3.hsl
+include ~/toolsets/tulip/tulip-v4.hsl
 include ~/toolsets/tulip/get_tlp_deps.hsl
 
 var sources type list;
 var deps type string;
 
-project mytabs : toolset "tulip-v3" : dependencies $deps : $sources ;
+project mytabs : toolset "tulip-v4" : dependencies $deps : $sources ;
 
 mytabs.prologue() {
     #
@@ -2343,14 +2355,14 @@ mytabs.prologue() {
 }
 ```
 
-So, after composing the above file all you should do is to run the following command:
+So, after composing the file above, you should run the following command:
 
 ```
 tulip-user@SOMEWHERE:~/over/the/rainbow/mytabs# hefesto --forgefiles=Forgefile.hsl --Forgefile-projects=mytabs
 ```
 
-For avoiding typing the ``Hefesto``'s invocation everytime, you should compose an invocation file. For doing it just create a file
-called ``.ivk`` adding what should be the default invocation command inside of it:
+Avoid typing the ``Hefesto``'s invocation everytime is a good idea. You should compose an invocation file. Create a file
+called ``.ivk`` adding what should be the default invocation command to it:
 
 ```
 --forgefiles=Forgefile.hsl --Forgefile-projects=mytabs
@@ -2362,7 +2374,7 @@ Now, the ``Hefesto`` invocation became simpler than the previous one. Follows ou
 tulip-user@SOMEWHERE:~/over/the/rainbow/mytabs# hefesto
 ```
 
-There are other cool options that you can use with this ``Hefesto's toolset for tulip-v3``. However, if you are interested
+There are other cool options that you can use with this ``Hefesto's toolset for tulip-v4``. However, if you are interested
 you should read this toolset's [README.md](https://github.com/rafael-santiago/helios/blob/master/src/include/doc/toolsets/tulip/README.md) file.
 
 ## And so?
@@ -2371,14 +2383,10 @@ Well, I hope you enjoy using this software. Maybe at the beginning, seeing a bun
 could make you a little bit dizzy. Bear in mind that once learned the numeric cipher and the possible control tags,
 the ``Tulip`` could be not only useful but also can make the transcription process much more entertaining, because you will start
 seeing it in a more programmatic way, instead of dummy clicks on a simulated fretboard. In addition, it can bring more
-method to your transcription workflow. Because you can add some version control over it. Look, here is about producing
-well-structured codes instead of abstract clicks chained on a "luser" interface, so you can edit this plain-file codes
-everywhere you want to. Then, what about be more free and tidy with your transcriptions?
+method to your transcription workflow. Because you can add some versioning control over it.
 
 However, do not avoid learning about the ``Standard Music Notation (Sheet Music)``. It is rather important for any ``Musician`` whom wants
-to evolute more and more. In fact, the tablature is a quite limited transcription form. It is nice only to know about what you
+to evolve more and more. In fact, the tablature is a quite limited transcription form. It is nice only to know about what you
 "previously know" or at least have a far idea about what it should be.
 
 That's all folks. Enjoy!
-
-*By now turn off this tedious flat-computer and go to play your gorgeous-interesting-curvilinear-guitar, hurry up! ;)*

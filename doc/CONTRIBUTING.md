@@ -35,7 +35,7 @@ Important things here:
 - This is about compilers, language, toy-programming. Point-and-click things already exist. If you really want to do a point-and-click stuff... Congrats, you got a new project or several projects to contribute outhere!
 - Tests are good.
 - If you need a Human to test what you did, your work is probably wrong or at least incomplete.
-- If people involved with the code need you to understand what you did, your work is propably wrong or at least incomplete.
+- If people involved with the code need you to understand what you did, your work is probably wrong or at least incomplete.
 - Write tests seeking to guarantee that no one (you, larry, curly, moe, your cat or fresh vegetables) can deploy what you wrote broken.
 - Paranoic, pedantic, useless tests are boring.
 - A memory leak is vulgar. Pretty vulgar.

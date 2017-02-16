@@ -166,6 +166,28 @@ Follows a better way:
     }
 ```
 
+or
+
+```
+    int i = 0;
+
+    for (i = 0; i < 10; i++) {
+        (...)
+    }
+
+    if (i == 0) {
+        (...)
+    }
+
+    while (i-- > 0) {
+        (...)
+    }
+
+    if (((a | b | cc | dd)  & mask) == 0) {
+        (...)
+    }
+```
+
 ## Comments
 
 This is important when it is important. The format should be:
