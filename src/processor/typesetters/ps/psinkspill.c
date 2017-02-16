@@ -17,11 +17,10 @@
 
 static int g_ps_cpage = 0;
 
-static int g_ps_ctab_sustained_techniques_y = 0;
-
 struct pstypesetter_tab_diagram_ctx {
     int cxl, cxr;
     int cy, cx;
+    int sustained_techniques_y;
 };
 
 static int g_ps_pagenumbering = 1;
@@ -82,6 +81,7 @@ static void pstypesetter_pageinit(void) {
     g_ps_ctab.cxl = PSTYPESETTER_PAGEXL;
     g_ps_ctab.cxr = PSTYPESETTER_PAGEXR;
     g_ps_ctab.cy = PSTYPESETTER_PAGEY;
+    g_ps_ctab.sustained_techniques_y = PSTYPESETTER_PAGEY;
 }
 
 static FILE *pstypesetter_newps(const char *filepath) {
@@ -257,12 +257,16 @@ static void pstypesetter_close_tab(FILE *fp, const int x, const int sn) {
     int s = 0, sy = 0;
     int yt = 0, yb = 0;
 
+    if (x >= g_ps_ctab.cxr) {
+        return;
+    }
+
     /* WARN(Rafael): !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                      -------- HANNA-BARBERA's DASTARDLY DICK WAS HERE --------
                      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! >:) Hahaha!!
     */
 
-    yt = g_ps_ctab_sustained_techniques_y + 10;
+    yt = g_ps_ctab.sustained_techniques_y + 10;
     yb = pstypesetter_string_y(sn - 1, g_ps_ctab.cy) - 10;
 
     fprintf(fp, "1 1 1 setrgbcolor\n"
@@ -299,7 +303,7 @@ static void pstypesetter_close_tab(FILE *fp, const int x, const int sn) {
 
 static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     size_t s, o;
-    int x = g_ps_ctab.cx, py = 0;
+    int x = g_ps_ctab.cx;
     int pointed = 0;
     struct typesetter_curr_settings cset = typesetter_settings();
     size_t s_limit = tab->fretboard_sz;
@@ -327,7 +331,8 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                             ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
                                 pstypesetter_close_tab(fp, x, tab->string_nr);
                         }
-
+                        g_ps_ctab.cy += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
+                        g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
                         pstypesetter_newtabdiagram(fp, tab);
                         x = g_ps_ctab.cx;
                     }
@@ -369,7 +374,8 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                                 ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
                                     pstypesetter_close_tab(fp, x, tab->string_nr);
                             }
-
+                            g_ps_ctab.cy += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
+                            g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
                             pstypesetter_newtabdiagram(fp, tab);
                             x = g_ps_ctab.cx;
                         }
@@ -403,6 +409,10 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                 ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
                 pstypesetter_close_tab(fp, x, tab->string_nr);
             }
+
+            g_ps_ctab.cy += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
+
+            g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
 
             pstypesetter_newtabdiagram(fp, tab);
             x = g_ps_ctab.cx;
@@ -687,7 +697,7 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
         pstypesetter_showpage(fp);
         pstypesetter_newpage(fp);
     }
-    g_ps_ctab_sustained_techniques_y = g_ps_ctab.cy;
+    g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
 
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
         if (has_half_step_notes) {
@@ -699,14 +709,15 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
 
         alpha_has_printed = 0;
         while (dp != dp_end) {
-            fprintf(fp, "%d %d moveto ", x, g_ps_ctab.cy);
 
             if ((*dp != '.' && *dp != ' ') || dp == &tp->data[0]) {
+                fprintf(fp, "%d %d moveto ", x, g_ps_ctab.cy);
                 fprintf(fp, "(%c) show\n", *dp);
                 if (!alpha_has_printed) {
                     alpha_has_printed = isalpha(*(dp));
                 }
             } else {
+                fprintf(fp, "%d %d moveto ", x, g_ps_ctab.cy);
                 if (alpha_has_printed && (*(dp - 1) == '.' || *(dp + 1) == '.')) { // WARN(Rafael): Yes, just accept it.
                     fprintf(fp, "(-) show\n");
                 }
