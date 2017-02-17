@@ -9,6 +9,7 @@
 #include <processor/typesetters/txt/txtctx.h>
 #include <processor/typesetters/txt/txt.h>
 #include <processor/typesetters/ps/psinkspill.h>
+#include <processor/settings.h>
 
 int ps_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     txttypesetter_tablature_ctx *tab = NULL;

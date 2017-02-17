@@ -338,11 +338,17 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                     }
 
                     pstypesetter_pinch_hammer_on_pull_off(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5);
+
+                    if (s < tab->string_nr - 1 && (tab->strings[s+1][o] == 'h' || tab->strings[s+1][o] == 'p')) {
+                        x -= PSTYPESETTER_CARRIAGE_STEP + 10;
+                    }
                     break;
 
                 case '~':
                     pstypesetter_pinch_vibrato(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 3);
-                    x += PSTYPESETTER_CARRIAGE_STEP;
+                    if (s == tab->string_nr - 1 || tab->strings[s+1][o] != '~') {
+                        x += PSTYPESETTER_CARRIAGE_STEP;
+                    }
                     break;
 
                 case 'b':
@@ -396,12 +402,12 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
         x += PSTYPESETTER_CARRIAGE_STEP;
 
 
-        if (tab->techniques != NULL) {
+        /*if (tab->techniques != NULL) {
             if (o > 0 && tab->techniques->data != NULL &&
                 tab->techniques->data[o] != '.' && tab->techniques->data[o-1] == '.') {
                 x += PSTYPESETTER_CARRIAGE_STEP;
             }
-        }
+        }*/
 
         if (x >= g_ps_ctab.cxr) {
             if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
@@ -700,7 +706,7 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
     g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
 
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
-        if (has_half_step_notes) {
+/*        if (has_half_step_notes) {
             x += PSTYPESETTER_CARRIAGE_STEP;
         }
 
@@ -755,9 +761,9 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
             x += PSTYPESETTER_CARRIAGE_STEP;
             dp++;
         }
-
+*/
         g_ps_ctab.cy += PSTYPESETTER_ADDINFO_LINEBREAK;
-        x = PSTYPESETTER_CARRIAGEX;
+//        x = PSTYPESETTER_CARRIAGEX;
     }
 
     g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
