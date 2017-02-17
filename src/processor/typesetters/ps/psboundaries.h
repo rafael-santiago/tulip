@@ -23,5 +23,7 @@
 #define PSTYPESETTER_NEXT_ADDINFO           -16
 #define PSTYPESETTER_ADDINFO_LINEBREAK      -10
 
+#define PSTYPESETTER_FRETBOARD_SIZE          80
+
 
 #endif

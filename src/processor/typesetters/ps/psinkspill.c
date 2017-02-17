@@ -17,10 +17,15 @@
 
 static int g_ps_cpage = 0;
 
+struct pstypesetter_real_x_coords_ctx {
+    int value;
+};
+
 struct pstypesetter_tab_diagram_ctx {
     int cxl, cxr;
     int cy, cx;
     int sustained_techniques_y;
+    struct pstypesetter_real_x_coords_ctx x[PSTYPESETTER_FRETBOARD_SIZE];
 };
 
 static int g_ps_pagenumbering = 1;
@@ -48,6 +53,8 @@ static int pstypesetter_pinch_y(const int sn, const int cy);
 static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
 static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab);
+
+static void pstypesetter_markup_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
 static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
@@ -82,6 +89,7 @@ static void pstypesetter_pageinit(void) {
     g_ps_ctab.cxr = PSTYPESETTER_PAGEXR;
     g_ps_ctab.cy = PSTYPESETTER_PAGEY;
     g_ps_ctab.sustained_techniques_y = PSTYPESETTER_PAGEY;
+    memset(&g_ps_ctab.x, 0, sizeof(g_ps_ctab.x));
 }
 
 static FILE *pstypesetter_newps(const char *filepath) {
@@ -170,6 +178,8 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
     } else if (cset.prefs & kTlpPrefsFretboardStyleNormal) {
         pstypesetter_vertbar(fp, g_ps_ctab.cxl, g_ps_ctab.cy, tab->string_nr);
     }
+
+    memset(&g_ps_ctab.x, g_ps_ctab.cx, sizeof(g_ps_ctab.x));
 }
 
 static void pstypesetter_spill_fretboard_tunning(FILE *fp, const txttypesetter_tablature_ctx *tab) {
@@ -195,7 +205,7 @@ static void pstypesetter_proc_tabchunk(FILE *fp, const txttypesetter_tablature_c
     }
 
     pstypesetter_spill_comments(fp, tab);
-    pstypesetter_spill_sustained_techniques(fp, tab);
+    pstypesetter_markup_sustained_techniques(fp, tab);
     pstypesetter_spill_times(fp, tab);
 
     pstypesetter_newtabdiagram(fp, tab);
@@ -320,12 +330,18 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
 
         for (s = 0; s < tab->string_nr; s++) {
 
+            if (s == 0) {
+                g_ps_ctab.x[o].value = x;
+            }
+
             switch (tab->strings[s][o]) {
                 case 'h':
                 case 'p':
                     x += PSTYPESETTER_CARRIAGE_STEP + 10;
 
                     if (x >= g_ps_ctab.cxr) {
+                        pstypesetter_spill_sustained_techniques(fp, tab);
+
                         if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
                             (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
                             ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
@@ -375,6 +391,8 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                         x += 1;
 
                         if (x >= g_ps_ctab.cxr) {
+                            pstypesetter_spill_sustained_techniques(fp, tab);
+
                             if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
                                 (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
                                 ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
@@ -396,11 +414,9 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                     }
                     break;
             }
-
         }
 
         x += PSTYPESETTER_CARRIAGE_STEP;
-
 
         /*if (tab->techniques != NULL) {
             if (o > 0 && tab->techniques->data != NULL &&
@@ -410,6 +426,8 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
         }*/
 
         if (x >= g_ps_ctab.cxr) {
+            pstypesetter_spill_sustained_techniques(fp, tab);
+
             if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
                 (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
                 ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
@@ -424,6 +442,8 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
             x = g_ps_ctab.cx;
         }
     }
+
+    pstypesetter_spill_sustained_techniques(fp, tab);
 
     if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
         (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
@@ -683,6 +703,58 @@ static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx
 }
 
 static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab) {
+    int cy = g_ps_ctab.sustained_techniques_y, xl, xr = 0;
+    const txttypesetter_sustained_technique_ctx *tp = NULL;
+    char label[255] = "", *dp = NULL;
+    size_t l = 0, d = 0, d_end = 0;
+
+    for (tp = tab->techniques; tp != NULL; tp = tp->next) {
+        d = 0;
+        d_end = PSTYPESETTER_FRETBOARD_SIZE;
+
+        while (d < d_end) {
+            dp = tp->data + d;
+            if (*dp != ' ') {
+                if (isalpha(*dp)) {
+                    memset(label, 0, sizeof(label));
+                    l = 0;
+                    while (d < d_end && isalpha(*dp)) {
+                        label[l] = *dp;
+                        l = (l + 1) % sizeof(label);
+                        d++;
+                        dp = tp->data + d;
+                    }
+                    fprintf(fp, "%d %d moveto (%s) show\n", g_ps_ctab.x[d].value, cy, label);
+//                    printf("%s at(%d, %d) i=%d\n", label, g_ps_ctab.x[d].value, cy, d);
+                } else if (*dp == '.') {
+                    xl = g_ps_ctab.x[d].value;
+                    while (d < d_end && (*dp == '.' || (*dp + 1) == '.')) {
+                        d++;
+                        dp = tp->data + d;
+                    }
+
+                    if (d < d_end) {
+                        xr = g_ps_ctab.x[d].value;
+                    } else {
+                        xr = g_ps_ctab.x[d - 1].value;
+                    }
+
+                    if (xr > g_ps_ctab.cxr) {
+                        xr = g_ps_ctab.cxr;
+                    }
+
+                    fprintf(fp, "%d %d moveto %d %d lineto stroke\n", xl, cy, xr, cy);
+//                    printf("line at(%d, %d), at(%d, %d) i=%d\n", xl, cy, xr, cy, d);
+                }
+            }
+            d++;
+        }
+//        printf("--\n");
+        cy += PSTYPESETTER_ADDINFO_LINEBREAK;
+    }
+}
+
+static void pstypesetter_markup_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     const txttypesetter_sustained_technique_ctx *tp = NULL;
     int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, typesetter_settings().prefs);
     int x = PSTYPESETTER_CARRIAGEX;

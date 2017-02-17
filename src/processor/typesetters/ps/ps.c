@@ -6,6 +6,7 @@
  *
  */
 #include <processor/typesetters/ps/ps.h>
+#include <processor/typesetters/ps/psboundaries.h>
 #include <processor/typesetters/txt/txtctx.h>
 #include <processor/typesetters/txt/txt.h>
 #include <processor/typesetters/ps/psinkspill.h>
@@ -14,6 +15,9 @@
 int ps_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     txttypesetter_tablature_ctx *tab = NULL;
     int has_error = 1;
+    size_t fretboard_sz = PSTYPESETTER_FRETBOARD_SIZE;
+
+    set_processor_setting("fretboard-size", &fretboard_sz, sizeof(fretboard_sz));
 
     if (song == NULL || tabpath == NULL) {
         return 0;
