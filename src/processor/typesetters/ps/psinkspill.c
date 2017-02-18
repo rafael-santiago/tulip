@@ -22,8 +22,8 @@ struct pstypesetter_real_x_coords_ctx {
 };
 
 struct pstypesetter_tab_diagram_ctx {
-    int cxl, cxr;
-    int cy, cx;
+    int xlimit_left, xlimit_right;
+    int carriage_y, carriage_x;
     int start_offset, end_offset;
     int sustained_techniques_y;
     struct pstypesetter_real_x_coords_ctx x[PSTYPESETTER_FRETBOARD_SIZE];
@@ -55,7 +55,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
 
 static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
-static void pstypesetter_markup_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab);
+static void pstypesetter_eval_sustained_techniques_area(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
 static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
@@ -86,9 +86,9 @@ static void pstypesetter_init(void) {
 }
 
 static void pstypesetter_pageinit(void) {
-    g_ps_ctab.cxl = PSTYPESETTER_PAGEXL;
-    g_ps_ctab.cxr = PSTYPESETTER_PAGEXR;
-    g_ps_ctab.cy = PSTYPESETTER_PAGEY;
+    g_ps_ctab.xlimit_left = PSTYPESETTER_PAGEXL;
+    g_ps_ctab.xlimit_right = PSTYPESETTER_PAGEXR;
+    g_ps_ctab.carriage_y = PSTYPESETTER_PAGEY;
     g_ps_ctab.sustained_techniques_y = PSTYPESETTER_PAGEY;
 }
 
@@ -144,43 +144,43 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
     }
 
     for (s = 0; s < tab->string_nr; s++) {
-        if (pstypesetter_string_y(s, g_ps_ctab.cy) < PSTYPESETTER_PAGEY_LIMIT + 20) {
+        if (pstypesetter_string_y(s, g_ps_ctab.carriage_y) < PSTYPESETTER_PAGEY_LIMIT + 20) {
             pstypesetter_pageinit();
             pstypesetter_showpage(fp);
             pstypesetter_newpage(fp);
-            pstypesetter_markup_sustained_techniques(fp, tab);
+            pstypesetter_eval_sustained_techniques_area(fp, tab);
             break;
         }
     }
 
     fprintf(fp, "%.1f setlinewidth\n", PSTYPESETTER_TABLINE_W);
 
-    g_ps_ctab.cx = PSTYPESETTER_CARRIAGEX;
+    g_ps_ctab.carriage_x = PSTYPESETTER_CARRIAGEX;
 
     for (s = 0; s < tab->string_nr; s++) {
-        sy = pstypesetter_string_y(s, g_ps_ctab.cy);
+        sy = pstypesetter_string_y(s, g_ps_ctab.carriage_y);
         fprintf(fp, "%d %d moveto\n"
-                    "%d %d lineto\n", g_ps_ctab.cxl, sy, g_ps_ctab.cxr, sy);
+                    "%d %d lineto\n", g_ps_ctab.xlimit_left, sy, g_ps_ctab.xlimit_right, sy);
     }
 
     fprintf(fp, "stroke\n");
 
     fprintf(fp, "/Times-Bold 13 selectfont\n");
 
-    fprintf(fp, "%d %d moveto (T) show\n", PSTYPESETTER_PAGEXL + 2, pstypesetter_pinch_y(1, g_ps_ctab.cy) + 1);
-    fprintf(fp, "%d %d moveto (A) show\n", PSTYPESETTER_PAGEXL + 2, pstypesetter_pinch_y(3, g_ps_ctab.cy) + 2);
-    fprintf(fp, "%d %d moveto (B) show\n", PSTYPESETTER_PAGEXL + 2, pstypesetter_pinch_y(5, g_ps_ctab.cy) + 4);
+    fprintf(fp, "%d %d moveto (T) show\n", PSTYPESETTER_PAGEXL + 2, pstypesetter_pinch_y(1, g_ps_ctab.carriage_y) + 1);
+    fprintf(fp, "%d %d moveto (A) show\n", PSTYPESETTER_PAGEXL + 2, pstypesetter_pinch_y(3, g_ps_ctab.carriage_y) + 2);
+    fprintf(fp, "%d %d moveto (B) show\n", PSTYPESETTER_PAGEXL + 2, pstypesetter_pinch_y(5, g_ps_ctab.carriage_y) + 4);
 
     fprintf(fp, "/Times-Bold 11 selectfont\n");
 
     if (cset.prefs & kTlpPrefsAddTunningToTheFretboard) {
         pstypesetter_spill_fretboard_tunning(fp, tab);
     } else if (cset.prefs & kTlpPrefsFretboardStyleNormal) {
-        pstypesetter_vertbar(fp, g_ps_ctab.cxl, g_ps_ctab.cy, tab->string_nr);
+        pstypesetter_vertbar(fp, g_ps_ctab.xlimit_left, g_ps_ctab.carriage_y, tab->string_nr);
     }
 
     for (s = 0; s < PSTYPESETTER_FRETBOARD_SIZE; s++) {
-        g_ps_ctab.x[s].value = g_ps_ctab.cxr;
+        g_ps_ctab.x[s].value = g_ps_ctab.xlimit_right;
     }
 }
 
@@ -188,8 +188,8 @@ static void pstypesetter_spill_fretboard_tunning(FILE *fp, const txttypesetter_t
     size_t s;
 
     for (s = 0; s < tab->string_nr; s++) {
-        fprintf(fp, "%d %d moveto (%s) show\n", g_ps_ctab.cxl - PSTYPESETTER_CARRIAGE_STEP - 10,
-                                                pstypesetter_pinch_y(s, g_ps_ctab.cy) + 2, tab->tunning[s]);
+        fprintf(fp, "%d %d moveto (%s) show\n", g_ps_ctab.xlimit_left - PSTYPESETTER_CARRIAGE_STEP - 10,
+                                                pstypesetter_pinch_y(s, g_ps_ctab.carriage_y) + 2, tab->tunning[s]);
     }
 }
 
@@ -207,7 +207,7 @@ static void pstypesetter_proc_tabchunk(FILE *fp, const txttypesetter_tablature_c
     }
 
     pstypesetter_spill_comments(fp, tab);
-    pstypesetter_markup_sustained_techniques(fp, tab);
+    pstypesetter_eval_sustained_techniques_area(fp, tab);
     pstypesetter_spill_times(fp, tab);
 
     pstypesetter_newtabdiagram(fp, tab);
@@ -266,10 +266,9 @@ static void pstypesetter_pinch_release_bend(FILE *fp, const int x, const int y, 
 }
 
 static void pstypesetter_close_tab(FILE *fp, const int x, const int sn) {
-    int s = 0, sy = 0;
     int yt = 0, yb = 0;
 
-    if (x >= g_ps_ctab.cxr) {
+    if (x >= g_ps_ctab.xlimit_right) {
         return;
     }
 
@@ -279,7 +278,7 @@ static void pstypesetter_close_tab(FILE *fp, const int x, const int sn) {
     */
 
     yt = g_ps_ctab.sustained_techniques_y + 10;
-    yb = pstypesetter_string_y(sn - 1, g_ps_ctab.cy) - 10;
+    yb = pstypesetter_string_y(sn - 1, g_ps_ctab.carriage_y) - 10;
 
     fprintf(fp, "1 1 1 setrgbcolor\n"
                 "newpath\n"
@@ -294,28 +293,19 @@ static void pstypesetter_close_tab(FILE *fp, const int x, const int sn) {
                 "%d %d lineto\n"
                 "closepath\n"
                 "fill\n"
-//                "newpath\n"
-//                "%d.5 %d.5 moveto\n"
-//                "%d.5 %d.5 lineto\n"
-//                "%d.5 %d.5 lineto\n"
-//                "closepath\n"
-//                "fill\n"
                 "0 0 0 setrgbcolor\n", x, yt,
                                        x, yb,
-                                       g_ps_ctab.cxr, yt,
-                                       g_ps_ctab.cxr, yb,
-                                       g_ps_ctab.cxr, yt,
-                                       x, yb,
-                                       x - 2, yt,
-                                       x - 2, pstypesetter_string_y(0, g_ps_ctab.cy) + 10,
-                                       g_ps_ctab.cxr, yt);
+                                       g_ps_ctab.xlimit_right, yt,
+                                       g_ps_ctab.xlimit_right, yb,
+                                       g_ps_ctab.xlimit_right, yt,
+                                       x, yb);
 
-    pstypesetter_vertbar(fp, x, g_ps_ctab.cy, sn);
+    pstypesetter_vertbar(fp, x, g_ps_ctab.carriage_y, sn);
 }
 
 static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     size_t s, o;
-    int x = g_ps_ctab.cx;
+    int x = g_ps_ctab.carriage_x;
     int pointed = 0;
     struct typesetter_curr_settings cset = typesetter_settings();
     size_t s_limit = tab->fretboard_sz;
@@ -328,10 +318,12 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
         s_limit = get_fretboard_usage_limit(tab);
     }
 
-g_ps_ctab.start_offset = 0;
+    g_ps_ctab.start_offset = 0;
 
     for (o = 0; o < s_limit; o++) {
-g_ps_ctab.end_offset = o;
+
+        g_ps_ctab.end_offset = o;
+
         for (s = 0; s < tab->string_nr; s++) {
 
             if (s == 0) {
@@ -343,7 +335,7 @@ g_ps_ctab.end_offset = o;
                 case 'p':
                     x += PSTYPESETTER_CARRIAGE_STEP + 10;
 
-                    if (x >= g_ps_ctab.cxr) {
+                    if (x >= g_ps_ctab.xlimit_right) {
                         pstypesetter_spill_sustained_techniques(fp, tab);
                         g_ps_ctab.start_offset = o;
 
@@ -352,14 +344,13 @@ g_ps_ctab.end_offset = o;
                             ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
                                 pstypesetter_close_tab(fp, x, tab->string_nr);
                         }
-                        g_ps_ctab.cy += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
-                        //g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
-                        pstypesetter_markup_sustained_techniques(fp, tab);
+                        g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
+                        pstypesetter_eval_sustained_techniques_area(fp, tab);
                         pstypesetter_newtabdiagram(fp, tab);
-                        x = g_ps_ctab.cx;
+                        x = g_ps_ctab.carriage_x;
                     }
 
-                    pstypesetter_pinch_hammer_on_pull_off(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5);
+                    pstypesetter_pinch_hammer_on_pull_off(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.carriage_y) + 5);
 
                     if (s < tab->string_nr - 1 && (tab->strings[s+1][o] == 'h' || tab->strings[s+1][o] == 'p')) {
                         x -= PSTYPESETTER_CARRIAGE_STEP + 10;
@@ -367,7 +358,7 @@ g_ps_ctab.end_offset = o;
                     break;
 
                 case '~':
-                    pstypesetter_pinch_vibrato(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 3);
+                    pstypesetter_pinch_vibrato(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.carriage_y) + 3);
                     if (s == tab->string_nr - 1 || tab->strings[s+1][o] != '~') {
                         x += PSTYPESETTER_CARRIAGE_STEP;
                     }
@@ -375,19 +366,19 @@ g_ps_ctab.end_offset = o;
 
                 case 'b':
                     pointed = (s == 0 || tab->strings[s - 1][o] != 'b');
-                    pstypesetter_pinch_bend(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy) + 5, pointed);
+                    pstypesetter_pinch_bend(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.carriage_y) + 5, pointed);
                     break;
 
                 case 'r':
                     pointed = (s == tab->string_nr - 1 || tab->strings[s + 1][o] != 'r');
-                    pstypesetter_pinch_release_bend(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.cy), pointed);
+                    pstypesetter_pinch_release_bend(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.carriage_y), pointed);
                     break;
 
                 case '-':
                     break;
 
                 case '|':
-                    pstypesetter_vertbar(fp, x, g_ps_ctab.cy, tab->string_nr);
+                    pstypesetter_vertbar(fp, x, g_ps_ctab.carriage_y, tab->string_nr);
                     s = tab->string_nr + 1;
                     x -= PSTYPESETTER_CARRIAGE_STEP;
                     continue;
@@ -396,7 +387,7 @@ g_ps_ctab.end_offset = o;
                     if (tab->strings[s][o] == '/' || tab->strings[s][o] == '\\') {
                         x += 1;
 
-                        if (x >= g_ps_ctab.cxr) {
+                        if (x >= g_ps_ctab.xlimit_right) {
                             pstypesetter_spill_sustained_techniques(fp, tab);
                             g_ps_ctab.start_offset = o;
 
@@ -405,15 +396,14 @@ g_ps_ctab.end_offset = o;
                                 ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
                                     pstypesetter_close_tab(fp, x, tab->string_nr);
                             }
-                            g_ps_ctab.cy += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
-                            //g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
-                            pstypesetter_markup_sustained_techniques(fp, tab);
+                            g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
+                            pstypesetter_eval_sustained_techniques_area(fp, tab);
                             pstypesetter_newtabdiagram(fp, tab);
-                            x = g_ps_ctab.cx;
+                            x = g_ps_ctab.carriage_x;
                         }
                     }
 
-                    fprintf(fp, "%d %d moveto (%s%c) show\n", x, pstypesetter_pinch_y(s, g_ps_ctab.cy),
+                    fprintf(fp, "%d %d moveto (%s%c) show\n", x, pstypesetter_pinch_y(s, g_ps_ctab.carriage_y),
                                                             (tab->strings[s][o] == '\\') ? "\\" : "",
                                                                 tab->strings[s][o]);
 
@@ -433,7 +423,7 @@ g_ps_ctab.end_offset = o;
             }
         }*/
 
-        if (x >= g_ps_ctab.cxr) {
+        if (x >= g_ps_ctab.xlimit_right) {
             pstypesetter_spill_sustained_techniques(fp, tab);
             g_ps_ctab.start_offset = o;
 
@@ -443,12 +433,11 @@ g_ps_ctab.end_offset = o;
                 pstypesetter_close_tab(fp, x, tab->string_nr);
             }
 
-            g_ps_ctab.cy += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
+            g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
 
-            //g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
-            pstypesetter_markup_sustained_techniques(fp, tab);
+            pstypesetter_eval_sustained_techniques_area(fp, tab);
             pstypesetter_newtabdiagram(fp, tab);
-            x = g_ps_ctab.cx;
+            x = g_ps_ctab.carriage_x;
         }
     }
 
@@ -460,9 +449,9 @@ g_ps_ctab.end_offset = o;
         pstypesetter_close_tab(fp, x, tab->string_nr);
     }
 
-    g_ps_ctab.cx = PSTYPESETTER_CARRIAGEX;
+    g_ps_ctab.carriage_x = PSTYPESETTER_CARRIAGEX;
 
-    g_ps_ctab.cy += PSTYPESETTER_NEXT_TABCHUNK;
+    g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_TABCHUNK;
 }
 
 static void pstypesetter_spill_song_title(FILE *fp, const char *song) {
@@ -470,9 +459,9 @@ static void pstypesetter_spill_song_title(FILE *fp, const char *song) {
         return;
     }
     fprintf(fp, "/Times-Bold 20 selectfont\n");
-    fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.cy, song);
+    fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.carriage_y, song);
     fprintf(fp, "/Times-Bold 11 selectfont\n");
-    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+    g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
 }
 
 static void pstypesetter_spill_transcribers_name(FILE *fp, const char *transcriber) {
@@ -480,9 +469,9 @@ static void pstypesetter_spill_transcribers_name(FILE *fp, const char *transcrib
         return;
     }
     fprintf(fp, "/Times-Bold-Italic 11 selectfont\n");
-    fprintf(fp, "%d %d moveto (transcribed by %s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.cy, transcriber);
+    fprintf(fp, "%d %d moveto (transcribed by %s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.carriage_y, transcriber);
     fprintf(fp, "/Times-Bold 11 selectfont\n");
-    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO * 3;
+    g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO * 3;
 }
 
 static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song) {
@@ -496,7 +485,7 @@ static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
         return;
     }
 
-    g_ps_ctab.cy -= PSTYPESETTER_NEXT_ADDINFO;
+    g_ps_ctab.carriage_y -= PSTYPESETTER_NEXT_ADDINFO;
 
     get_all_used_techniques(song, used_techniques, &used_techniques_nr, &has_muffled, &has_anyfret);
 
@@ -507,67 +496,74 @@ static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
                 case kTlpPullOff:
                     if (!hp_done) {
                         hp_done = 1;
-                        pstypesetter_pinch_hammer_on_pull_off(fp, PSTYPESETTER_CARRIAGEX + 20, g_ps_ctab.cy);
+                        pstypesetter_pinch_hammer_on_pull_off(fp, PSTYPESETTER_CARRIAGEX + 20, g_ps_ctab.carriage_y);
                         fprintf(fp, "%d %d moveto (=   %s/%s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25,
-                                                                     g_ps_ctab.cy,
+                                                                     g_ps_ctab.carriage_y,
                                                                      get_technique_notation_label(kTlpHammerOn),
                                                                      get_technique_notation_label(kTlpPullOff));
-                        g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+                        g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
                     }
                     continue;
 
                 case kTlpVibrato:
-                    pstypesetter_pinch_vibrato(fp, PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy);
-                    fprintf(fp, "%d %d moveto (=   %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy,
-                                                      get_technique_notation_label(kTlpVibrato));
-                    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+                    pstypesetter_pinch_vibrato(fp, PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.carriage_y);
+                    fprintf(fp, "%d %d moveto (=   %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25,
+                                                                g_ps_ctab.carriage_y,
+                                                                get_technique_notation_label(kTlpVibrato));
+                    g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
                     continue;
 
                 case kTlpBend:
-                    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
-                    pstypesetter_pinch_bend(fp, PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy, 1);
-                    fprintf(fp, "%d %d moveto (=   %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy,
-                                                      get_technique_notation_label(kTlpBend));
-                    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+                    g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
+                    pstypesetter_pinch_bend(fp, PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.carriage_y, 1);
+                    fprintf(fp, "%d %d moveto (=   %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25,
+                                                                g_ps_ctab.carriage_y,
+                                                                get_technique_notation_label(kTlpBend));
+                    g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
                     continue;
 
                 case kTlpReleaseBend:
-                    pstypesetter_pinch_release_bend(fp, PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy, 1);
-                    fprintf(fp, "%d %d moveto (=   %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy - 10,
-                                                      get_technique_notation_label(kTlpReleaseBend));
-                    g_ps_ctab.cy += (2 * PSTYPESETTER_NEXT_ADDINFO);
+                    pstypesetter_pinch_release_bend(fp, PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.carriage_y, 1);
+                    fprintf(fp, "%d %d moveto (=   %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25,
+                                                                g_ps_ctab.carriage_y - 10,
+                                                                get_technique_notation_label(kTlpReleaseBend));
+                    g_ps_ctab.carriage_y += (2 * PSTYPESETTER_NEXT_ADDINFO);
                     continue;
 
                 case kTlpSlideUp:
-                        fprintf(fp, "%d %d moveto (\\\\) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy);
+                        fprintf(fp, "%d %d moveto (\\\\) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.carriage_y);
                     break;
 
                 default:
-                    fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy, get_technique_label(used_techniques[u]));
+                    fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.carriage_y,
+                                                            get_technique_label(used_techniques[u]));
                     break;
             }
 
-            fprintf(fp, "%d %d moveto (=   %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy,
-                                                      get_technique_notation_label(used_techniques[u]));
+            fprintf(fp, "%d %d moveto (=   %s) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25,
+                                                        g_ps_ctab.carriage_y,
+                                                        get_technique_notation_label(used_techniques[u]));
 
 
-            g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+            g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
         }
 
         if (has_muffled) {
-            fprintf(fp, "%d %d moveto (X) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy);
-            fprintf(fp, "%d %d moveto (=   Muffled note) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy);
-            g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+            fprintf(fp, "%d %d moveto (X) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.carriage_y);
+            fprintf(fp, "%d %d moveto (=   Muffled note) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25,
+                                                                  g_ps_ctab.carriage_y);
+            g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
         }
 
         if (has_anyfret) {
-            fprintf(fp, "%d %d moveto (?) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy);
-            fprintf(fp, "%d %d moveto (=   From any fret) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25, g_ps_ctab.cy);
-            g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+            fprintf(fp, "%d %d moveto (?) show\n", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.carriage_y);
+            fprintf(fp, "%d %d moveto (=   From any fret) show\n", PSTYPESETTER_CARRIAGEX + PSTYPESETTER_CARRIAGE_STEP + 25,
+                                                                   g_ps_ctab.carriage_y);
+            g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
         }
     }
 
-    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+    g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
 
 }
 
@@ -580,12 +576,12 @@ static void pstypesetter_spill_tunning(FILE *fp) {
     if ((cset.prefs & kTlpPrefsShowTunning) && !(cset.prefs & kTlpPrefsAddTunningToTheFretboard)) {
 
         if (!(cset.prefs & kTlpPrefsIncludeTabNotation)) {
-            g_ps_ctab.cy -= PSTYPESETTER_NEXT_ADDINFO;
+            g_ps_ctab.carriage_y -= PSTYPESETTER_NEXT_ADDINFO;
         }
 
         tunning = get_processor_setting("tunning", &t_nr);
 
-        fprintf(fp, "%d %d moveto (Tunning [%d-1] = ", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.cy, t_nr);
+        fprintf(fp, "%d %d moveto (Tunning [%d-1] = ", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.carriage_y, t_nr);
 
         for (t = t_nr - 1; t >= 0; t--) {
             fprintf(fp, "%s", tunning[t]);
@@ -596,11 +592,11 @@ static void pstypesetter_spill_tunning(FILE *fp) {
 
         fprintf(fp, ") show\n");
 
-        g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+        g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
 
     }
 
-    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+    g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
 }
 
 static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_tablature_ctx *tab) {
@@ -614,10 +610,10 @@ static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_tablature_
     }
 
     if (tab->last != NULL) {
-        g_ps_ctab.cy += (2 * PSTYPESETTER_NEXT_ADDINFO);
+        g_ps_ctab.carriage_y += (2 * PSTYPESETTER_NEXT_ADDINFO);
     }
 
-    if (g_ps_ctab.cy < (PSTYPESETTER_PAGEY_LIMIT + 20)) {
+    if (g_ps_ctab.carriage_y < (PSTYPESETTER_PAGEY_LIMIT + 20)) {
         pstypesetter_pageinit();
         pstypesetter_showpage(fp);
         pstypesetter_newpage(fp);
@@ -636,15 +632,15 @@ static void pstypesetter_spill_comments(FILE *fp, const txttypesetter_tablature_
                 dp++;
             }
             comment[c] = 0;
-            fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.cy, comment);
-            g_ps_ctab.cy += PSTYPESETTER_ADDINFO_LINEBREAK;
+            fprintf(fp, "%d %d moveto (%s) show\n", PSTYPESETTER_PAGEXL, g_ps_ctab.carriage_y, comment);
+            g_ps_ctab.carriage_y += PSTYPESETTER_ADDINFO_LINEBREAK;
             dp++;
         }
     }
 
     fprintf(fp, "/Times-Bold 11 selectfont\n");
 
-    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+    g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
 }
 
 static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx *tab) {
@@ -679,7 +675,7 @@ static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx
     while (tp != tp_end) {
 
         if (*tp != ' ') {
-            fprintf(fp, "%d %d moveto (%c) show\n", x, g_ps_ctab.cy, *tp);
+            fprintf(fp, "%d %d moveto (%c) show\n", x, g_ps_ctab.carriage_y, *tp);
         }
 
         for (s = 0; s < tab->string_nr; s++) {
@@ -687,7 +683,8 @@ static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx
                 case 'h':
                 case 'p':
                     x += PSTYPESETTER_CARRIAGE_STEP + 10;
-                    if (s < tab->string_nr - 1 && (tab->strings[s+1][tp_end - tp] == 'h' || tab->strings[s+1][tp_end - tp] == 'p')) {
+                    if (s < tab->string_nr - 1 && (tab->strings[s+1][tp_end - tp] == 'h' ||
+                                                   tab->strings[s+1][tp_end - tp] == 'p')) {
                         x -= PSTYPESETTER_CARRIAGE_STEP + 10;
                     }
                     break;
@@ -712,28 +709,61 @@ static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx
         tp++;
     }
 
-    g_ps_ctab.cy += PSTYPESETTER_NEXT_STRING;
-
+    g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_STRING;
 }
 
 static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     int cy = g_ps_ctab.sustained_techniques_y, xl, xr = 0;
     const txttypesetter_sustained_technique_ctx *tp = NULL;
     char label[255] = "", *dp = NULL;
-    size_t l = 0, d = 0, d_end = 0, d_temp_end = 0;
-//fprintf(fp, "1 0 0 setrgbcolor\n");
+    size_t l = 0, d = 0, d_end = 0;
+
+    /* ------------------------------------------------------------------------------------------------------------------------
+     * --------------------------------- TIP(Monty Python's Black Knight): You Shall Not Pass. --------------------------------
+     * ------------------------------------------------------------------------------------------------------------------------
+     *
+     * WARN(Rafael): The sustained techniques are "spit out" in... "2 acts". It is a damn craziness I must confess but works.
+     *
+     *  The fisrt function [pstypesetter_eval_sustained_techniques_area()] only stores the initial y of the first technique
+     *  and let a correct space to be filled later. The [pstypesetter_eval_sustained_techniques_area()] function just
+     *  "make the plans about" :D and like an ostrich calls abstract(). I really should have called it professor_moriarty().
+     *
+     *  So, the second act of the Crime is performed by this current function. Basically, this function restores the current
+     *  tab's carriage_y to the initial y of the first sustained technique (a.k.a. Crime scene) and traverses the related
+     *  linked list writing (flushing) all data...
+     *
+     *  However, the tablature diagram can be not enough as its reference ASCII representation (in RAM). Frequently what the
+     *  Tulip has into RAM is not an absolute truth when in Postscript. Additonal tab diagrams can be necessary when our
+     *  moriarty-function has gone away.
+     *
+     *  The solution here is to flush the data following a kind of sliding window strategy, incantations and black art.
+     *
+     *  Also important: this current function is triggered only by [pstypesetter_flush_fretboard_pinches()].
+     *
+     *  Well, good luck! ;)
+     *
+     * ------------------------------------------------------------------------------------------------------------------------
+     */
+
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
         d = g_ps_ctab.start_offset;
+
         while (d > 0 && isalpha(*(tp->data + d - 1))) {
             d--;
         }
+
         d_end = g_ps_ctab.end_offset + 1;
 
         while (d < d_end) {
+
             dp = tp->data + d;
+
             if (*dp != ' ') {
+
                 if (isalpha(*dp)) {
+
                     memset(label, 0, sizeof(label));
+
                     l = 0;
                     while (d < d_end && isalpha(*dp)) {
                         label[l] = *dp;
@@ -741,16 +771,21 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
                         d++;
                         dp = tp->data + d;
                     }
-                    if (g_ps_ctab.x[d].value >= g_ps_ctab.cxr) {
+
+                    if (g_ps_ctab.x[d].value >= g_ps_ctab.xlimit_right) {
                         continue;
                     }
+
                     fprintf(fp, "%d %d moveto (%s) show\n", g_ps_ctab.x[d].value, cy, label);
+
                     if (d_end < PSTYPESETTER_FRETBOARD_SIZE) {
                         d_end++;
                     }
-//                    printf("%s at(%d, %d) i=%d\n", label, g_ps_ctab.x[d].value, cy, d);
+
                 } else if (*dp == '.') {
+
                     xl = g_ps_ctab.x[d].value;
+
                     while (d < d_end && (*dp == '.' || (*dp + 1) == '.')) {
                         d++;
                         dp = tp->data + d;
@@ -762,27 +797,26 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
                         xr = g_ps_ctab.x[d - 1].value;
                     }
 
-                    if (xr > g_ps_ctab.cxr) {
-                        xr = g_ps_ctab.cxr;
+                    if (xr > g_ps_ctab.xlimit_right) {
+                        xr = g_ps_ctab.xlimit_right;
                     }
 
-                    if (xl >= g_ps_ctab.cxr) {
+                    if (xl >= g_ps_ctab.xlimit_right) {
                         xl = PSTYPESETTER_CARRIAGEX;
                     }
 
                     fprintf(fp, "%d %d moveto %d %d lineto stroke\n", xl, cy, xr, cy);
-//                    printf("line at(%d, %d), at(%d, %d) i=%d\n", xl, cy, xr, cy, d);
                 }
             }
+
             d++;
         }
-//        printf("--\n");
+
         cy += PSTYPESETTER_ADDINFO_LINEBREAK;
     }
-//fprintf(fp, "0 0 0 setrgbcolor\n");
 }
 
-static void pstypesetter_markup_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab) {
+static void pstypesetter_eval_sustained_techniques_area(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     const txttypesetter_sustained_technique_ctx *tp = NULL;
 
     if (is_tab_empty(tab)) {
@@ -790,21 +824,21 @@ static void pstypesetter_markup_sustained_techniques(FILE *fp, const txttypesett
     }
 
     if (tab->comments == NULL) {
-        g_ps_ctab.cy += (2 * PSTYPESETTER_NEXT_ADDINFO);
+        g_ps_ctab.carriage_y += (2 * PSTYPESETTER_NEXT_ADDINFO);
     }
 
-    if (g_ps_ctab.cy < (PSTYPESETTER_PAGEY_LIMIT + 60)) {
+    if (g_ps_ctab.carriage_y < (PSTYPESETTER_PAGEY_LIMIT + 60)) {
         pstypesetter_pageinit();
         pstypesetter_showpage(fp);
         pstypesetter_newpage(fp);
     }
-    g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
+    g_ps_ctab.sustained_techniques_y = g_ps_ctab.carriage_y;
 
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
-        g_ps_ctab.cy += PSTYPESETTER_ADDINFO_LINEBREAK;
+        g_ps_ctab.carriage_y += PSTYPESETTER_ADDINFO_LINEBREAK;
     }
 
-    g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;
+    g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_ADDINFO;
 }
 
 int pstypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab, const tulip_single_note_ctx *song) {
