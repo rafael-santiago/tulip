@@ -89,7 +89,6 @@ static void pstypesetter_pageinit(void) {
     g_ps_ctab.cxr = PSTYPESETTER_PAGEXR;
     g_ps_ctab.cy = PSTYPESETTER_PAGEY;
     g_ps_ctab.sustained_techniques_y = PSTYPESETTER_PAGEY;
-    memset(&g_ps_ctab.x, 0, sizeof(g_ps_ctab.x));
 }
 
 static FILE *pstypesetter_newps(const char *filepath) {
@@ -144,14 +143,14 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
     }
 
     for (s = 0; s < tab->string_nr; s++) {
-        if (pstypesetter_string_y(s, g_ps_ctab.cy) < PSTYPESETTER_PAGEY_LIMIT) {
+        if (pstypesetter_string_y(s, g_ps_ctab.cy) < PSTYPESETTER_PAGEY_LIMIT + 20) {
             pstypesetter_pageinit();
             pstypesetter_showpage(fp);
             pstypesetter_newpage(fp);
+            pstypesetter_markup_sustained_techniques(fp, tab);
             break;
         }
     }
-
 
     fprintf(fp, "%.1f setlinewidth\n", PSTYPESETTER_TABLINE_W);
 
@@ -179,7 +178,9 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
         pstypesetter_vertbar(fp, g_ps_ctab.cxl, g_ps_ctab.cy, tab->string_nr);
     }
 
-    memset(&g_ps_ctab.x, g_ps_ctab.cx, sizeof(g_ps_ctab.x));
+    for (s = 0; s < PSTYPESETTER_FRETBOARD_SIZE; s++) {
+        g_ps_ctab.x[s].value = g_ps_ctab.cxr;
+    }
 }
 
 static void pstypesetter_spill_fretboard_tunning(FILE *fp, const txttypesetter_tablature_ctx *tab) {
@@ -348,7 +349,8 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                                 pstypesetter_close_tab(fp, x, tab->string_nr);
                         }
                         g_ps_ctab.cy += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
-                        g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
+                        //g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
+                        pstypesetter_markup_sustained_techniques(fp, tab);
                         pstypesetter_newtabdiagram(fp, tab);
                         x = g_ps_ctab.cx;
                     }
@@ -399,7 +401,8 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                                     pstypesetter_close_tab(fp, x, tab->string_nr);
                             }
                             g_ps_ctab.cy += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
-                            g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
+                            //g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
+                            pstypesetter_markup_sustained_techniques(fp, tab);
                             pstypesetter_newtabdiagram(fp, tab);
                             x = g_ps_ctab.cx;
                         }
@@ -436,8 +439,8 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
 
             g_ps_ctab.cy += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
 
-            g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
-
+            //g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
+            pstypesetter_markup_sustained_techniques(fp, tab);
             pstypesetter_newtabdiagram(fp, tab);
             x = g_ps_ctab.cx;
         }
@@ -678,11 +681,16 @@ static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx
                 case 'h':
                 case 'p':
                     x += PSTYPESETTER_CARRIAGE_STEP + 10;
-                    continue;
+                    if (s < tab->string_nr - 1 && (tab->strings[s+1][tp_end - tp] == 'h' || tab->strings[s+1][tp_end - tp] == 'p')) {
+                        x -= PSTYPESETTER_CARRIAGE_STEP + 10;
+                    }
+                    break;
 
                 case '~':
-                    x += PSTYPESETTER_CARRIAGE_STEP;
-                    continue;
+                    if (s == tab->string_nr - 1 || tab->strings[s+1][tp_end - tp] != '~') {
+                        x += PSTYPESETTER_CARRIAGE_STEP;
+                    }
+                    break;
             }
         }
 
@@ -707,7 +715,7 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
     const txttypesetter_sustained_technique_ctx *tp = NULL;
     char label[255] = "", *dp = NULL;
     size_t l = 0, d = 0, d_end = 0;
-
+//fprintf(fp, "1 0 0 setrgbcolor\n");
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
         d = 0;
         d_end = PSTYPESETTER_FRETBOARD_SIZE;
@@ -723,6 +731,9 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
                         l = (l + 1) % sizeof(label);
                         d++;
                         dp = tp->data + d;
+                    }
+                    if (g_ps_ctab.x[d].value >= g_ps_ctab.cxr) {
+                        continue;
                     }
                     fprintf(fp, "%d %d moveto (%s) show\n", g_ps_ctab.x[d].value, cy, label);
 //                    printf("%s at(%d, %d) i=%d\n", label, g_ps_ctab.x[d].value, cy, d);
@@ -752,15 +763,11 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
 //        printf("--\n");
         cy += PSTYPESETTER_ADDINFO_LINEBREAK;
     }
+//fprintf(fp, "0 0 0 setrgbcolor\n");
 }
 
 static void pstypesetter_markup_sustained_techniques(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     const txttypesetter_sustained_technique_ctx *tp = NULL;
-    int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, typesetter_settings().prefs);
-    int x = PSTYPESETTER_CARRIAGEX;
-    char *dp = NULL, *dp_end = NULL;
-    size_t s = 0;
-    int alpha_has_printed = 0;
 
     if (is_tab_empty(tab)) {
         return;
@@ -778,64 +785,7 @@ static void pstypesetter_markup_sustained_techniques(FILE *fp, const txttypesett
     g_ps_ctab.sustained_techniques_y = g_ps_ctab.cy;
 
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
-/*        if (has_half_step_notes) {
-            x += PSTYPESETTER_CARRIAGE_STEP;
-        }
-
-        dp = &tp->data[0];
-        dp_end = dp + strlen(dp) - 1;
-
-        alpha_has_printed = 0;
-        while (dp != dp_end) {
-
-            if ((*dp != '.' && *dp != ' ') || dp == &tp->data[0]) {
-                fprintf(fp, "%d %d moveto ", x, g_ps_ctab.cy);
-                fprintf(fp, "(%c) show\n", *dp);
-                if (!alpha_has_printed) {
-                    alpha_has_printed = isalpha(*(dp));
-                }
-            } else {
-                fprintf(fp, "%d %d moveto ", x, g_ps_ctab.cy);
-                if (alpha_has_printed && (*(dp - 1) == '.' || *(dp + 1) == '.')) { // WARN(Rafael): Yes, just accept it.
-                    fprintf(fp, "(-) show\n");
-                }
-            }
-
-            for (s = 0; s < tab->string_nr; s++) {
-                switch (tab->strings[s][dp_end - dp]) {
-                    case '|':
-                        if (!alpha_has_printed) {
-                            x -= PSTYPESETTER_CARRIAGE_STEP;
-                            s = tab->string_nr + 1;
-                        }
-                        break;
-
-                    case 'h':
-                    case 'p':
-                        if (!alpha_has_printed) {
-                            x += PSTYPESETTER_CARRIAGE_STEP + 10;
-                            s = tab->string_nr + 1;
-                        }
-                        break;
-
-                    case '~':
-                        if (!alpha_has_printed) {
-                            x += PSTYPESETTER_CARRIAGE_STEP;
-                            s = tab->string_nr + 1;
-                        }
-                        break;
-                }
-            }
-
-            if (isalpha(*dp) && *(dp + 1) == '.') {
-                x += 5;
-            }
-            x += PSTYPESETTER_CARRIAGE_STEP;
-            dp++;
-        }
-*/
         g_ps_ctab.cy += PSTYPESETTER_ADDINFO_LINEBREAK;
-//        x = PSTYPESETTER_CARRIAGEX;
     }
 
     g_ps_ctab.cy += PSTYPESETTER_NEXT_ADDINFO;

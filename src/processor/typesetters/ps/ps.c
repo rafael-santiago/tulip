@@ -15,7 +15,7 @@
 int ps_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     txttypesetter_tablature_ctx *tab = NULL;
     int has_error = 1;
-    size_t fretboard_sz = PSTYPESETTER_FRETBOARD_SIZE;
+    size_t fretboard_sz = 80;
 
     set_processor_setting("fretboard-size", &fretboard_sz, sizeof(fretboard_sz));
 
