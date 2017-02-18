@@ -347,7 +347,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                         g_ps_ctab.carriage_y += PSTYPESETTER_NEXT_TABCHUNK + PSTYPESETTER_NEXT_ADDINFO;
                         pstypesetter_eval_sustained_techniques_area(fp, tab);
                         pstypesetter_newtabdiagram(fp, tab);
-                        x = g_ps_ctab.carriage_x;
+                        x = g_ps_ctab.carriage_x + PSTYPESETTER_CARRIAGE_STEP + 10;
                     }
 
                     pstypesetter_pinch_hammer_on_pull_off(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.carriage_y) + 5);
