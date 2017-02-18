@@ -24,6 +24,7 @@ struct pstypesetter_real_x_coords_ctx {
 struct pstypesetter_tab_diagram_ctx {
     int cxl, cxr;
     int cy, cx;
+    int start_offset, end_offset;
     int sustained_techniques_y;
     struct pstypesetter_real_x_coords_ctx x[PSTYPESETTER_FRETBOARD_SIZE];
 };
@@ -293,12 +294,12 @@ static void pstypesetter_close_tab(FILE *fp, const int x, const int sn) {
                 "%d %d lineto\n"
                 "closepath\n"
                 "fill\n"
-                "newpath\n"
-                "%d.5 %d.5 moveto\n"
-                "%d.5 %d.5 lineto\n"
-                "%d.5 %d.5 lineto\n"
-                "closepath\n"
-                "fill\n"
+//                "newpath\n"
+//                "%d.5 %d.5 moveto\n"
+//                "%d.5 %d.5 lineto\n"
+//                "%d.5 %d.5 lineto\n"
+//                "closepath\n"
+//                "fill\n"
                 "0 0 0 setrgbcolor\n", x, yt,
                                        x, yb,
                                        g_ps_ctab.cxr, yt,
@@ -327,8 +328,10 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
         s_limit = get_fretboard_usage_limit(tab);
     }
 
-    for (o = 0; o < s_limit; o++) {
+g_ps_ctab.start_offset = 0;
 
+    for (o = 0; o < s_limit; o++) {
+g_ps_ctab.end_offset = o;
         for (s = 0; s < tab->string_nr; s++) {
 
             if (s == 0) {
@@ -342,6 +345,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
 
                     if (x >= g_ps_ctab.cxr) {
                         pstypesetter_spill_sustained_techniques(fp, tab);
+                        g_ps_ctab.start_offset = o;
 
                         if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
                             (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
@@ -394,6 +398,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
 
                         if (x >= g_ps_ctab.cxr) {
                             pstypesetter_spill_sustained_techniques(fp, tab);
+                            g_ps_ctab.start_offset = o;
 
                             if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
                                 (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
@@ -430,6 +435,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
 
         if (x >= g_ps_ctab.cxr) {
             pstypesetter_spill_sustained_techniques(fp, tab);
+            g_ps_ctab.start_offset = o;
 
             if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
                 (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
@@ -714,11 +720,14 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
     int cy = g_ps_ctab.sustained_techniques_y, xl, xr = 0;
     const txttypesetter_sustained_technique_ctx *tp = NULL;
     char label[255] = "", *dp = NULL;
-    size_t l = 0, d = 0, d_end = 0;
+    size_t l = 0, d = 0, d_end = 0, d_temp_end = 0;
 //fprintf(fp, "1 0 0 setrgbcolor\n");
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
-        d = 0;
-        d_end = PSTYPESETTER_FRETBOARD_SIZE;
+        d = g_ps_ctab.start_offset;
+        while (d > 0 && isalpha(*(tp->data + d - 1))) {
+            d--;
+        }
+        d_end = g_ps_ctab.end_offset + 1;
 
         while (d < d_end) {
             dp = tp->data + d;
@@ -736,6 +745,9 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
                         continue;
                     }
                     fprintf(fp, "%d %d moveto (%s) show\n", g_ps_ctab.x[d].value, cy, label);
+                    if (d_end < PSTYPESETTER_FRETBOARD_SIZE) {
+                        d_end++;
+                    }
 //                    printf("%s at(%d, %d) i=%d\n", label, g_ps_ctab.x[d].value, cy, d);
                 } else if (*dp == '.') {
                     xl = g_ps_ctab.x[d].value;
@@ -752,6 +764,10 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
 
                     if (xr > g_ps_ctab.cxr) {
                         xr = g_ps_ctab.cxr;
+                    }
+
+                    if (xl >= g_ps_ctab.cxr) {
+                        xl = PSTYPESETTER_CARRIAGEX;
                     }
 
                     fprintf(fp, "%d %d moveto %d %d lineto stroke\n", xl, cy, xr, cy);
