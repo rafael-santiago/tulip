@@ -745,6 +745,8 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
      * ------------------------------------------------------------------------------------------------------------------------
      */
 
+    fprintf(fp, "gsave [3 3] 0 setdash\n");
+
     for (tp = tab->techniques; tp != NULL; tp = tp->next) {
         d = g_ps_ctab.start_offset;
 
@@ -814,6 +816,8 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
 
         cy += PSTYPESETTER_ADDINFO_LINEBREAK;
     }
+
+    fprintf(fp, "grestore\n");
 }
 
 static void pstypesetter_eval_sustained_techniques_area(FILE *fp, const txttypesetter_tablature_ctx *tab) {
