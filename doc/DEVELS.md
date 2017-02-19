@@ -1,6 +1,6 @@
 # Developer's guide
 
-Hi! If you are interested in contrubuting with ``Tulip`` coding some stuff, the following documents are indispensable
+Hi! If you are interested in contributing with ``Tulip`` coding some stuff, the following documents are indispensable
 readings before starting:
 
 - [CONTRIBUTING.md](https://github.com/rafael-santiago/tulip/blob/master/doc/CONTRIBUTING.md)
