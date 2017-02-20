@@ -14,7 +14,9 @@
 #include <stdio.h>
 #include <string.h>
 
-static void epstypesetter_mkheader(FILE *fp);
+#define EPSTYPESETTER_BOTTOM_SPACER 100
+
+static void epstypesetter_mkheader(FILE *fp, const int carriage_y);
 
 static char *epstypesetter_getpsdata(const char *tempfile, size_t *dsize);
 
@@ -22,10 +24,12 @@ static void epstypesetter_mktrailer(FILE *fp);
 
 static int epstypesetter_get_page_nr(const char *psdata);
 
-static void epstypesetter_mkheader(FILE *fp) {
+static int epstypesetter_eval_bounding_box_lly(const int carriage_y);
+
+static void epstypesetter_mkheader(FILE *fp, const int carriage_y) {
     fprintf(fp, "%%!PS-Adobe-2.0 EPSF-2.0\n"
-                "%%%%BoundingBox: 40 30 561 734\n"
-                "%%%%HiResBoundingBox: 40.000000 30.000000 560.500000 733.500000\n"
+                "%%%%BoundingBox: 40 %d 560 734\n"
+//                "%%%%HiResBoundingBox: 40.000000 30.000000 560.500000 733.500000\n"
                 "%%Generated with tulip-%s\n"
                 "%%%%EndComments\n"
                 "%%%%BeginProlog\n"
@@ -35,7 +39,11 @@ static void epstypesetter_mkheader(FILE *fp) {
                 "newpath\n"
                 "/showpage {} def\n"
                 "/setpagedevice {pop} def\n"
-                "%%%%EndProlog\n", get_tulip_system_version());
+                "%%%%EndProlog\n", epstypesetter_eval_bounding_box_lly(carriage_y), get_tulip_system_version());
+}
+
+static int epstypesetter_eval_bounding_box_lly(const int carriage_y) {
+    return (carriage_y - EPSTYPESETTER_BOTTOM_SPACER);
 }
 
 static char *epstypesetter_getpsdata(const char *tempfile, size_t *dsize) {
@@ -122,7 +130,7 @@ int epstypesetter_inkspill(const char *tabpath, const tulip_single_note_ctx *son
         goto ___epstypesetter_inkspill_epilogue;
     }
 
-    epstypesetter_mkheader(fp);
+    epstypesetter_mkheader(fp, pstypesetter_get_carriage_y());
 
     fwrite(psdata, 1, dsize, fp);
 

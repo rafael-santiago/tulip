@@ -16,4 +16,6 @@ void pstypesetter_disable_pagenumbering(void);
 
 void pstypesetter_enable_pagenumbering(void);
 
+int pstypesetter_get_carriage_y(void);
+
 #endif

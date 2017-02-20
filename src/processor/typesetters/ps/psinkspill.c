@@ -885,3 +885,7 @@ void pstypesetter_disable_pagenumbering(void) {
 void pstypesetter_enable_pagenumbering(void) {
     g_ps_pagenumbering = 1;
 }
+
+int pstypesetter_get_carriage_y(void) {
+    return g_ps_ctab.carriage_y;
+}
