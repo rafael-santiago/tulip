@@ -2258,7 +2258,7 @@ currently implemented in ``Tulip``.
 The ``PDF`` processor depends on an external application called ``pspdf``, commonly it can be found in ``TeX/Live`` or even
 ``MikTeX`` if you are on ``Windows``.
 
-**A important remark**: The ``EPS`` output is only possible when your transcription is limited to one page. A ``EPS`` output is
+**An important remark**: The ``EPS`` output is only possible when your transcription is limited to one page. A ``EPS`` output is
 nice when you want to add a short idea into another text. Usually when you write some instructional document short tablatures
 are common. Maybe this short tablature can be some scale shape, some part of a Music, etc... The ``EPS`` is handy for
 ``TeX/LaTeX`` people. Using ``LaTeX`` the ``EPS`` output could be added as follows:
