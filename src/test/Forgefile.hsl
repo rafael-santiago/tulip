@@ -109,6 +109,19 @@ function runtests() : result type int {
         var memcheck_lines type list;
         $memcheck_lines = hefesto.sys.lines_from_file("memcheck.log", "== All heap blocks were freed.*no leaks are possible");
         if ($memcheck_lines.count() == 0) {
+            # INFO(Rafael): Sometimes still reachable blocks can show up, usually it is about some trinket lost in the
+            #               Twilight Zone of libc, due to some implicit (mis)configuration. Well, under these conditions
+            #               "still reachable" blocks are not user's fault.
+
+            $memcheck_lines = hefesto.sys.lines_from_file("memcheck.log", "(==.*definitely lost: 0 bytes in 0 blocks.*|" +
+                                                                          "==.*indirectly lost: 0 bytes in 0 blocks.*|" +
+                                                                          "==.*possibly lost: 0 bytes in 0 blocks)");
+            if ($memcheck_lines.count() != 3) {
+                # INFO(Rafael): It is better let it explode.
+                $memcheck_lines.clear();
+            }
+        }
+        if ($memcheck_lines.count() == 0) {
             hefesto.sys.echo("\nWARNING: Issues were found by Valgrind...\n" +
                              "         Please, try to re-run the main forge under src sub-directory using the following command:\n\n" +
                              "                     hefesto --compile-model=debug\n\n" +
