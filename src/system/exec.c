@@ -74,7 +74,12 @@ static int tulip_task_help() {
            "You can redistribute it and/or modify under the terms of the GNU General Public License version 2.\n\n"
            "Tulip language is Copyright (C) 2005-2017 by Rafael Santiago.\n"
            "Tulip compiler is Copyright (C) 2005-2017 by Rafael Santiago.\n"
-           "Tulip txt typesetter is Copyright (C) 2005-2017 by Rafael Santiago.\n\n"
+           "Tulip txt typesetter is Copyright (C) 2005-2017 by Rafael Santiago.\n"
+           "Tulip Postscript typesetter is Copyright (C) 2017 by Rafael Santiago.\n"
+           "Tulip Encapsulated Postscript typesetter is Copyright (C) 2017 by Rafael Santiago.\n"
+           "Tulip PDF typesetter is Copyright (C) 2017 by Rafael Santiago.\n"
+           "Tulip Markdown typesetter is Copyright (C) 2017 by Rafael Santiago.\n"
+           "Tulip HTML typesetter is Copyright (C) 2017 by Rafael Santiago\n\n"
            "Bug reports, feedback, etc: <voidbrainvoid@gmail.com> or <https://github.com/rafael-santiago/tulip/issues>\n\n");
     return 0;
 }
