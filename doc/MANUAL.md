@@ -2258,6 +2258,28 @@ currently implemented in ``Tulip``.
 The ``PDF`` processor depends on an external application called ``pspdf``, commonly it can be found in ``TeX/Live`` or even
 ``MikTeX`` if you are on ``Windows``.
 
+**A important remark**: The ``EPS`` output is only possible when your transcription is limited to one page. A ``EPS`` output is
+nice when you want to add a short idea into another text. Usually when you write some instructional document short tablatures
+are common. Maybe this short tablature can be some scale shape, some part of a Music, etc... The ``EPS`` is handy for
+``TeX/LaTeX`` people. Using ``LaTeX`` the ``EPS`` output could be added as follows:
+
+```latex
+(...)
+
+\usepackage{graphicx}
+
+(...)
+
+\begin{figure}[htbp]
+    \includegraphics[width=\textwidth]{pentatonic-scale-2nd-shape.eps}
+    \caption{The second shape of the Pentatonic Scale (A)}
+\end{figure}
+```
+
+Do not worry, when your tablature exceeds the "one-page" limit, the ``EPS`` processor will tell you.
+
+Also the ``EPS`` bounding box it automatically adjusted ("cropped") so you will not get a figure full of empty space.... ;)
+
 ### Changing the behavior of the processor
 
 It is possible to change the behavior of the processor in some cases using explict options.
