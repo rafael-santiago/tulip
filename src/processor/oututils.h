@@ -12,7 +12,7 @@
 #include <processor/typesetters/txt/txttypes.h>
 #include <stdlib.h>
 
-#ifdef _WIN32
+#ifndef __linux__
 #include <sys/types.h>
 #endif
 
