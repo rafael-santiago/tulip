@@ -116,7 +116,7 @@ function runtests() : result type int {
             $memcheck_lines = hefesto.sys.lines_from_file("memcheck.log", "(==.*definitely lost: 0 bytes in 0 blocks.*|" +
                                                                           "==.*indirectly lost: 0 bytes in 0 blocks.*|" +
                                                                           "==.*possibly lost: 0 bytes in 0 blocks)");
-            if ($memcheck_lines.count() != 3) {
+            if ($memcheck_lines.count() > 0 && $memcheck_lines.count() != 3) {
                 # INFO(Rafael): It is better let it explode.
                 $memcheck_lines.clear();
             }
