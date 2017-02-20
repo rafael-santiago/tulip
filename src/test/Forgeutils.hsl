@@ -99,6 +99,7 @@ local function get_relevant_test_logs_to_attach() : result type string {
     $RElevant_files.add_item(".*output\\.ps$");
     $RElevant_files.add_item(".*output\\.md$");
     $RElevant_files.add_item(".*output\\.html$");
+    $RElevant_files.add_item(".*output\\.eps$");
     $RElevant_files.add_item(".*output\\.pdf$");
     $RElevant_files.add_item(".*memcheck\\.log$");
     $RElevant_files.add_item(".*final\\.tlp$");
