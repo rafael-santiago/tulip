@@ -300,6 +300,8 @@ char *typesetter_raw_output(const tulip_single_note_ctx *song, size_t *osize, in
 
     fread(data, 1, dsize, tp);
 
+    fclose(tp);
+
     if (osize != NULL) {
         *osize = dsize;
     }

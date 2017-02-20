@@ -32,7 +32,9 @@ struct typesetter_fancy_outputs_assurance g_fancy_outputs_test_vector[] = {
     add_new_output_fancy_testing_step(high_heeled_sneakers, txt),
     add_new_output_fancy_testing_step(purple_haze, ps),
     add_new_output_fancy_testing_step(feel_me, ps),
-    add_new_output_fancy_testing_step(born_to_hula, ps)
+    add_new_output_fancy_testing_step(born_to_hula, ps),
+    add_new_output_fancy_testing_step(born_to_hula, md),
+    add_new_output_fancy_testing_step(born_to_hula, html)
 };
 
 size_t g_fancy_outputs_test_vector_nr = sizeof(g_fancy_outputs_test_vector) / sizeof(g_fancy_outputs_test_vector[0]);

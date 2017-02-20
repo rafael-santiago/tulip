@@ -38,7 +38,7 @@ int metatypesetter_inkspill(const char *tabpath, const tulip_single_note_ctx *so
         metatypesetter_spill_transcribers_name(fp, txttab->transcriber);
     }
 
-    if (linebreaking != NULL && txttab->song != NULL || txttab->transcriber != NULL) {
+    if (linebreaking != NULL && (txttab->song != NULL || txttab->transcriber != NULL)) {
         fprintf(fp, "%s", linebreaking);
     }
 
