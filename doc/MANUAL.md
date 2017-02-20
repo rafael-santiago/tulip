@@ -359,8 +359,8 @@ Here goes my bad solo's aproximation... If you have a ``Octave Fuzz`` you should
 
 Engage your octave...
 
-    203-.letring{205b-105-205~~-105-205b-205~~}-|-205h207-207~--205-207-205-307~~--307-309-307-305-307~~-307/309-305~~
-    405/407-305-307-305-407-305~~--305-307-305-407-405~~--405-407-405-507-405~~~--402/405-302-304--
+    203-.letring{205b-105-205~~-105-205b-205~~}-|-205h207-207~--205-207-205-307~~--307-309-307-305-307~~-307/309-
+    305~~405/407-305-307-305-407-305~~--305-307-305-407-405~~--405-407-405-507-405~~~--402/405-302-304--
     304h305p304-405-302-304-405--304-405-304-405-304-405~~--402-405-302-304-305--106b-104h106p104-102-104-102-204-
     3?/304-203-.letring{204b-104-204~~~~}-
 
@@ -378,7 +378,11 @@ In order to get a complete transcription we need to the "exit solo". Follows:
 Another great guitar player called ``Eric Gales`` does a nice ending using the eighth intervals from the bridge idead.
 ``Strumming`` more or less in this way:
 
-    .strum{5?/.chord{500-302}----------------------5?/.chord{502-304}----------------------5?/.chord{58-300}-----------}
+    .strum{
+        5?/.chord{500-302}----------------------
+        5?/.chord{502-304}----------------------
+        5?/.chord{58-300}-----------
+    }
 
 Go ahead repeating it again and again. The use of ``.strum`` is straightforward. It is a way to abstract the strumming
 complications, saying only where to put the fingers and strum the notes following the current beat.
@@ -437,8 +441,8 @@ Then, here is our ``Purple Haze`` interpretation coded into ``Tulip's DSL``:
     .literal{"Solo:\n"}
 
         402h404-302-205~~--402h402-302-205~~--305h307-206-108~~--305h307-206-108~~-|-
-        203-.letring{205b-105-205~~-105-205b-205~~}-|-205h207-207~--205-207-205-307~~--307-309-307-305-307~~-307/309-305~~
-        405/407-305-307-305-407-305~~--305-307-305-407-405~~--405-407-405-507-405~~~--402/405-302-304--
+        203-.letring{205b-105-205~~-105-205b-205~~}-|-205h207-207~--205-207-205-307~~--307-309-307-305-307~~-307/309-
+        305~~405/407-305-307-305-407-305~~--305-307-305-407-405~~--405-407-405-507-405~~~--402/405-302-304--
         304h305p304-405-302-304-405--304-405-304-405-304-405~~--402-405-302-304-305--106b-104h106p104-102-104-102-204-
         3?/304-203-.letring{204b-104-204~~~~}-;
 
@@ -450,7 +454,11 @@ Then, here is our ``Purple Haze`` interpretation coded into ``Tulip's DSL``:
 
     .literal{"Ending (outro):\n"}
 
-        .strum{5?/.chord{500-302}----------------------5?/.chord{502-304}----------------------5?/.chord{58-300}-----------}
+        .strum{
+            5?/.chord{500-302}----------------------
+            5?/.chord{502-304}----------------------
+            5?/.chord{58-300}-----------
+        }
 
 
 By now we will abstract how this code should be passed to the ``Tulip``. After processing we will get this output:
@@ -1201,7 +1209,8 @@ of these horns:
         .chord{58-47-38}-.chord{18-28}--
         48-.chord{37-26-16}--
         .chord{46-36}h.chord{48-37}-.chord{28-18}-.chord{26-16}--
-        .chord{26-16}-.chord{400-302-201}.chord{3:p}.chord{400-300-201}.chord{3:h}.chord{400-302-201}-.times{2}-|-
+        .chord{26-16}-.chord{400-302-201}.chord{3:p}.chord{400-300-201}.chord{3:h}.chord{400-302-201}-
+        .times{2}-|-
 
         56-57-
         .chord{58-47-38-29}~
@@ -1404,8 +1413,9 @@ The entire ``tlp`` for my transcription for this ``badass`` song:
             .chord{58-48-300-201}-------------------|-
             .chord{58-48-38-29}----------------
         }-|-;
-        .chord{50-40}-.chord{58-400-300}-.chord{58-400-300}-.chord{50-40}-.chord{58-48-38}-.chord{58-48-38}-.chord{58-48-38}-
-        .chord{50-40}-.chord{58-48-300-201}-.chord{58-48-38-29}-.chord{58-400-300}-|-.chord{58-400-300}-.chord{58-400-300}-;
+        .chord{50-40}-.chord{58-400-300}-.chord{58-400-300}-.chord{50-40}-.chord{58-48-38}-.chord{58-48-38}-
+        .chord{58-48-38}-.chord{50-40}-.chord{58-48-300-201}-.chord{58-48-38-29}-.chord{58-400-300}-|-
+        .chord{58-400-300}-.chord{58-400-300}-;
         .chord{50-40}-
         .mute{.chord{58-48-300-201}-----------------}-|-
         .chord{50-40}-
@@ -1698,7 +1708,8 @@ For the ``intro riff`` we have the following:
 
 The ``base`` constantly backs to the ``intro riff``. Then I found this way in order to denote it:
 
-    .chord{53-43-35}-.chord{53-43-35}---.chord{53-43-37}---.chord{43-33-24}---.chord{53-43-37}-.chord{53-43-35}.times{2}-|-
+    .chord{53-43-35}-.chord{53-43-35}---.chord{53-43-37}---.chord{43-33-24}---
+    .chord{53-43-37}-.chord{53-43-35}.times{2}-|-
 
     .repeat{intro&riff_1}
     .repeat{intro&riff_2}
@@ -1741,7 +1752,8 @@ Well, the solo is a far approximation....
 
     .chord{202-102}\.chord{201-101}-.chord{19-29}-|-.chord{201-101}b-.chord{201-101}r-.chord{29-19}.times{2}-|-
 
-    28-201b-18-201b-18-201b-18-18h101p18-201-28-201\200p29-300-38-300/301\300-38-300-400-400-38h39-.chord{18-28}\-|-
+    28-201b-18-201b-18-201b-18-18h101p18-201-28-201\200p29-300-38-300/301\300-38-300-400-400-38h39-
+    .chord{18-28}\-|-
 
     .chord{302-201-102}@@-|-
 
@@ -1787,7 +1799,8 @@ The entire script for this cool blues:
     .literal{"\tBasically you should \"shuffle\" twice and back to the intro riff."}
     .literal{"\tThe ***whole base*** is done twice."}
 
-        .chord{53-43-35}-.chord{53-43-35}---.chord{53-43-37}---.chord{43-33-24}---.chord{53-43-37}-.chord{53-43-35}.times{2}-|-
+        .chord{53-43-35}-.chord{53-43-35}---.chord{53-43-37}---.chord{43-33-24}---
+        .chord{53-43-37}-.chord{53-43-35}.times{2}-|-
 
         .repeat{intro&riff_1}
         .repeat{intro&riff_2}
@@ -1833,7 +1846,8 @@ The entire script for this cool blues:
 
         .chord{302-201-102}@@-|-
 
-        .chord{29-19}-.chord{202-102}-.chord{201-101}-.chord{29-19}-.chord{302-202}\.chord{301-201}---.chord{39-29}-;-
+        .chord{29-19}-.chord{202-102}-.chord{201-101}-.chord{29-19}-
+        .chord{302-202}\.chord{301-201}---.chord{39-29}-;-
 
         .literal{"\tPick several times (listen to the song) the last note from this segment holding"}
 
@@ -2055,7 +2069,8 @@ Here is the entire ``Tulip`` code of this song (two whole steps down, you alread
     .literal{"[Chorus]"}
         .literal{"\tHere you can also omit the open intervals."}
         .chord{60-50}-.chord{69-501-401}-.chord{69-501-401}-.chord{69-501-401}-|-
-        .chord{59-401-301}-.chord{59-401-301}-|-.chord{50-40}-.chord{501-403-303}-.chord{501-403-303}-.chord{501-403-303}-|-
+        .chord{59-401-301}-.chord{59-401-301}-|-.chord{50-40}-.chord{501-403-303}-
+        .chord{501-403-303}-.chord{501-403-303}-|-
         .chord{59-401-301}-.chord{59-401-301}-;
 
     .literal{"[Solo]"}
@@ -2090,7 +2105,8 @@ Here is the entire ``Tulip`` code of this song (two whole steps down, you alread
 
         109b----------110~~~~~~~~-|-
         111-109-106-.chord{209-106}.chord{2:b}-210-|-
-        106-111-109-106-.chord{209-106}.chord{2:b}-106-.chord{209-106}.chord{2:b}-.chord{209-106}.chord{2:~}.chord{2:~}-;
+        106-111-109-106-.chord{209-106}.chord{2:b}-106-.chord{209-106}.chord{2:b}-
+        .chord{209-106}.chord{2:~}.chord{2:~}-;
 
         .literal{"[Final lick]"}
             .literal{"\tSomething to be developed over.\n"}
@@ -2278,7 +2294,7 @@ are common. Maybe this short tablature can be some scale shape, some part of a M
 
 Do not worry, when your tablature exceeds the "one-page" limit, the ``EPS`` processor will tell you.
 
-Also the ``EPS`` bounding box it automatically adjusted ("cropped") so you will not get a figure full of empty space.... ;)
+Also the ``EPS`` bounding box is automatically adjusted ("cropped") so you will not get a figure full of empty space.... ;)
 
 ### Changing the behavior of the processor
 
@@ -2380,7 +2396,8 @@ mytabs.prologue() {
 So, after composing the file above, you should run the following command:
 
 ```
-tulip-user@SOMEWHERE:~/over/the/rainbow/mytabs# hefesto --forgefiles=Forgefile.hsl --Forgefile-projects=mytabs
+tulip-user@SOMEWHERE:~/over/the/rainbow/mytabs# hefesto --forgefiles=Forgefile.hsl \
+> --Forgefile-projects=mytabs
 ```
 
 Avoid typing the ``Hefesto``'s invocation everytime is a good idea. You should compose an invocation file. Create a file
