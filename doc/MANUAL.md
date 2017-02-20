@@ -2407,7 +2407,7 @@ the ``Tulip`` could be not only useful but also can make the transcription proce
 seeing it in a more programmatic way, instead of dummy clicks on a simulated fretboard. In addition, it can bring more
 method to your transcription workflow. Because you can add some versioning control over it.
 
-However, do not avoid learning about the ``Standard Music Notation (Sheet Music)``. It is rather important for any ``Musician`` whom wants
+However, do not avoid learning about the ``Standard Music Notation (Sheet Music)``. It is rather important for any ``Musician`` who wants
 to evolve more and more. In fact, the tablature is a quite limited transcription form. It is nice only to know about what you
 "previously know" or at least have a far idea about what it should be.
 
