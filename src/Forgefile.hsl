@@ -20,14 +20,14 @@ var deps type string;
 
 project tulip : toolset "gcc-c-app" : dependencies $deps : $src, $inc, $cflags, $lib, $ldflags, $appname ;
 
-function get_app_name() : result type string {
+local function get_app_name() : result type string {
     if (hefesto.sys.os_name() != "windows") {
         result "tulip";
     }
     result "tulip.exe";
 }
 
-function get_codes() : result type list {
+local function get_codes() : result type list {
     var codes type list;
     var submodules type list;
     var s type int;
@@ -52,7 +52,7 @@ function get_codes() : result type list {
     result $codes;
 }
 
-function runtests() : result type int {
+local function runtests() : result type int {
     var oldcwd type string;
     var test_options type list;
     var test_options_data type string;
@@ -108,7 +108,7 @@ function runtests() : result type int {
     result $tests_forge_result;
 }
 
-function init_forge() : result type none {
+local function init_forge() : result type none {
     $src = get_codes();
     $inc = hefesto.sys.get_option("includes");
     $appname = get_app_name();

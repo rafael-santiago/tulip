@@ -50,7 +50,7 @@ tulip-tests.epilogue() {
     }
 }
 
-function forge_libcutest() : result type none {
+local function forge_libcutest() : result type none {
     var oldcwd type string;
     $oldcwd = hefesto.sys.pwd();
     hefesto.sys.cd("cutest/src");
@@ -61,7 +61,7 @@ function forge_libcutest() : result type none {
     }
 }
 
-function runtests() : result type int {
+local function runtests() : result type int {
     var test_options type list;
     $test_options = hefesto.sys.get_option("test-options");
 
@@ -141,14 +141,14 @@ function runtests() : result type int {
     result $exit_code;
 }
 
-function get_appname() : result type string {
+local function get_appname() : result type string {
     if (hefesto.sys.os_name() == "windows") {
         result "tests.exe";
     }
     result "tests";
 }
 
-function get_master_project_objects(ldflags type list) : result type list {
+local function get_master_project_objects(ldflags type list) : result type list {
     var master_project_obj_dir type list;
     var m type int;
     var oldcwd type string;
@@ -185,4 +185,3 @@ function get_master_project_objects(ldflags type list) : result type list {
     }
     result $ldflags;
 }
-
