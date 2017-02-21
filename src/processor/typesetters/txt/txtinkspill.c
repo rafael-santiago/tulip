@@ -39,7 +39,7 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
     struct typesetter_curr_settings cset;
     int half_step_notes = 0;
 
-    if (is_tab_empty(tab)) {
+    if (is_tab_empty(tab, -1)) {
         return;
     }
 
@@ -100,7 +100,7 @@ static void txttypesetter_spill_sustained_techniques(FILE *fp, const txttypesett
     int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, cset.prefs);
     ssize_t usage_limit = -1;
 
-    if (is_tab_empty(tab)) {
+    if (is_tab_empty(tab, -1)) {
         return;
     }
 
@@ -279,7 +279,7 @@ int txttypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
     for (tp = tab; tp != NULL; tp = tp->next) {
         txttypesetter_spill_comments(fp, tp->comments);
         txttypesetter_spill_sustained_techniques(fp, tp);
-        if (!is_tab_empty(tp)) {
+        if (!is_tab_empty(tp, -1)) {
             txttypesetter_spill_times(fp, tp->times, tp->tunning);
         }
         txttypesetter_spill_fretboard_pinches(fp, tp);

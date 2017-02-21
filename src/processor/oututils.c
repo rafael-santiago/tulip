@@ -100,13 +100,19 @@ char *get_technique_notation_label(const tulip_command_t command) {
     return &g_tlp_technique_notation_label[tlp_cmd_code_to_plain_index(command) % g_tlp_technique_label_nr][0];
 }
 
-int is_tab_empty(const txttypesetter_tablature_ctx *tab) {
-    size_t s = 0, o = 0;
+int is_tab_empty(const txttypesetter_tablature_ctx *tab, const int curr_offset) {
+    size_t s = 0;
+    int o = 0;
     int is_empty = 1;
+
+    if ((curr_offset + 1) > tab->fretboard_sz) {
+        return 1;
+    }
+
     //  WARN(Santiago): A leading ';' at the end of a tlp script or a automatic break just after
     //                  the last song note can cause this dummy empty tab diagram.
     for (s = 0; s < tab->string_nr && is_empty; s++) {
-        for (o = 0; o < tab->fretboard_sz && is_empty; o++) {
+        for (o = curr_offset + 1; o < tab->fretboard_sz && is_empty; o++) {
             is_empty = (tab->strings[s][o] == '-');
         }
     }

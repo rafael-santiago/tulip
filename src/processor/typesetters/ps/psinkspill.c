@@ -139,7 +139,7 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
     int sy = 0;
     struct typesetter_curr_settings cset = typesetter_settings();
 
-    if (is_tab_empty(tab)) {
+    if (is_tab_empty(tab, -1)) {
         return;
     }
 
@@ -310,7 +310,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
     struct typesetter_curr_settings cset = typesetter_settings();
     size_t s_limit = tab->fretboard_sz;
 
-    if (is_tab_empty(tab)) {
+    if (is_tab_empty(tab, -1)) {
         return;
     }
 
@@ -335,7 +335,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                 case 'p':
                     x += PSTYPESETTER_CARRIAGE_STEP + 10;
 
-                    if (x >= g_ps_ctab.xlimit_right) {
+                    if (x >= g_ps_ctab.xlimit_right && !is_tab_empty(tab, o)) {
                         pstypesetter_spill_sustained_techniques(fp, tab);
                         g_ps_ctab.start_offset = o;
 
@@ -387,7 +387,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                     if (tab->strings[s][o] == '/' || tab->strings[s][o] == '\\') {
                         x += 1;
 
-                        if (x >= g_ps_ctab.xlimit_right) {
+                        if (x >= g_ps_ctab.xlimit_right && !is_tab_empty(tab, o)) {
                             pstypesetter_spill_sustained_techniques(fp, tab);
                             g_ps_ctab.start_offset = o;
 
@@ -423,7 +423,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
             }
         }*/
 
-        if (x >= g_ps_ctab.xlimit_right) {
+        if (x >= g_ps_ctab.xlimit_right && !is_tab_empty(tab, o)) {
             pstypesetter_spill_sustained_techniques(fp, tab);
             g_ps_ctab.start_offset = o;
 
@@ -445,7 +445,7 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
 
     if ((cset.prefs & kTlpPrefsFretboardStyleNormal    ) ||
         (cset.prefs & kTlpPrefsCloseTabToSave          ) ||
-        ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL)) {
+        ((cset.prefs & kTlpPrefsFretboardStyleContinuous) && tab->next == NULL && !is_tab_empty(tab, o))) {
         pstypesetter_close_tab(fp, x, tab->string_nr);
     }
 
@@ -823,7 +823,7 @@ static void pstypesetter_spill_sustained_techniques(FILE *fp, const txttypesette
 static void pstypesetter_eval_sustained_techniques_area(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     const txttypesetter_sustained_technique_ctx *tp = NULL;
 
-    if (is_tab_empty(tab)) {
+    if (is_tab_empty(tab, -1)) {
         return;
     }
 

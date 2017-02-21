@@ -22,7 +22,7 @@ char *get_technique_notation_label(const tulip_command_t command);
 
 int single_note_to_tab_fret_nr(const char *single_note);
 
-int is_tab_empty(const txttypesetter_tablature_ctx *tab);
+int is_tab_empty(const txttypesetter_tablature_ctx *tab, const int curr_offset);
 
 int tunning_has_half_step_notes(const txttypesetter_tablature_ctx *tab, const char tunning_buffer[6][4], const tulip_prefs_map_t prefs);
 
