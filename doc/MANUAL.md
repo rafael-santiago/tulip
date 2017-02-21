@@ -1368,7 +1368,7 @@ I love the easy way we fell down from the solo into the ``calm part``.
     }-
      .chord{33-23}-.chord{31-21}-.chord{43-32-21}-53h56-43-;
 
-This is a nice base for noodling your guitar all day long. Find for videos from this song with "battles"... You can not be sorry.
+This is a nice base for noodling your guitar all day long. Find for videos from this song with "battles"... You cannot be sorry.
 
 The end of the song is just a pentatonic lick using intervals (double-stops):
 
@@ -2056,7 +2056,7 @@ depicted in the **Figure 2**, **Figure 3**, **Figure 4**, **Figure 5** and **Fig
 
 Here is the entire ``Tulip`` code of this song (two whole steps down, you already know why...):
 
-    .song{"Louie Louie (Alternate Version) / Motorhead [Some EP which I can not remember by now, around 1979]"}
+    .song{"Louie Louie (Alternate Version) / Motorhead [Some EP which I cannot remember by now, around 1979]"}
     .transcriber{"Rafael Santiago"}
 
     .literal{"[Riff intro]"}
@@ -2120,7 +2120,7 @@ Here is the entire ``Tulip`` code of this song (two whole steps down, you alread
 
 It is a simple and cool song. Sorry for my solo approximations, etc, etc... Follows the tab for it:
 
-    Song: Louie Louie (Alternate Version) / Motorhead [Some EP which I can not remember by now, around 1979]
+    Song: Louie Louie (Alternate Version) / Motorhead [Some EP which I cannot remember by now, around 1979]
     Transcribed by: Rafael Santiago
 
     [Riff intro]
