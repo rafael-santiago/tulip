@@ -101,12 +101,15 @@ local function refresh_prebuilt_md5sum(dst_bin_path type string) : result type i
     }
 
     var search_pattern type string;
+    var binary_filename type string;
 
-    $search_pattern = "| ``prebuilt/tulip-bin-" + hefesto.sys.os_name() + ".zip`` | ``" + hefesto.sys.os_name() + "`` |.*|";
+    $binary_filename = "tulip-bin-" + hefesto.sys.os_name() + ".zip";
+
+    $search_pattern = "| \\[``prebuilt/" + $binary_filename + "``\\].*| ``" + hefesto.sys.os_name() + "`` |.*|";
 
     var replacement_data type string;
 
-    $replacement_data = "| ``prebuilt/tulip-bin-" + hefesto.sys.os_name() + ".zip`` | ``" + hefesto.sys.os_name() +  "`` | ``" + $md5hash + "`` |";
+    $replacement_data = "| [``prebuilt/" + $binary_filename + "``](https://github.com/rafael-santiago/tulip/blob/master/prebuilt/" + $binary_filename + ") | ``" + hefesto.sys.os_name() +  "`` | ``" + $md5hash + "`` |";
 
     if (hefesto.sys.cp("../README.md", "../README.md~")) {
         var replacement_count type int;
