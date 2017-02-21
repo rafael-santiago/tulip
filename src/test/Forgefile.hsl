@@ -117,7 +117,7 @@ function runtests() : result type int {
                                                                           "==.*indirectly lost: 0 bytes in 0 blocks.*|" +
                                                                           "==.*possibly lost: 0 bytes in 0 blocks)");
             if ($memcheck_lines.count() > 0 && $memcheck_lines.count() != 3) {
-                # INFO(Rafael): It is better let it explode.
+                # INFO(Rafael): Better to explode.
                 $memcheck_lines.clear();
             }
         }
