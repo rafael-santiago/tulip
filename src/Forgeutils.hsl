@@ -109,7 +109,7 @@ local function refresh_prebuilt_md5sum(dst_bin_path type string) : result type i
 
     var replacement_data type string;
 
-    $replacement_data = "| [``prebuilt/" + $binary_filename + "``](https://github.com/rafael-santiago/tulip/blob/master/prebuilt/" + $binary_filename + ") | ``" + hefesto.sys.os_name() +  "`` | ``" + $md5hash + "`` |";
+    $replacement_data = "| [``prebuilt/" + $binary_filename + "``](https://github.com/rafael-santiago/tulip/raw/master/prebuilt/" + $binary_filename + ") | ``" + hefesto.sys.os_name() +  "`` | ``" + $md5hash + "`` |";
 
     if (hefesto.sys.cp("../README.md", "../README.md~")) {
         var replacement_count type int;
