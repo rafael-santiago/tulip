@@ -79,7 +79,7 @@ static int tulip_task_help() {
            "Tulip Encapsulated Postscript typesetter is Copyright (C) 2017 by Rafael Santiago.\n"
            "Tulip PDF typesetter is Copyright (C) 2017 by Rafael Santiago.\n"
            "Tulip Markdown typesetter is Copyright (C) 2017 by Rafael Santiago.\n"
-           "Tulip HTML typesetter is Copyright (C) 2017 by Rafael Santiago\n\n"
+           "Tulip HTML typesetter is Copyright (C) 2017 by Rafael Santiago.\n\n"
            "Bug reports, feedback, etc: <voidbrainvoid@gmail.com> or <https://github.com/rafael-santiago/tulip/issues>\n\n");
     return 0;
 }
