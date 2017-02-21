@@ -36,7 +36,7 @@ function pack_stuff(src type string, dst type string) : result type int {
 function eval_md5_file_hash(filepath type string, hash_result type string) : result type int {
     var exit_code type int;
     var has_md5sum type int;
-    
+
     $has_md5sum = has_md5sum();
 
     if ($has_md5sum) {
@@ -44,21 +44,21 @@ function eval_md5_file_hash(filepath type string, hash_result type string) : res
     } else {
         $exit_code = hefesto.sys.run("fciv -md5 " + $filepath + ">.-md5sum-");
     }
-    
+
     if ($exit_code != 0) {
         result $exit_code;
     }
-    
+
     var md5sum_out type list;
 
     $md5sum_out = hefesto.sys.lines_from_file(".-md5sum-", "^[0123456789abcdefABCDEF]");
 
     hefesto.sys.rm(".-md5sum-");
-    
+
     if ($md5sum_out.count() == 0) {
         result 1;
     }
-    
+
     $hash_result = $md5sum_out.item(0);
 
     $hash_result.replace(" .*$", "");
