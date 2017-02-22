@@ -69,7 +69,7 @@ All executables listed in the **Table 1** are ``32-bit`` based.
 
 After downloading the correspondent file you need to unzip it into a specific directory. Maybe you should create a new directory
 for doing it. However, ``Linux`` and ``FreeBSD`` users should unzip it to the ``local/bin`` directory (or equivalent) and for
-them any additional action is unnecessary.
+them no additional actions are necessary.
 
 Now, for ``Windows`` users: once the executable unzipped into some place on your computer filesystem, you need to "export" this
 executable, in order to be able to call this program from everywhere. Under ``Windows`` it should be done adding to
