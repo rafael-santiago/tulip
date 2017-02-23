@@ -61,7 +61,7 @@ CUTE_TEST_CASE(dsl_basic_dsl_utils_tests)
         {              "\\",            kTlpSlideUp, 0 },
         {               "h",           kTlpHammerOn, 0 },
         {               "p",            kTlpPullOff, 0 },
-        {        ".tunning",            kTlpTunning, 0 },
+        {        ".tuning",            kTlpTuning, 0 },
         {        ".literal",            kTlpLiteral, 0 },
         {              "34",         kTlpSingleNote, 0 },
         {               "-",            kTlpNoteSep, 0 },
@@ -263,7 +263,7 @@ CUTE_TEST_CASE(dsl_utils_tlp_cmd_code_to_plain_index_tests)
         {            kTlpSlideUp, 13 },
         {           kTlpHammerOn, 14 },
         {            kTlpPullOff, 15 },
-        {            kTlpTunning, 16 },
+        {            kTlpTuning, 16  },
         {            kTlpLiteral, 17 },
         {         kTlpSingleNote, 18 },
         {             kTlpSepBar, 19 },
@@ -402,7 +402,7 @@ CUTE_TEST_CASE(dsl_utils_demux_tlp_commands_tests)
                                  kTlpPullOff         |
                                  kTlpTimes           |
                                  kTlpVibratoWBar     |
-                                 kTlpTunning         |
+                                 kTlpTuning          |
                                  kTlpLiteral         |
                                  kTlpSingleNote      |
                                  kTlpNoteSep         |
@@ -430,7 +430,7 @@ CUTE_TEST_CASE(dsl_utils_demux_tlp_commands_tests)
         kTlpSlideUp,
         kTlpHammerOn,
         kTlpPullOff,
-        kTlpTunning,
+        kTlpTuning,
         kTlpLiteral,
         kTlpSingleNote,
         kTlpSepBar,
@@ -657,7 +657,7 @@ CUTE_TEST_CASE(dsl_utils_get_cmd_tag_from_cmd_code_tests)
         {              "\\", kTlpSlideUp            },
         {               "h", kTlpHammerOn           },
         {               "p", kTlpPullOff            },
-        {        ".tunning", kTlpTunning            },
+        {        ".tuning", kTlpTuning              },
         {        ".literal", kTlpLiteral            },
         {               "|", kTlpSepBar             },
         {               "b", kTlpBend               },
@@ -704,7 +704,7 @@ CUTE_TEST_CASE(dsl_utils_has_sustained_technique_tests)
         {                           kTlpSlideUp,  0 },
         {                          kTlpHammerOn,  0 },
         {                           kTlpPullOff,  0 },
-        {                           kTlpTunning,  0 },
+        {                           kTlpTuning,  0  },
         {                           kTlpLiteral,  0 },
         {                        kTlpSingleNote,  0 },
         {                            kTlpSepBar,  0 },
@@ -753,7 +753,7 @@ CUTE_TEST_CASE(dsl_utils_has_non_sustained_technique_tests)
         {                           kTlpSlideUp,  1 },
         {                          kTlpHammerOn,  1 },
         {                           kTlpPullOff,  1 },
-        {                           kTlpTunning,  0 },
+        {                           kTlpTuning,  0  },
         {                           kTlpLiteral,  0 },
         {                        kTlpSingleNote,  0 },
         {                            kTlpSepBar,  0 },
@@ -1026,7 +1026,6 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     //                  run after.
     CUTE_RUN_TEST(system_get_tulip_system_version_tests);
     CUTE_RUN_TEST(system_tulip_task_exec_tests);
-    // TODO(Rafael): The vectors must be updated due to improvements done in txttypesetter.
     if (CUTE_GET_OPTION("skip-fancy-outputs-assurance") == NULL) {
         CUTE_RUN_TEST(processor_fancy_outputs_assurance);
     } else {

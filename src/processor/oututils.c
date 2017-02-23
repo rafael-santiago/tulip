@@ -120,19 +120,19 @@ int is_tab_empty(const txttypesetter_tablature_ctx *tab, const int curr_offset) 
     return is_empty;
 }
 
-int tunning_has_half_step_notes(const txttypesetter_tablature_ctx *tab, const char tunning_buffer[6][4], const tulip_prefs_map_t prefs) {
+int tuning_has_half_step_notes(const txttypesetter_tablature_ctx *tab, const char tuning_buffer[6][4], const tulip_prefs_map_t prefs) {
     int has_half_step_notes = 0;
     size_t i = 0;
-    char tunning[6][4];
+    char tuning[6][4];
 
-    if (prefs & kTlpPrefsAddTunningToTheFretboard) {
+    if (prefs & kTlpPrefsAddTuningToTheFretboard) {
         if (tab != NULL) {
-            memcpy(tunning, tab->tunning, sizeof(tunning));
+            memcpy(tuning, tab->tuning, sizeof(tuning));
         } else {
-            memcpy(tunning, tunning_buffer, sizeof(tunning));
+            memcpy(tuning, tuning_buffer, sizeof(tuning));
         }
         for (i = 0; i < 6 && !has_half_step_notes; i++) {
-            has_half_step_notes = (strlen(tunning[i]) == 2);
+            has_half_step_notes = (strlen(tuning[i]) == 2);
         }
     }
 
@@ -276,7 +276,7 @@ char *typesetter_raw_output(const tulip_single_note_ctx *song, size_t *osize, in
         transcriber_tag->techniques = kTlpNone;
     }
 
-    cset.prefs = cset.prefs & ~(kTlpPrefsShowTunning | kTlpPrefsIncludeTabNotation);
+    cset.prefs = cset.prefs & ~(kTlpPrefsShowTuning | kTlpPrefsIncludeTabNotation);
     set_processor_setting("prefs", &cset.prefs, sizeof(cset.prefs));
 
     if (typesetter(song, tempfile) != 0) {

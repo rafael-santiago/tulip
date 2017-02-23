@@ -20,7 +20,7 @@
 #include <dsl/compiler/verifiers/releasebend.h>
 #include <dsl/compiler/verifiers/singlenote.h>
 #include <dsl/compiler/verifiers/blockend.h>
-#include <dsl/compiler/verifiers/tunning.h>
+#include <dsl/compiler/verifiers/tuning.h>
 #include <dsl/compiler/verifiers/letring.h>
 #include <dsl/compiler/verifiers/mute.h>
 #include <dsl/compiler/verifiers/strum.h>
@@ -84,7 +84,7 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpSlideUp, slideup_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpHammerOn, hammeron_sep_verifier),
     tlp_compiler_register_cmd_verifier(kTlpPullOff, pulloff_sep_verifier),
-    tlp_compiler_register_cmd_verifier(kTlpTunning, tunning_tag_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpTuning, tuning_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpLiteral, literal_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSingleNote, singlenote_verifier),
     tlp_compiler_register_cmd_verifier(kTlpSepBar, sepbar_verifier),

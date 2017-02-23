@@ -20,7 +20,7 @@ static void htmltypesetter_spill_transcribers_name(FILE *fp, const char *name);
 
 static void htmltypesetter_spill_song_title(FILE *fp, const char *title);
 
-static void htmltypesetter_spill_tunning(FILE *fp);
+static void htmltypesetter_spill_tuning(FILE *fp);
 
 static void htmltypesetter_spill_song(FILE *fp, const tulip_single_note_ctx *song);
 
@@ -78,22 +78,22 @@ static void htmltypesetter_spill_song_title(FILE *fp, const char *title) {
     fprintf(fp, " <H1>%s</H1>\n", title);
 }
 
-static void htmltypesetter_spill_tunning(FILE *fp) {
+static void htmltypesetter_spill_tuning(FILE *fp) {
     struct typesetter_curr_settings cset = typesetter_settings();
     ssize_t s = 0;
     size_t d = 0;
-    char **tunning = NULL;
+    char **tuning = NULL;
 
-    if ((cset.prefs & kTlpPrefsShowTunning) && !(cset.prefs & kTlpPrefsAddTunningToTheFretboard)) {
-        tunning = get_processor_setting("tunning", &d);
+    if ((cset.prefs & kTlpPrefsShowTuning) && !(cset.prefs & kTlpPrefsAddTuningToTheFretboard)) {
+        tuning = get_processor_setting("tuning", &d);
 
-        fprintf(fp, " <B>Tunning [%d-1]</B>: ", d);
+        fprintf(fp, " <B>Tuning [%d-1]</B>: ", d);
 
         for (s = d - 1; s >= 0; s--) {
-            fprintf(fp, "%c", tunning[s][0]);
+            fprintf(fp, "%c", tuning[s][0]);
 
-            if (tunning[s][1] != 0 && tunning[s][1] != ' ') {
-                fprintf(fp, "%c", tunning[s][1]);
+            if (tuning[s][1] != 0 && tuning[s][1] != ' ') {
+                fprintf(fp, "%c", tuning[s][1]);
             }
 
             if (s != 0) {
@@ -124,6 +124,6 @@ int htmltypesetter_inkspill(const char *filepath, const tulip_single_note_ctx *s
                                    htmltypesetter_spill_song_title,
                                    htmltypesetter_spill_transcribers_name,
                                    htmltypesetter_spill_tab_notation,
-                                   htmltypesetter_spill_tunning,
+                                   htmltypesetter_spill_tuning,
                                    htmltypesetter_spill_song);
 }

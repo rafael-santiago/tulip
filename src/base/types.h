@@ -26,7 +26,7 @@ typedef enum _tulip_command_t {
     kTlpSlideUp            = 0x00002000,
     kTlpHammerOn           = 0x00004000,
     kTlpPullOff            = 0x00008000,
-    kTlpTunning            = 0x00010000,
+    kTlpTuning             = 0x00010000,
     kTlpLiteral            = 0x00020000,
     kTlpSingleNote         = 0x00040000,
     kTlpSepBar             = 0x00080000,
@@ -63,11 +63,11 @@ typedef struct _tulip_part_ctx {
 typedef enum _tulip_bool_prefs_map {
     kTlpPrefsCutTabOnTheLastNote      = 0x0000000000000001,
     kTlpPrefsCloseTabToSave           = 0x0000000000000002,
-    kTlpPrefsShowTunning              = 0x0000000000000004,
+    kTlpPrefsShowTuning               = 0x0000000000000004,
     kTlpPrefsFretboardStyleNormal     = 0x0000000000000008,
     kTlpPrefsFretboardStyleContinuous = 0x0000000000000010,
     kTlpPrefsIncludeTabNotation       = 0x0000000000000020,
-    kTlpPrefsAddTunningToTheFretboard = 0x0000000000000040
+    kTlpPrefsAddTuningToTheFretboard  = 0x0000000000000040
 }tulip_prefs_map_t;
 
 #endif

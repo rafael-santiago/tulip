@@ -21,7 +21,7 @@ static void mdtypesetter_spill_transcribers_name(FILE *fp, const char *name);
 
 static void mdtypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ctx *song);
 
-static void mdtypesetter_spill_tunning(FILE *fp);
+static void mdtypesetter_spill_tuning(FILE *fp);
 
 static void mdtypesetter_spill_song(FILE *fp, const tulip_single_note_ctx *song);
 
@@ -75,22 +75,22 @@ static void mdtypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
 
 }
 
-static void mdtypesetter_spill_tunning(FILE *fp) {
-    char **tunning = NULL;
+static void mdtypesetter_spill_tuning(FILE *fp) {
+    char **tuning = NULL;
     size_t d = 0;
     int s = 0;
     struct typesetter_curr_settings cset = typesetter_settings();
 
-    if ((cset.prefs & kTlpPrefsShowTunning) && !(cset.prefs & kTlpPrefsAddTunningToTheFretboard)) {
-        tunning = get_processor_setting("tunning", &d);
+    if ((cset.prefs & kTlpPrefsShowTuning) && !(cset.prefs & kTlpPrefsAddTuningToTheFretboard)) {
+        tuning = get_processor_setting("tuning", &d);
 
-        fprintf(fp, "**Tunning [%d-1]**: ", d);
+        fprintf(fp, "**Tuning [%d-1]**: ", d);
 
         for (s = d - 1; s >= 0; s--) {
-            fprintf(fp, "%c", tunning[s][0]);
+            fprintf(fp, "%c", tuning[s][0]);
 
-            if (tunning[s][1] != 0 && tunning[s][1] != ' ') {
-                fprintf(fp, "%c", tunning[s][1]);
+            if (tuning[s][1] != 0 && tuning[s][1] != ' ') {
+                fprintf(fp, "%c", tuning[s][1]);
             }
 
             if (s != 0) {
@@ -122,6 +122,6 @@ int mdtypesetter_inkspill(const char *filepath, const tulip_single_note_ctx *son
                                    mdtypesetter_spill_song_title,
                                    mdtypesetter_spill_transcribers_name,
                                    mdtypesetter_spill_tab_notation,
-                                   mdtypesetter_spill_tunning,
+                                   mdtypesetter_spill_tuning,
                                    mdtypesetter_spill_song);
 }

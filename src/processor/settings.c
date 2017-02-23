@@ -12,7 +12,7 @@
 struct processor_settings_ctx {
     tulip_prefs_map_t prefs;
     size_t fretboard_size;
-    char tunning[6][3];
+    char tuning[6][3];
     size_t indentation_deepness;
 };
 
@@ -26,9 +26,9 @@ static void set_fretboard_size(const void *data, const size_t dsize);
 
 static void *get_fretboard_size(size_t *dsize);
 
-static void set_tunning(const void *data, const size_t dsize);
+static void set_tuning(const void *data, const size_t dsize);
 
-static void *get_tunning(size_t *dsize);
+static void *get_tuning(size_t *dsize);
 
 static void set_indentation_deepness(const void *data, const size_t dsize);
 
@@ -42,7 +42,7 @@ static void *get_tulip_bitmap(size_t *dsize);
 
 static struct processor_setting_handler_ctx g_processor_setting_handlers[] = {
     register_new_processor_setting("prefs", set_tulip_bitmap, get_tulip_bitmap),
-    register_new_processor_setting("tunning", set_tunning, get_tunning),
+    register_new_processor_setting("tuning", set_tuning, get_tuning),
     register_new_processor_setting("fretboard-size", set_fretboard_size, get_fretboard_size),
     register_new_processor_setting("indentation-deepness", set_indentation_deepness, get_indentation_deepness)
 };
@@ -109,7 +109,7 @@ static void *get_fretboard_size(size_t *dsize) {
     return &g_processor_settings.fretboard_size;
 }
 
-static void set_tunning(const void *data, const size_t dsize) {
+static void set_tuning(const void *data, const size_t dsize) {
     const char *buf = NULL;
     const char *bp = NULL;
     const char *bp_end = NULL;
@@ -127,18 +127,18 @@ static void set_tunning(const void *data, const size_t dsize) {
     while (bp != bp_end && s >= 0) {
         if (*bp == '-' || (bp + 1) == bp_end) {
             if ((bp + 1) == bp_end) {
-                g_processor_settings.tunning[s][t] = *bp;
-                t = (t + 1) % sizeof(g_processor_settings.tunning[0]);
+                g_processor_settings.tuning[s][t] = *bp;
+                t = (t + 1) % sizeof(g_processor_settings.tuning[0]);
             }
-            g_processor_settings.tunning[s][t] = 0;
-            if (strlen(g_processor_settings.tunning[s]) == 2) {
+            g_processor_settings.tuning[s][t] = 0;
+            if (strlen(g_processor_settings.tuning[s]) == 2) {
                 has_half_step_notes = 1;
             }
             s--;
             t = 0;
         } else {
-            g_processor_settings.tunning[s][t] = *bp;
-            t = (t + 1) % sizeof(g_processor_settings.tunning[0]);
+            g_processor_settings.tuning[s][t] = *bp;
+            t = (t + 1) % sizeof(g_processor_settings.tuning[0]);
         }
         bp++;
     }
@@ -146,25 +146,25 @@ static void set_tunning(const void *data, const size_t dsize) {
     if (has_half_step_notes) {
         s = 0;
         while (s < 6) {
-            if (strlen(g_processor_settings.tunning[s]) == 1) {
-                strncat(g_processor_settings.tunning[s], " ", sizeof(g_processor_settings.tunning[s]) - 1);
+            if (strlen(g_processor_settings.tuning[s]) == 1) {
+                strncat(g_processor_settings.tuning[s], " ", sizeof(g_processor_settings.tuning[s]) - 1);
             }
             s++;
         }
     }
 }
 
-static void *get_tunning(size_t *dsize) {
+static void *get_tuning(size_t *dsize) {
     static char *tp[6] = {
-        g_processor_settings.tunning[0],
-        g_processor_settings.tunning[1],
-        g_processor_settings.tunning[2],
-        g_processor_settings.tunning[3],
-        g_processor_settings.tunning[4],
-        g_processor_settings.tunning[5]
+        g_processor_settings.tuning[0],
+        g_processor_settings.tuning[1],
+        g_processor_settings.tuning[2],
+        g_processor_settings.tuning[3],
+        g_processor_settings.tuning[4],
+        g_processor_settings.tuning[5]
     };
     if (dsize != NULL) {
-        *dsize = sizeof(g_processor_settings.tunning) / sizeof(g_processor_settings.tunning[0]);
+        *dsize = sizeof(g_processor_settings.tuning) / sizeof(g_processor_settings.tuning[0]);
     }
     return tp;
 }

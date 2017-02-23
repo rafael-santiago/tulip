@@ -39,7 +39,7 @@ static struct tulip_command_table_ctx g_tlp_tag_map[] = {
     tulip_register_code_tag(kTlpSlideUp, "\\", 0),
     tulip_register_code_tag(kTlpHammerOn, "h", 0),
     tulip_register_code_tag(kTlpPullOff, "p", 0),
-    tulip_register_code_tag(kTlpTunning, ".tunning", 0),
+    tulip_register_code_tag(kTlpTuning, ".tuning", 0),
     tulip_register_code_tag(kTlpLiteral, ".literal", 0),
     tulip_register_code_tag(kTlpSepBar, "|", 0),
     tulip_register_code_tag(kTlpBend, "b", 0),

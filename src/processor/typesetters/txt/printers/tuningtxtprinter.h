@@ -5,12 +5,12 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#ifndef TULIP_PROCESSOR_TYPESETTERS_TXT_PRINTERS_TUNNINGTXTPRINTER_H
-#define TULIP_PROCESSOR_TYPESETTERS_TXT_PRINTERS_TUNNINGTXTPRINTER_H 1
+#ifndef TULIP_PROCESSOR_TYPESETTERS_TXT_PRINTERS_TUNINGTXTPRINTER_H
+#define TULIP_PROCESSOR_TYPESETTERS_TXT_PRINTERS_TUNINGTXTPRINTER_H 1
 
 #include <base/types.h>
 #include <processor/typesetters/txt/txttypes.h>
 
-void txttypesetter_tunning_printer(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note);
+void txttypesetter_tuning_printer(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note);
 
 #endif

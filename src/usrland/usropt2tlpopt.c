@@ -22,7 +22,7 @@ static struct usropt2tlpopt_ctx *get_tulip_prefs_map_t(const char *option, const
 
 static struct usropt2tlpopt_ctx *get_fretboard_style_t(const char *option, const char *entire_buf);
 
-static struct usropt2tlpopt_ctx *get_tunning(const char *option, const char *entire_buf);
+static struct usropt2tlpopt_ctx *get_tuning(const char *option, const char *entire_buf);
 
 struct get_tlpopt_callvect {
     const char *option;
@@ -38,9 +38,9 @@ static struct get_tlpopt_callvect g_tlpopt_callvect[] = {
     register_new_tlpopt_callout("indentation-deepness", get_size_t),
     register_new_tlpopt_callout("include-tab-notation", get_tulip_prefs_map_t),
     register_new_tlpopt_callout("cut-tab-on-the-last-note", get_tulip_prefs_map_t),
-    register_new_tlpopt_callout("add-tunning-to-the-fretboard", get_tulip_prefs_map_t),
-    register_new_tlpopt_callout("tunning", get_tunning),
-    register_new_tlpopt_callout("show-tunning", get_tulip_prefs_map_t)
+    register_new_tlpopt_callout("add-tuning-to-the-fretboard", get_tulip_prefs_map_t),
+    register_new_tlpopt_callout("tuning", get_tuning),
+    register_new_tlpopt_callout("show-tuning", get_tulip_prefs_map_t)
 };
 
 static const size_t g_tlpopt_callvect_nr = sizeof(g_tlpopt_callvect) / sizeof(g_tlpopt_callvect[0]);
@@ -74,12 +74,12 @@ static struct usropt2tlpopt_ctx *get_tlpopt(const char *option, const char *enti
     return NULL;
 }
 
-static struct usropt2tlpopt_ctx *get_tunning(const char *option, const char *entire_buf) {
+static struct usropt2tlpopt_ctx *get_tuning(const char *option, const char *entire_buf) {
     struct usropt2tlpopt_ctx *opt = NULL;
     size_t t = 0;
     char buf[255];
     const char *bp = NULL;
-    tulip_single_note_ctx *tunning = NULL;
+    tulip_single_note_ctx *tuning = NULL;
     int is_ok = 0;
 
     if (option == NULL || entire_buf == NULL) {
@@ -87,12 +87,12 @@ static struct usropt2tlpopt_ctx *get_tunning(const char *option, const char *ent
     }
 
     memset(buf, 0, sizeof(buf));
-    sprintf(buf, ".tunning{%s}", entire_buf);
-    is_ok = compile_tulip_codebuf(buf, NULL, &tunning, &bp);
+    sprintf(buf, ".tuning{%s}", entire_buf);
+    is_ok = compile_tulip_codebuf(buf, NULL, &tuning, &bp);
     if (!is_ok) {
         return NULL;
     }
-    free_tulip_single_note_ctx(tunning);
+    free_tulip_single_note_ctx(tuning);
 
     opt = (struct usropt2tlpopt_ctx *)getseg(sizeof(struct usropt2tlpopt_ctx));
 
@@ -148,11 +148,11 @@ static struct usropt2tlpopt_ctx *get_tulip_prefs_map_t(const char *option, const
     char *bitmap_options[] = {
         "cut-tab-on-the-last-note",
         "close-tab-to-save",
-        "show-tunning",
+        "show-tuning",
         NULL,
         NULL,
         "include-tab-notation",
-        "add-tunning-to-the-fretboard"
+        "add-tuning-to-the-fretboard"
     };
     const size_t bitmap_options_nr = sizeof(bitmap_options) / sizeof(bitmap_options[0]);
     size_t b;

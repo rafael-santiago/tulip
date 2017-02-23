@@ -33,7 +33,7 @@ and forget about tech stuff.
                                       <tremolopicking-tag-code> |
                                       <vibratowbar-tag-code>    |
                                       <trill-tag-code>          |
-                                      <tunning-tag-code>        |
+                                      <tuning-tag-code>         |
                                       <literal-tag-code>        |
                                       <times-tag-code>          |
                                       <song-tag-code>           |
@@ -46,8 +46,8 @@ and forget about tech stuff.
         <tremolopicking-tag-code> ::= "tremolopicking" <recursive-tag-stmt-list>
         <vibratowbar-tag-code>    ::= "vibratowbar" <recursive-tag-stmt-list>
         <trill-tag-code>          ::= "trill" <recursive-tag-stmt-list>
-        <tunning-tag-code>        ::= "tunning" <tag-begin> <tunning-code> <tag-end>
-        <tunning-code>            ::= <note-cipher> | "-" <note-cipher>
+        <tuning-tag-code>         ::= "tuning" <tag-begin> <tuning-code> <tag-end>
+        <tuning-code>             ::= <note-cipher> | "-" <note-cipher>
         <literal-tag-code>        ::= "literal" <tag-begin> <string> <tag-end>
         <string>                  ::= """ (<US-ASCII-SET> | <string-escape-codes>)+ """
         <string-escape-codes>     ::= ("\n" | "\r" | "\n" | "\t" | "\\" | "\"")+
@@ -68,8 +68,8 @@ and forget about tech stuff.
 
 As you can see it is about a pretty compact Language. To parse it is very straightforward.
 
-Excepting the tags ``chord``, ``tunning``, ``literal``, ``song``, ``transcriber``, ``part``, ``repeat`` and ``times`` any other
+Excepting the tags ``chord``, ``tuning``, ``literal``, ``song``, ``transcriber``, ``part``, ``repeat`` and ``times`` any other
 should support fully recursion. What means to allow a more internal definition of ``<tlp-code>`` as the tag's production.
 
-The production ``<note-cipher>`` does not disallow the usage of a lower-case cipher in order to express a lower string tunning.
+The production ``<note-cipher>`` does not disallow the usage of a lower-case cipher in order to express a lower string tuning.
 Nevertheless I think that use it is ugly as hell.

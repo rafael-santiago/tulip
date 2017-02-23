@@ -11,7 +11,7 @@ context default
     keyword             .part           gray
     keyword	        .repeat		gray
     keyword		.literal	gray
-    keyword             .tunning        gray
+    keyword             .tuning         gray
     keyword             .song           gray
     keyword             .transcriber    gray
 # symbols

@@ -28,7 +28,7 @@
 #include <processor/typesetters/txt/printers/savepointtxtprinter.h>
 #include <processor/typesetters/txt/printers/hammerontxtprinter.h>
 #include <processor/typesetters/txt/printers/pullofftxtprinter.h>
-#include <processor/typesetters/txt/printers/tunningtxtprinter.h>
+#include <processor/typesetters/txt/printers/tuningtxtprinter.h>
 #include <processor/typesetters/txt/printers/literaltxtprinter.h>
 #include <processor/typesetters/txt/printers/timestxtprinter.h>
 #include <processor/typesetters/txt/printers/songtxtprinter.h>
@@ -73,7 +73,7 @@ static txttypesetter_print_func g_txttypesetter_printers[] = {
     register_new_typesetter_printer(kTlpSlideUp, txttypesetter_slideup_printer),
     register_new_typesetter_printer(kTlpHammerOn, txttypesetter_hammeron_printer),
     register_new_typesetter_printer(kTlpPullOff, txttypesetter_pulloff_printer),
-    register_new_typesetter_printer(kTlpTunning, txttypesetter_tunning_printer),
+    register_new_typesetter_printer(kTlpTuning, txttypesetter_tuning_printer),
     register_new_typesetter_printer(kTlpLiteral, txttypesetter_literal_printer),
     register_new_typesetter_printer(kTlpSingleNote, txttypesetter_singlenote_printer),
     register_new_typesetter_printer(kTlpSepBar, txttypesetter_sepbar_printer),

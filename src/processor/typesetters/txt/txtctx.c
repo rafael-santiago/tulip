@@ -186,7 +186,7 @@ void free_txttypesetter_sustained_technique_ctx(txttypesetter_sustained_techniqu
 
 txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tablature_ctx **tablature) {
     txttypesetter_tablature_ctx *tail = NULL;
-    char **tunning = NULL;
+    char **tuning = NULL;
 
     if (tablature == NULL) {
         return NULL;
@@ -221,13 +221,13 @@ txttypesetter_tablature_ctx *new_txttypesetter_tablature_ctx(txttypesetter_tabla
     new_tab_string(tail->strings[4], tail->fretboard_sz);
     new_tab_string(tail->strings[5], tail->fretboard_sz);
 
-    tunning = (char **) get_processor_setting("tunning", NULL);
-    strncpy(tail->tunning[0], tunning[0], sizeof(tail->tunning[0]) - 1);
-    strncpy(tail->tunning[1], tunning[1], sizeof(tail->tunning[1]) - 1);
-    strncpy(tail->tunning[2], tunning[2], sizeof(tail->tunning[2]) - 1);
-    strncpy(tail->tunning[3], tunning[3], sizeof(tail->tunning[3]) - 1);
-    strncpy(tail->tunning[4], tunning[4], sizeof(tail->tunning[4]) - 1);
-    strncpy(tail->tunning[5], tunning[5], sizeof(tail->tunning[5]) - 1);
+    tuning = (char **) get_processor_setting("tuning", NULL);
+    strncpy(tail->tuning[0], tuning[0], sizeof(tail->tuning[0]) - 1);
+    strncpy(tail->tuning[1], tuning[1], sizeof(tail->tuning[1]) - 1);
+    strncpy(tail->tuning[2], tuning[2], sizeof(tail->tuning[2]) - 1);
+    strncpy(tail->tuning[3], tuning[3], sizeof(tail->tuning[3]) - 1);
+    strncpy(tail->tuning[4], tuning[4], sizeof(tail->tuning[4]) - 1);
+    strncpy(tail->tuning[5], tuning[5], sizeof(tail->tuning[5]) - 1);
 
     tail->next = NULL;
 

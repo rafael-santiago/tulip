@@ -33,7 +33,7 @@ typedef struct _txttypesetter_tablature_ctx {
     txttypesetter_active_technique_ctx *active_techniques;
     char *times;
     char *strings[6];
-    char tunning[6][4];
+    char tuning[6][4];
     char *song;
     char *transcriber;
     size_t curr_row;

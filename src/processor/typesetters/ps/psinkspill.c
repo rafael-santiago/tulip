@@ -67,7 +67,7 @@ static void pstypesetter_spill_transcribers_name(FILE *fp, const char *transcrib
 
 static void pstypesetter_spill_song_title(FILE *fp, const char *song);
 
-static void pstypesetter_spill_fretboard_tunning(FILE *fp, const txttypesetter_tablature_ctx *tab);
+static void pstypesetter_spill_fretboard_tuning(FILE *fp, const txttypesetter_tablature_ctx *tab);
 
 static void pstypesetter_vertbar(FILE *fp, const int x, const int y, const int sn);
 
@@ -79,7 +79,7 @@ static void pstypesetter_pinch_bend(FILE *fp, const int x, const int y, const in
 
 static void pstypesetter_pinch_release_bend(FILE *fp, const int x, const int y, const int pointed);
 
-static void pstypesetter_spill_tunning(FILE *fp);
+static void pstypesetter_spill_tuning(FILE *fp);
 
 static void pstypesetter_init(void) {
     g_ps_cpage = 0;
@@ -173,8 +173,8 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
 
     fprintf(fp, "/Times-Bold 11 selectfont\n");
 
-    if (cset.prefs & kTlpPrefsAddTunningToTheFretboard) {
-        pstypesetter_spill_fretboard_tunning(fp, tab);
+    if (cset.prefs & kTlpPrefsAddTuningToTheFretboard) {
+        pstypesetter_spill_fretboard_tuning(fp, tab);
     } else if (cset.prefs & kTlpPrefsFretboardStyleNormal) {
         pstypesetter_vertbar(fp, g_ps_ctab.xlimit_left, g_ps_ctab.carriage_y, tab->string_nr);
     }
@@ -184,12 +184,12 @@ static void pstypesetter_newtabdiagram(FILE *fp, const txttypesetter_tablature_c
     }
 }
 
-static void pstypesetter_spill_fretboard_tunning(FILE *fp, const txttypesetter_tablature_ctx *tab) {
+static void pstypesetter_spill_fretboard_tuning(FILE *fp, const txttypesetter_tablature_ctx *tab) {
     size_t s;
 
     for (s = 0; s < tab->string_nr; s++) {
         fprintf(fp, "%d %d moveto (%s) show\n", g_ps_ctab.xlimit_left - PSTYPESETTER_CARRIAGE_STEP - 10,
-                                                pstypesetter_pinch_y(s, g_ps_ctab.carriage_y) + 2, tab->tunning[s]);
+                                                pstypesetter_pinch_y(s, g_ps_ctab.carriage_y) + 2, tab->tuning[s]);
     }
 }
 
@@ -567,24 +567,24 @@ static void pstypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_ct
 
 }
 
-static void pstypesetter_spill_tunning(FILE *fp) {
+static void pstypesetter_spill_tuning(FILE *fp) {
     int t = 0;
     size_t t_nr = 0;
-    char **tunning = NULL;
+    char **tuning = NULL;
     struct typesetter_curr_settings cset = typesetter_settings();
 
-    if ((cset.prefs & kTlpPrefsShowTunning) && !(cset.prefs & kTlpPrefsAddTunningToTheFretboard)) {
+    if ((cset.prefs & kTlpPrefsShowTuning) && !(cset.prefs & kTlpPrefsAddTuningToTheFretboard)) {
 
         if (!(cset.prefs & kTlpPrefsIncludeTabNotation)) {
             g_ps_ctab.carriage_y -= PSTYPESETTER_NEXT_ADDINFO;
         }
 
-        tunning = get_processor_setting("tunning", &t_nr);
+        tuning = get_processor_setting("tuning", &t_nr);
 
-        fprintf(fp, "%d %d moveto (Tunning [%d-1] = ", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.carriage_y, t_nr);
+        fprintf(fp, "%d %d moveto (Tuning [%d-1] = ", PSTYPESETTER_CARRIAGEX + 10, g_ps_ctab.carriage_y, t_nr);
 
         for (t = t_nr - 1; t >= 0; t--) {
-            fprintf(fp, "%s", tunning[t]);
+            fprintf(fp, "%s", tuning[t]);
             if (t != 0) {
                 fprintf(fp, ", ");
             }
@@ -648,7 +648,7 @@ static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx
     const char *tp_end = NULL;
     int x = PSTYPESETTER_CARRIAGEX;
     size_t s = 0;
-    int has_half_step_notes = tunning_has_half_step_notes(tab, NULL, typesetter_settings().prefs);
+    int has_half_step_notes = tuning_has_half_step_notes(tab, NULL, typesetter_settings().prefs);
     int print_times = 0;
 
     if (tp == NULL) {
@@ -867,7 +867,7 @@ int pstypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ct
 
     pstypesetter_spill_tab_notation(fp, song);
 
-    pstypesetter_spill_tunning(fp);
+    pstypesetter_spill_tuning(fp);
 
     for (tp = tab; tp != NULL; tp = tp->next) {
         pstypesetter_proc_tabchunk(fp, tp);

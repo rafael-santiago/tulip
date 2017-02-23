@@ -149,7 +149,7 @@ Regardless, I am sure that these both kinds of people have one aspect in common:
 I find that be in touch with real world transcriptions, talking about ``Music`` will certainly deviate us from a terrible boredom.
 
 All songs shown here are in the way that I am currently playing. I am saying it because I like to use an ``alternate``
-tunning instead of the ``standard``. For the following code samples ``it is important`` you considering that all is done in a
+tuning instead of the ``standard``. For the following code samples ``it is important`` you considering that all is done in a
 guitar tunned ``two steps down``. Why? I am crazy, just accept it.
 
 >Last thing: all here is about approximation and adaptations. Do not expect note-by-note things. Let's free ourselves from
@@ -243,7 +243,7 @@ unexpressive. So, what about combining these two worlds?
 
         69-.chord{500-401}--69-.chord{500-401}--69-.chord{500-401}--69-.chord{500-401}-
 
-Better? I think so... Remembering that everything is taking in consideration my personal preference for tunning
+Better? I think so... Remembering that everything is taking in consideration my personal preference for tuning
 the guitar ``two steps down``.
 
 Now the cool riff. If you have one, you should "wet" this riff on a ``Fuzz``...
@@ -308,7 +308,7 @@ Here goes the first part of the verses accompanying:
     .letring{4?/48-37}-.chord{48-37-28}.chord{2:p}.chord{48-37-26}--
     .letring{4?/400-39}-.chord{400-39-200}.chord{2:p}.chord{400-39-28}-
 
-Beware that here I am not playing "that" open 6th string when it is played ``a half step down`` (by the way, the original tunning).
+Beware that here I am not playing "that" open 6th string when it is played ``a half step down`` (by the way, the original tuning).
 Here we could hold this note at the 3th fret but we need to sustain it to sound heavy and dude I sincerely hate capos.
 I prefer to find my own way.
 
@@ -2319,11 +2319,11 @@ in the **Table 5** you are directly influencing the output typesetting.
 | ``indentation-deepness``         | Indicates the amount of spaces added in order to indent the tablature                    | ``indentation-deepness=2``                                  |
 | ``include-tab-notation``         | Includes at the beginning of the tablature a used-techniques reference table             | ``include-tab-notation=yes``                                |
 | ``cut-tab-on-the-last-note``     | Cuts the tablature output based on the effective last note put on it                     | ``cut-tab-on-the-last-note=no``                             |
-| ``add-tunning-to-the-fretboard`` | Adds the tunning of each string in the fretboard diagram                                 | ``add-tunning-to-the-fretboard=yes``                        |
-| ``tunning``                      | When you want to add it to the fretboard and you are using an alternate tunning          | ``tunning=D-G-D-G-B-d``                                     |
-| ``show-tunning``                 | Shows the master tunning before the song listing                                         | ``show-tunning=yes``                                        |
+| ``add-tuning-to-the-fretboard``  | Adds the tuning of each string in the fretboard diagram                                  | ``add-tuning-to-the-fretboard=yes``                         |
+| ``tuning``                       | When you want to add it to the fretboard and you are using an alternate tuning           | ``tuning=D-G-D-G-B-d``                                      |
+| ``show-tuning``                  | Shows the master tuning before the song listing                                          | ``show-tuning=yes``                                         |
 
-The ``tunning`` option must be expressed from the sixth string to the first. Using note ciphers separated by single dashes.
+The ``tuning`` option must be expressed from the sixth string to the first. Using note ciphers separated by single dashes.
 
 When the ``fretboard-style`` is set to ``continuous`` the processor does not mind for closing the saved tab diagram (with bars)
 unless when it is about the last one diagram.
@@ -2333,8 +2333,8 @@ Follows a content sample of it:
 
 ```
 fretboard-size=100
-add-tunning-to-the-fretboard=yes
-tunning=Eb-Ab-Db-Gb-Bb-Eb
+add-tuning-to-the-fretboard=yes
+tuning=Eb-Ab-Db-Gb-Bb-Eb
 fretboard-style=continuous
 ```
 
@@ -2347,7 +2347,7 @@ Another way to set this options is supplying them through the command line. In t
 
 ```
 tulip-user@SOMEWHERE:~/over/the/rainbow# tulip --tlp=sample.tlp \
-> --out=sample.txt --fretboard-size=180 --tunning=E-A-D-G-B-e
+> --out=sample.txt --fretboard-size=180 --tuning=E-A-D-G-B-e
 ```
 
 An important thing to say here is that an option supplied by command line overwrites an option set into the ``.tulipprefs``.
