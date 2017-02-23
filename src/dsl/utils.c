@@ -225,7 +225,7 @@ tulip_command_t *demux_tlp_commands(const tulip_command_t commands, size_t *arra
     size_t a = 0;
 
     if (array_size == NULL || commands == kTlpNone) {
-        return kTlpNone;
+        return NULL;
     }
 
     (*array_size) = 0;
