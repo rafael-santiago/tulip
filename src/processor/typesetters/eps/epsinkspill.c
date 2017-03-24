@@ -28,7 +28,7 @@ static int epstypesetter_eval_bounding_box_lly(const int carriage_y);
 
 static void epstypesetter_mkheader(FILE *fp, const int carriage_y) {
     fprintf(fp, "%%!PS-Adobe-2.0 EPSF-2.0\n"
-                "%%%%BoundingBox: 40 %d 550 734\n"
+                "%%%%BoundingBox: 40 %d 560.500000 734\n"
 //                "%%%%HiResBoundingBox: 40.000000 30.000000 560.500000 733.500000\n"
                 "%%Generated with tulip-%s\n"
                 "%%%%EndComments\n"
