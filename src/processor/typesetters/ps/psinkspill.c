@@ -99,6 +99,20 @@ static FILE *pstypesetter_newps(const char *filepath) {
     }
     fprintf(fp, "%%!PS-Adobe-3.0\n"
                 "%%Generated with tulip-%s\n"
+                "/arrowhead {\n"
+                "\tgsave\n"
+                "\t\tcurrentpoint\n"
+                "\t\t4 2 roll exch\n"
+                "\t\t4 -1 roll exch\n"
+                "\t\tsub 3 1 roll\n"
+                "\t\tsub exch\n"
+                "\t\tatan rotate\n"
+                "\t\tdup scale\n"
+                "\t\t-7 2 rlineto 1 -2 rlineto -1 -2 rlineto\n"
+                "\t\tclosepath fill\n"
+                "\tgrestore\n"
+                "\tnewpath\n"
+                "} def\n"
                 "/Times-Bold 11 selectfont\n", get_tulip_system_version());
     return fp;
 }
@@ -233,36 +247,30 @@ static void pstypesetter_pinch_vibrato(FILE *fp, const int x, const int y) {
                 "/Times-Bold 11 selectfont\n", x, y);
 }
 
-static void pstypesetter_pinch_bend(FILE *fp, const int x, const int y, const int pointed) {
-    fprintf(fp, "/Times-Italic 25 selectfont\n"
-                "gsave %d %d moveto %d rotate (\\)) show grestore\n", x, y, (pointed) ? -5 : -7);
-
-    if (pointed) {
-        fprintf(fp, "newpath\n"
-                    "%d.5 %d moveto\n"
-                    "%d.5 %d lineto\n"
-                    "%d.5 %d lineto\n"
-                    "closepath\n"
-                    "fill\n", x + 3, y + 14, x + 6, y + 19, x + 9, y + 14);
+static void pstypesetter_draw_arrow(FILE *fp, const int x, const int y, const int down) {
+    if (down == 0) {
+        fprintf(fp, "newpath %d %d moveto 2 %d -40 arrowhead\n", x, y, x + 2);
+    } else {
+        fprintf(fp, "newpath %d %d moveto -2 %d -40 arrowhead\n", x + 1, y, x - 5);
     }
+}
 
-    fprintf(fp, "/Times-Bold 11 selectfont\n");
+static void pstypesetter_pinch_bend(FILE *fp, const int x, const int y, const int pointed) {
+    if (pointed) {
+        fprintf(fp, "gsave 0.1 setlinewidth newpath %d %d 10 -120 10 arc stroke grestore\n", x + 3, y + 7);
+        pstypesetter_draw_arrow(fp, x + 3 + 10, y + 7 + 14, 0);
+    } else {
+        fprintf(fp, "gsave 0.1 setlinewidth newpath %d %d 10 -120 50 arc stroke grestore\n", x, y + 7);
+    }
 }
 
 static void pstypesetter_pinch_release_bend(FILE *fp, const int x, const int y, const int pointed) {
-    fprintf(fp, "/Times-Italic 25 selectfont\n"
-                "gsave %d %d moveto -150 rotate (\\() show grestore\n", x + 6, y);
-
     if (pointed) {
-        fprintf(fp, "newpath\n"
-                    "%d.5 %d moveto\n"
-                    "%d.5 %d lineto\n"
-                    "%d.5 %d lineto\n"
-                    "closepath\n"
-                    "fill\n", x + 4, y - 15, x + 7, y - 20, x + 10, y - 15);
+        fprintf(fp, "gsave 0.1 setlinewidth newpath %d %d 10 -10 110 arc stroke grestore\n", x + 3, y - 7);
+        pstypesetter_draw_arrow(fp, x + 3 + 9, y - 7 - 13, 1);
+    } else {
+        fprintf(fp, "gsave 0.1 setlinewidth newpath %d %d 10 -10 150 arc stroke grestore\n", x + 3, y - 7);
     }
-
-    fprintf(fp, "/Times-Bold 11 selectfont\n");
 }
 
 static void pstypesetter_close_tab(FILE *fp, const int x, const int sn) {
@@ -367,11 +375,13 @@ static void pstypesetter_flush_fretboard_pinches(FILE *fp, const txttypesetter_t
                 case 'b':
                     pointed = (s == 0 || tab->strings[s - 1][o] != 'b');
                     pstypesetter_pinch_bend(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.carriage_y) + 5, pointed);
+                    x += PSTYPESETTER_CARRIAGE_STEP;
                     break;
 
                 case 'r':
                     pointed = (s == tab->string_nr - 1 || tab->strings[s + 1][o] != 'r');
                     pstypesetter_pinch_release_bend(fp, x, pstypesetter_pinch_y(s, g_ps_ctab.carriage_y), pointed);
+                    x += PSTYPESETTER_CARRIAGE_STEP;
                     break;
 
                 case '-':
@@ -693,6 +703,11 @@ static void pstypesetter_spill_times(FILE *fp, const txttypesetter_tablature_ctx
                     if (s == tab->string_nr - 1 || tab->strings[s+1][tp_end - tp] != '~') {
                         x += PSTYPESETTER_CARRIAGE_STEP;
                     }
+                    break;
+
+                case 'b':
+                case 'r':
+                    x += PSTYPESETTER_CARRIAGE_STEP;
                     break;
             }
         }
