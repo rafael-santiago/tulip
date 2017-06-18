@@ -160,7 +160,7 @@ static FILE *pstypesetter_newps(const char *filepath) {
                 "} ifelse\n"
                 "%% Name: Re-encode Font\n"
                 "%% Description: Creates a new font using the named encoding.\n"
-                "/REENCODEFONT { % /Newfont NewEncoding /Oldfont\n"
+                "/REENCODEFONT { %% /Newfont NewEncoding /Oldfont\n"
                 "        findfont dup length 4 add dict\n"
                 "        begin\n"
                 "                   { %% forall\n"
