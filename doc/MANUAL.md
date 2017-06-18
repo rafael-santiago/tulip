@@ -111,9 +111,11 @@ Since ``2005`` I had done two major improvements on this project. So the first v
 definition and its text output producing. After I added a tiny ``MIDI`` processor which was able to filter the main ideas from
 an input song translating it as a ``Tulip code``. I called it ``v2``. What I could learned from ``v2`` is that parse ``MIDI``
 files is painful. It is astonishing how people do not follow any standard... We have several sub-standards (depending on the
-manufacturers) inside the main standard and it is such a mess. Now the current version is ``v4``. This version brings a
-``postscript`` and ``PDF`` processor in addition to the standard ``plain-text`` processor. The ``MIDI`` processor is still
-not integrated in ``v4``. Maybe ``v5``.
+manufacturers) inside the main standard and it is such a mess. In ``v3`` the software was re-written. The ``v4`` brought a
+``postscript`` and ``PDF`` processor in addition to the standard ``plain-text`` processor from later versions.
+The ``MIDI`` processor is still not integrated in ``v4``. Maybe this feature will never go back again. The current version is the ``v5``.
+This version have introduced minor improvements on ``bend`` and ``release bend`` typesetting (for ``Postscript/PDF`` outputs) and support
+for Latin1 symbols (for ``Postscript/PDF`` outputs).
 
 Then, here is the main versioning idea:
 
