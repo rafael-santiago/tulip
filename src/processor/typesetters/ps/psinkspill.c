@@ -269,7 +269,7 @@ static void pstypesetter_pinch_release_bend(FILE *fp, const int x, const int y, 
         fprintf(fp, "gsave 0.1 setlinewidth newpath %d %d 10 -10 110 arc stroke grestore\n", x + 3, y - 7);
         pstypesetter_draw_arrow(fp, x + 3 + 9, y - 7 - 13, 1);
     } else {
-        fprintf(fp, "gsave 0.1 setlinewidth newpath %d %d 10 -10 150 arc stroke grestore\n", x + 3, y - 7);
+        fprintf(fp, "gsave 0.1 setlinewidth newpath %d %d 15 -40 110 arc stroke grestore\n", x + 7, y - 7);
     }
 }
 
