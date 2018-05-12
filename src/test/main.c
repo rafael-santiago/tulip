@@ -910,6 +910,11 @@ CUTE_TEST_CASE(append_tests)
     FILE *fp;
     char *output;
     size_t output_sz;
+#ifndef _WIN32
+    char *binpath = "../../bin/tulip";
+#else
+    char *binpath = "..\\..\\bin\\tulip";
+#endif
 
     write_buffer_to_disk("main.tlp", append_stmt, strlen(append_stmt));
 
@@ -917,7 +922,7 @@ CUTE_TEST_CASE(append_tests)
         write_buffer_to_disk("inc.tlp",
                              g_fancy_outputs_test_vector[t].tlp_code,
                              strlen(g_fancy_outputs_test_vector[t].tlp_code));
-        sprintf(cmdline, "../../bin/tulip --tlp=main.tlp --out=%s", g_fancy_outputs_test_vector[t].filepath);
+        sprintf(cmdline, "%s --tlp=main.tlp --out=%s", binpath, g_fancy_outputs_test_vector[t].filepath);
         CUTE_ASSERT(system(cmdline) == 0);
         fp = fopen(g_fancy_outputs_test_vector[t].filepath, "rb");
         CUTE_ASSERT(fp != NULL);
