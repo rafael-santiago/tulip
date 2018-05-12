@@ -905,7 +905,7 @@ CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(append_tests)
     size_t t;
-    char *append_stmt = ".append{\"inc.tlp\"}\n";
+    char *append_stmt = "% --BEGIN\n.append{\"inc.tlp\"}\n% --END";
     char cmdline[200];
     FILE *fp;
     char *output;
