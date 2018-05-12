@@ -13,12 +13,22 @@
 
 static int g_curr_line_nr = 0;
 
+static const char *g_curr_compiled_file = NULL;
+
 void set_curr_code_line_number(const int line_nr) {
     g_curr_line_nr = line_nr;
 }
 
 int get_curr_code_line_number() {
     return g_curr_line_nr;
+}
+
+void set_curr_compiled_file(const char *filepath) {
+    g_curr_compiled_file = filepath;
+}
+
+const char *get_curr_compiled_file(void) {
+    return g_curr_compiled_file;
 }
 
 long get_filesize(FILE *fp) {

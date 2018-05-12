@@ -36,6 +36,7 @@
 #include <dsl/compiler/verifiers/song.h>
 #include <dsl/compiler/verifiers/transcriber.h>
 #include <dsl/compiler/verifiers/trill.h>
+#include <dsl/compiler/verifiers/append.h>
 #include <dsl/parser/parser.h>
 #include <dsl/utils.h>
 #include <base/ctx.h>
@@ -47,6 +48,8 @@
 tulip_technique_stack_ctx *g_techniques = NULL;
 
 tulip_part_ctx *g_parts = NULL;
+
+#define TLP_COMPILER_APPEND_RECUR_LIMIT 100
 
 //  INFO(Santiago): This must be the general standard behavior of a verifier...
 //
@@ -97,7 +100,8 @@ static struct tlp_command_verifiers_ctx g_tlp_cmd_verifiers[] = {
     tlp_compiler_register_cmd_verifier(kTlpTranscriber, transcriber_tag_verifier),
     tlp_compiler_register_cmd_verifier(kTlpOnceMore, oncemore_verifier),
     tlp_compiler_register_cmd_verifier(kTlpPart, part_tag_verifier),
-    tlp_compiler_register_cmd_verifier(kTlpRepeat, repeat_tag_verifier)
+    tlp_compiler_register_cmd_verifier(kTlpRepeat, repeat_tag_verifier),
+    tlp_compiler_register_cmd_verifier(kTlpAppend, append_tag_verifier)
 };
 
 size_t g_tlp_cmd_verifiers_nr = sizeof(g_tlp_cmd_verifiers) / sizeof(g_tlp_cmd_verifiers[0]);
@@ -117,7 +121,7 @@ void tlperr_s(char *buf, const char *error_message, ...) {
     if (buf == NULL || error_message == NULL) {
         return;
     }
-    sprintf(buf, "tulip ERROR: LINE: %d: ", get_curr_code_line_number());
+    sprintf(buf, "tulip ERROR: %s: LINE: %d: ", get_curr_compiled_file(), get_curr_code_line_number());
     ep_end = ep + strlen(ep);
     va_start(args, error_message);
     while (ep != ep_end) {
@@ -171,7 +175,7 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
     const char *next = NULL;
     const char *cp = codebuf;
     const char *cp_end = NULL;
-    static int callstack_level = 0;
+    static int callstack_level = 0, append_recur = 0;
     int cltmp = callstack_level++;
     tulip_single_note_ctx *sp = NULL;
     tulip_command_t curr_command = kTlpNone;
@@ -179,6 +183,11 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
     char command_chunk[20] = "";
 
     if (cp == NULL) {
+        return 0;
+    }
+
+    if (append_recur++ > TLP_COMPILER_APPEND_RECUR_LIMIT) {
+        tlperr_s(message_buf, "The recursion caused by your code is too deep. Check for circular appends and try again.");
         return 0;
     }
 
@@ -254,6 +263,8 @@ int compile_tulip_codebuf(const char *codebuf, char *message_buf, tulip_single_n
     } else if (next_codebuf != NULL) {
         *next_codebuf = cp;
     }
+
+    append_recur--;
 
     return compilation_status;
 }

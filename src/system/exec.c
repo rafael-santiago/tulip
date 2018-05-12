@@ -45,7 +45,11 @@ static int tulip_task_compile(const char *tlp, tulip_single_note_ctx **song) {
         return 1;
     }
 
+    set_curr_compiled_file(tlp);
+
     is_tlpcode_ok = compile_tulip_codebuf(tlpcode, errmsg, song, NULL);
+
+    set_curr_compiled_file(NULL);
 
     free(tlpcode);
 

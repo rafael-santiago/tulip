@@ -61,7 +61,7 @@ CUTE_TEST_CASE(dsl_basic_dsl_utils_tests)
         {              "\\",            kTlpSlideUp, 0 },
         {               "h",           kTlpHammerOn, 0 },
         {               "p",            kTlpPullOff, 0 },
-        {        ".tuning",            kTlpTuning, 0 },
+        {         ".tuning",             kTlpTuning, 0 },
         {        ".literal",            kTlpLiteral, 0 },
         {              "34",         kTlpSingleNote, 0 },
         {               "-",            kTlpNoteSep, 0 },
@@ -72,6 +72,7 @@ CUTE_TEST_CASE(dsl_basic_dsl_utils_tests)
         {               "T",            kTlpTapping, 0 },
         {               "*",    kTlpNaturalHarmonic, 0 },
         {               "v", kTlpArtificialHarmonic, 0 },
+        {         ".append",             kTlpAppend, 0 },
         {          "(null)",               kTlpNone, 0 }
     };
     size_t e_results_nr = sizeof(e_results) / sizeof(e_results[0]), e = 0;
@@ -263,7 +264,7 @@ CUTE_TEST_CASE(dsl_utils_tlp_cmd_code_to_plain_index_tests)
         {            kTlpSlideUp, 13 },
         {           kTlpHammerOn, 14 },
         {            kTlpPullOff, 15 },
-        {            kTlpTuning, 16  },
+        {            kTlpTuning,  16 },
         {            kTlpLiteral, 17 },
         {         kTlpSingleNote, 18 },
         {             kTlpSepBar, 19 },
@@ -271,7 +272,8 @@ CUTE_TEST_CASE(dsl_utils_tlp_cmd_code_to_plain_index_tests)
         {        kTlpReleaseBend, 21 },
         {            kTlpTapping, 22 },
         {    kTlpNaturalHarmonic, 23 },
-        { kTlpArtificialHarmonic, 24 }
+        { kTlpArtificialHarmonic, 24 },
+        {             kTlpAppend, 30 }
     };
     size_t values_nr = sizeof(values) / sizeof(values[0]), v;
     for (v = 0; v < values_nr; v++) {
@@ -351,6 +353,9 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
         { ".chord{6?-5?-4?-3?-2?-1?X}", 0 },
         { ".chord{6X-5?-4X-3?-2X-1?&}", 0 },
         { ".chord{6?-5X-4?-3X-2?-1X(}", 0 },
+        { ".append{boo.tlp}", 0 },
+        { ".append{\"boo.tlp}", 0 },
+        { ".append{\"not-found.tlp\"}", 0},
         //  INFO(Santiago): Real world productions. All following must compile without any error.
         { ".chord{40-30}-.chord{43-33}-.chord{45-35}.chord{4:~3:~}-|-.chord{40-30}-.chord{43-33}-.chord{46-36}.chord{4:p3:p}.chord{45-35}.chord{4:~3:~}-|-.chord{40-30}-.chord{43-33}-.chord{45-35}-.chord{43-33}-.chord{40-30}-;", 1 },
         { ".letring{55-47-37-27---27-37-47-55-47-27--54-46-36-26--46-36-26--24h26h27-14--55-47-37-27--47-37-27--55-27-14b15r--54-46-36-26--46-36-26--26b27r};", 1 },
@@ -367,7 +372,7 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
         { "67-67-55-67-62-62-65-66-", 1 },
         { ".mute{50-42-21-32-10-11-21-13-23-}-50-53~~-52-53-", 1 },
         { ".chord{50-42-32-21}-.chord{50-42-32-21}--.chord{45-34-23}--50-53~~-52-53-", 1 },
-        { ".letring{67-59-49-37-49--49-59-49-37-49--49-47h49}-", 1 }
+        { ".letring{67-59-49-37-49--49-59-49-37-49--49-47h49}-", 1 },
     };
     tulip_single_note_ctx *song = NULL;
     char errbuf[255] = "";
@@ -507,7 +512,7 @@ CUTE_TEST_CASE(system_get_tulip_system_version_tests)
     CUTE_ASSERT(get_tulip_system_version() != NULL);
 CUTE_TEST_CASE_END
 
-void write_buffer_to_disk(const char *filepath, const char * buffer, const size_t buffer_size) {
+void write_buffer_to_disk(const char *filepath, const char *buffer, const size_t buffer_size) {
     FILE *fp = fopen(filepath, "wb");
     if (fp == NULL) {
         return;
@@ -657,7 +662,7 @@ CUTE_TEST_CASE(dsl_utils_get_cmd_tag_from_cmd_code_tests)
         {              "\\", kTlpSlideUp            },
         {               "h", kTlpHammerOn           },
         {               "p", kTlpPullOff            },
-        {        ".tuning", kTlpTuning              },
+        {         ".tuning", kTlpTuning             },
         {        ".literal", kTlpLiteral            },
         {               "|", kTlpSepBar             },
         {               "b", kTlpBend               },
@@ -669,7 +674,8 @@ CUTE_TEST_CASE(dsl_utils_get_cmd_tag_from_cmd_code_tests)
         {           ".part", kTlpPart               },
         {         ".repeat", kTlpRepeat             },
         {           ".song", kTlpSong               },
-        {    ".transcriber", kTlpTranscriber        }
+        {    ".transcriber", kTlpTranscriber        },
+        {         ".append", kTlpAppend             }
     };
     const size_t expected_nr = sizeof(expected) / sizeof(expected[0]);
     size_t e;
@@ -704,7 +710,7 @@ CUTE_TEST_CASE(dsl_utils_has_sustained_technique_tests)
         {                           kTlpSlideUp,  0 },
         {                          kTlpHammerOn,  0 },
         {                           kTlpPullOff,  0 },
-        {                           kTlpTuning,  0  },
+        {                            kTlpTuning,  0 },
         {                           kTlpLiteral,  0 },
         {                        kTlpSingleNote,  0 },
         {                            kTlpSepBar,  0 },
@@ -720,7 +726,9 @@ CUTE_TEST_CASE(dsl_utils_has_sustained_technique_tests)
         {                            kTlpRepeat,  0 },
         { kTlpHammerOn | kTlpMute | kTlpVibrato,  1 },
         { kTlpPullOff | kTlpTrill | kTlpHammerOn, 1 },
-        { kTlpVibratoWBar | kTlpMute | kTlpChord, 1 }
+        { kTlpVibratoWBar | kTlpMute | kTlpChord, 1 },
+        {                             kTlpAppend, 0 },
+        {                  kTlpMute | kTlpAppend, 1 }
     };
     size_t tests_nr = sizeof(tests) / sizeof(tests[0]);
     size_t t = 0;
@@ -753,7 +761,7 @@ CUTE_TEST_CASE(dsl_utils_has_non_sustained_technique_tests)
         {                           kTlpSlideUp,  1 },
         {                          kTlpHammerOn,  1 },
         {                           kTlpPullOff,  1 },
-        {                           kTlpTuning,  0  },
+        {                            kTlpTuning,  0 },
         {                           kTlpLiteral,  0 },
         {                        kTlpSingleNote,  0 },
         {                            kTlpSepBar,  0 },
@@ -769,7 +777,9 @@ CUTE_TEST_CASE(dsl_utils_has_non_sustained_technique_tests)
         {                            kTlpRepeat,  0 },
         { kTlpHammerOn | kTlpMute | kTlpVibrato,  1 },
         { kTlpPullOff | kTlpTrill | kTlpHammerOn, 1 },
-        { kTlpVibratoWBar | kTlpMute | kTlpChord, 0 }
+        { kTlpVibratoWBar | kTlpMute | kTlpChord, 0 },
+        {                             kTlpAppend, 0 },
+        {                  kTlpMute | kTlpAppend, 0 }
     };
     size_t tests_nr = sizeof(tests) / sizeof(tests[0]);
     size_t t = 0;
@@ -884,6 +894,42 @@ CUTE_TEST_CASE(processor_fancy_outputs_assurance)
         free(output_buf);
         remove(g_fancy_outputs_test_vector[t].filepath);
     }
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(append_tests)
+    size_t t;
+    char *append_stmt = ".append{\"inc.tlp\"}\n";
+    char cmdline[200];
+    FILE *fp;
+    char *output;
+    size_t output_sz;
+
+    write_buffer_to_disk("main.tlp", append_stmt, strlen(append_stmt));
+
+    for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
+        write_buffer_to_disk("inc.tlp",
+                             g_fancy_outputs_test_vector[t].tlp_code,
+                             strlen(g_fancy_outputs_test_vector[t].tlp_code));
+        sprintf(cmdline, "../../bin/tulip --tlp=main.tlp --out=%s", g_fancy_outputs_test_vector[t].filepath);
+        CUTE_ASSERT(system(cmdline) == 0);
+        fp = fopen(g_fancy_outputs_test_vector[t].filepath, "rb");
+        CUTE_ASSERT(fp != NULL);
+        fseek(fp, 0L, SEEK_END);
+        output_sz = ftell(fp);
+        fseek(fp, 0L, SEEK_SET);
+        output = (char *) getseg(output_sz + 1);
+        CUTE_ASSERT(output != NULL);
+        memset(output, 0, output_sz + 1);
+        fread(output, 1, output_sz, fp);
+        fclose(fp);
+        CUTE_ASSERT(output_sz == g_fancy_outputs_test_vector[t].output_sz);
+        CUTE_ASSERT(memcmp(output, g_fancy_outputs_test_vector[t].output, output_sz) == 0);
+        remove(g_fancy_outputs_test_vector[t].filepath);
+        free(output);
+    }
+
+    remove("main.tlp");
+    remove("inc.tlp");
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(users_binary_tests)
@@ -1032,6 +1078,7 @@ CUTE_TEST_CASE(tulips_tester_monkey)
         printf("***\n*** WARNING: The fancy outputs assurance tests were skipped.\n***\n");
     }
     //  WARN(Santiago): If all is ok, it is time to test the user's binary.
+    CUTE_RUN_TEST(append_tests);
     CUTE_RUN_TEST(users_binary_tests);
 CUTE_TEST_CASE_END
 

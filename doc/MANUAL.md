@@ -2222,6 +2222,22 @@ It is a simple and cool song. Sorry for my solo approximations, etc, etc... Foll
 
 I think it is enough. With the presented samples you can easily master the ``Tulip`` if you really want to.
 
+### Splitting your transcriptions into separated files
+
+Sometimes, depending on how tidy you are a best practice would be to split your song transcription into files.
+``Tulip`` implements a statement in order to import external code into the current processed code. By doing it
+you are able to assemble the whole song transcription, virtually.
+
+The way of doing it is by using the tag ``.append``:
+
+    .append{"intro.tlp"}
+    .append{"verses.tlp"}
+    .append{"solo.tlp"}
+    .append{"outro.tlp"}
+    .append{"ending.tlp"}
+
+I think every detail about the DSL syntax was covered.
+
 Now you need to know how to process the code written in ``Tulip``'s Language in order to produce your tabs.
 
 Keep reading...

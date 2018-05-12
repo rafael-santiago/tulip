@@ -39,7 +39,8 @@ typedef enum _tulip_command_t {
     kTlpTranscriber        = 0x04000000,
     kTlpOnceMore           = 0x08000000,
     kTlpPart               = 0x10000000,
-    kTlpRepeat             = 0x20000000
+    kTlpRepeat             = 0x20000000,
+    kTlpAppend             = 0x40000000
 }tulip_command_t;
 
 typedef struct _tulip_technique_stack_ctx {

@@ -26,4 +26,8 @@ void set_curr_code_line_number(const int line_nr);
 
 int get_curr_code_line_number();
 
+void set_curr_compiled_file(const char *filepath);
+
+const char *get_curr_compiled_file(void);
+
 #endif
