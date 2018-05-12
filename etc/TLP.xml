@@ -5,7 +5,7 @@
             <Prefix Keywords1="yes" Keywords2="no" Keywords3="no" Keywords4="no" Keywords5="yes" Keywords6="no" Keywords7="no" Keywords8="no" />
         </Settings>
         <KeywordLists>
-            <Keywords name="Comments">00 01 02 03{ 04}</Keywords>
+            <Keywords name="Comments">00% 01 02\n|\r 03{ 04}</Keywords>
             <Keywords name="Numbers, prefix1"></Keywords>
             <Keywords name="Numbers, prefix2"></Keywords>
             <Keywords name="Numbers, extras1"></Keywords>
@@ -25,10 +25,10 @@
             <Keywords name="Folders in comment, middle"></Keywords>
             <Keywords name="Folders in comment, close"></Keywords>
             <Keywords name="Keywords1"></Keywords>
-            <Keywords name="Keywords2">&#x000D;&#x000A;</Keywords>
+            <Keywords name="Keywords2"></Keywords>
             <Keywords name="Keywords3"></Keywords>
             <Keywords name="Keywords4"></Keywords>
-            <Keywords name="Keywords5">mute chord strum letring tremolopicking vibratowbar trill times part repeat literal tuning song transcriber append</Keywords>
+            <Keywords name="Keywords5">mute chord strum letring tremolopicking vibratowbar trill times part repeat literal tunning song transcriber append</Keywords>
             <Keywords name="Keywords6"></Keywords>
             <Keywords name="Keywords7"></Keywords>
             <Keywords name="Keywords8"></Keywords>
