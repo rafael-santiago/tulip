@@ -54,3 +54,6 @@ context default
 context exclusive .part*{ -            gray
 
 context exclusive .repeat*{ -          gray
+
+context % \n brightred black
+    spellcheck

@@ -2236,7 +2236,25 @@ The way of doing it is by using the tag ``.append``:
     .append{"outro.tlp"}
     .append{"ending.tlp"}
 
-I think every detail about the DSL syntax was covered.
+### Commenting the codes
+
+You can add comments to your ``tlp`` source by using the percent symbol. This will make the compiler skip the entire
+line. Tags that accept a string as input do not support comments inside. However, the best place to add comments is
+out of any tag, I find it more sane. Take a look:
+
+    % This is a comment and this line will be ignored.
+
+    % This one too
+
+    .append{"songs/1/intro.tlp"}
+    .append{"songs/1/verses.tlp"}
+    .append{"songs/1/solo.tlp"}
+    .append{"songs/1/outro.tlp"}
+    .append{"songs/1/ending.tlp"}
+
+    % End of the transcription. Duh!
+
+I think that every detail about the DSL syntax was covered.
 
 Now you need to know how to process the code written in ``Tulip``'s Language in order to produce your tabs.
 

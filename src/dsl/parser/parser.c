@@ -84,6 +84,14 @@ const char *get_next_tlp_command(const char *codebuf) {
                                      !is_save_point(*codebuf)             &&
                                      !is_technique_block_end(*codebuf)    &&
                                      !is_oncemore(*codebuf)) {
+        if (is_comment(*codebuf)) {
+            while (codebuf != codebuf_end && *codebuf != '\n') {
+                codebuf++;
+            }
+            if (codebuf == codebuf_end) {
+                continue;
+            }
+        }
         if (*codebuf == '\n') {
             g_curr_line_nr++;
         }
