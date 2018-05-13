@@ -113,9 +113,10 @@ an input song translating it as a ``Tulip code``. I called it ``v2``. What I cou
 files is painful. It is astonishing how people do not follow any standard... We have several sub-standards (depending on the
 manufacturers) inside the main standard and it is such a mess. In ``v3`` the software was re-written. The ``v4`` brought a
 ``postscript`` and ``PDF`` processor in addition to the standard ``plain-text`` processor from later versions.
-The ``MIDI`` processor is still not integrated in ``v4``. Maybe this feature will never go back again. The current version is the ``v5``.
-This version have introduced minor improvements on ``bend`` and ``release bend`` typesetting (for ``Postscript/PDF`` outputs) and support
-for Latin1 symbols (for ``Postscript/PDF`` outputs).
+The ``MIDI`` processor is still not integrated in ``v4``. Maybe this feature will never go back again.
+The version ``v6`` have introduced minor improvements on ``bend`` and ``release bend`` typesetting (for ``Postscript/PDF`` outputs)
+and support for Latin1 symbols (for ``Postscript/PDF`` outputs). The current version is ``v6``. This version introduced the
+``.append`` tag and the possibility of adding comments to the source code.
 
 Then, here is the main versioning idea:
 
@@ -125,7 +126,7 @@ In addition, a nice slogan:
 
 >"Keep it simple stupid"
 
-I must confess that I can see beauty on this way of thinking.
+I must confess that I can see beauty in this way of thinking.
 
 ## The Tulip system
 
