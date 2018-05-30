@@ -246,7 +246,7 @@ unexpressive. So, what about combining these two worlds?
 
         69-.chord{500-401}--69-.chord{500-401}--69-.chord{500-401}--69-.chord{500-401}-
 
-Better? I think so... Remembering that everything is taking in consideration my personal preference for tuning
+Better? I think so... Remembering that everything is taking into consideration my personal preference for tuning
 the guitar ``two steps down``.
 
 Now the cool riff. If you have one, you should "wet" this riff on a ``Fuzz``...
@@ -2393,7 +2393,7 @@ processor behavior using directly the command line.
 
 ## How to automate the processing of my tlp codes?
 
-You can use any ``build system`` of your choice, taking in consideration the command line usage and the ``Tulip``'s exit codes.
+You can use any ``build system`` of your choice, taking into consideration the command line usage and the ``Tulip``'s exit codes.
 However, if you want to use [``hefesto``](https://github.com/rafael-santiago/hefesto) to do it. First of all,
 you need to build and install the ``hefesto`` on your system. Once it done, you need to install the ``Hefesto's tulip v4 toolset``.
 
@@ -2412,7 +2412,7 @@ downloaded copy if you want to.
 
 ### How to create Forgefiles to process my tlp source code base?
 
-Well, I am taking in consideration that you know the essential of ``Hefesto``. Then, a basic ``Forgefile`` for ``Tulip`` code
+Well, I am taking into consideration that you know the essential of ``Hefesto``. Then, a basic ``Forgefile`` for ``Tulip`` code
 processing would be something like:
 
 ```

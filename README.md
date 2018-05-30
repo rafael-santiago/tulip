@@ -4,7 +4,7 @@
 
 ``Tulip`` is a software for guitar tablatures ``typesetting``. This can run on ``Linux``, ``FreeBSD`` and ``Windows``.
 
-This software works based on a ``DSL`` designed taking in consideration my own preferences and necessities on this subject.
+This software works based on a ``DSL`` designed taking into consideration my own preferences and necessities on this subject.
 
 You can follow reading the [user's manual](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md) in order to know more about.
 
