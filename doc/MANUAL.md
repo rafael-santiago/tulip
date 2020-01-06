@@ -1042,6 +1042,9 @@ something that you judge good enough. The tablature is what follows:
             |--------0--8--9--|---10-----------10-----5/9~~-----------------------|
             |-?/7-------------|--------------------12------------------?/7~~~~----|
 
+Since ``v7`` part tag can also be used following this syntax: ``.part{tag-label}{<tlp-code>}``. This new syntax is much more
+flexible and generic to handle with different song and transcription constructions.
+
 Okay as we started to talk about ``jazz``, then let's pick up a nice ``jazz-funk`` by ``Grant Green``. The song is
 ``High Heeled Sneakers``. Originally, this song is an old ``blues`` song, recorded by a ``blues man`` called ``Tommy Tucker``.
 ``Grant Green`` picked up the verses melody and made up a dancing ``jazz-funk`` with this. I challenge you not to nod your

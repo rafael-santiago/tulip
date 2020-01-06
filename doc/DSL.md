@@ -55,7 +55,9 @@ and forget about tech stuff.
         <times-tag-code>          ::= "times" <tag-begin> <number> <tag-end>
         <song-tag-code>           ::= "song" <tag-begin> <string> <tag-end>
         <transcriber-tag-code>    ::= "trancriber" <tag-begin> <string> <tag-end>
-        <part-tag-code>           ::= "part" <tag-begin> (<US-ASCII-SET-EXCEPTING-{-}-">)+ <tag-end>
+        <part-tag-code>           ::= "part" <tag-begin> (<US-ASCII-SET-EXCEPTING-{-}-">)+ <tag-end> |
+                                      "part" <tag-begin> (<US-ASCII-SET-EXCEPTING-{-}-">)+ <tag-end>
+                                      <tag-begin> <tlp-code> <tag-end>
         <repeat-tag-code>         ::= "repeat" <tag-begin> (<US-ASCII-SET-EXCEPTING-{-}-">)+ <tag-end>
         <chord-stmt-list>         ::= (<note><sep>)+ | <note>
         <note-cipher>             ::= "C"  | "D"  | "E"  | "F"  | "G"  | "A"  | "B"  | "C#" | "D#" |
