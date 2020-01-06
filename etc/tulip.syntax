@@ -7,34 +7,82 @@ context default
     keyword		.tremolopicking	brightcyan
     keyword		.vibratowbar	brightcyan
     keyword		.trill		brightcyan
-    keyword             .times          gray
-    keyword             .part           gray
-    keyword	        .repeat		gray
-    keyword		.literal	gray
-    keyword             .tuning         gray
-    keyword             .song           gray
-    keyword             .transcriber    gray
+    keyword             .times          brightred
+    keyword             .part           brightred
+    keyword	        .repeat		brightred
+    keyword		.literal	brightred
+    keyword             .tuning         brightred
+    keyword             .song           brightred
+    keyword             .transcriber    brightred
     keyword             .append         brightred
 # symbols
     keyword		{		brightcyan
     keyword		}		brightcyan
-    keyword		p		brightcyan
-    keyword		h		brightcyan
-    keyword		b		brightcyan
-    keyword		r		brightcyan
     keyword		~		brightcyan
     keyword		\*		brightcyan
     keyword		/		brightcyan
     keyword		\\		brightcyan
-    keyword		X		brightcyan
-    keyword             v               brightcyan
     keyword		:		brightcyan
     keyword		|		red
     keyword		-		brightcyan
     keyword		?		brightcyan
     keyword		;		red
+    keyword             @               red
+# letters
+    keyword             a               brightcyan
+    keyword             b               brightcyan
+    keyword             c               brightcyan
+    keyword             d               brightcyan
+    keyword             e               brightcyan
+    keyword             f               brightcyan
+    keyword             g               brightcyan
+    keyword             h               brightcyan
+    keyword             i               brightcyan
+    keyword             j               brightcyan
+    keyword             k               brightcyan
+    keyword             l               brightcyan
+    keyword             m               brightcyan
+    keyword             n               brightcyan
+    keyword             o               brightcyan
+    keyword             p               brightcyan
+    keyword             q               brightcyan
+    keyword             r               brightcyan
+    keyword             s               brightcyan
+    keyword             t               brightcyan
+    keyword             u               brightcyan
+    keyword             v               brightcyan
+    keyword             w               brightcyan
+    keyword             x               brightcyan
+    keyword             y               brightcyan
+    keyword             z               brightcyan
+    keyword             ç               brightcyan
+    keyword             A               brightcyan
+    keyword             B               brightcyan
+    keyword             C               brightcyan
+    keyword             D               brightcyan
+    keyword             E               brightcyan
+    keyword             F               brightcyan
+    keyword             G               brightcyan
+    keyword             H               brightcyan
+    keyword             I               brightcyan
+    keyword             J               brightcyan
+    keyword             K               brightcyan
+    keyword             L               brightcyan
+    keyword             M               brightcyan
+    keyword             N               brightcyan
+    keyword             O               brightcyan
+    keyword             P               brightcyan
+    keyword             Q               brightcyan
+    keyword             R               brightcyan
+    keyword             S               brightcyan
     keyword             T               brightcyan
-    keyword             @               gray
+    keyword             U               brightcyan
+    keyword             V               brightcyan
+    keyword             W               brightcyan
+    keyword             X               brightcyan
+    keyword             Y               brightcyan
+    keyword             Z               brightcyan
+    keyword             Ç               brightcyan
 # notes
     keyword		0 		cyan
     keyword		1 		cyan
@@ -51,9 +99,6 @@ context default
     keyword 		\\n		brightgreen
     keyword		\\t		brightgreen
 
-context exclusive .part*{ -            gray
 
-context exclusive .repeat*{ -          gray
-
-context % \n brightred black
+context % \n lightgray
     spellcheck
