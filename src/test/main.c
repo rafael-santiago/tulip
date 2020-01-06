@@ -1,5 +1,5 @@
 /*
- *                           Copyright (C) 2005-2016 by Rafael Santiago
+ *                           Copyright (C) 2005-2020 by Rafael Santiago
  *
  * This is a free software. You can redistribute it and/or modify under
  * the terms of the GNU General Public License version 2.
@@ -332,6 +332,10 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
         { ".literal{\"boo.\"", 0 },
         { ".chord{60-52-42-31-20-10}-.part{E-Major}", 1 },
         { ".chord{60-52-42-31-20-10}-.part{E-Major}-.chord{57-49-39-29-17}-.part{E-Major}", 0 },
+        { ".part{E-Major}{.chord{60-52-42-31-20-10}", 0 },
+        { ".part{E-Major}{.chord{60-52-42-31-20-10}}", 1 },
+        { ".part{E-Major}{.chord{60-52-42-31-20-10}}-.repeat{E-major}", 0 },
+        { ".part{E-Major}{.chord{60-52-42-31-20-10}}-.repeat{E-Major}", 1 },
         { "@", 0 },
         { ".part{null}", 0 },
         { ".repeat{null}", 0 },
@@ -940,8 +944,31 @@ CUTE_TEST_CASE(append_tests)
         free(output);
     }
 
-    remove("main.tlp");
     remove("inc.tlp");
+
+    // INFO(Rafael): Null appends. It must not get a SIGSEGV.
+
+    append_stmt = ".append{}";
+    write_buffer_to_disk("main.tlp", append_stmt, strlen(append_stmt));
+
+    CUTE_ASSERT(system(cmdline) != 0);
+
+    append_stmt = ".append{\"\"}";
+    write_buffer_to_disk("main.tlp", append_stmt, strlen(append_stmt));
+
+    CUTE_ASSERT(system(cmdline) != 0);
+
+    append_stmt = ".append{ }";
+    write_buffer_to_disk("main.tlp", append_stmt, strlen(append_stmt));
+
+    CUTE_ASSERT(system(cmdline) != 0);
+
+    append_stmt = ".append{\" \"}";
+    write_buffer_to_disk("main.tlp", append_stmt, strlen(append_stmt));
+
+    CUTE_ASSERT(system(cmdline) != 0);
+
+    remove("main.tlp");
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(users_binary_tests)

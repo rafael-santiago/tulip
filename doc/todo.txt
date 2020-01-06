@@ -1,6 +1,6 @@
-(A) Implement test cases for null appends and part tag following v7 syntax: '.part{<label>}{<code-chunk>}'. +Tests
 (A) Implement new processor which spits tabs as SVGs (files per page). +NewFeature
 (Z) Implement a new processor which spits tabs as JPEGs (files per page, it would be useful for Kindle stuff). +NewFeature
+x (A) Implement test cases for null appends and part tag following v7 syntax: '.part{<label>}{<code-chunk>}'. +Tests
 x (B) Change part tag to a more sane definition/usage: '.part{riff-i}{<code>}'...'.repeat{riff-i}'.
       Trying to keep backward compatibility with its previous insane implementation. +Redesign,+BackwardCompatWhat?,+Improvement
 x (A) Fix SIGSEGV when appeding a null script into another, e.g.: '.append{}'. +BugFix,+Improvement
