@@ -29,7 +29,7 @@ static int svgtypesetter_newpage(void);
 
 static void svgtypesetter_fclose(void);
 
-static void svgtypesetter_spill_tabdiagram(const txttypesetter_tablature_ctx *txttab);
+static void svgtypesetter_spill_tabdiagram(void);
 
 static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txttab);
 
@@ -40,10 +40,6 @@ static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab)
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab);
 
 static struct svgtypesetter_page_ctx g_svg_page;
-
-static void svgtypesetter_spill_tabdiagram(const txttypesetter_tablature_ctx *txttab) {
-    // TODO(Rafael): Guess what?
-}
 
 static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txttab) {
     // TODO(Rafael): Guess what?
@@ -62,7 +58,8 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
 }
 
 static int svgtypesetter_newpage(void) {
-    snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%d-pp.svg", g_svg_page.filename);
+    snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%d-pp.svg", g_svg_page.filename,
+                                                                                             g_svg_page.page_nr);
 
     if (g_svg_page.fp != NULL) {
         svgtypesetter_fclose();
@@ -126,9 +123,11 @@ static void svgtypesetter_spill_tabdiagram(void) {
 
 static void svgtypesetter_fclose(void) {
     if (g_svg_page.fp != NULL) {
+        // TODO(Rafael): Spill page number at end of the page.
         fprintf(g_svg_page.fp, "</svg>\n");
         fclose(g_svg_page.fp);
         g_svg_page.fp = NULL;
+        g_svg_page.page_nr++;
     }
 }
 
