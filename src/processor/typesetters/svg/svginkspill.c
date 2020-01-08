@@ -10,9 +10,14 @@
 #include <string.h>
 #include <stdio.h>
 
+struct svgtypesetter_pinch_point_ctx {
+    int x, y;
+};
+
 struct svgtypesetter_tab_diagram_ctx {
     int xlim_left, xlim_right;
     int carriage_x, carriage_y;
+    struct svgtypesetter_pinch_point_ctx fbrd[6];
 };
 
 struct svgtypesetter_page_ctx {
@@ -31,6 +36,10 @@ static void svgtypesetter_fclose(void);
 
 static void svgtypesetter_spill_tabdiagram(void);
 
+static void svgtypesetter_spill_song_title(const char *title);
+
+static void svgtypesetter_spill_transcriber(const char *name);
+
 static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txttab);
 
 static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablature_ctx *txttab);
@@ -39,10 +48,43 @@ static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab)
 
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab);
 
+static void svgtypesetter_insert_header_span(void);
+
+static inline int svgtypesetter_set_fretboard_coordinates(void);
+
 static struct svgtypesetter_page_ctx g_svg_page;
 
+static void svgtypesetter_insert_header_span(void) {
+    g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 3;
+    svgtypesetter_set_fretboard_coordinates();
+}
+
+static void svgtypesetter_spill_song_title(const char *title) {
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"30\" font-weight=\"bold\">%s"
+                           "</text>\n", g_svg_page.tab.carriage_x, g_svg_page.tab.carriage_y, title);
+    g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
+    svgtypesetter_set_fretboard_coordinates();
+}
+
+static void svgtypesetter_spill_transcriber(const char *name) {
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"13\""
+                           " font-style=\"italic\" font-weight=\"bold\">%s</text>\n", name);
+    g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
+    svgtypesetter_set_fretboard_coordinates();
+}
+
 static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txttab) {
-    // TODO(Rafael): Guess what?
+    txttypesetter_comment_ctx *cp;
+
+    for (cp = txttab->comments; cp != NULL; cp = cp->next) {
+        fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"18\">"
+                               "%s</text>\n", g_svg_page.tab.carriage_x,
+                                              g_svg_page.tab.carriage_y,
+                                              cp->data);
+        g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
+    }
+
+    svgtypesetter_set_fretboard_coordinates();
 }
 
 static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablature_ctx *txttab) {
@@ -55,6 +97,22 @@ static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab)
 
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab) {
     // TODO(Rafael): Guess what?
+}
+
+static inline int svgtypesetter_set_fretboard_coordinates(void) {
+    g_svg_page.tab.fbrd[0].y = g_svg_page.tab.carriage_y;
+    g_svg_page.tab.fbrd[1].y += SVGTYPESETTER_TAB_Y_SPAN;
+    g_svg_page.tab.fbrd[2].y += SVGTYPESETTER_TAB_Y_SPAN;
+    g_svg_page.tab.fbrd[3].y += SVGTYPESETTER_TAB_Y_SPAN;
+    g_svg_page.tab.fbrd[4].y += SVGTYPESETTER_TAB_Y_SPAN;
+    g_svg_page.tab.fbrd[5].y += SVGTYPESETTER_TAB_Y_SPAN;
+
+    g_svg_page.tab.fbrd[0].x = g_svg_page.tab.carriage_x;
+    g_svg_page.tab.fbrd[1].x = g_svg_page.tab.carriage_x;
+    g_svg_page.tab.fbrd[2].x = g_svg_page.tab.carriage_x;
+    g_svg_page.tab.fbrd[3].x = g_svg_page.tab.carriage_x;
+    g_svg_page.tab.fbrd[4].x = g_svg_page.tab.carriage_x;
+    g_svg_page.tab.fbrd[5].x = g_svg_page.tab.carriage_x;
 }
 
 static int svgtypesetter_newpage(void) {
@@ -74,6 +132,8 @@ static int svgtypesetter_newpage(void) {
 
     g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
     g_svg_page.tab.carriage_y = SVGTYPESETTER_TAB_Y;
+
+    svgtypesetter_set_fretboard_coordinates();
 
     fprintf(g_svg_page.fp, "<svg width=\"%d\" height=\"%d\">\n", SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT);
     fprintf(g_svg_page.fp, "\t<defs>\n"
@@ -119,6 +179,8 @@ static void svgtypesetter_spill_tabdiagram(void) {
                                                                                         g_svg_page.tab.carriage_y,
                                                                                         g_svg_page.tab.carriage_y +
                                                                                             SVGTYPESETTER_TAB_Y_SPAN * 10);
+
+    svgtypesetter_set_fretboard_coordinates();
 }
 
 static void svgtypesetter_fclose(void) {
