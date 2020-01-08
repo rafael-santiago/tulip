@@ -52,7 +52,43 @@ static void svgtypesetter_insert_header_span(void);
 
 static inline int svgtypesetter_set_fretboard_coordinates(void);
 
+static inline int svgtypesetter_note_sep_xstep(void);
+
+static inline int svgtypesetter_bend_xstep(void);
+
+static inline int svgtypesetter_release_bend_xstep(void);
+
+static inline int svgtypesetter_hammer_on_xstep(void);
+
+static inline int svgtypesetter_pull_off_xstep(void);
+
+static inline int svgtypesetter_vibrato_xstep(void);
+
 static struct svgtypesetter_page_ctx g_svg_page;
+
+static inline int svgtypesetter_hammer_on_xstep(void) {
+    g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN + 10;
+}
+
+static inline int svgtypesetter_vibrato_xstep(void) {
+    g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN;
+}
+
+static inline int svgtypesetter_pull_off_xstep(void) {
+    svgtypesetter_hammer_on_xstep();
+}
+
+static inline int svgtypesetter_release_bend_xstep(void) {
+    svgtypesetter_bend_xstep();
+}
+
+static inline int svgtypesetter_bend_xstep(void) {
+    g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN + 10;
+}
+
+static inline int svgtypesetter_note_sep_xstep(void) {
+    g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN;
+}
 
 static void svgtypesetter_insert_header_span(void) {
     g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 3;
