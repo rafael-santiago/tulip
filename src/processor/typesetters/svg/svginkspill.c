@@ -7,6 +7,7 @@
  */
 #include <processor/typesetters/svg/svginkspill.h>
 #include <processor/typesetters/svg/svgboundaries.h>
+#include <ctype.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -47,6 +48,16 @@ static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablatu
 static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab);
 
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab);
+
+static void svgtypesetter_flush_hammer_on_pull_off_pinch(void);
+
+static void svgtypesetter_flush_bend_pinch(const int arrow);
+
+static void svgtypesetter_flush_release_bend_pinch(const int arrow);
+
+static void svgtypesetter_flush_note_pinch(const char *note);
+
+static void svgtypesetter_flush_vibrato_pinch(void);
 
 static void svgtypesetter_insert_header_span(void);
 
@@ -104,7 +115,8 @@ static void svgtypesetter_spill_song_title(const char *title) {
 
 static void svgtypesetter_spill_transcriber(const char *name) {
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"13\""
-                           " font-style=\"italic\" font-weight=\"bold\">%s</text>\n", name);
+                           " font-style=\"italic\" font-weight=\"bold\">%s</text>\n", g_svg_page.tab.carriage_x,
+                                                                                      g_svg_page.tab.carriage_y, name);
     g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
     svgtypesetter_set_fretboard_coordinates();
 }
@@ -130,6 +142,59 @@ static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablatu
 static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab) {
     // TODO(Rafael): Guess what?
 }
+
+static void svgtypesetter_flush_note_pinch(const char *note) {
+    const char *np = note;
+
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"13\" font-weight=\"bold\">", g_svg_page.tab.carriage_x,
+                                                                                               g_svg_page.tab.carriage_y);
+    while (isdigit(*np)) {
+        fprintf(g_svg_page.fp, "%c", *np);
+        np++;
+    }
+
+    fprintf(g_svg_page.fp, "</text>\n");
+}
+
+static void svgtypesetter_flush_bend_pinch(const int arrow) {
+    char *arrow_markup = (arrow) ? " marker-end=\"(url#arrow)\"" : "";
+    fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d, %d,%d %d,%d\""
+                           " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>", g_svg_page.tab.carriage_x,
+                                                                                     g_svg_page.tab.carriage_y,
+                                                                                     g_svg_page.tab.carriage_x,
+                                                                                     g_svg_page.tab.carriage_y + 5,
+                                                                                     g_svg_page.tab.carriage_x + 5,
+                                                                                     g_svg_page.tab.carriage_y + 5,
+                                                                                     g_svg_page.tab.carriage_x + 5,
+                                                                                     g_svg_page.tab.carriage_y - 15,
+                                                                                     arrow_markup);
+}
+
+static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
+    char *arrow_markup = (arrow) ? "marker-end=\"(url#arrow)\"" : "";
+    fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d %d,%d %d,%d\""
+                           " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>", g_svg_page.tab.carriage_x,
+                                                                                     g_svg_page.tab.carriage_y,
+                                                                                     g_svg_page.tab.carriage_x,
+                                                                                     g_svg_page.tab.carriage_y - 10,
+                                                                                     g_svg_page.tab.carriage_x + 5,
+                                                                                     g_svg_page.tab.carriage_y - 10,
+                                                                                     g_svg_page.tab.carriage_x + 4,
+                                                                                     g_svg_page.tab.carriage_y + 5,
+                                                                                     arrow_markup);
+}
+
+static void svgtypesetter_flush_vibrato_pinch(void) {
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\">~</text>\n", g_svg_page.tab.carriage_x,
+                                                                                    g_svg_page.tab.carriage_y);
+}
+
+static void svgtypesetter_flush_hammer_on_pull_off(void) {
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\""
+                           " transform=\"rotate(90,162,65)\">(</text>\n", g_svg_page.tab.carriage_x,
+                                                                          g_svg_page.tab.carriage_y);
+}
+
 
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab) {
     // TODO(Rafael): Guess what?
