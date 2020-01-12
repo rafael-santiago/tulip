@@ -308,9 +308,17 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
     }\
 }
 
-    // TODO(Rafael): Flush header data.
+    if (txttab->song != NULL) {
+        svgtypesetter_spill_song_title(txttab->song);
+    }
+
+    if (txttab->transcriber) {
+        svgtypesetter_spill_transcriber(txttab->transcriber);
+    }
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
+        // TODO(Rafael): Spill sustained techniques and tag times indication.
+
         for (offset = 0; offset < tp->fretboard_sz; offset++) {
 
             is_chord = svgtypesetter_is_chord((const char **)tp->strings, offset);
@@ -336,11 +344,17 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
             xstep();
         }
 
-        // TODO(Rafael): Manage the current tab diagram and ask for a new one when the current is full.
-
-        // TODO(Rafael): Manage page's y limit and ask for a new one when the current is full.
-
         svgtypesetter_refresh_fbrd_xy();
+
+        if (g_svg_page.tab.fbrd[5].y >= SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6)) {
+            // INFO(Rafael): The current page became full, we need a new one.
+            svgtypesetter_newpage();
+        }
+
+        if (*g_svg_page.tab.carriage_x >= SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN) {
+            // INFO(Rafael): The current tab diagram became full, we need a new empty one.
+            svgtypesetter_spill_tabdiagram();
+        }
     }
 
 #undef do_flush_pinch
