@@ -47,7 +47,7 @@ static verifier_t get_suitable_tag_verifier(const char *buf, tulip_single_note_c
     }
 
     if ((bp_end = get_next_tlp_technique_block_end(buf)) == NULL) {
-        unterminated_part_tag_verifier;
+        return unterminated_part_tag_verifier;
     }
 
     bp_end++;
@@ -141,7 +141,8 @@ static int v7_part_tag_verifier(const char *buf, char *error_message, tulip_sing
     memcpy(tlpdata, bp, tlpdata_size);
 
     if ((*song) != NULL) {
-        begin = (*song);
+        for (begin = (*song); begin->next != NULL; begin = begin->next)
+            ;
     }
 
     no_error = compile_tulip_codebuf(tlpdata, error_message, song, &local_next);
