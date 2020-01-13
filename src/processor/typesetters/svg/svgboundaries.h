@@ -22,6 +22,8 @@
 
 #define SVGTYPESETTER_TAB_NOTE_Y_OFFSET          05
 
+#define SVGTYPESETTER_CHORD_SPAN_X_STEP          07
+
 #define SVGTYPESETTER_FRETBOARD_SIZE             80
 
 
