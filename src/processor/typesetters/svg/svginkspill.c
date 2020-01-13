@@ -502,6 +502,19 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                 do_flush_pinch(xstep, &tp->strings[s][offset], s, bend_arrow_string);
             }
 
+            if (is_chord && offset > 0) {
+                for (s = 0; s < 6 && is_chord; s++) {
+                    if (tp->strings[s][offset-1] == '-' && tp->strings[s][offset] == '-') {
+                        continue;
+                    }
+                    is_chord = isdigit(tp->strings[s][offset-1]) && isdigit(tp->strings[s][offset]);
+                }
+                if (is_chord) {
+                    svgtypesetter_chord_span_xstep();
+                    xstep = NULL;
+                }
+            }
+
             if (xstep != NULL) {
                 xstep();
                 xstep = NULL;
