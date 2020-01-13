@@ -157,14 +157,6 @@ static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txtt
     svgtypesetter_refresh_fbrd_xy();
 }
 
-static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablature_ctx *txttab) {
-    // TODO(Rafael): Guess what?
-}
-
-static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab) {
-    // TODO(Rafael): Guess what?
-}
-
 static void svgtypesetter_flush_note_pinch(const char *note) {
     const char *np = note;
 
@@ -264,6 +256,130 @@ static size_t svgtypesetter_get_bend_arrow_string(const char **strings, const si
     }
 
     return 6;
+}
+
+static void do_xstep(int *x, const char **strings, const size_t offset) {
+    size_t s, x_span = 0;
+
+    for (s = 0; s < 6; s++) {
+        switch (strings[s][offset]) {
+            case '-':
+                if (x_span < SVGTYPESETTER_TAB_X_SPAN) {
+                    x_span = SVGTYPESETTER_TAB_X_SPAN;
+                }
+                break;
+
+            case 'h':
+            case 'p':
+                if (x_span < SVGTYPESETTER_TAB_X_SPAN + 10) {
+                    x_span = SVGTYPESETTER_TAB_X_SPAN + 10;
+                }
+                break;
+
+            case '/':
+            case '\\':
+                if (x_span < SVGTYPESETTER_TAB_X_SPAN - 10) {
+                    x_span = SVGTYPESETTER_TAB_X_SPAN - 10;
+                }
+                break;
+
+            case '~':
+                if (x_span < SVGTYPESETTER_TAB_X_SPAN) {
+                    x_span = SVGTYPESETTER_TAB_X_SPAN;
+                }
+                break;
+
+            case 'b':
+            case 'r':
+                if (x_span < SVGTYPESETTER_TAB_X_SPAN + 10) {
+                    x_span = SVGTYPESETTER_TAB_X_SPAN + 10;
+                }
+                break;
+
+            default:
+                if (isdigit(strings[s][offset]) && x_span < SVGTYPESETTER_TAB_X_SPAN) {
+                    x_span = SVGTYPESETTER_TAB_X_SPAN;
+                }
+                break;
+        }
+    }
+
+    *x += x_span;
+}
+
+static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablature_ctx *txttab) {
+    const txttypesetter_sustained_technique_ctx *sp;
+    int x[2], y, n = 0;
+    size_t i;
+    char *p, *p_end, *tp = NULL;
+    size_t offset;
+
+    for (sp = txttab->techniques; sp != NULL; sp = sp->next) {
+        n += 1;
+    }
+
+    if (n > 0) {
+        y = g_svg_page.tab.fbrd[0].y - SVGTYPESETTER_TAB_Y_SPAN * n;
+        for (sp = txttab->techniques; sp != NULL; sp = sp->next) {
+            i = 0;
+            p = sp->data;
+            p_end = p + strlen(p);
+            x[0] = x[1] = g_svg_page.tab.xlim_left;
+            offset = 0;
+            while (p != p_end && i < 2 && offset < txttab->fretboard_sz) {
+                do_xstep(&x[i], (const char **)txttab->strings, offset);
+                i += (i == 0) ? isalpha(*p) : (*p != '.');
+                if (isalpha(*p)) {
+                    tp = p;
+                    p += 1;
+                }
+                p++;
+                offset++;
+            }
+            fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                   " font-size=\"13\" font-weight=\"bold\">%c%c%c</text>\n", x[0], y, tp[0], tp[1], tp[2]);
+            fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
+                                   " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\""
+                                   " stroke-dasharray=\"5,5\"/>\n", x[0], x[1], y + 1, y + 1);
+            y += SVGTYPESETTER_TAB_Y_SPAN;
+        }
+    }
+}
+
+static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab) {
+    int x;
+    char *tp, *tp_end, *temp;
+    size_t offset;
+    char tm_buf[20];
+
+    if (txttab->times == NULL) {
+        return;
+    }
+
+    tp = txttab->times;
+    tp_end = tp + strlen(tp);
+
+    x = g_svg_page.tab.xlim_left;
+    offset = 0;
+    while (tp < tp_end && offset < txttab->fretboard_sz) {
+        do_xstep(&x, (const char **)txttab->strings, offset);
+        if (isdigit(*tp)) {
+            if ((temp = strstr(tp, "X")) != NULL) {
+                // INFO(Rafael): Under normal conditions 'X' must always be found.
+                memset(tm_buf, 0, sizeof(tm_buf));
+                memcpy(tm_buf, tp, temp - tp);
+                fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                       " font-size=\"13\" font-weight=\"bold\">%s</text>\n", x,
+                                                                                             g_svg_page.tab.fbrd[0].y -
+                                                                                                SVGTYPESETTER_TAB_Y_SPAN,
+                                                                                             tm_buf);
+            }
+            tp = temp + 1;
+        } else {
+            tp++;
+        }
+        offset++;
+    }
 }
 
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab) {
