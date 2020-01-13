@@ -29,13 +29,23 @@ struct svgtypesetter_page_ctx {
     struct svgtypesetter_tab_diagram_ctx tab;
 };
 
-static int svgtypesetter_init(const char *filename);
+static inline void svgtypesetter_hammer_on_xstep(void);
 
-static int svgtypesetter_newpage(void);
+static inline void svgtypesetter_vibrato_xstep(void);
 
-static void svgtypesetter_fclose(void);
+static inline void svgtypesetter_pull_off_xstep(void);
 
-static void svgtypesetter_spill_tabdiagram(void);
+static inline void svgtypesetter_release_bend_xstep(void);
+
+static inline void svgtypesetter_bend_xstep(void);
+
+static inline void svgtypesetter_note_sep_xstep(void);
+
+static inline void svgtypesetter_slide_down_xstep(void);
+
+static inline void svgtypesetter_slide_up_xstep(void);
+
+static void svgtypesetter_insert_header_span(void);
 
 static void svgtypesetter_spill_song_title(const char *title);
 
@@ -43,21 +53,15 @@ static void svgtypesetter_spill_transcriber(const char *name);
 
 static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txttab);
 
-static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablature_ctx *txttab);
-
-static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab);
-
-static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab);
-
-static void svgtypesetter_flush_hammer_on_pull_off_pinch(void);
+static void svgtypesetter_flush_note_pinch(const char *note);
 
 static void svgtypesetter_flush_bend_pinch(const int arrow);
 
 static void svgtypesetter_flush_release_bend_pinch(const int arrow);
 
-static void svgtypesetter_flush_note_pinch(const char *note);
-
 static void svgtypesetter_flush_vibrato_pinch(void);
+
+static void svgtypesetter_flush_hammer_on_pull_off_pinch(void);
 
 static void svgtypesetter_flush_slide_down_pinch(void);
 
@@ -65,31 +69,29 @@ static void svgtypesetter_flush_slide_up_pinch(void);
 
 static void svgtypesetter_flush_sep_bar(void);
 
-static void svgtypesetter_insert_header_span(void);
-
-static int svgtypesetter_refresh_fbrd_xy(void);
-
-static inline void svgtypesetter_note_sep_xstep(void);
-
-static inline void svgtypesetter_bend_xstep(void);
-
-static inline void svgtypesetter_release_bend_xstep(void);
-
-static inline void svgtypesetter_hammer_on_xstep(void);
-
-static inline void svgtypesetter_pull_off_xstep(void);
-
-static inline void svgtypesetter_vibrato_xstep(void);
-
-static inline void svgtypesetter_slide_down_xstep(void);
-
-static inline void svgtypesetter_slide_up_xstep(void);
-
 static int svgtypesetter_is_chord(const char **strings, const size_t offset);
 
 static size_t svgtypesetter_get_release_bend_arrow_string(const char **strings, const size_t offset);
 
 static size_t svgtypesetter_get_bend_arrow_string(const char **strings, const size_t offset);
+
+static void do_xstep(int *x, const char **strings, const size_t offset);
+
+static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablature_ctx *txttab);
+
+static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab);
+
+static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab);
+
+static int svgtypesetter_refresh_fbrd_xy(void);
+
+static int svgtypesetter_newpage(void);
+
+static void svgtypesetter_spill_tabdiagram(void);
+
+static void svgtypesetter_fclose(void);
+
+static int svgtypesetter_init(const char *filename);
 
 static struct svgtypesetter_page_ctx g_svg_page;
 
