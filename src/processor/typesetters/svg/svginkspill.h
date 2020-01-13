@@ -10,8 +10,8 @@
 
 #include <processor/typesetters/txt/txttypes.h>
 
-int svgtypesetters_svginkspill(const char *filepath, const txttypesetter_tablature_ctx *tab,
-                               const tulip_single_note_ctx *song);
+int svgtypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab,
+                           const tulip_single_note_ctx *song);
 
 #endif
 

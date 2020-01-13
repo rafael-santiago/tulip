@@ -20,4 +20,7 @@
 
 #define SVGTYPESETTER_TAB_X_SPAN                 15
 
+#define SVGTYPESETTER_FRETBOARD_SIZE             80
+
+
 #endif

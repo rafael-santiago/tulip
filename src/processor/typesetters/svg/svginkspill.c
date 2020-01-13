@@ -63,6 +63,8 @@ static void svgtypesetter_flush_slide_down_pinch(void);
 
 static void svgtypesetter_flush_slide_up_pinch(void);
 
+static void svgtypesetter_flush_sep_bar(void);
+
 static void svgtypesetter_insert_header_span(void);
 
 static int svgtypesetter_refresh_fbrd_xy(void);
@@ -219,6 +221,15 @@ static void svgtypesetter_flush_slide_up_pinch(void) {
                                                                                     *g_svg_page.tab.carriage_y);
 }
 
+static void svgtypesetter_flush_sep_bar(void) {
+    int y = g_svg_page.tab.fbrd[0].y;
+    fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
+                           " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\"/>", *g_svg_page.tab.carriage_x,
+                                                                                        *g_svg_page.tab.carriage_x,
+                                                                                        y,
+                                                                                        y + SVGTYPESETTER_TAB_Y_SPAN * 10);
+}
+
 static int svgtypesetter_is_chord(const char **strings, const size_t offset) {
     size_t s;
     int is = 0;
@@ -319,6 +330,11 @@ static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablatu
     }
 
     if (n > 0) {
+        if (y >= SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6 * n)) {
+            // INFO(Rafael): The current page would became full, thus we need a new one, where we can spill sustained
+            //               techniques together with the whole tab diagram.
+            svgtypesetter_newpage();
+        }
         y = g_svg_page.tab.fbrd[0].y - SVGTYPESETTER_TAB_Y_SPAN * n;
         for (sp = txttab->techniques; sp != NULL; sp = sp->next) {
             i = 0;
@@ -367,7 +383,7 @@ static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab)
             if ((temp = strstr(tp, "X")) != NULL) {
                 // INFO(Rafael): Under normal conditions 'X' must always be found.
                 memset(tm_buf, 0, sizeof(tm_buf));
-                memcpy(tm_buf, tp, temp - tp);
+                memcpy(tm_buf, tp, temp - tp + 1);
                 fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
                                        " font-size=\"13\" font-weight=\"bold\">%s</text>\n", x,
                                                                                              g_svg_page.tab.fbrd[0].y -
@@ -419,22 +435,16 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
         if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
             xstep = svgtypesetter_slide_up_xstep;\
         }\
+    } else if (*(s) == '|' && sn == 5) {\
+        svgtypesetter_flush_sep_bar();\
     } else if (isdigit(*(s))) {\
         svgtypesetter_flush_note_pinch(s);\
     }\
 }
 
-    if (txttab->song != NULL) {
-        svgtypesetter_spill_song_title(txttab->song);
-    }
-
-    if (txttab->transcriber) {
-        svgtypesetter_spill_transcriber(txttab->transcriber);
-    }
+    svgtypesetter_spill_tabdiagram();
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
-        // TODO(Rafael): Spill sustained techniques and tag times indication.
-
         for (offset = 0; offset < tp->fretboard_sz; offset++) {
 
             is_chord = svgtypesetter_is_chord((const char **)tp->strings, offset);
@@ -462,12 +472,12 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
 
         svgtypesetter_refresh_fbrd_xy();
 
-        if (g_svg_page.tab.fbrd[5].y >= SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6)) {
+        if (g_svg_page.tab.fbrd[5].y >= SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6) && tp->next != NULL) {
             // INFO(Rafael): The current page became full, we need a new one.
             svgtypesetter_newpage();
         }
 
-        if (*g_svg_page.tab.carriage_x >= SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN) {
+        if (*g_svg_page.tab.carriage_x >= SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN && tp->next != NULL) {
             // INFO(Rafael): The current tab diagram became full, we need a new empty one.
             svgtypesetter_spill_tabdiagram();
         }
@@ -561,8 +571,15 @@ static void svgtypesetter_spill_tabdiagram(void) {
 }
 
 static void svgtypesetter_fclose(void) {
+    char pn[20];
+    snprintf(pn, sizeof(pn) - 1, "-%s-", g_svg_page.page_nr);
     if (g_svg_page.fp != NULL) {
-        // TODO(Rafael): Spill page number at end of the page.
+        fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\""
+                               " font-size=\"13\" font-style=\"italic\">%s</text>\n", SVGTYPESETTER_PAGE_WIDTH / 2 -
+                                                                                        (strlen(pn) - 1),
+                                                                                      SVGTYPESETTER_PAGE_HEIGHT -
+                                                                                        SVGTYPESETTER_TAB_Y_SPAN + 5,
+                                                                                      pn);
         fprintf(g_svg_page.fp, "</svg>\n");
         fclose(g_svg_page.fp);
         g_svg_page.fp = NULL;
@@ -593,8 +610,29 @@ static int svgtypesetter_init(const char *filename) {
     return 1;
 }
 
-int svgtypesetters_svginkspill(const char *filepath, const txttypesetter_tablature_ctx *tab,
-                               const tulip_single_note_ctx *song) {
-    return 0;
+int svgtypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab,
+                           const tulip_single_note_ctx *song) {
+
+    if (!svgtypesetter_init(filepath)) {
+        return 0;
+    }
+
+    if (!svgtypesetter_newpage()) {
+        return 0;
+    }
+
+    if (tab->song != NULL) {
+        svgtypesetter_spill_song_title(tab->song);
+    }
+
+    if (tab->transcriber) {
+        svgtypesetter_spill_transcriber(tab->transcriber);
+    }
+
+    svgtypesetter_flush_fretboard_pinches(tab);
+
+    svgtypesetter_fclose();
+
+    return 1;
 }
 

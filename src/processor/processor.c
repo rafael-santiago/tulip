@@ -1,5 +1,5 @@
 /*
- *                           Copyright (C) 2005-2016 by Rafael Santiago
+ *                           Copyright (C) 2005-2020 by Rafael Santiago
  *
  * This is a free software. You can redistribute it and/or modify under
  * the terms of the GNU General Public License version 2.
@@ -12,6 +12,7 @@
 #include <processor/typesetters/pdf/pdf.h>
 #include <processor/typesetters/md/md.h>
 #include <processor/typesetters/html/html.h>
+#include <processor/typesetters/svg/svg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -30,23 +31,15 @@
 
 static int blackhole_processor(const tulip_single_note_ctx *song, const char *tabpath);
 
-//static int coming_soon(const tulip_single_note_ctx *song, const char *tabpath);
-
 register_tulip_processors
     register_new_tlp_processor(txt),
     register_new_tlp_processor(pdf),
     register_new_tlp_processor(ps),
     register_new_tlp_processor(eps),
     register_new_tlp_processor(md),
-    register_new_tlp_processor(html)
+    register_new_tlp_processor(html),
+    register_new_tlp_processor(svg)
 register_tulip_processors_end
-
-/*
-static int coming_soon(const tulip_single_note_ctx *song, const char *tabpath) {
-    printf("WARNING: the processor to produce the file \"%s\" is not totally implemented yet! coming soon!\n", tabpath);
-    return 1;
-}
-*/
 
 int blackhole_processor(const tulip_single_note_ctx *song, const char *tabpath) {
     printf("processor ERROR: Tulip has no processor capable of producing the file \"%s\".\n", tabpath);

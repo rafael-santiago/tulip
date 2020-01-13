@@ -5,8 +5,8 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#ifndef TULIP_TYPESETTERS_PS_PS_H
-#define TULIP_TYPESETTERS_PS_PS_H 1
+#ifndef TULIP_PROCESSOR_TYPESETTERS_PS_PS_H
+#define TULIP_PROCESSOR_TYPESETTERS_PS_PS_H 1
 
 #include <base/types.h>
 
