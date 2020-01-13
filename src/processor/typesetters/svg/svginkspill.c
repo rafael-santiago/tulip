@@ -141,7 +141,8 @@ static void svgtypesetter_spill_song_title(const char *title) {
 
 static void svgtypesetter_spill_transcriber(const char *name) {
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"13\""
-                           " font-style=\"italic\" font-weight=\"bold\">%s</text>\n", *g_svg_page.tab.carriage_x,
+                           " font-style=\"italic\" font-weight=\"bold\">transcribed by %s</text>\n",
+                                                                                      *g_svg_page.tab.carriage_x,
                                                                                       *g_svg_page.tab.carriage_y, name);
     *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
     svgtypesetter_refresh_fbrd_xy();
@@ -165,7 +166,8 @@ static void svgtypesetter_flush_note_pinch(const char *note) {
     const char *np = note;
 
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"13\" font-weight=\"bold\">", *g_svg_page.tab.carriage_x,
-                                                                                               *g_svg_page.tab.carriage_y);
+                                                                                               *g_svg_page.tab.carriage_y +
+                                                                                               SVGTYPESETTER_TAB_NOTE_Y_OFFSET);
     while (isdigit(*np)) {
         fprintf(g_svg_page.fp, "%c", *np);
         np++;
@@ -177,29 +179,29 @@ static void svgtypesetter_flush_note_pinch(const char *note) {
 static void svgtypesetter_flush_bend_pinch(const int arrow) {
     char *arrow_markup = (arrow) ? " marker-end=\"(url#arrow)\"" : "";
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d, %d,%d %d,%d\""
-                           " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>", *g_svg_page.tab.carriage_x,
-                                                                                     *g_svg_page.tab.carriage_y,
-                                                                                     *g_svg_page.tab.carriage_x,
-                                                                                     *g_svg_page.tab.carriage_y + 5,
-                                                                                     *g_svg_page.tab.carriage_x + 5,
-                                                                                     *g_svg_page.tab.carriage_y + 5,
-                                                                                     *g_svg_page.tab.carriage_x + 5,
-                                                                                     *g_svg_page.tab.carriage_y - 15,
-                                                                                     arrow_markup);
+                           " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>\n", *g_svg_page.tab.carriage_x,
+                                                                                       *g_svg_page.tab.carriage_y,
+                                                                                       *g_svg_page.tab.carriage_x,
+                                                                                       *g_svg_page.tab.carriage_y + 5,
+                                                                                       *g_svg_page.tab.carriage_x + 5,
+                                                                                       *g_svg_page.tab.carriage_y + 5,
+                                                                                       *g_svg_page.tab.carriage_x + 5,
+                                                                                       *g_svg_page.tab.carriage_y - 15,
+                                                                                       arrow_markup);
 }
 
 static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
     char *arrow_markup = (arrow) ? "marker-end=\"(url#arrow)\"" : "";
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d %d,%d %d,%d\""
-                           " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>", *g_svg_page.tab.carriage_x,
-                                                                                     *g_svg_page.tab.carriage_y,
-                                                                                     *g_svg_page.tab.carriage_x,
-                                                                                     *g_svg_page.tab.carriage_y - 10,
-                                                                                     *g_svg_page.tab.carriage_x + 5,
-                                                                                     *g_svg_page.tab.carriage_y - 10,
-                                                                                     *g_svg_page.tab.carriage_x + 4,
-                                                                                     *g_svg_page.tab.carriage_y + 5,
-                                                                                     arrow_markup);
+                           " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>\n", *g_svg_page.tab.carriage_x,
+                                                                                       *g_svg_page.tab.carriage_y,
+                                                                                       *g_svg_page.tab.carriage_x,
+                                                                                       *g_svg_page.tab.carriage_y - 10,
+                                                                                       *g_svg_page.tab.carriage_x + 5,
+                                                                                       *g_svg_page.tab.carriage_y - 10,
+                                                                                       *g_svg_page.tab.carriage_x + 4,
+                                                                                       *g_svg_page.tab.carriage_y + 5,
+                                                                                       arrow_markup);
 }
 
 static void svgtypesetter_flush_vibrato_pinch(void) {
@@ -226,10 +228,10 @@ static void svgtypesetter_flush_slide_up_pinch(void) {
 static void svgtypesetter_flush_sep_bar(void) {
     int y = g_svg_page.tab.fbrd[0].y;
     fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
-                           " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\"/>", *g_svg_page.tab.carriage_x,
-                                                                                        *g_svg_page.tab.carriage_x,
-                                                                                        y,
-                                                                                        y + SVGTYPESETTER_TAB_Y_SPAN * 10);
+                           " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\"/>\n", *g_svg_page.tab.carriage_x,
+                                                                                          *g_svg_page.tab.carriage_x,
+                                                                                          y,
+                                                                                          y + SVGTYPESETTER_TAB_Y_SPAN * 5);
 }
 
 static int svgtypesetter_is_chord(const char **strings, const size_t offset) {
@@ -403,8 +405,8 @@ static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab)
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab) {
     const txttypesetter_tablature_ctx *tp;
     size_t s, offset;
-    void (*xstep)(void);
-    int is_chord, bend_arrow_string;
+    void (*xstep)(void) = NULL;
+    int bend_arrow_string, spill_done;
 
 #define do_flush_pinch(xstep, s, sn, arrow_string) {\
     if (*(s) == '~') {\
@@ -437,6 +439,8 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
         if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
             xstep = svgtypesetter_slide_up_xstep;\
         }\
+    } else if (*(s) == '-' && xstep == NULL) {\
+        xstep = svgtypesetter_note_sep_xstep;\
     } else if (*(s) == '|' && sn == 5) {\
         svgtypesetter_flush_sep_bar();\
     } else if (isdigit(*(s))) {\
@@ -448,44 +452,67 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
         for (offset = 0; offset < tp->fretboard_sz; offset++) {
+            //is_chord = svgtypesetter_is_chord((const char **)tp->strings, offset);
 
-            is_chord = svgtypesetter_is_chord((const char **)tp->strings, offset);
-
-            if (tp->strings[s][offset] == 'b') {
-                bend_arrow_string = svgtypesetter_get_bend_arrow_string((const char **)tp->strings, offset);
-            } else if (tp->strings[s][offset] == 'r') {
-                bend_arrow_string = svgtypesetter_get_release_bend_arrow_string((const char **)tp->strings, offset);
-            }
+            bend_arrow_string = 6;
 
             for (s = 0; s < 6; s++) {
+                if (offset > 0 && isdigit(txttab->strings[s][offset-1]) && isdigit(txttab->strings[s][offset])) {
+                    continue;
+                }
+                if (tp->strings[s][offset] == 'b' && bend_arrow_string == 6) {
+                    bend_arrow_string = svgtypesetter_get_bend_arrow_string((const char **)tp->strings, offset);
+                } else if (tp->strings[s][offset] == 'r' && bend_arrow_string == 6) {
+                    bend_arrow_string = svgtypesetter_get_release_bend_arrow_string((const char **)tp->strings, offset);
+                }
                 g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[s].x;
                 g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[s].y;
                 do_flush_pinch(xstep, &tp->strings[s][offset], s, bend_arrow_string);
             }
-        }
 
-        if (xstep == NULL) {
-            xstep = svgtypesetter_note_sep_xstep;
-        }
+            if (xstep != NULL) {
+                xstep();
+                xstep = NULL;
+            }
 
-        if (xstep != NULL) {
-            xstep();
-        }
+            svgtypesetter_refresh_fbrd_xy();
 
-        svgtypesetter_refresh_fbrd_xy();
+            if (g_svg_page.tab.fbrd[5].y >= SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6) && tp->next != NULL) {
+                // INFO(Rafael): The current page became full, we need a new one.
+                svgtypesetter_newpage();
+            }
 
-        if (g_svg_page.tab.fbrd[5].y >= SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6) && tp->next != NULL) {
-            // INFO(Rafael): The current page became full, we need a new one.
-            svgtypesetter_newpage();
-        }
-
-        if (*g_svg_page.tab.carriage_x >= SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN && tp->next != NULL) {
-            // INFO(Rafael): The current tab diagram became full, we need a new empty one.
-            svgtypesetter_spill_tabdiagram();
+            if (*g_svg_page.tab.carriage_x >= SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN && tp->next != NULL) {
+                // INFO(Rafael): The current tab diagram became full, we need a new empty one.
+                g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
+                g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+                *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
+                *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 10;
+                svgtypesetter_refresh_fbrd_xy();
+                svgtypesetter_spill_tabdiagram();
+            }
         }
     }
 
 #undef do_flush_pinch
+/*
+            if (xstep == svgtypesetter_vibrato_xstep) {
+                printf("vibrato xstep.\n");
+            } else if (xstep == svgtypesetter_bend_xstep) {
+                printf("bend xstep.\n");
+            } else if (xstep == svgtypesetter_release_bend_xstep) {
+                printf("release bend xstep.\n");
+            } else if (xstep == svgtypesetter_hammer_on_xstep || xstep == svgtypesetter_pull_off_xstep) {
+                printf("hammer-on/pull-off xstep.\n");
+            } else if (xstep == svgtypesetter_slide_up_xstep) {
+                printf("slide-up xstep.\n");
+            } else if (xstep == svgtypesetter_slide_down_xstep) {
+                printf("slide-down xstep.\n");
+            } else if (xstep == svgtypesetter_note_sep_xstep) {
+                printf("note-sep xstep.\n");
+            }
+*/
+
 }
 
 static int svgtypesetter_refresh_fbrd_xy(void) {
@@ -502,8 +529,8 @@ static int svgtypesetter_refresh_fbrd_xy(void) {
 }
 
 static int svgtypesetter_newpage(void) {
-    snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%d-pp.svg", g_svg_page.filename,
-                                                                                             g_svg_page.page_nr);
+    snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%03d-pp.svg", g_svg_page.filename,
+                                                                                               g_svg_page.page_nr);
 
     if (g_svg_page.fp != NULL) {
         svgtypesetter_fclose();
@@ -527,10 +554,10 @@ static int svgtypesetter_newpage(void) {
     fprintf(g_svg_page.fp, "<svg width=\"%d\" height=\"%d\">\n", SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT);
     fprintf(g_svg_page.fp, "\t<defs>\n"
                             "\t\t<marker id=\"arrow\" markerWidth=\"10\" markerHeight=\"10\" refX=\"1\" refY=\"4\""
-                            " orient=\"auto\" markerUnits=\"strokeWidth\">"
-                            "\t\t\t<path d=\"M0,0 L0,8 L9,3 z\" fill=\"black\"/>"
-                            "\t\t</marker>"
-                            "\t</defs>");
+                            " orient=\"auto\" markerUnits=\"strokeWidth\">\n"
+                            "\t\t\t<path d=\"M0,0 L0,8 L9,3 z\" fill=\"black\"/>\n"
+                            "\t\t</marker>\n"
+                            "\t</defs>\n");
     return 1;
 }
 
@@ -551,30 +578,30 @@ static void svgtypesetter_spill_tabdiagram(void) {
 
     // INFO(Rafael): Vertical left line.
     fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
-                           " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\"/>", x, x, y,
-                                                                                        y + SVGTYPESETTER_TAB_Y_SPAN * 10);
+                           " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\"/>\n", x, x, y,
+                                                                                          y + SVGTYPESETTER_TAB_Y_SPAN * 5);
     // INFO(Rafael): String lines.
     for (s = 0; s < 6; s++) {
         fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
-                               " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\"/>", x, g_svg_page.tab.xlim_right,
-                                                                                            y, y);
+                               " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\"/>\n", x, g_svg_page.tab.xlim_right,
+                                                                                              y, y);
         y += SVGTYPESETTER_TAB_Y_SPAN;
     }
 
     // INFO(Rafael): Vertical right line.
     fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
-                           " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\"/>", g_svg_page.tab.xlim_right,
-                                                                                        g_svg_page.tab.xlim_right,
-                                                                                        *g_svg_page.tab.carriage_y,
-                                                                                        *g_svg_page.tab.carriage_y +
-                                                                                            SVGTYPESETTER_TAB_Y_SPAN * 10);
+                           " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\"/>\n", g_svg_page.tab.xlim_right,
+                                                                                          g_svg_page.tab.xlim_right,
+                                                                                          *g_svg_page.tab.carriage_y,
+                                                                                          *g_svg_page.tab.carriage_y +
+                                                                                            SVGTYPESETTER_TAB_Y_SPAN * 5);
 
     svgtypesetter_refresh_fbrd_xy();
 }
 
 static void svgtypesetter_fclose(void) {
     char pn[20];
-    snprintf(pn, sizeof(pn) - 1, "-%s-", g_svg_page.page_nr);
+    snprintf(pn, sizeof(pn) - 1, "-%d-", g_svg_page.page_nr);
     if (g_svg_page.fp != NULL) {
         fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\""
                                " font-size=\"13\" font-style=\"italic\">%s</text>\n", SVGTYPESETTER_PAGE_WIDTH / 2 -
