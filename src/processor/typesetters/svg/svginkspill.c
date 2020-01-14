@@ -625,13 +625,14 @@ static int svgtypesetter_newpage(void) {
 
     svgtypesetter_refresh_fbrd_xy();
 
-    fprintf(g_svg_page.fp, "<svg width=\"%d\" height=\"%d\">\n", SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT);
-    fprintf(g_svg_page.fp, "\t<defs>\n"
+    fprintf(g_svg_page.fp, "<svg xmlns=\"http://www.w3.org/2000/svg\""
+                           " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
+                           "\t<defs>\n"
                             "\t\t<marker id=\"arrow\" markerWidth=\"10\" markerHeight=\"10\" refX=\"1\" refY=\"4\""
                             " orient=\"auto\" markerUnits=\"strokeWidth\">\n"
                             "\t\t\t<path d=\"M0,0 L0,8 L9,3 z\" fill=\"black\"/>\n"
                             "\t\t</marker>\n"
-                            "\t</defs>\n");
+                            "\t</defs>\n", SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT);
     return 1;
 }
 
