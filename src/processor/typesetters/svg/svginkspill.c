@@ -214,7 +214,7 @@ static void svgtypesetter_flush_bend_pinch(const int arrow) {
 }
 
 static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
-    char *arrow_markup = (arrow) ? "marker-end=\"url(#arrow)\"" : "";
+    char *arrow_markup = (arrow) ? " marker-end=\"url(#arrow)\"" : "";
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d %d,%d %d,%d\""
                            " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>\n", *g_svg_page.tab.carriage_x,
                                                                                        *g_svg_page.tab.carriage_y,
