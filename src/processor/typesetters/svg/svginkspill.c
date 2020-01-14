@@ -127,7 +127,7 @@ static inline void svgtypesetter_release_bend_xstep(const int delta) {
 }
 
 static inline void svgtypesetter_bend_xstep(const int delta) {
-    *g_svg_page.tab.carriage_x += (SVGTYPESETTER_TAB_X_SPAN + 10) * delta;
+    *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN * delta;
 }
 
 static inline void svgtypesetter_note_sep_xstep(const int delta) {
@@ -200,7 +200,7 @@ static void svgtypesetter_flush_note_pinch(const char *note) {
 }
 
 static void svgtypesetter_flush_bend_pinch(const int arrow) {
-    char *arrow_markup = (arrow) ? " marker-end=\"(url#arrow)\"" : "";
+    char *arrow_markup = (arrow) ? " marker-end=\"url(#arrow)\"" : "";
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d, %d,%d %d,%d\""
                            " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>\n", *g_svg_page.tab.carriage_x,
                                                                                        *g_svg_page.tab.carriage_y,
@@ -214,7 +214,7 @@ static void svgtypesetter_flush_bend_pinch(const int arrow) {
 }
 
 static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
-    char *arrow_markup = (arrow) ? "marker-end=\"(url#arrow)\"" : "";
+    char *arrow_markup = (arrow) ? "marker-end=\"url(#arrow)\"" : "";
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d %d,%d %d,%d\""
                            " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>\n", *g_svg_page.tab.carriage_x,
                                                                                        *g_svg_page.tab.carriage_y,
@@ -453,11 +453,13 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
             xstep = svgtypesetter_vibrato_xstep;\
         }\
     } else if (*(s) == 'b') {\
+        do_xpack(7);\
         svgtypesetter_flush_bend_pinch(sn == arrow_string);\
         if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
             xstep = svgtypesetter_bend_xstep;\
         }\
     } else if (*(s) == 'r') {\
+        do_xpack(7);\
         svgtypesetter_flush_release_bend_pinch(sn == arrow_string);\
         if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
             xstep = svgtypesetter_release_bend_xstep;\
