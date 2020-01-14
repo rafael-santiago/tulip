@@ -29,25 +29,25 @@ struct svgtypesetter_page_ctx {
     struct svgtypesetter_tab_diagram_ctx tab;
 };
 
-static inline void svgtypesetter_hammer_on_xstep(void);
+static inline void svgtypesetter_hammer_on_xstep(const int delta);
 
-static inline void svgtypesetter_vibrato_xstep(void);
+static inline void svgtypesetter_vibrato_xstep(const int delta);
 
-static inline void svgtypesetter_pull_off_xstep(void);
+static inline void svgtypesetter_pull_off_xstep(const int delta);
 
-static inline void svgtypesetter_release_bend_xstep(void);
+static inline void svgtypesetter_release_bend_xstep(const int delta);
 
-static inline void svgtypesetter_bend_xstep(void);
+static inline void svgtypesetter_bend_xstep(const int delta);
 
-static inline void svgtypesetter_note_sep_xstep(void);
+static inline void svgtypesetter_note_sep_xstep(const int delta);
 
-static inline void svgtypesetter_slide_down_xstep(void);
+static inline void svgtypesetter_slide_down_xstep(const int delta);
 
-static inline void svgtypesetter_slide_up_xstep(void);
+static inline void svgtypesetter_slide_up_xstep(const int delta);
 
-static inline void svgtypesetter_sep_bar_xstep(void);
+static inline void svgtypesetter_sep_bar_xstep(const int delta);
 
-static inline void svgtypesetter_chord_span_xstep(void);
+static inline void svgtypesetter_chord_span_xstep(const int delta);
 
 static void svgtypesetter_insert_header_span(void);
 
@@ -110,44 +110,44 @@ static inline void svgtypesetter_newtabdiagram(void) {
     svgtypesetter_spill_tabdiagram();
 }
 
-static inline void svgtypesetter_hammer_on_xstep(void) {
-    *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN + 10;
+static inline void svgtypesetter_hammer_on_xstep(const int delta) {
+    *g_svg_page.tab.carriage_x += (SVGTYPESETTER_TAB_X_SPAN + 10) * delta;
 }
 
-static inline void svgtypesetter_vibrato_xstep(void) {
-    *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN;
+static inline void svgtypesetter_vibrato_xstep(const int delta) {
+    *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN * delta;
 }
 
-static inline void svgtypesetter_pull_off_xstep(void) {
-    svgtypesetter_hammer_on_xstep();
+static inline void svgtypesetter_pull_off_xstep(const int delta) {
+    svgtypesetter_hammer_on_xstep(delta);
 }
 
-static inline void svgtypesetter_release_bend_xstep(void) {
-    svgtypesetter_bend_xstep();
+static inline void svgtypesetter_release_bend_xstep(const int delta) {
+    svgtypesetter_bend_xstep(delta);
 }
 
-static inline void svgtypesetter_bend_xstep(void) {
-    *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN + 10;
+static inline void svgtypesetter_bend_xstep(const int delta) {
+    *g_svg_page.tab.carriage_x += (SVGTYPESETTER_TAB_X_SPAN + 10) * delta;
 }
 
-static inline void svgtypesetter_note_sep_xstep(void) {
-    *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN;
+static inline void svgtypesetter_note_sep_xstep(const int delta) {
+    *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN * delta;
 }
 
-static inline void svgtypesetter_sep_bar_xstep(void) {
-    *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN - 5;
+static inline void svgtypesetter_sep_bar_xstep(const int delta) {
+    *g_svg_page.tab.carriage_x += (SVGTYPESETTER_TAB_X_SPAN - 5) * delta;
 }
 
-static inline void svgtypesetter_slide_down_xstep(void) {
-    *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN - 10;
+static inline void svgtypesetter_slide_down_xstep(const int delta) {
+    *g_svg_page.tab.carriage_x += (SVGTYPESETTER_TAB_X_SPAN - 5) * delta;
 }
 
-static inline void svgtypesetter_slide_up_xstep(void) {
-    svgtypesetter_slide_down_xstep();
+static inline void svgtypesetter_slide_up_xstep(const int delta) {
+    svgtypesetter_slide_down_xstep(delta);
 }
 
-static inline void svgtypesetter_chord_span_xstep(void) {
-    *g_svg_page.tab.carriage_x += SVGTYPESETTER_CHORD_SPAN_X_STEP;
+static inline void svgtypesetter_chord_span_xstep(const int delta) {
+    *g_svg_page.tab.carriage_x += SVGTYPESETTER_CHORD_SPAN_X_STEP * delta;
 }
 
 static void svgtypesetter_insert_header_span(void) {
@@ -242,12 +242,14 @@ static void svgtypesetter_flush_hammer_on_pull_off_pinch(void) {
 
 static void svgtypesetter_flush_slide_down_pinch(void) {
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\">/</text>\n", *g_svg_page.tab.carriage_x,
-                                                                                    *g_svg_page.tab.carriage_y);
+                                                                                    *g_svg_page.tab.carriage_y +
+                                                                                SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
 }
 
 static void svgtypesetter_flush_slide_up_pinch(void) {
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\">\\</text>\n", *g_svg_page.tab.carriage_x,
-                                                                                    *g_svg_page.tab.carriage_y);
+                                                                                    *g_svg_page.tab.carriage_y +
+                                                                                SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
 }
 
 static void svgtypesetter_flush_sep_bar(void) {
@@ -430,11 +432,22 @@ static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab)
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab) {
     const txttypesetter_tablature_ctx *tp;
     size_t s, offset;
-    void (*xstep)(void) = NULL;
+    void (*xstep)(const int) = NULL;
+    void (*last_xstep)(const int) = NULL;
     int bend_arrow_string, spill_done, is_chord;
+
+#define do_xpack(xspan) {\
+    if (last_xstep != NULL) {\
+        last_xstep(-1);\
+        last_xstep = NULL;\
+        *g_svg_page.tab.carriage_x += xspan;\
+        svgtypesetter_refresh_fbrd_xy();\
+    }\
+}
 
 #define do_flush_pinch(xstep, s, sn, arrow_string) {\
     if (*(s) == '~') {\
+        do_xpack(7);\
         svgtypesetter_flush_vibrato_pinch();\
         if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
             xstep = svgtypesetter_vibrato_xstep;\
@@ -455,11 +468,23 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
             xstep = svgtypesetter_hammer_on_xstep;\
         }\
     } else if (*(s) == '/') {\
+        if (last_xstep == svgtypesetter_chord_span_xstep) {\
+            last_xstep(-1);\
+            do_xpack(13);\
+        } else {\
+            do_xpack(10);\
+        }\
         svgtypesetter_flush_slide_down_pinch();\
         if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
             xstep = svgtypesetter_slide_down_xstep;\
         }\
     } else if (*(s) == '\\') {\
+        if (last_xstep == svgtypesetter_chord_span_xstep) {\
+            last_xstep(-1);\
+            do_xpack(14);\
+        } else {\
+            do_xpack(11);\
+        }\
         svgtypesetter_flush_slide_up_pinch();\
         if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
             xstep = svgtypesetter_slide_up_xstep;\
@@ -510,13 +535,15 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                     is_chord = isdigit(tp->strings[s][offset-1]) && isdigit(tp->strings[s][offset]);
                 }
                 if (is_chord) {
-                    svgtypesetter_chord_span_xstep();
+                    svgtypesetter_chord_span_xstep(1);
+                    last_xstep = svgtypesetter_chord_span_xstep;
                     xstep = NULL;
                 }
             }
 
             if (xstep != NULL) {
-                xstep();
+                xstep(1);
+                last_xstep = xstep;
                 xstep = NULL;
                 svgtypesetter_refresh_fbrd_xy();
 
@@ -538,6 +565,8 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
     }
 
 #undef do_flush_pinch
+
+#undef do_xpack
 /*
             if (xstep == svgtypesetter_vibrato_xstep) {
                 printf("vibrato xstep.\n");
