@@ -95,15 +95,28 @@ static void svgtypesetter_fclose(void);
 
 static int svgtypesetter_init(const char *filename);
 
-static inline void svgtypesetter_newtabdiagram(void);
+static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab);
 
 static struct svgtypesetter_page_ctx g_svg_page;
 
-static inline void svgtypesetter_newtabdiagram(void) {
+static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
+    size_t span_size = 0;
+    const txttypesetter_sustained_technique_ctx *sp;
+    const txttypesetter_comment_ctx *cp;
+    for (sp = txttab->techniques; sp != NULL; sp = sp->next) {
+        span_size++;
+    }
+    for (cp = txttab->comments; cp != NULL; cp = cp->next) {
+        span_size++;
+    }
+    span_size += (txttab->times != NULL);
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
     *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
-    *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 10;
+    *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 10 + (10 * span_size);
+    if (txttab->times != NULL) {
+        *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN;
+    }
     svgtypesetter_refresh_fbrd_xy();
     svgtypesetter_spill_tabdiagram();
 }
@@ -398,6 +411,14 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
     void (*last_xstep)(const int) = NULL;
     int bend_arrow_string, spill_done, is_chord;
     char *times, *times_end, tm_buf[20];
+    struct sustained_techniques_points_ctx {
+        int x;
+        int y;
+        char *data;
+        char *data_end;
+        int print_line;
+    } stech_pts[20], *stech_p, *stech_end;
+    const txttypesetter_sustained_technique_ctx *sp;
 
 #define do_xpack(xspan) {\
     if (last_xstep != NULL) {\
@@ -463,12 +484,63 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
     }\
 }
 
-    svgtypesetter_spill_tabdiagram();
+    //svgtypesetter_spill_tabdiagram();
+    svgtypesetter_newtabdiagram(txttab);
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
         times = tp->times;
         times_end = times + 3;
+
+        if (tp->techniques != NULL) {
+            stech_p = &stech_pts[0];
+            stech_end = stech_p + sizeof(stech_pts) / sizeof(stech_pts[0]);
+            sp = tp->techniques;
+            while (stech_p != stech_end && sp != NULL) {
+                stech_p->x = *g_svg_page.tab.carriage_x;
+                stech_p->data = sp->data;
+                stech_p->data_end = stech_p->data + strlen(stech_p->data);
+                stech_p->print_line = 0;
+                stech_p++;
+                sp = sp->next;
+            }
+            stech_end = stech_p + 1;
+            stech_p = &stech_pts[0];
+            stech_p->y = g_svg_page.tab.fbrd[0].y - (SVGTYPESETTER_TAB_Y_SPAN * 2) - 10;
+            stech_p++;
+            while (stech_p != stech_end) {
+                stech_p[0].y = stech_p[-1].y - SVGTYPESETTER_TAB_Y_SPAN;
+                stech_p++;
+            }
+        } else {
+            stech_p = stech_end = NULL;
+        }
+
         for (offset = 0; offset < tp->fretboard_sz; offset++) {
+            // INFO(Rafael): Spilling sustained techniques.
+            if (stech_end != NULL) {
+                for (stech_p = &stech_pts[0]; stech_p != stech_end; stech_p++) {
+                    if (stech_p->data == stech_p->data_end) {
+                        continue;
+                    }
+                    if (!stech_p->print_line && isalpha(*stech_p->data)) {
+                        stech_p->x = *g_svg_page.tab.carriage_x;
+                        fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                               " font-size=\"13\" font-weight=\"bold\">%c%c%c</text>\n", stech_p->x,
+                                                                                                         stech_p->y,
+                                                                                                         stech_p->data[0],
+                                                                                                         stech_p->data[1],
+                                                                                                         stech_p->data[2]);
+                        stech_p->print_line = 1;
+                    } else if (stech_p->print_line && stech_p->data[0] == '.' && stech_p->data[1] != '.') {
+                        fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
+                                               " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\""
+                                               " stroke-dasharray=\"5,5\"/>\n", stech_p->x, *g_svg_page.tab.carriage_x,
+                                                                                stech_p->y + 1, stech_p->y + 1);
+                        stech_p->print_line = 0;
+                    }
+                    stech_p->data++;
+                }
+            }
 
             // INFO(Rafael): Spilling times.
             if (times != NULL && times > times_end && isdigit(*times)) {
@@ -480,6 +552,8 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                                        " font-size=\"13\" font-weight=\"bold\">%s</text>\n", *g_svg_page.tab.carriage_x,
                                                                                              g_svg_page.tab.fbrd[0].y -
                                                                                              SVGTYPESETTER_TAB_Y_SPAN, tm_buf);
+                *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN;
+                svgtypesetter_refresh_fbrd_xy();
             }
 
             is_chord = svgtypesetter_is_chord((const char **)tp->strings, offset);
@@ -532,9 +606,9 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                     svgtypesetter_newpage();
                 }
 
-                if (*g_svg_page.tab.carriage_x >= SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN && tp->next != NULL) {
+                if (*g_svg_page.tab.carriage_x >= SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN /*&& tp->next != NULL*/) {
                     // INFO(Rafael): The current tab diagram became full, we need a new empty one.
-                    svgtypesetter_newtabdiagram();
+                    svgtypesetter_newtabdiagram(tp);
                 }
             }
 
@@ -543,7 +617,7 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
             }
         }
         if (tp->next != NULL) {
-            svgtypesetter_newtabdiagram();
+            svgtypesetter_newtabdiagram(tp->next);
         }
     }
 
