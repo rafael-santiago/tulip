@@ -83,8 +83,6 @@ static void do_xstep(int *x, const char **strings, const size_t offset);
 
 static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablature_ctx *txttab);
 
-static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab);
-
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab);
 
 static int svgtypesetter_refresh_fbrd_xy(void);
@@ -393,48 +391,13 @@ static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablatu
     }
 }
 
-static void svgtypesetter_spill_times(const txttypesetter_tablature_ctx *txttab) {
-    int x;
-    char *tp, *tp_end, *temp;
-    size_t offset;
-    char tm_buf[20];
-
-    if (txttab->times == NULL) {
-        return;
-    }
-
-    tp = txttab->times;
-    tp_end = tp + strlen(tp);
-
-    x = g_svg_page.tab.xlim_left;
-    offset = 0;
-    while (tp < tp_end && offset < txttab->fretboard_sz) {
-        do_xstep(&x, (const char **)txttab->strings, offset);
-        if (isdigit(*tp)) {
-            if ((temp = strstr(tp, "X")) != NULL) {
-                // INFO(Rafael): Under normal conditions 'X' must always be found.
-                memset(tm_buf, 0, sizeof(tm_buf));
-                memcpy(tm_buf, tp, temp - tp + 1);
-                fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
-                                       " font-size=\"13\" font-weight=\"bold\">%s</text>\n", x,
-                                                                                             g_svg_page.tab.fbrd[0].y -
-                                                                                                SVGTYPESETTER_TAB_Y_SPAN,
-                                                                                             tm_buf);
-            }
-            tp = temp + 1;
-        } else {
-            tp++;
-        }
-        offset++;
-    }
-}
-
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab) {
     const txttypesetter_tablature_ctx *tp;
     size_t s, offset;
     void (*xstep)(const int) = NULL;
     void (*last_xstep)(const int) = NULL;
     int bend_arrow_string, spill_done, is_chord;
+    char *times, *times_end, tm_buf[20];
 
 #define do_xpack(xspan) {\
     if (last_xstep != NULL) {\
@@ -503,11 +466,25 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
     svgtypesetter_spill_tabdiagram();
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
+        times = tp->times;
+        times_end = times + 3;
         for (offset = 0; offset < tp->fretboard_sz; offset++) {
+
+            // INFO(Rafael): Spilling times.
+            if (times != NULL && times > times_end && isdigit(*times)) {
+                for (times_end = times; *times_end != 'X'; times_end++)
+                    ;
+                memset(tm_buf, 0, sizeof(tm_buf));
+                memcpy(tm_buf, times, times_end - times + 1);
+                fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                       " font-size=\"13\" font-weight=\"bold\">%s</text>\n", *g_svg_page.tab.carriage_x,
+                                                                                             g_svg_page.tab.fbrd[0].y -
+                                                                                             SVGTYPESETTER_TAB_Y_SPAN, tm_buf);
+            }
+
             is_chord = svgtypesetter_is_chord((const char **)tp->strings, offset);
 
             bend_arrow_string = 6;
-
             for (s = 0; s < 6; s++) {
                 if (tp->strings[s][offset] == '-' ||
                     (offset > 0 && isdigit(tp->strings[s][offset-1]) && isdigit(tp->strings[s][offset]))) {
@@ -560,6 +537,10 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                     svgtypesetter_newtabdiagram();
                 }
             }
+
+            if (times != NULL) {
+                times++;
+            }
         }
         if (tp->next != NULL) {
             svgtypesetter_newtabdiagram();
@@ -569,24 +550,6 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
 #undef do_flush_pinch
 
 #undef do_xpack
-/*
-            if (xstep == svgtypesetter_vibrato_xstep) {
-                printf("vibrato xstep.\n");
-            } else if (xstep == svgtypesetter_bend_xstep) {
-                printf("bend xstep.\n");
-            } else if (xstep == svgtypesetter_release_bend_xstep) {
-                printf("release bend xstep.\n");
-            } else if (xstep == svgtypesetter_hammer_on_xstep || xstep == svgtypesetter_pull_off_xstep) {
-                printf("hammer-on/pull-off xstep.\n");
-            } else if (xstep == svgtypesetter_slide_up_xstep) {
-                printf("slide-up xstep.\n");
-            } else if (xstep == svgtypesetter_slide_down_xstep) {
-                printf("slide-down xstep.\n");
-            } else if (xstep == svgtypesetter_note_sep_xstep) {
-                printf("note-sep xstep.\n");
-            }
-*/
-
 }
 
 static int svgtypesetter_refresh_fbrd_xy(void) {
@@ -741,4 +704,3 @@ int svgtypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
 
     return 1;
 }
-
