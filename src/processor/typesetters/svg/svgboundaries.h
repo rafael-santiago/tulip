@@ -15,7 +15,7 @@
 #define SVGTYPESETTER_TAB_XL_DELTA               10
 #define SVGTYPESETTER_TAB_XR_DELTA              -05
 
-#define SVGTYPESETTER_TAB_Y                      30
+#define SVGTYPESETTER_TAB_Y                      50
 #define SVGTYPESETTER_TAB_Y_SPAN                 10
 
 #define SVGTYPESETTER_TAB_X_SPAN                 15

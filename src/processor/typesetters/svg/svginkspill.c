@@ -55,7 +55,7 @@ static void svgtypesetter_spill_song_title(const char *title);
 
 static void svgtypesetter_spill_transcriber(const char *name);
 
-static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txttab);
+static void svgtypesetter_spill_comments(const txttypesetter_comment_ctx *comments);
 
 static void svgtypesetter_flush_note_pinch(const char *note);
 
@@ -113,7 +113,9 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
     *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
-    *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 10 + (10 * span_size);
+    if (txttab->last != NULL) {
+        *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 10 + (10 * span_size);
+    }
     if (txttab->times != NULL) {
         *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN;
     }
@@ -182,11 +184,11 @@ static void svgtypesetter_spill_transcriber(const char *name) {
     svgtypesetter_refresh_fbrd_xy();
 }
 
-static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txttab) {
-    txttypesetter_comment_ctx *cp;
+static void svgtypesetter_spill_comments(const txttypesetter_comment_ctx *comments) {
+    const txttypesetter_comment_ctx *cp;
 
-    for (cp = txttab->comments; cp != NULL; cp = cp->next) {
-        fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"18\">"
+    for (cp = comments; cp != NULL; cp = cp->next) {
+        fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"11\">"
                                "%s</text>\n", *g_svg_page.tab.carriage_x,
                                               *g_svg_page.tab.carriage_y,
                                               cp->data);
@@ -409,9 +411,26 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
     }\
 }
 
-    svgtypesetter_newtabdiagram(txttab);
+    if (txttab->song != NULL || txttab->transcriber != NULL) {
+        svgtypesetter_insert_header_span();
+    }
+
+    //svgtypesetter_newtabdiagram(txttab);
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
+        if (tp->strings[0] != NULL) {
+            svgtypesetter_newtabdiagram(tp);
+        }
+
+        //if (tp->comments != NULL) {
+        //    svgtypesetter_spill_comments(tp->comments);
+        //}
+
+        if (tp->strings[0] == NULL) {
+            tp = tp->next;
+            continue;
+        }
+
         times = tp->times;
         times_end = times + 3;
 
@@ -568,9 +587,9 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
             }
         }
         svgtypesetter_cut_tab();
-        if (tp->next != NULL) {
-            svgtypesetter_newtabdiagram(tp->next);
-        }
+        //if (tp->next != NULL) {
+        //svgtypesetter_newtabdiagram(tp->next);
+        //}
     }
 
 #undef do_flush_pinch
