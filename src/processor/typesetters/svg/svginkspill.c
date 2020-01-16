@@ -440,7 +440,12 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                                                " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\""
                                                " stroke-dasharray=\"5,5\"/>\n", stech_p->x, *g_svg_page.tab.carriage_x,
                                                                                 stech_p->y + 1, stech_p->y + 1);
-                        stech_p->print_line = 0;
+                        if ((stech_p->data + 2) < stech_p->data_end &&
+                            stech_p->data[1] == ' ' && tp->strings[0][offset + 1] == '|' && stech_p->data[2] == '.') {
+                            stech_p->x = *g_svg_page.tab.carriage_x;
+                        } else {
+                            stech_p->print_line = 0;
+                        }
                     }
                     stech_p->data++;
                 }
@@ -510,7 +515,7 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                     svgtypesetter_newpage();
                 }
 
-                if (*g_svg_page.tab.carriage_x >= SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN /*&& tp->next != NULL*/) {
+                if (*g_svg_page.tab.carriage_x >= SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN && s < 5) {
                     // INFO(Rafael): The current tab diagram became full, we need a new empty one.
                     svgtypesetter_newtabdiagram(tp);
                 }
