@@ -79,15 +79,13 @@ static size_t svgtypesetter_get_release_bend_arrow_string(const char **strings, 
 
 static size_t svgtypesetter_get_bend_arrow_string(const char **strings, const size_t offset);
 
-static void do_xstep(int *x, const char **strings, const size_t offset);
-
-static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablature_ctx *txttab);
-
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab);
 
 static int svgtypesetter_refresh_fbrd_xy(void);
 
 static int svgtypesetter_newpage(void);
+
+static void svgtypesetter_cut_tab(void);
 
 static void svgtypesetter_spill_tabdiagram(void);
 
@@ -311,99 +309,6 @@ static size_t svgtypesetter_get_bend_arrow_string(const char **strings, const si
     return 6;
 }
 
-static void do_xstep(int *x, const char **strings, const size_t offset) {
-    size_t s, x_span = 0;
-
-    for (s = 0; s < 6; s++) {
-        switch (strings[s][offset]) {
-            case '-':
-                if (x_span < SVGTYPESETTER_TAB_X_SPAN) {
-                    x_span = SVGTYPESETTER_TAB_X_SPAN;
-                }
-                break;
-
-            case 'h':
-            case 'p':
-                if (x_span < SVGTYPESETTER_TAB_X_SPAN + 10) {
-                    x_span = SVGTYPESETTER_TAB_X_SPAN + 10;
-                }
-                break;
-
-            case '/':
-            case '\\':
-                if (x_span < SVGTYPESETTER_TAB_X_SPAN - 10) {
-                    x_span = SVGTYPESETTER_TAB_X_SPAN - 10;
-                }
-                break;
-
-            case '~':
-                if (x_span < SVGTYPESETTER_TAB_X_SPAN) {
-                    x_span = SVGTYPESETTER_TAB_X_SPAN;
-                }
-                break;
-
-            case 'b':
-            case 'r':
-                if (x_span < SVGTYPESETTER_TAB_X_SPAN + 10) {
-                    x_span = SVGTYPESETTER_TAB_X_SPAN + 10;
-                }
-                break;
-
-            default:
-                if (isdigit(strings[s][offset]) && x_span < SVGTYPESETTER_TAB_X_SPAN) {
-                    x_span = SVGTYPESETTER_TAB_X_SPAN;
-                }
-                break;
-        }
-    }
-
-    *x += x_span;
-}
-
-static void svgtypesetter_spill_sustained_techniques(const txttypesetter_tablature_ctx *txttab) {
-    const txttypesetter_sustained_technique_ctx *sp;
-    int x[2], y, n = 0;
-    size_t i;
-    char *p, *p_end, *tp = NULL;
-    size_t offset;
-
-    for (sp = txttab->techniques; sp != NULL; sp = sp->next) {
-        n += 1;
-    }
-
-    if (n > 0) {
-        if (y >= SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6 * n)) {
-            // INFO(Rafael): The current page would became full, thus we need a new one, where we can spill sustained
-            //               techniques together with the whole tab diagram.
-            svgtypesetter_newpage();
-        }
-        y = g_svg_page.tab.fbrd[0].y - SVGTYPESETTER_TAB_Y_SPAN * n;
-        for (sp = txttab->techniques; sp != NULL; sp = sp->next) {
-            i = 0;
-            p = sp->data;
-            p_end = p + strlen(p);
-            x[0] = x[1] = g_svg_page.tab.xlim_left;
-            offset = 0;
-            while (p != p_end && i < 2 && offset < txttab->fretboard_sz) {
-                do_xstep(&x[i], (const char **)txttab->strings, offset);
-                i += (i == 0) ? isalpha(*p) : (*p != '.');
-                if (isalpha(*p)) {
-                    tp = p;
-                    p += 1;
-                }
-                p++;
-                offset++;
-            }
-            fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
-                                   " font-size=\"13\" font-weight=\"bold\">%c%c%c</text>\n", x[0], y, tp[0], tp[1], tp[2]);
-            fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
-                                   " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\""
-                                   " stroke-dasharray=\"5,5\"/>\n", x[0], x[1], y + 1, y + 1);
-            y += SVGTYPESETTER_TAB_Y_SPAN;
-        }
-    }
-}
-
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab) {
     const txttypesetter_tablature_ctx *tp;
     size_t s, offset;
@@ -484,7 +389,6 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
     }\
 }
 
-    //svgtypesetter_spill_tabdiagram();
     svgtypesetter_newtabdiagram(txttab);
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
@@ -503,7 +407,7 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                 stech_p++;
                 sp = sp->next;
             }
-            stech_end = stech_p + 1;
+            stech_end = stech_p;
             stech_p = &stech_pts[0];
             stech_p->y = g_svg_page.tab.fbrd[0].y - (SVGTYPESETTER_TAB_Y_SPAN * 2) - 10;
             stech_p++;
@@ -519,7 +423,7 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
             // INFO(Rafael): Spilling sustained techniques.
             if (stech_end != NULL) {
                 for (stech_p = &stech_pts[0]; stech_p != stech_end; stech_p++) {
-                    if (stech_p->data == stech_p->data_end) {
+                    if (stech_p->data >= stech_p->data_end) {
                         continue;
                     }
                     if (!stech_p->print_line && isalpha(*stech_p->data)) {
@@ -616,6 +520,7 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                 times++;
             }
         }
+        svgtypesetter_cut_tab();
         if (tp->next != NULL) {
             svgtypesetter_newtabdiagram(tp->next);
         }
@@ -639,7 +544,20 @@ static int svgtypesetter_refresh_fbrd_xy(void) {
     }
 }
 
+static void svgtypesetter_cut_tab(void) {
+    if (g_svg_page.fp == NULL) {
+        return;
+    }
+    svgtypesetter_flush_sep_bar();
+    fprintf(g_svg_page.fp, "\t<rect x=\"%d\" y=\"%d\" width=\"%d\""
+                           " height=\"%d\" fill=\"white\"/>\n", *g_svg_page.tab.carriage_x + 1,
+                                                                g_svg_page.tab.fbrd[0].y - SVGTYPESETTER_TAB_Y_SPAN,
+                                                                SVGTYPESETTER_PAGE_WIDTH - *g_svg_page.tab.carriage_x + 1,
+                                                                SVGTYPESETTER_TAB_Y_SPAN * 6 + SVGTYPESETTER_TAB_Y_SPAN / 2);
+}
+
 static int svgtypesetter_newpage(void) {
+    svgtypesetter_cut_tab();
     snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%03d-pp.svg", g_svg_page.filename,
                                                                                                g_svg_page.page_nr);
 
@@ -664,12 +582,14 @@ static int svgtypesetter_newpage(void) {
 
     fprintf(g_svg_page.fp, "<svg xmlns=\"http://www.w3.org/2000/svg\""
                            " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
+                           "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n"
                            "\t<defs>\n"
                             "\t\t<marker id=\"arrow\" markerWidth=\"10\" markerHeight=\"10\" refX=\"1\" refY=\"4\""
                             " orient=\"auto\" markerUnits=\"strokeWidth\">\n"
                             "\t\t\t<path d=\"M0,0 L0,8 L9,3 z\" fill=\"black\"/>\n"
                             "\t\t</marker>\n"
-                            "\t</defs>\n", SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT);
+                            "\t</defs>\n", SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT,
+                                           SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT);
     return 1;
 }
 
