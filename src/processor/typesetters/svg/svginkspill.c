@@ -95,6 +95,8 @@ static int svgtypesetter_init(const char *filename);
 
 static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab);
 
+static int has_unflushed_data(const char **strings, const size_t offset, const size_t fretboard_size);
+
 static struct svgtypesetter_page_ctx g_svg_page;
 
 static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
@@ -309,6 +311,24 @@ static size_t svgtypesetter_get_bend_arrow_string(const char **strings, const si
     return 6;
 }
 
+static int has_unflushed_data(const char **strings, const size_t offset, const size_t fretboard_size) {
+    size_t s, o;
+    int has;
+
+    if (offset >= fretboard_size) {
+        return 0;
+    }
+
+    has = 0;
+    for (o = offset; o < fretboard_size && !has; o++) {
+        for (s = 0; s < 6 && !has; s++) {
+            has = (strings[s][o] != '-');
+        }
+    }
+
+    return has;
+}
+
 static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab) {
     const txttypesetter_tablature_ctx *tp;
     size_t s, offset;
@@ -509,15 +529,37 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                 xstep = NULL;
                 svgtypesetter_refresh_fbrd_xy();
 
-                if (g_svg_page.tab.fbrd[5].y >= SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6) &&
+                if (g_svg_page.tab.fbrd[5].y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6)) &&
                     tp->next != NULL) {
                     // INFO(Rafael): The current page became full, we need a new one.
                     svgtypesetter_newpage();
                 }
 
-                if (*g_svg_page.tab.carriage_x >= SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN && s < 5) {
+                if (*g_svg_page.tab.carriage_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN) &&
+                    has_unflushed_data((const char **)tp->strings, offset + 1, tp->fretboard_sz)) {
+                    if (stech_end != NULL) {
+                        stech_p = &stech_pts[0];
+                        while (stech_p != stech_end) {
+                            fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
+                                               " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\""
+                                               " stroke-dasharray=\"5,5\"/>\n", stech_p->x, *g_svg_page.tab.carriage_x,
+                                                                                stech_p->y + 1, stech_p->y + 1);
+                            stech_p++;
+                        }
+                    }
                     // INFO(Rafael): The current tab diagram became full, we need a new empty one.
                     svgtypesetter_newtabdiagram(tp);
+                    if (stech_end != NULL) {
+                        stech_p = &stech_pts[0];
+                        stech_p->x = *g_svg_page.tab.carriage_x;
+                        stech_p->y = g_svg_page.tab.fbrd[0].y - (SVGTYPESETTER_TAB_Y_SPAN * 2) - 10;
+                        stech_p += 1;
+                        while (stech_p != stech_end) {
+                            stech_p->x = *g_svg_page.tab.carriage_x;
+                            stech_p[0].y = stech_p[-1].y - SVGTYPESETTER_TAB_Y_SPAN;
+                            stech_p++;
+                        }
+                    }
                 }
             }
 
