@@ -97,6 +97,8 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
 
 static int has_unflushed_data(const char **strings, const size_t offset, const size_t fretboard_size);
 
+static void svgtypesetter_reduce_blank_yspan(const txttypesetter_tablature_ctx *txttab);
+
 static struct svgtypesetter_page_ctx g_svg_page;
 
 static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
@@ -186,13 +188,40 @@ static void svgtypesetter_spill_transcriber(const char *name) {
 
 static void svgtypesetter_spill_comments(const txttypesetter_comment_ctx *comments) {
     const txttypesetter_comment_ctx *cp;
+    char comment[65535];
+    char *p, *p_end, *lp;
 
-    for (cp = comments; cp != NULL; cp = cp->next) {
-        fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"11\">"
-                               "%s</text>\n", *g_svg_page.tab.carriage_x,
-                                              *g_svg_page.tab.carriage_y,
-                                              cp->data);
-        *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
+    g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+
+    cp = comments;
+    p = lp = cp->data;
+    p_end = p + strlen(p);
+
+    while (cp != NULL) {
+        while (lp != p_end && *lp != '\n') {
+            lp++;
+        }
+        memset(comment, 0, sizeof(comment));
+        if (p != NULL) {
+            memcpy(comment, p, lp - p);
+        }
+        p = lp + 1;
+        if (strlen(comment) > 0) {
+            fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"11\">"
+                                   "%s</text>\n", g_svg_page.tab.xlim_left,
+                                                  *g_svg_page.tab.carriage_y,
+                                                  comment);
+        }
+        *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN + 2;
+        if (p >= p_end) {
+            cp = cp->next;
+            if (cp != NULL) {
+                p = lp = cp->data;
+                p_end = p + strlen(p);
+            }
+        } else {
+            lp = p;
+        }
     }
 
     svgtypesetter_refresh_fbrd_xy();
@@ -313,6 +342,30 @@ static size_t svgtypesetter_get_bend_arrow_string(const char **strings, const si
     return 6;
 }
 
+static void svgtypesetter_reduce_blank_yspan(const txttypesetter_tablature_ctx *txttab) {
+    const txttypesetter_comment_ctx *cp;
+    size_t cm_nr = 0;
+    char *p, *p_end;
+
+    if (txttab == NULL) {
+        return;
+    }
+
+    if (txttab->next != NULL && !has_unflushed_data((const char **)txttab->next->strings, 0, txttab->next->fretboard_sz)) {
+        return;
+    }
+
+    g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+
+    for (cp = txttab->comments; cp != NULL; cp = cp->next) {
+        cm_nr++;
+    }
+
+    *g_svg_page.tab.carriage_y -= (SVGTYPESETTER_TAB_Y_SPAN * cm_nr) * 6 + SVGTYPESETTER_TAB_Y_SPAN * 2;
+
+    svgtypesetter_refresh_fbrd_xy();
+}
+
 static int has_unflushed_data(const char **strings, const size_t offset, const size_t fretboard_size) {
     size_t s, o;
     int has;
@@ -336,7 +389,7 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
     size_t s, offset;
     void (*xstep)(const int) = NULL;
     void (*last_xstep)(const int) = NULL;
-    int bend_arrow_string, spill_done, is_chord;
+    int bend_arrow_string, spill_done, is_chord, is_empty_diagram;
     char *times, *times_end, tm_buf[20];
     struct sustained_techniques_points_ctx {
         int x;
@@ -415,21 +468,19 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
         svgtypesetter_insert_header_span();
     }
 
-    //svgtypesetter_newtabdiagram(txttab);
-
     for (tp = txttab; tp != NULL; tp = tp->next) {
-        if (tp->strings[0] != NULL) {
-            svgtypesetter_newtabdiagram(tp);
+        if (tp->comments != NULL) {
+            svgtypesetter_spill_comments(tp->comments);
         }
 
-        //if (tp->comments != NULL) {
-        //    svgtypesetter_spill_comments(tp->comments);
-        //}
-
-        if (tp->strings[0] == NULL) {
-            tp = tp->next;
+        if (!has_unflushed_data((const char **)tp->strings, 0, tp->fretboard_sz))  {
+            if (tp->comments) {
+                svgtypesetter_reduce_blank_yspan(tp);
+            }
             continue;
         }
+
+        svgtypesetter_newtabdiagram(tp);
 
         times = tp->times;
         times_end = times + 3;
