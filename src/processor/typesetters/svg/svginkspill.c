@@ -24,7 +24,7 @@ struct svgtypesetter_tab_diagram_ctx {
 struct svgtypesetter_page_ctx {
     FILE *fp;
     int y;
-    int page_nr;
+    int page_nr, tab_per_page_nr;
     char filename[4096], curr_pagefile[4096];
     struct svgtypesetter_tab_diagram_ctx tab;
 };
@@ -55,7 +55,7 @@ static void svgtypesetter_spill_song_title(const char *title);
 
 static void svgtypesetter_spill_transcriber(const char *name);
 
-static void svgtypesetter_spill_comments(const txttypesetter_comment_ctx *comments);
+static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txttab);
 
 static void svgtypesetter_flush_note_pinch(const char *note);
 
@@ -186,14 +186,32 @@ static void svgtypesetter_spill_transcriber(const char *name) {
     svgtypesetter_refresh_fbrd_xy();
 }
 
-static void svgtypesetter_spill_comments(const txttypesetter_comment_ctx *comments) {
+static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txttab) {
     const txttypesetter_comment_ctx *cp;
     char comment[65535];
     char *p, *p_end, *lp;
 
-    g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+    if (txttab->last == NULL || g_svg_page.tab_per_page_nr == 0) {
+        g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+    } else {
+        if (has_unflushed_data((const char **)txttab->last->strings, 0, txttab->last->fretboard_sz)) {
+            g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
+            *g_svg_page.tab.carriage_y += (SVGTYPESETTER_TAB_Y_SPAN + 2) * 4;
+            g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+            *g_svg_page.tab.carriage_y = g_svg_page.tab.fbrd[5].y;
+            g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
+        } else {
+            g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+            *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN + 2;
+        }
+        if (*g_svg_page.tab.carriage_y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
+            // INFO(Rafael): The current page became full, we need a new one.
+            svgtypesetter_newpage();
+            g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+        }
+    }
 
-    cp = comments;
+    cp = txttab->comments;
     p = lp = cp->data;
     p_end = p + strlen(p);
 
@@ -213,6 +231,11 @@ static void svgtypesetter_spill_comments(const txttypesetter_comment_ctx *commen
                                                   comment);
         }
         *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN + 2;
+        if (*g_svg_page.tab.carriage_y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
+            // INFO(Rafael): The current page became full, we need a new one.
+            svgtypesetter_newpage();
+            g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+        }
         if (p >= p_end) {
             cp = cp->next;
             if (cp != NULL) {
@@ -470,7 +493,7 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
         if (tp->comments != NULL) {
-            svgtypesetter_spill_comments(tp->comments);
+            svgtypesetter_spill_comments(tp);
         }
 
         if (!has_unflushed_data((const char **)tp->strings, 0, tp->fretboard_sz))  {
@@ -479,6 +502,11 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
             }
             continue;
         }
+
+        // TODO(Rafael): Apply a different reduction for comment span.
+        //if (tp->comments) {
+        //    svgtypesetter_reduce_blank_yspan(tp);
+        //}
 
         svgtypesetter_newtabdiagram(tp);
 
@@ -707,11 +735,16 @@ static int svgtypesetter_newpage(void) {
                             "\t\t</marker>\n"
                             "\t</defs>\n", SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT,
                                            SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT);
+
+    g_svg_page.tab_per_page_nr = 0;
+
     return 1;
 }
 
 static void svgtypesetter_spill_tabdiagram(void) {
     int x, y, s;
+
+    g_svg_page.tab_per_page_nr++;
 
     x = g_svg_page.tab.xlim_left;
     y = *g_svg_page.tab.carriage_y;
