@@ -725,7 +725,9 @@ static int svgtypesetter_newpage(void) {
 
     svgtypesetter_refresh_fbrd_xy();
 
-    fprintf(g_svg_page.fp, "<svg xmlns=\"http://www.w3.org/2000/svg\""
+    // TODO(Rafael): Read encoding scheme from user option letting (ISO-8859-1) as the default option.
+    fprintf(g_svg_page.fp, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>\n"
+                           "<svg xmlns=\"http://www.w3.org/2000/svg\""
                            " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
                            "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n"
                            "\t<defs>\n"
