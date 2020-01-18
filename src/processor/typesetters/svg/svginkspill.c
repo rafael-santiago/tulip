@@ -779,8 +779,8 @@ static void svgtypesetter_cut_tab(void) {
 
 static int svgtypesetter_newpage(void) {
     svgtypesetter_cut_tab();
-    snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%03d-pp.svg", g_svg_page.filename,
-                                                                                               g_svg_page.page_nr);
+    snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%03d.svg", g_svg_page.filename,
+                                                                                            g_svg_page.page_nr);
 
     if (g_svg_page.fp != NULL) {
         svgtypesetter_fclose();
