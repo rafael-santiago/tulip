@@ -102,19 +102,32 @@ static void svgtypesetter_reduce_blank_yspan(const txttypesetter_tablature_ctx *
 static struct svgtypesetter_page_ctx g_svg_page;
 
 static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
-    size_t span_size = 0;
+    size_t span_size = 0, ln_breaks_nr = 2;
     const txttypesetter_tablature_ctx *tp;
     const txttypesetter_sustained_technique_ctx *sp;
     const txttypesetter_comment_ctx *cp;
     char *p, *p_end;
+
+    // ----------------------------------------------------------------------------------------------------------------------+
+    // WARN(Rafael): This is rather heuristic.                                                                               |
+    //               All carriage_y advance is made based on g_svg_page.tab.fbrd[5].y, however, before calling               |
+    //               svgtypesetter_refresh_fbrd_xy is important to set g_svg_page.tab.fbrd[0].y to g_svg_page.tab.fbrd[5].y, |
+    //               because the refresh function takes into consideration fbrd[0] to refresh all other coordinates.         |
+    // ----------------------------------------------------------------------------------------------------------------------+
+
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
-    g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
     *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
+
     if (txttab->last != NULL) {
+        g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
+        g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
+
         for (sp = txttab->last->techniques; sp != NULL; sp = sp->next) {
             span_size++;
         }
+
         span_size += (txttab->last->times != NULL);
+
         for (cp = txttab->last->comments; cp != NULL; cp = cp->next) {
             p = cp->data;
             p_end = p + strlen(p);
@@ -124,6 +137,7 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
             }
             span_size++;
         }
+
         // INFO(Rafael): This reverse traversing is necessary in order to handle subsequent 'literal{"foobar"};'
         //               statements.
         tp = txttab->last->last;
@@ -133,22 +147,26 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
                 p_end = p + strlen(p);
                 while (p != p_end) {
                     span_size += (*p == '\n');
+                    ln_breaks_nr += (*p == '\n');
                     p++;
                 }
                 span_size++;
+                ln_breaks_nr++;
             }
             tp = tp->last;
         }
+
         for (sp = txttab->techniques; sp != NULL; sp = sp->next) {
             span_size++;
         }
+
         span_size = (txttab->times != NULL);
+
         if (has_unflushed_data((const char **)txttab->last->strings, 0, txttab->last->fretboard_sz)) {
             if (txttab->comments == NULL) {
-                //printf("i\n");
-                *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN + (SVGTYPESETTER_TAB_Y_SPAN * 2 * span_size) + (SVGTYPESETTER_TAB_Y_SPAN * 4 * span_size);
+                *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN + (SVGTYPESETTER_TAB_Y_SPAN * 2 * span_size) +
+                                                                                (SVGTYPESETTER_TAB_Y_SPAN * 4 * span_size);
             } else {
-                //printf("ii\n");
                 for (cp = txttab->comments; cp != NULL; cp = cp->next) {
                     p = cp->data;
                     p_end = p + strlen(p);
@@ -162,8 +180,18 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
             }
             g_svg_page.tab.fbrd[0].y = *g_svg_page.tab.carriage_y;
         } else {
+            for (cp = txttab->last->comments; cp != NULL; cp = cp->next) {
+                p = cp->data;
+                p_end = p + strlen(p);
+                while (p != p_end) {
+                    ln_breaks_nr += (*p == '\n');
+                    p++;
+                }
+                ln_breaks_nr++;
+            }
             g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
-            *g_svg_page.tab.carriage_y += (SVGTYPESETTER_TAB_Y_SPAN + 2) * span_size + (SVGTYPESETTER_TAB_Y_SPAN + 2) * 2;
+            *g_svg_page.tab.carriage_y += (SVGTYPESETTER_TAB_Y_SPAN + 2) * span_size +
+                                                (SVGTYPESETTER_TAB_Y_SPAN + 2) * ln_breaks_nr;
         }
         g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
     }
