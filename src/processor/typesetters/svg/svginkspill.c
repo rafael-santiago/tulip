@@ -7,6 +7,9 @@
  */
 #include <processor/typesetters/svg/svginkspill.h>
 #include <processor/typesetters/svg/svgboundaries.h>
+#include <processor/typesetters/typeprefs.h>
+#include <processor/oututils.h>
+#include <processor/settings.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
@@ -101,6 +104,8 @@ static void svgtypesetter_reduce_blank_yspan(const txttypesetter_tablature_ctx *
 
 static struct svgtypesetter_page_ctx g_svg_page;
 
+static void svgtypesetter_spill_tab_notation(const tulip_single_note_ctx *song);
+
 static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
     size_t span_size = 0, ln_breaks_nr = 2;
     const txttypesetter_tablature_ctx *tp;
@@ -118,7 +123,7 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
 
-    if (txttab->last != NULL) {
+    if (txttab->last != NULL && g_svg_page.tab_per_page_nr > 0) {
         g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
         g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
 
@@ -240,12 +245,13 @@ static inline void svgtypesetter_chord_span_xstep(const int delta) {
 }
 
 static void svgtypesetter_insert_header_span(void) {
-    *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 3;
+    *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 6;
     svgtypesetter_refresh_fbrd_xy();
 }
 
 static void svgtypesetter_spill_song_title(const char *title) {
-    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"30\" font-weight=\"bold\">%s"
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"30\" font-weight=\"bold\""
+                           " font-family=\"Courier\">%s"
                            "</text>\n", *g_svg_page.tab.carriage_x, *g_svg_page.tab.carriage_y, title);
     *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
     svgtypesetter_refresh_fbrd_xy();
@@ -253,8 +259,9 @@ static void svgtypesetter_spill_song_title(const char *title) {
 
 static void svgtypesetter_spill_transcriber(const char *name) {
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"13\""
-                           " font-weight=\"bold\">transcribed by %s</text>\n", *g_svg_page.tab.carriage_x,
-                                                                               *g_svg_page.tab.carriage_y, name);
+                           " font-weight=\"bold\" font-family=\"Courier\">"
+                           "transcribed by %s</text>\n", *g_svg_page.tab.carriage_x,
+                                                         *g_svg_page.tab.carriage_y, name);
     *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
     svgtypesetter_refresh_fbrd_xy();
 }
@@ -559,10 +566,6 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
         xstep = svgtypesetter_note_sep_xstep;\
     }\
 }
-
-    if (txttab->song != NULL || txttab->transcriber != NULL) {
-        svgtypesetter_insert_header_span();
-    }
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
         if (tp->comments != NULL) {
@@ -898,6 +901,146 @@ static int svgtypesetter_init(const char *filename) {
     return 1;
 }
 
+static void svgtypesetter_spill_tab_notation(const tulip_single_note_ctx *song) {
+    struct typesetter_curr_settings cset = typesetter_settings();
+    tulip_command_t used_techniques[31];
+    size_t used_techniques_nr = 0, u = 0;
+    int has_muffled = 0, has_anyfret = 0;
+    int hp_done = 0;
+
+    if ((cset.prefs & kTlpPrefsIncludeTabNotation) == 0 || song == NULL) {
+        return;
+    }
+
+    *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN + 2;
+
+    get_all_used_techniques(song, used_techniques, &used_techniques_nr, &has_muffled, &has_anyfret);
+
+    if (used_techniques_nr > 0 || has_muffled || has_anyfret) {
+        for (u = 0; u < used_techniques_nr; u++) {
+            *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left + 20;
+            switch (used_techniques[u]) {
+                case kTlpHammerOn:
+                case kTlpPullOff:
+                    if (!hp_done) {
+                        hp_done = 1;
+                        *g_svg_page.tab.carriage_y -= 4;
+                        svgtypesetter_flush_hammer_on_pull_off_pinch();
+                        *g_svg_page.tab.carriage_y += 4;
+                        svgtypesetter_hammer_on_xstep(1);
+                        fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                               " font-size=\"11\" font-family=\"Courier\">............ %s/%s"
+                                               "</text>\n", *g_svg_page.tab.carriage_x,
+                                                            *g_svg_page.tab.carriage_y,
+                                                            get_technique_notation_label(kTlpHammerOn),
+                                                            get_technique_notation_label(kTlpPullOff));
+                    }
+                    break;
+
+                case kTlpVibrato:
+                    svgtypesetter_flush_vibrato_pinch();
+                    svgtypesetter_vibrato_xstep(1);
+                    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                           " font-size=\"11\" font-family=\"Courier\"> ............ %s"
+                                           "</text>\n", *g_svg_page.tab.carriage_x + 10,
+                                                        *g_svg_page.tab.carriage_y,
+                                                        get_technique_notation_label(kTlpVibrato));
+                    break;
+
+                case kTlpBend:
+                    *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
+                    svgtypesetter_flush_bend_pinch(1);
+                    svgtypesetter_bend_xstep(1);
+                    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                           " font-size=\"11\" font-family=\"Courier\"> ............ %s"
+                                           "</text>\n", *g_svg_page.tab.carriage_x + 14,
+                                                        *g_svg_page.tab.carriage_y + ((u == 0) ? 0 :
+                                                                           -SVGTYPESETTER_TAB_Y_SPAN/2),
+                                                        get_technique_notation_label(kTlpBend));
+                    break;
+
+                case kTlpReleaseBend:
+                    svgtypesetter_flush_release_bend_pinch(1);
+                    svgtypesetter_release_bend_xstep(1);
+                    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                           " font-size=\"11\" font-family=\"Courier\"> ............ %s"
+                                           "</text>\n", *g_svg_page.tab.carriage_x + 14,
+                                                        (*g_svg_page.tab.carriage_y) + ((u == 0) ? 0 :
+                                                                           SVGTYPESETTER_TAB_Y_SPAN/2),
+                                                        get_technique_notation_label(kTlpReleaseBend));
+                    break;
+
+                case kTlpSlideUp:
+                    *g_svg_page.tab.carriage_y -= 4;
+                    svgtypesetter_flush_slide_up_pinch();
+                    *g_svg_page.tab.carriage_y += 4;
+                    svgtypesetter_slide_up_xstep(1);
+                    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                           " font-size=\"11\" font-family=\"Courier\"> ............ %s"
+                                           "</text>\n", *g_svg_page.tab.carriage_x + 15,
+                                                        *g_svg_page.tab.carriage_y,
+                                                        get_technique_notation_label(kTlpSlideUp));
+                    break;
+
+                case kTlpSlideDown:
+                    *g_svg_page.tab.carriage_y -= 4;
+                    svgtypesetter_flush_slide_down_pinch();
+                    *g_svg_page.tab.carriage_y += 4;
+                    svgtypesetter_slide_down_xstep(1);
+                    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                           " font-size=\"11\" font-family=\"Courier\"> ............ %s"
+                                           "</text>\n", *g_svg_page.tab.carriage_x + 15,
+                                                        *g_svg_page.tab.carriage_y,
+                                                        get_technique_notation_label(kTlpSlideDown));
+                    break;
+
+
+                default:
+                    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                   " font-size=\"11\" font-family=\"Courier\">%s"
+                                   "</text>\n", *g_svg_page.tab.carriage_x,
+                                                *g_svg_page.tab.carriage_y, get_technique_label(used_techniques[u]));
+                    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                           " font-size=\"11\" font-family=\"Courier\"> ............ %s"
+                                           "</text>\n", *g_svg_page.tab.carriage_x + 25,
+                                                        *g_svg_page.tab.carriage_y,
+                                                        get_technique_notation_label(used_techniques[u]));
+                    break;
+            }
+
+            *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN + 3;
+        }
+
+        *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left + 20;
+
+        if (has_muffled) {
+            fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                   " font-size=\"11\" font-family=\"Courier\">X"
+                                   "</text>\n", *g_svg_page.tab.carriage_x,
+                                                *g_svg_page.tab.carriage_y);
+            fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                   " font-size=\"11\" font-family=\"Courier\"> ............ Muffled note"
+                                   "</text>\n", *g_svg_page.tab.carriage_x + 30,
+                                                *g_svg_page.tab.carriage_y);
+            *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN + 3;
+        }
+
+        if (has_anyfret) {
+            fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                   " font-size=\"11\" font-family=\"Courier\">?"
+                                   "</text>\n", *g_svg_page.tab.carriage_x,
+                                                *g_svg_page.tab.carriage_y);
+            fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                   " font-size=\"11\" font-family=\"Courier\"> ............ From any fret"
+                                   "</text>\n", *g_svg_page.tab.carriage_x + 30,
+                                                *g_svg_page.tab.carriage_y);
+            *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN + 3;
+        }
+    }
+
+    svgtypesetter_refresh_fbrd_xy();
+}
+
 int svgtypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab,
                            const tulip_single_note_ctx *song) {
 
@@ -915,6 +1058,12 @@ int svgtypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
 
     if (tab->transcriber) {
         svgtypesetter_spill_transcriber(tab->transcriber);
+    }
+
+    svgtypesetter_spill_tab_notation(song);
+
+    if (tab->song != NULL || tab->transcriber != NULL) {
+        svgtypesetter_insert_header_span();
     }
 
     svgtypesetter_flush_fretboard_pinches(tab);
