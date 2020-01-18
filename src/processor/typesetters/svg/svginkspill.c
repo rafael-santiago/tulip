@@ -336,7 +336,7 @@ static void svgtypesetter_flush_note_pinch(const char *note) {
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"13\" font-weight=\"bold\">", *g_svg_page.tab.carriage_x,
                                                                                                *g_svg_page.tab.carriage_y +
                                                                                                SVGTYPESETTER_TAB_NOTE_Y_OFFSET);
-    while (isdigit(*np)) {
+    while (isdigit(*np) || *np == 'X' || *np == '?') {
         fprintf(g_svg_page.fp, "%c", *np);
         np++;
     }
@@ -561,7 +561,7 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
     } else if (*(s) == '|' && sn == 5) {\
         svgtypesetter_flush_sep_bar();\
         xstep = svgtypesetter_sep_bar_xstep;\
-    } else if (isdigit(*(s))) {\
+    } else if (isdigit(*(s)) || *s == 'X' || *s == '?') {\
         svgtypesetter_flush_note_pinch(s);\
         xstep = svgtypesetter_note_sep_xstep;\
     }\
@@ -573,16 +573,8 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
         }
 
         if (!has_unflushed_data((const char **)tp->strings, 0, tp->fretboard_sz))  {
-            //if (tp->comments) {
-            //    svgtypesetter_reduce_blank_yspan(tp);
-            //}
             continue;
         }
-
-        // TODO(Rafael): Apply a different reduction for comment span.
-        //if (tp->comments) {
-        //    svgtypesetter_reduce_blank_yspan(tp);
-        //}
 
         svgtypesetter_newtabdiagram(tp);
 
