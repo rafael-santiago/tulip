@@ -253,9 +253,8 @@ static void svgtypesetter_spill_song_title(const char *title) {
 
 static void svgtypesetter_spill_transcriber(const char *name) {
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"13\""
-                           " font-style=\"italic\" font-weight=\"bold\">transcribed by %s</text>\n",
-                                                                                      *g_svg_page.tab.carriage_x,
-                                                                                      *g_svg_page.tab.carriage_y, name);
+                           " font-weight=\"bold\">transcribed by %s</text>\n", *g_svg_page.tab.carriage_x,
+                                                                               *g_svg_page.tab.carriage_y, name);
     *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
     svgtypesetter_refresh_fbrd_xy();
 }
