@@ -20,12 +20,13 @@ struct svgtypesetter_pinch_point_ctx {
 
 struct svgtypesetter_tab_diagram_ctx {
     int xlim_left, xlim_right;
-    int *carriage_x, *carriage_y;
+    int *carriage_x, *carriage_y, *last_carriage_x, *last_carriage_y;
     struct svgtypesetter_pinch_point_ctx fbrd[6];
 };
 
 struct svgtypesetter_page_ctx {
     FILE *fp;
+    const txttypesetter_tablature_ctx *tp;
     int y;
     int page_nr, tab_per_page_nr;
     char filename[4096], curr_pagefile[4096];
@@ -107,6 +108,8 @@ static struct svgtypesetter_page_ctx g_svg_page;
 static void svgtypesetter_spill_tab_notation(const tulip_single_note_ctx *song);
 
 static void svgtypesetter_spill_tuning(void);
+
+static void svgtypesetter_clean_old_pages_not_rewritten(void);
 
 static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
     size_t span_size = 0, ln_breaks_nr = 2;
@@ -202,7 +205,14 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
         }
         g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
     }
+
     svgtypesetter_refresh_fbrd_xy();
+
+    if (g_svg_page.tab.fbrd[5].y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
+        // INFO(Rafael): The current page became full, we need a new one.
+        svgtypesetter_newpage();
+    }
+
     svgtypesetter_spill_tabdiagram();
 }
 
@@ -569,6 +579,7 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
 }
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
+        g_svg_page.tp = tp;
         if (tp->comments != NULL) {
             svgtypesetter_spill_comments(tp);
         }
@@ -740,6 +751,8 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
         //}
     }
 
+    g_svg_page.tp = NULL;
+
 #undef do_flush_pinch
 
 #undef do_xpack
@@ -771,13 +784,17 @@ static void svgtypesetter_cut_tab(void) {
 }
 
 static int svgtypesetter_newpage(void) {
-    svgtypesetter_cut_tab();
-    snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%03d.svg", g_svg_page.filename,
-                                                                                            g_svg_page.page_nr);
+    if (g_svg_page.tp != NULL && g_svg_page.tp->last != NULL &&
+        has_unflushed_data((const char **)g_svg_page.tp->last->strings, 0, g_svg_page.tp->last->fretboard_sz)) {
+        svgtypesetter_cut_tab();
+    }
 
     if (g_svg_page.fp != NULL) {
         svgtypesetter_fclose();
     }
+
+    snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%03d.svg", g_svg_page.filename,
+                                                                                            g_svg_page.page_nr);
 
     if ((g_svg_page.fp = fopen(g_svg_page.curr_pagefile, "w")) == NULL) {
         return 0;
@@ -788,6 +805,9 @@ static int svgtypesetter_newpage(void) {
 
     g_svg_page.tab.fbrd[0].x = g_svg_page.tab.xlim_left;
     g_svg_page.tab.fbrd[0].y = SVGTYPESETTER_TAB_Y;
+
+    g_svg_page.tab.last_carriage_x = g_svg_page.tab.carriage_x;
+    g_svg_page.tab.last_carriage_y = g_svg_page.tab.carriage_y;
 
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
@@ -807,7 +827,10 @@ static int svgtypesetter_newpage(void) {
                             "\t</defs>\n", SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT,
                                            SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT);
 
-    g_svg_page.tab_per_page_nr = 0;
+    g_svg_page.tab_per_page_nr = 1;
+
+    g_svg_page.tab.carriage_x = g_svg_page.tab.last_carriage_x;
+    g_svg_page.tab.carriage_y = g_svg_page.tab.last_carriage_y;
 
     return 1;
 }
@@ -856,8 +879,9 @@ static void svgtypesetter_spill_tabdiagram(void) {
 
 static void svgtypesetter_fclose(void) {
     char pn[20];
-    snprintf(pn, sizeof(pn) - 1, "-%d-", g_svg_page.page_nr);
+
     if (g_svg_page.fp != NULL) {
+        snprintf(pn, sizeof(pn) - 1, "-%d-", g_svg_page.page_nr);
         fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\""
                                " font-size=\"13\" font-style=\"italic\">%s</text>\n", SVGTYPESETTER_PAGE_WIDTH / 2 -
                                                                                         (strlen(pn) - 1),
@@ -887,6 +911,7 @@ static int svgtypesetter_init(const char *filename) {
     g_svg_page.page_nr = 1;
 
     g_svg_page.fp = NULL;
+    g_svg_page.tp = NULL;
 
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
@@ -1061,9 +1086,16 @@ static void svgtypesetter_spill_tuning(void) {
 
         fprintf(g_svg_page.fp, "</text>\n");
 
-        *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN + 3;
+        //*g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN;
         svgtypesetter_refresh_fbrd_xy();
     }
+}
+
+static void svgtypesetter_clean_old_pages_not_rewritten(void) {
+    do {
+        snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%03d.svg", g_svg_page.filename,
+                                                                                                g_svg_page.page_nr++);
+    } while (remove(g_svg_page.curr_pagefile) == 0);
 }
 
 int svgtypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab,
@@ -1096,6 +1128,8 @@ int svgtypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
     svgtypesetter_flush_fretboard_pinches(tab);
 
     svgtypesetter_fclose();
+
+    svgtypesetter_clean_old_pages_not_rewritten();
 
     return 1;
 }
