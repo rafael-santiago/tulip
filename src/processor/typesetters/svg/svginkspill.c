@@ -106,6 +106,8 @@ static struct svgtypesetter_page_ctx g_svg_page;
 
 static void svgtypesetter_spill_tab_notation(const tulip_single_note_ctx *song);
 
+static void svgtypesetter_spill_tuning(void);
+
 static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
     size_t span_size = 0, ln_breaks_nr = 2;
     const txttypesetter_tablature_ctx *tp;
@@ -123,7 +125,7 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
 
-    if (txttab->last != NULL && g_svg_page.tab_per_page_nr > 0) {
+    if (txttab->last != NULL /*&& g_svg_page.tab_per_page_nr > 0*/) {
         g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
         g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
 
@@ -250,18 +252,17 @@ static void svgtypesetter_insert_header_span(void) {
 }
 
 static void svgtypesetter_spill_song_title(const char *title) {
-    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"30\" font-weight=\"bold\""
-                           " font-family=\"Courier\">%s"
-                           "</text>\n", *g_svg_page.tab.carriage_x, *g_svg_page.tab.carriage_y, title);
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"30\""
+                           " font-weight=\"bold\">%s</text>\n", *g_svg_page.tab.carriage_x,
+                                                                *g_svg_page.tab.carriage_y, title);
     *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
     svgtypesetter_refresh_fbrd_xy();
 }
 
 static void svgtypesetter_spill_transcriber(const char *name) {
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"13\""
-                           " font-weight=\"bold\" font-family=\"Courier\">"
-                           "transcribed by %s</text>\n", *g_svg_page.tab.carriage_x,
-                                                         *g_svg_page.tab.carriage_y, name);
+                           " font-weight=\"bold\">transcribed by %s</text>\n", *g_svg_page.tab.carriage_x,
+                                                                               *g_svg_page.tab.carriage_y, name);
     *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
     svgtypesetter_refresh_fbrd_xy();
 }
@@ -1033,6 +1034,38 @@ static void svgtypesetter_spill_tab_notation(const tulip_single_note_ctx *song) 
     svgtypesetter_refresh_fbrd_xy();
 }
 
+static void svgtypesetter_spill_tuning(void) {
+    struct typesetter_curr_settings cset = typesetter_settings();
+    char **tuning;
+    size_t tuning_nr;
+    ssize_t t;
+
+    if ((cset.prefs & kTlpPrefsShowTuning) && !(cset.prefs & kTlpPrefsAddTuningToTheFretboard)) {
+        *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
+
+        *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
+
+        tuning = get_processor_setting("tuning", &tuning_nr);
+        fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"13\""
+                               " font-weight=\"bold\">Tuning [%d-1]:</text>\n", *g_svg_page.tab.carriage_x,
+                                                                                *g_svg_page.tab.carriage_y,
+                                                                                tuning_nr);
+
+        fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"13\">", *g_svg_page.tab.carriage_x + 78,
+                                                                              *g_svg_page.tab.carriage_y,
+                                                                              tuning_nr);
+
+        for (t = tuning_nr - 1; t >= 0; t--) {
+            fprintf(g_svg_page.fp, "%s%s", tuning[t], (t >  0) ? ", " : ".");
+        }
+
+        fprintf(g_svg_page.fp, "</text>\n");
+
+        *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN + 3;
+        svgtypesetter_refresh_fbrd_xy();
+    }
+}
+
 int svgtypesetter_inkspill(const char *filepath, const txttypesetter_tablature_ctx *tab,
                            const tulip_single_note_ctx *song) {
 
@@ -1053,6 +1086,8 @@ int svgtypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
     }
 
     svgtypesetter_spill_tab_notation(song);
+
+    svgtypesetter_spill_tuning();
 
     if (tab->song != NULL || tab->transcriber != NULL) {
         svgtypesetter_insert_header_span();
