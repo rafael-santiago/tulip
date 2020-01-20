@@ -129,7 +129,11 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
         !has_unflushed_data((const char **)txttab->last->strings, 0, txttab->last->fretboard_sz)) {
         g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
     } else {
-        g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
+        if (txttab->last == NULL && !tab_auto_break) {
+            g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+        } else {
+            g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
+        }
     }
 
     for (sp = txttab->techniques; sp != NULL; sp = sp->next) {
@@ -153,11 +157,11 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
         p++;
     }
 
-    *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN +
+    *g_svg_page.tab.carriage_y += (SVGTYPESETTER_TAB_Y_SPAN * 2) +
                                   ((tab_auto_break) ? SVGTYPESETTER_TAB_Y_SPAN * 5 : 0) +
                                   ((s_techniques_nr > 0) ? SVGTYPESETTER_TAB_Y_SPAN * 2 : 0) +
                                   ((SVGTYPESETTER_TAB_Y_SPAN * 2) * s_techniques_nr) +
-                                  ((SVGTYPESETTER_TAB_Y_SPAN + 2) * comments_nr) +
+                                  ((SVGTYPESETTER_TAB_Y_SPAN + 2) * comments_nr + 10) +
                                   ((has_times) ? SVGTYPESETTER_TAB_Y_SPAN * 2 : 0);
     g_svg_page.tab.fbrd[0].y = *g_svg_page.tab.carriage_y;
 
@@ -297,7 +301,7 @@ static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txtt
     }
 
     if (!has_unflushed_data((const char **)txttab->strings, 0, txttab->fretboard_sz)) {
-        g_svg_page.tab.fbrd[0].y = y - SVGTYPESETTER_TAB_Y_SPAN + 2;;
+        g_svg_page.tab.fbrd[0].y = y;
         svgtypesetter_refresh_fbrd_xy();
     }
 }
