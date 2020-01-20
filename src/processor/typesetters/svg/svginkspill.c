@@ -112,11 +112,80 @@ static void svgtypesetter_spill_tuning(void);
 static void svgtypesetter_clean_old_pages_not_rewritten(void);
 
 static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
+    int comments_nr = 0, s_techniques_nr = 0, has_times = 0;
+    const txttypesetter_sustained_technique_ctx *sp;
+    const txttypesetter_comment_ctx *cp;
+    char *p, *p_end;
+
+    if (txttab->last == NULL) {
+        goto svgtypesetter_newtabdiagram_epilogue;
+    }
+
+    g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
+    *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
+
+    if (!has_unflushed_data((const char **)txttab->last->strings, 0, txttab->last->fretboard_sz)) {
+        g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+        for (cp = txttab->last->comments; cp != NULL; cp = cp->next) {
+            p = cp->data;
+            p_end = p + strlen(p);
+            while (p != p_end) {
+                comments_nr += (*p == '\n');
+                p++;
+            }
+            comments_nr++;
+        }
+    } else {
+        g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
+    }
+
+    for (sp = txttab->techniques; sp != NULL; sp = sp->next) {
+        s_techniques_nr++;
+    }
+
+    for (cp = txttab->comments; cp != NULL; cp = cp->next) {
+        p = cp->data;
+        p_end = p + strlen(p);
+        while (p != p_end) {
+            comments_nr += (*p == '\n');
+            p++;
+        }
+        comments_nr++;
+    }
+
+    p = txttab->times;
+    p_end = p + strlen(p);
+    while (!has_times && p != p_end) {
+        has_times = isdigit(*p);
+        p++;
+    }
+
+    *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN +
+                                  ((s_techniques_nr > 0) ? SVGTYPESETTER_TAB_Y_SPAN * 2 : 0) +
+                                  ((SVGTYPESETTER_TAB_Y_SPAN * 2) * s_techniques_nr) +
+                                  ((SVGTYPESETTER_TAB_Y_SPAN + 2) * comments_nr) +
+                                  ((has_times) ? SVGTYPESETTER_TAB_Y_SPAN : 0);
+    g_svg_page.tab.fbrd[0].y = *g_svg_page.tab.carriage_y;
+
+    svgtypesetter_refresh_fbrd_xy();
+
+    if (g_svg_page.tab.fbrd[5].y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
+        // INFO(Rafael): The current page became full, we need a new one.
+        svgtypesetter_newpage();
+    }
+
+svgtypesetter_newtabdiagram_epilogue:
+
+    svgtypesetter_spill_tabdiagram();
+}
+
+/*atic inline void _svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
     size_t span_size = 0, ln_breaks_nr = 2;
     const txttypesetter_tablature_ctx *tp;
     const txttypesetter_sustained_technique_ctx *sp;
     const txttypesetter_comment_ctx *cp;
     char *p, *p_end;
+    int is_tab_full;
 
     // ----------------------------------------------------------------------------------------------------------------------+
     // WARN(Rafael): This is rather heuristic.                                                                               |
@@ -125,12 +194,14 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
     //               because the refresh function takes into consideration fbrd[0] to refresh all other coordinates.         |
     // ----------------------------------------------------------------------------------------------------------------------+
 
+    is_tab_full = (*g_svg_page.tab.carriage_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN));
+
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
 
-    if (txttab->last != NULL /*&& g_svg_page.tab_per_page_nr > 0*/) {
+    if (txttab->last != NULL) {
         g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
-        g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
+        //g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
 
         for (sp = txttab->last->techniques; sp != NULL; sp = sp->next) {
             span_size++;
@@ -172,7 +243,7 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
 
         span_size = (txttab->times != NULL);
 
-        if (has_unflushed_data((const char **)txttab->last->strings, 0, txttab->last->fretboard_sz)) {
+        if (has_unflushed_data((const char **)txttab->last->strings, 0, txttab->last->fretboard_sz) || is_tab_full) {
             if (txttab->comments == NULL) {
                 *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN + (SVGTYPESETTER_TAB_Y_SPAN * 2 * span_size) +
                                                                                 (SVGTYPESETTER_TAB_Y_SPAN * 4 * span_size);
@@ -214,7 +285,7 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
     }
 
     svgtypesetter_spill_tabdiagram();
-}
+}*/
 
 static inline void svgtypesetter_hammer_on_xstep(const int delta) {
     *g_svg_page.tab.carriage_x += (SVGTYPESETTER_TAB_X_SPAN + 10) * delta;
@@ -836,12 +907,29 @@ static int svgtypesetter_newpage(void) {
 }
 
 static void svgtypesetter_spill_tabdiagram(void) {
-    int x, y, s;
+    int x, y, s, has_semi = 0;
+    struct typesetter_curr_settings cset = typesetter_settings();
 
     g_svg_page.tab_per_page_nr++;
 
-    x = g_svg_page.tab.xlim_left;
-    y = *g_svg_page.tab.carriage_y;
+    y = g_svg_page.tab.fbrd[0].y;
+
+    if (cset.prefs & kTlpPrefsAddTuningToTheFretboard) {
+        g_svg_page.tab.xlim_left = x = SVGTYPESETTER_TAB_XL_DELTA;
+        for (s = 0; s < g_svg_page.tp->string_nr; s++) {
+            fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\""
+                                   " font-size=\"10\">%s</text>\n", x, y, g_svg_page.tp->tuning[s]);
+            if (!has_semi) {
+                has_semi = strlen(g_svg_page.tp->tuning[s]) > 1;
+            }
+            y += SVGTYPESETTER_TAB_Y_SPAN + 1;
+        }
+        g_svg_page.tab.xlim_left += SVGTYPESETTER_TAB_X_SPAN - 5 + ((has_semi) ? 5 : 0);
+        x = g_svg_page.tab.xlim_left;
+        y = g_svg_page.tab.fbrd[0].y;
+    } else {
+        x = g_svg_page.tab.xlim_left;
+    }
 
     // INFO(Rafael): More left vertical 'TAB' indication.
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"15\" font-weight=\"bold\">T</text>\n"
