@@ -22,6 +22,7 @@ struct svgtypesetter_tab_diagram_ctx {
     int xlim_left, xlim_right;
     int *carriage_x, *carriage_y, *last_carriage_x, *last_carriage_y;
     struct svgtypesetter_pinch_point_ctx fbrd[6];
+    int last_non_null_x;
 };
 
 struct svgtypesetter_page_ctx {
@@ -112,12 +113,15 @@ static void svgtypesetter_spill_tuning(void);
 static void svgtypesetter_clean_old_pages_not_rewritten(void);
 
 static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
-    int comments_nr = 0, s_techniques_nr = 0, has_times = 0, tab_auto_break = 0;
+    int comments_nr = 0, s_techniques_nr = 0, has_times = 0, tab_auto_break = 0, y, y0, y1;
     const txttypesetter_sustained_technique_ctx *sp;
     const txttypesetter_comment_ctx *cp;
     char *p, *p_end;
 
-    tab_auto_break = (*g_svg_page.tab.carriage_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN));
+    y0 = g_svg_page.tab.fbrd[0].y;
+    y1 = g_svg_page.tab.fbrd[5].y;
+
+    tab_auto_break = (g_svg_page.tab.last_non_null_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN));
 
     g_svg_page.tab.last_carriage_x = g_svg_page.tab.carriage_x;
     g_svg_page.tab.last_carriage_y = g_svg_page.tab.carriage_y;
@@ -127,6 +131,7 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
 
     if (txttab->last != NULL &&
         !has_unflushed_data((const char **)txttab->last->strings, 0, txttab->last->fretboard_sz)) {
+        *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
         g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
     } else {
         if (txttab->last == NULL && !tab_auto_break) {
@@ -140,14 +145,16 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
         s_techniques_nr++;
     }
 
-    for (cp = txttab->comments; cp != NULL; cp = cp->next) {
-        p = cp->data;
-        p_end = p + strlen(p);
-        while (p != p_end) {
-            comments_nr += (*p == '\n');
-            p++;
+    if (!tab_auto_break) {
+        for (cp = txttab->comments; cp != NULL; cp = cp->next) {
+            p = cp->data;
+            p_end = p + strlen(p);
+            while (p != p_end) {
+                comments_nr += (*p == '\n');
+                p++;
+            }
+            comments_nr++;
         }
-        comments_nr++;
     }
 
     p = txttab->times;
@@ -157,19 +164,37 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
         p++;
     }
 
-    *g_svg_page.tab.carriage_y += (SVGTYPESETTER_TAB_Y_SPAN * 2) +
-                                  ((tab_auto_break) ? SVGTYPESETTER_TAB_Y_SPAN * 5 : 0) +
+    *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN +
+                                  ((tab_auto_break) ? SVGTYPESETTER_TAB_Y_SPAN : 0) +
                                   ((s_techniques_nr > 0) ? SVGTYPESETTER_TAB_Y_SPAN * 2 : 0) +
                                   ((SVGTYPESETTER_TAB_Y_SPAN * 2) * s_techniques_nr) +
                                   ((SVGTYPESETTER_TAB_Y_SPAN + 2) * comments_nr + 10) +
                                   ((has_times) ? SVGTYPESETTER_TAB_Y_SPAN * 2 : 0);
-    g_svg_page.tab.fbrd[0].y = *g_svg_page.tab.carriage_y;
 
+    g_svg_page.tab.fbrd[0].y = *g_svg_page.tab.carriage_y;
     svgtypesetter_refresh_fbrd_xy();
 
     if (g_svg_page.tab.fbrd[5].y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
         // INFO(Rafael): The current page became full, we need a new one.
         svgtypesetter_newpage();
+    } else if (tab_auto_break) {
+        if (s_techniques_nr > 0) {
+            y = g_svg_page.tab.fbrd[0].y;
+            y -= (SVGTYPESETTER_TAB_Y_SPAN * 2) - 10;
+        }
+
+        if (y >= y0 && y <= y1) {
+            // INFO(Rafael): The heuristic span was not so good we still have an overlapping.
+            y = y1 + SVGTYPESETTER_TAB_Y_SPAN;
+        }
+
+        g_svg_page.tab.fbrd[0].y = y;
+        svgtypesetter_refresh_fbrd_xy();
+
+        if (g_svg_page.tab.fbrd[5].y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
+            // INFO(Rafael): The current page became full, we need a new one.
+            svgtypesetter_newpage();
+        }
     }
 
 svgtypesetter_newtabdiagram_epilogue:
@@ -218,6 +243,10 @@ static inline void svgtypesetter_slide_up_xstep(const int delta) {
 
 static inline void svgtypesetter_chord_span_xstep(const int delta) {
     *g_svg_page.tab.carriage_x += SVGTYPESETTER_CHORD_SPAN_X_STEP * delta;
+}
+
+static inline void svgtypesetter_user_note_span_xstep(const int delta) {
+    *g_svg_page.tab.carriage_x += 5;
 }
 
 static void svgtypesetter_insert_header_span(void) {
@@ -672,6 +701,8 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                 xstep = NULL;
                 svgtypesetter_refresh_fbrd_xy();
 
+                g_svg_page.tab.last_non_null_x = *g_svg_page.tab.carriage_x;
+
                 if (g_svg_page.tab.fbrd[5].y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6)) &&
                     tp->next != NULL) {
                     // INFO(Rafael): The current page became full, we need a new one.
@@ -704,16 +735,22 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                         }
                     }
                 }
+            } else {
+                last_xstep = svgtypesetter_user_note_span_xstep;
+                svgtypesetter_user_note_span_xstep(1);
+                svgtypesetter_refresh_fbrd_xy();
             }
 
             if (times != NULL) {
                 times++;
             }
         }
+
+        printf("*** Last non null note x: %d\n", g_svg_page.tab.last_non_null_x);
+        g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
+        *g_svg_page.tab.carriage_x = g_svg_page.tab.last_non_null_x;
+        svgtypesetter_refresh_fbrd_xy();
         svgtypesetter_cut_tab();
-        //if (tp->next != NULL) {
-        //svgtypesetter_newtabdiagram(tp->next);
-        //}
     }
 
     g_svg_page.tp = NULL;
@@ -896,6 +933,8 @@ static int svgtypesetter_init(const char *filename) {
 
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+
+    g_svg_page.tab.last_non_null_x = 0;
 
     return 1;
 }
