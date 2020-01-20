@@ -129,7 +129,7 @@ static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
 
-    if (txttab->last != NULL &&
+    if (txttab->last != NULL && !tab_auto_break &&
         !has_unflushed_data((const char **)txttab->last->strings, 0, txttab->last->fretboard_sz)) {
         *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
         g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
