@@ -54,6 +54,8 @@ static inline void svgtypesetter_sep_bar_xstep(const int delta);
 
 static inline void svgtypesetter_chord_span_xstep(const int delta);
 
+static inline void svgtypesetter_user_note_span_xstep(const int delta);
+
 static void svgtypesetter_insert_header_span(void);
 
 static void svgtypesetter_spill_song_title(const char *title);
@@ -98,7 +100,7 @@ static void svgtypesetter_fclose(void);
 
 static int svgtypesetter_init(const char *filename);
 
-static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab);
+static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab);
 
 static int has_unflushed_data(const char **strings, const size_t offset, const size_t fretboard_size);
 
@@ -112,7 +114,7 @@ static void svgtypesetter_spill_tuning(void);
 
 static void svgtypesetter_clean_old_pages_not_rewritten(void);
 
-static inline void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
+static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
     int comments_nr = 0, s_techniques_nr = 0, has_times = 0, tab_auto_break = 0, y, y0, y1;
     const txttypesetter_sustained_technique_ctx *sp;
     const txttypesetter_comment_ctx *cp;
@@ -246,7 +248,7 @@ static inline void svgtypesetter_chord_span_xstep(const int delta) {
 }
 
 static inline void svgtypesetter_user_note_span_xstep(const int delta) {
-    *g_svg_page.tab.carriage_x += 5;
+    *g_svg_page.tab.carriage_x += SVGTYPESETTER_USER_NOTE_SPAN_X_STEP;
 }
 
 static void svgtypesetter_insert_header_span(void) {
