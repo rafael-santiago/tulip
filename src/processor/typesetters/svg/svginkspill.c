@@ -541,11 +541,10 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
                 temp[offset + 2] = '-';
                 memcpy(&temp[offset + 3], &txttab->strings[s][offset + 2], txttab->fretboard_sz - offset);
                 free(txttab->strings[s]);
-                //printf("'%s'\n", temp);
                 txttab->strings[s] = temp;
             }
-            //printf("\n");
             offset -= 1;
+            txttab->fretboard_sz += 1;
         }
     }
 }
