@@ -343,7 +343,8 @@ static void svgtypesetter_flush_note_pinch(const char *note) {
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"13\" font-weight=\"bold\">", *g_svg_page.tab.carriage_x,
                                                                                                *g_svg_page.tab.carriage_y +
                                                                                                SVGTYPESETTER_TAB_NOTE_Y_OFFSET);
-    while (isdigit(*np) || *np == 'X' || *np == '?') {
+
+    while ((isdigit(*np) || *np == 'X' || *np == '?') && (np - note) < 2) {
         fprintf(g_svg_page.fp, "%c", *np);
         np++;
     }
@@ -499,7 +500,11 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
     size_t s, offset;
     void (*xstep)(const int) = NULL;
     void (*last_xstep)(const int) = NULL;
-    int bend_arrow_string, spill_done, is_chord, is_empty_diagram;
+    struct notes_span_ctx {
+        int is_beyond_9th_fret[6];
+        int do_span;
+    } notes_span;
+    int bend_arrow_string, spill_done, is_chord;
     char *times, *times_end, tm_buf[20];
     struct sustained_techniques_points_ctx {
         int x;
@@ -569,7 +574,13 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
         svgtypesetter_flush_sep_bar();\
         xstep = svgtypesetter_sep_bar_xstep;\
     } else if (isdigit(*(s)) || *s == 'X' || *s == '?') {\
+        if (is_chord && notes_span.do_span && !notes_span.is_beyond_9th_fret[sn]) {\
+            *g_svg_page.tab.carriage_x += 7;\
+        }\
         svgtypesetter_flush_note_pinch(s);\
+        if (is_chord && notes_span.do_span && !notes_span.is_beyond_9th_fret[sn]) {\
+            *g_svg_page.tab.carriage_x -= 7;\
+        }\
         xstep = svgtypesetter_note_sep_xstep;\
     }\
 }
@@ -661,6 +672,18 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
 
             is_chord = svgtypesetter_is_chord((const char **)tp->strings, offset);
 
+            memset(&notes_span, 0, sizeof(notes_span));
+
+            if (is_chord) {
+                for (s = 0; s < 6; s++) {
+                    notes_span.is_beyond_9th_fret[s] = (isdigit(tp->strings[s][offset]) &&
+                                                        isdigit(tp->strings[s][offset + 1]));
+                    if (!notes_span.do_span && notes_span.is_beyond_9th_fret[s]) {
+                        notes_span.do_span = 1;
+                    }
+                }
+            }
+
             bend_arrow_string = 6;
             for (s = 0; s < 6; s++) {
                 if (tp->strings[s][offset] == '-' ||
@@ -683,7 +706,7 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                 do_flush_pinch(xstep, &tp->strings[s][offset], s, bend_arrow_string);
             }
 
-            if (is_chord && offset > 0) {
+            /*if (is_chord && offset > 0) {
                 for (s = 0; s < 6 && is_chord; s++) {
                     if (tp->strings[s][offset-1] == '-' && tp->strings[s][offset] == '-') {
                         continue;
@@ -694,8 +717,9 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
                     svgtypesetter_chord_span_xstep(1);
                     last_xstep = svgtypesetter_chord_span_xstep;
                     xstep = NULL;
+                    svgtypesetter_refresh_fbrd_xy();
                 }
-            }
+            }*/
 
             if (xstep != NULL) {
                 xstep(1);
