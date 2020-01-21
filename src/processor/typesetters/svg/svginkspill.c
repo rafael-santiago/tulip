@@ -187,7 +187,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
 
         if (y >= y0 && y <= y1) {
             // INFO(Rafael): The heuristic span was not so good we still have an overlapping.
-            y = y1 + SVGTYPESETTER_TAB_Y_SPAN;
+            y = y1 + SVGTYPESETTER_TAB_Y_SPAN + ((s_techniques_nr == 0) ? 5 : 0);
         }
 
         g_svg_page.tab.fbrd[0].y = y;
