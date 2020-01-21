@@ -10,6 +10,7 @@
 #include <processor/typesetters/typeprefs.h>
 #include <processor/oututils.h>
 #include <processor/settings.h>
+#include <base/memory.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
@@ -86,7 +87,7 @@ static size_t svgtypesetter_get_release_bend_arrow_string(const char **strings, 
 
 static size_t svgtypesetter_get_bend_arrow_string(const char **strings, const size_t offset);
 
-static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab);
+static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *txttab);
 
 static int svgtypesetter_refresh_fbrd_xy(void);
 
@@ -113,6 +114,8 @@ static void svgtypesetter_spill_tab_notation(const tulip_single_note_ctx *song);
 static void svgtypesetter_spill_tuning(void);
 
 static void svgtypesetter_clean_old_pages_not_rewritten(void);
+
+static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txttab);
 
 static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
     int comments_nr = 0, s_techniques_nr = 0, has_times = 0, tab_auto_break = 0, y, y0, y1;
@@ -495,8 +498,60 @@ static int has_unflushed_data(const char **strings, const size_t offset, const s
     return has;
 }
 
-static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_ctx *txttab) {
-    const txttypesetter_tablature_ctx *tp;
+static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txttab) {
+    size_t s, offset;
+    int has_bad_align;
+    char *temp;
+    char *sp, *sp_end;
+
+    // INFO(Rafael): This function seeks to avoid bad acceptable alignments in ascii tab. Since this processor directly reads
+    //               the ascii output, any wrong alignment can screw up the svg output badly. Here we will search for
+    //               consecutive notes without an explicity separator and add one single dash between them:
+    //
+    //    |--------|
+    //    |--------|
+    //    |-9-9-9--|
+    //    |-101010-|
+    //    |--8-8-8-|
+    //    |--------|
+    //
+    //  It will turn into:
+    //
+    //    |----------|
+    //    |----------|
+    //    |-9--9--9--|
+    //    |-10-10-10-|
+    //    |--8--8--8-|
+    //    |----------|
+    //
+    // The SVG processor will beautify it a little more later.
+    //
+
+    for (offset = 0; offset < txttab->fretboard_sz - 2; offset++) {
+        has_bad_align = 0;
+        for (s = 0; s < 6 && !has_bad_align; s++) {
+            has_bad_align = (isdigit(txttab->strings[s][offset]) && isdigit(txttab->strings[s][offset + 1]) &&
+                             isdigit(txttab->strings[s][offset + 2]));
+        }
+        if (has_bad_align) {
+            for (s = 0; s < 6; s++) {
+                temp = (char *) getseg(txttab->fretboard_sz + 4);
+                memset(temp, 0, txttab->fretboard_sz + 4);
+                memcpy(temp, txttab->strings[s], offset + 2);
+                temp[offset + 2] = '-';
+                memcpy(&temp[offset + 3], &txttab->strings[s][offset + 2], txttab->fretboard_sz - offset);
+                free(txttab->strings[s]);
+                //printf("'%s'\n", temp);
+                txttab->strings[s] = temp;
+            }
+            //printf("\n");
+            offset -= 1;
+        }
+    }
+}
+
+static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *txttab) {
+    txttypesetter_tablature_ctx *tp;
     size_t s, offset;
     void (*xstep)(const int) = NULL;
     void (*last_xstep)(const int) = NULL;
@@ -513,7 +568,7 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
         char *data_end;
         int print_line;
     } stech_pts[20], *stech_p, *stech_end;
-    const txttypesetter_sustained_technique_ctx *sp;
+    txttypesetter_sustained_technique_ctx *sp;
 
 #define do_xpack(xspan) {\
     if (last_xstep != NULL) {\
@@ -587,6 +642,7 @@ static void svgtypesetter_flush_fretboard_pinches(const txttypesetter_tablature_
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
         g_svg_page.tp = tp;
+        svgtypesetter_normalize_ascii_tab(tp);
         if (tp->comments != NULL) {
             svgtypesetter_spill_comments(tp);
         }
@@ -1171,7 +1227,7 @@ int svgtypesetter_inkspill(const char *filepath, const txttypesetter_tablature_c
         svgtypesetter_insert_header_span();
     }
 
-    svgtypesetter_flush_fretboard_pinches(tab);
+    svgtypesetter_flush_fretboard_pinches((txttypesetter_tablature_ctx *)tab);
 
     svgtypesetter_fclose();
 
