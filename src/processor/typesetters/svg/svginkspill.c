@@ -15,8 +15,16 @@
 #include <string.h>
 #include <stdio.h>
 
+// HARD-TODO(Rafael): Document, explain how this code actually works...
+
 struct svgtypesetter_pinch_point_ctx {
     int x, y;
+};
+
+struct last_note_info_ctx {
+    int x;
+    int len;
+    int do_cr; //TODO(Rafael): Make it a function pointer.
 };
 
 struct svgtypesetter_tab_diagram_ctx {
@@ -24,6 +32,7 @@ struct svgtypesetter_tab_diagram_ctx {
     int *carriage_x, *carriage_y, *last_carriage_x, *last_carriage_y;
     struct svgtypesetter_pinch_point_ctx fbrd[6];
     int last_non_null_x;
+    struct last_note_info_ctx ln_info[6], *curr_ln_info;
 };
 
 struct svgtypesetter_page_ctx {
@@ -116,6 +125,8 @@ static void svgtypesetter_spill_tuning(void);
 static void svgtypesetter_clean_old_pages_not_rewritten(void);
 
 static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txttab);
+
+static void svgtypesetter_move_carriage_to_best_fit(const int ret_units);
 
 static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
     int comments_nr = 0, s_techniques_nr = 0, has_times = 0, tab_auto_break = 0, y, y0, y1;
@@ -342,20 +353,30 @@ static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txtt
 
 static void svgtypesetter_flush_note_pinch(const char *note) {
     const char *np = note;
+    int temp = 0;
+
+    if (g_svg_page.tab.curr_ln_info->do_cr && g_svg_page.tab.curr_ln_info->x > 0) {
+        temp = *g_svg_page.tab.carriage_x;
+        *g_svg_page.tab.carriage_x = g_svg_page.tab.curr_ln_info->x + 7;
+    }
 
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"13\" font-weight=\"bold\">", *g_svg_page.tab.carriage_x,
                                                                                                *g_svg_page.tab.carriage_y +
                                                                                                SVGTYPESETTER_TAB_NOTE_Y_OFFSET);
+    if (temp > 0) {
+        *g_svg_page.tab.carriage_x = temp;
+    }
 
     while ((isdigit(*np) || *np == 'X' || *np == '?') && (np - note) < 2) {
         fprintf(g_svg_page.fp, "%c", *np);
         np++;
     }
-
+    g_svg_page.tab.curr_ln_info->len = (np - note);
     fprintf(g_svg_page.fp, "</text>\n");
 }
 
 static void svgtypesetter_flush_bend_pinch(const int arrow) {
+    // TODO(Rafael): Verify if find for best carriage fit is necessary here.
     char *arrow_markup = (arrow) ? " marker-end=\"url(#arrow)\"" : "";
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d, %d,%d %d,%d\""
                            " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>\n", *g_svg_page.tab.carriage_x,
@@ -370,6 +391,7 @@ static void svgtypesetter_flush_bend_pinch(const int arrow) {
 }
 
 static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
+    // TODO(Rafael): Verify if find for best carriage fit is necessary here.
     char *arrow_markup = (arrow) ? " marker-end=\"url(#arrow)\"" : "";
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d %d,%d %d,%d\""
                            " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>\n", *g_svg_page.tab.carriage_x,
@@ -383,7 +405,25 @@ static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
                                                                                        arrow_markup);
 }
 
+static void svgtypesetter_move_carriage_to_best_fit(const int ret_units) {
+    int rl;
+    if (g_svg_page.tab.curr_ln_info == NULL || g_svg_page.tab.curr_ln_info->x == 0) {
+        return;
+    }
+    rl = ret_units * g_svg_page.tab.curr_ln_info->len;
+    if ((*g_svg_page.tab.carriage_x - g_svg_page.tab.curr_ln_info->x) > rl) {
+        do {
+            *g_svg_page.tab.carriage_x -= 1;
+        } while ((*g_svg_page.tab.carriage_x - g_svg_page.tab.curr_ln_info->x) > rl);
+        // WARN(Rafael): It is useless.
+        //for (rl = 0; rl < 0; rl++) {
+        //    g_svg_page.tab.ln_info[rl].x = *g_svg_page.tab.carriage_x;
+        //}
+    }
+}
+
 static void svgtypesetter_flush_vibrato_pinch(void) {
+    svgtypesetter_move_carriage_to_best_fit(7);
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\">~</text>\n", *g_svg_page.tab.carriage_x,
                                                                                     *g_svg_page.tab.carriage_y);
 }
@@ -397,12 +437,14 @@ static void svgtypesetter_flush_hammer_on_pull_off_pinch(void) {
 }
 
 static void svgtypesetter_flush_slide_down_pinch(void) {
+    svgtypesetter_move_carriage_to_best_fit(7);
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\">/</text>\n", *g_svg_page.tab.carriage_x,
                                                                                     *g_svg_page.tab.carriage_y +
                                                                                 SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
 }
 
 static void svgtypesetter_flush_slide_up_pinch(void) {
+    svgtypesetter_move_carriage_to_best_fit(7);
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\">\\</text>\n", *g_svg_page.tab.carriage_x,
                                                                                     *g_svg_page.tab.carriage_y +
                                                                                 SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
@@ -410,6 +452,7 @@ static void svgtypesetter_flush_slide_up_pinch(void) {
 
 static void svgtypesetter_flush_sep_bar(void) {
     int y = g_svg_page.tab.fbrd[0].y;
+    // TODO(Rafael): Set to best fit before drawing the bar.
     fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
                            " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\"/>\n", *g_svg_page.tab.carriage_x,
                                                                                           *g_svg_page.tab.carriage_x,
@@ -551,7 +594,7 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
 
 static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *txttab) {
     txttypesetter_tablature_ctx *tp;
-    size_t s, offset;
+    size_t s, offset, null_nr = 0;
     void (*xstep)(const int) = NULL;
     void (*last_xstep)(const int) = NULL;
     struct notes_span_ctx {
@@ -582,24 +625,38 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
     if (*(s) == '~') {\
         do_xpack(7);\
         svgtypesetter_flush_vibrato_pinch();\
-        if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
+        g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
+        g_svg_page.tab.curr_ln_info->do_cr = 1;\
+        if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
+            if (xstep == svgtypesetter_user_note_span_xstep) {\
+                xstep(-1);\
+            }\
             xstep = svgtypesetter_vibrato_xstep;\
         }\
     } else if (*(s) == 'b') {\
         do_xpack(7);\
         svgtypesetter_flush_bend_pinch(sn == arrow_string);\
-        if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
+        if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
+            if (xstep == svgtypesetter_user_note_span_xstep) {\
+                xstep(-1);\
+            }\
             xstep = svgtypesetter_bend_xstep;\
         }\
     } else if (*(s) == 'r') {\
         do_xpack(7);\
         svgtypesetter_flush_release_bend_pinch(sn == arrow_string);\
-        if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
+        if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
+            if (xstep == svgtypesetter_user_note_span_xstep) {\
+                xstep(-1);\
+            }\
             xstep = svgtypesetter_release_bend_xstep;\
         }\
     } else if (*(s) == 'h' || *(s) == 'p') {\
         svgtypesetter_flush_hammer_on_pull_off_pinch();\
-        if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
+        if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
+            if (xstep == svgtypesetter_user_note_span_xstep) {\
+                xstep(-1);\
+            }\
             xstep = svgtypesetter_hammer_on_xstep;\
         }\
     } else if (*(s) == '/') {\
@@ -610,7 +667,12 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
             do_xpack(10);\
         }\
         svgtypesetter_flush_slide_down_pinch();\
-        if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
+        g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
+        g_svg_page.tab.curr_ln_info->do_cr = 1;\
+        if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
+            if (xstep == svgtypesetter_user_note_span_xstep) {\
+                xstep(-1);\
+            }\
             xstep = svgtypesetter_slide_down_xstep;\
         }\
     } else if (*(s) == '\\') {\
@@ -621,11 +683,22 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
             do_xpack(11);\
         }\
         svgtypesetter_flush_slide_up_pinch();\
-        if (xstep == NULL || xstep == svgtypesetter_note_sep_xstep) {\
+        g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
+        g_svg_page.tab.curr_ln_info->do_cr = 1;\
+        if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
+            if (xstep == svgtypesetter_user_note_span_xstep) {\
+                xstep(-1);\
+            }\
             xstep = svgtypesetter_slide_up_xstep;\
         }\
     } else if (*(s) == '|' && sn == 5) {\
         svgtypesetter_flush_sep_bar();\
+        g_svg_page.tab.ln_info[0].x = *g_svg_page.tab.carriage_x;\
+        g_svg_page.tab.ln_info[1].x = *g_svg_page.tab.carriage_x;\
+        g_svg_page.tab.ln_info[2].x = *g_svg_page.tab.carriage_x;\
+        g_svg_page.tab.ln_info[3].x = *g_svg_page.tab.carriage_x;\
+        g_svg_page.tab.ln_info[4].x = *g_svg_page.tab.carriage_x;\
+        g_svg_page.tab.ln_info[5].x = *g_svg_page.tab.carriage_x;\
         xstep = svgtypesetter_sep_bar_xstep;\
     } else if (isdigit(*(s)) || *s == 'X' || *s == '?') {\
         if (is_chord && notes_span.do_span && !notes_span.is_beyond_9th_fret[sn]) {\
@@ -635,6 +708,8 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
         if (is_chord && notes_span.do_span && !notes_span.is_beyond_9th_fret[sn]) {\
             *g_svg_page.tab.carriage_x -= 7;\
         }\
+        g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
+        g_svg_page.tab.curr_ln_info->do_cr = 0;\
         xstep = svgtypesetter_note_sep_xstep;\
     }\
 }
@@ -642,6 +717,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
     for (tp = txttab; tp != NULL; tp = tp->next) {
         g_svg_page.tp = tp;
         svgtypesetter_normalize_ascii_tab(tp);
+
         if (tp->comments != NULL) {
             svgtypesetter_spill_comments(tp);
         }
@@ -740,6 +816,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
             }
 
             bend_arrow_string = 6;
+            //memset(g_svg_page.tab.xnote, 0, sizeof(g_svg_page.tab.xnote));
             for (s = 0; s < 6; s++) {
                 if (tp->strings[s][offset] == '-' ||
                     (offset > 0 && isdigit(tp->strings[s][offset-1]) && isdigit(tp->strings[s][offset]))) {
@@ -758,6 +835,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                 }
                 g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[s].x;
                 g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[s].y;
+                g_svg_page.tab.curr_ln_info = &g_svg_page.tab.ln_info[s];
                 do_flush_pinch(xstep, &tp->strings[s][offset], s, bend_arrow_string);
             }
 
@@ -867,6 +945,7 @@ static void svgtypesetter_cut_tab(void) {
 }
 
 static int svgtypesetter_newpage(void) {
+    size_t s;
     if (g_svg_page.tp != NULL && g_svg_page.tp->last != NULL &&
         has_unflushed_data((const char **)g_svg_page.tp->last->strings, 0, g_svg_page.tp->last->fretboard_sz)) {
         svgtypesetter_cut_tab();
@@ -894,6 +973,11 @@ static int svgtypesetter_newpage(void) {
 
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
+
+    for (s = 0; s < 6; s++) {
+        g_svg_page.tab.ln_info[s].x = *g_svg_page.tab.carriage_x;
+        g_svg_page.tab.ln_info[s].len = 0;
+    }
 
     svgtypesetter_refresh_fbrd_xy();
 
@@ -972,6 +1056,14 @@ static void svgtypesetter_spill_tabdiagram(void) {
                                                                                           g_svg_page.tab.fbrd[0].y + SVGTYPESETTER_TAB_Y_SPAN * 5);
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     *g_svg_page.tab.carriage_x = x + SVGTYPESETTER_TAB_X_SPAN;
+
+    for (s = 0; s < 6; s++) {
+        /*if (g_svg_page.tab.ln_info[s].x > 0) {
+            g_svg_page.tab.ln_info[s].x = *g_svg_page.tab.carriage_x;
+        }*/
+        g_svg_page.tab.ln_info[s].x = 0;
+    }
+
 
     svgtypesetter_refresh_fbrd_xy();
 }
