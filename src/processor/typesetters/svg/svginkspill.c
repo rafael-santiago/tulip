@@ -1393,7 +1393,7 @@ static void svgtypesetter_spill_tuning(void) {
 
 static void svgtypesetter_clean_old_pages_not_rewritten(void) {
     // INFO(Rafael): Since this processor divides generated pages into numbered SVG files, after processing the last page
-    //               all remaining old files generated from a later processing is removed by this function.
+    //               all remaining old files generated from a later processing are removed by this function.
     do {
         snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%03d.svg", g_svg_page.filename,
                                                                                                 g_svg_page.page_nr++);
