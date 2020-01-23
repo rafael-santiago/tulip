@@ -221,7 +221,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
     char *p, *p_end;
 
     // INFO(Rafael): This function draws a new TAB diagram taking into consideration the current
-    //               y coordinate of the current page, however, it not directly uses the coordinate.
+    //               y coordinate of the current page, however, it does not directly use the coordinate.
     //               The function performs some calculation based on what should be flushed and
     //               sometimes what was previously flushed.
 
