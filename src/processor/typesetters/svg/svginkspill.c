@@ -650,8 +650,8 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
 //              All stepper x increase amounts are heuristic. The int dit received parameter is an acronym which stands for
 //              [di]rection and [t]imes, where the signal of this integer gives the horizontal direction and the absolute
 //              value gives how many times the x carriage must walk. In fact the xstep functions takes advantage of the
-//              implicit cartesian plane concept present in SVG coordinate system. Thus by passing 1 means '- go one step ahead'
-//              and passing -1 means '- go one step behind'.
+//              implicit cartesian plane concept present in SVG coordinate system. Thus, by passing 1 means '- go one step
+//              ahead' and passing -1 means '- go one step behind'.
 
 static inline void svgtypesetter_hammer_on_xstep(const int dit) {
     *g_svg_page.tab.carriage_x += (SVGTYPESETTER_TAB_X_SPAN + 10) * dit;
@@ -698,7 +698,7 @@ static inline void svgtypesetter_user_note_span_xstep(const int dit) {
 }
 
 static void svgtypesetter_insert_header_span(void) {
-    // INFO(Rafael): Until this function is reponsible to insert a header blank span between header section and
+    // INFO(Rafael): Until now this function is reponsible to insert a header blank span between header section and
     //               the first TAB diagram.
     *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
     svgtypesetter_refresh_fbrd_xy();
@@ -725,10 +725,10 @@ static void svgtypesetter_carriage_return(const int space_amount, int *xreg) {
     //               effective used coordinate means a coordinate where a note sep different of '-' was inserted.
     //               With it is possible to allow user to increase the default spacing between notes by using periods of
     //               single dashes, e.g. '10-----45', without screwing up the typesetting of separators that must
-    //               not be more spaced more than the previous defined spacing amount.
+    //               not be more spaced than the previous defined spacing amount.
     //
-    //              space_amount: how many pixels must be added after return.
-    //              xreg: it saves the current carriage x coordinate for prior processing by the caller.
+    //              space_amount: how many pixels must be added after doing the return.
+    //              xreg: it saves the current carriage x coordinate for later processing by the caller.
     if (xreg != NULL) {
         *xreg = *g_svg_page.tab.carriage_x;
     }
@@ -756,7 +756,7 @@ static void svgtypesetter_flush_note_pinch(const char *note) {
         *g_svg_page.tab.carriage_x = xreg;
     }
 
-    // INFO(Rafael): If you fretboard generates notes more than 99, I am sorry.
+    // INFO(Rafael): If your fretboard generates notes more than 99 in a tulip script, I am sorry.
     while ((isdigit(*np) || *np == 'X' || *np == '?') && (np - note) < 2) {
         fprintf(g_svg_page.fp, "%c", *np);
         np++;
@@ -797,7 +797,7 @@ static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
 
 static void svgtypesetter_move_carriage_to_best_fit(const int min_space_amount) {
     // INFO(Rafael): This function moves the x carriage to a "best fit" defined by
-    //               the minimum space (pixels) between current x and last efftective x.
+    //               the minimum space (pixels) between current x and last effective x.
     //               It finds for this best fit.
     int ml;
     if (g_svg_page.tab.curr_ln_info == NULL || g_svg_page.tab.curr_ln_info->x == 0) {
@@ -869,6 +869,9 @@ static int svgtypesetter_is_chord(const char **strings, const size_t offset) {
 }
 
 static size_t svgtypesetter_get_release_bend_arrow_string(const char **strings, const size_t offset) {
+    // INFO(Rafael): This function finds the string number that must contain release bend indication headed by a arrow.
+    //               It is handy if you consider bends over internals/double stops. Return 6 means no release bends
+    //               for this TAB snippet.
     ssize_t s;
 
     for (s = 5; s >= 0; s--) {
@@ -881,6 +884,9 @@ static size_t svgtypesetter_get_release_bend_arrow_string(const char **strings, 
 }
 
 static size_t svgtypesetter_get_bend_arrow_string(const char **strings, const size_t offset) {
+    // INFO(Rafael): This function finds the string number that must contain a bend indication headed by a arrow.
+    //               It is handy if you consider bends over internals/double stops. Return 6 means no bends for this
+    //               TAB snippet.
     size_t s;
 
     for (s = 0; s < 6; s++) {
@@ -893,6 +899,7 @@ static size_t svgtypesetter_get_bend_arrow_string(const char **strings, const si
 }
 
 static void svgtypesetter_reduce_blank_yspan(const txttypesetter_tablature_ctx *txttab) {
+    // DEPRECATED(Rafael): wtf...
     const txttypesetter_comment_ctx *cp;
     size_t cm_nr = 0;
     char *p, *p_end;
@@ -917,6 +924,9 @@ static void svgtypesetter_reduce_blank_yspan(const txttypesetter_tablature_ctx *
 }
 
 static int has_unflushed_data(const char **strings, const size_t offset, const size_t fretboard_size) {
+    // INFO(Rafael): This function verifies if from current TAB snippet to its end has something different
+    //               of the ordinary note sep '-'. Thus, by passing offset 0 means verify if the current
+    //               ascii TAB diagram is an empty one or not.
     size_t s, o;
     int has;
 
@@ -986,6 +996,9 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
 }
 
 static int svgtypesetter_refresh_fbrd_xy(void) {
+    // INFO(Rafael): This function refreshes all fbrd coordinates for the current pointed value carriage_x and
+    //               fbrd[0].y value. My choice for not using carriage_y is for the sake of a more foreseeable
+    //               behavior of the refreshing process.
     size_t s;
     for (s = 0; s < 6; s++) {
         if (&g_svg_page.tab.fbrd[s].x != g_svg_page.tab.carriage_x) {
@@ -999,16 +1012,23 @@ static int svgtypesetter_refresh_fbrd_xy(void) {
 }
 
 static void svgtypesetter_cut_tab(void) {
-    int x;
+    // INFO(Rafael): This function closes the TAB more right by adding a vertical bar and erasing all
+    //               remaining empty TAB diagram. Notice that "erasing" here is a dirty trick of drawing
+    //               an white rect by overlapping all excedent TAB diagram area.
     size_t s;
+
     if (g_svg_page.fp == NULL) {
         return;
     }
+
     if (g_svg_page.tab.last_symbol != kTlpSepBar) {
+        // INFO(Rafael): The last symbol drawn was not a sep bar, thus we need to draw one.
         svgtypesetter_flush_sep_bar();
     } else {
+        // INFO(Rafael): A sep bar have been just drawn, now all we need to do is erasing TAB's empty area.
         *g_svg_page.tab.carriage_x = g_svg_page.tab.ln_info[0].x;
     }
+
     fprintf(g_svg_page.fp, "\t<rect x=\"%d\" y=\"%d\" width=\"%d\""
                            " height=\"%d\" fill=\"white\"/>\n", *g_svg_page.tab.carriage_x + 1,
                                                                 g_svg_page.tab.fbrd[0].y - SVGTYPESETTER_TAB_Y_SPAN,
@@ -1017,7 +1037,11 @@ static void svgtypesetter_cut_tab(void) {
 }
 
 static int svgtypesetter_newpage(void) {
+    // INFO(Rafael): It asks for a new page by closing the current file descriptor and resetting all coordinate values.
+    //               A new page involves to create the next numbered file based on the filename root supplied by the user.
+
     size_t s;
+
     if (g_svg_page.tp != NULL && g_svg_page.tp->last != NULL &&
         has_unflushed_data((const char **)g_svg_page.tp->last->strings, 0, g_svg_page.tp->last->fretboard_sz)) {
         svgtypesetter_cut_tab();
@@ -1047,7 +1071,9 @@ static int svgtypesetter_newpage(void) {
     g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
 
     for (s = 0; s < 6; s++) {
+        // INFO(Rafael): If all x was reseted, we also need to reset the last note x info.
         g_svg_page.tab.ln_info[s].x = *g_svg_page.tab.carriage_x;
+        // INFO(Rafael): Nothing was really 'pinched' on this new diagram, on this string, so let's set it to zero.
         g_svg_page.tab.ln_info[s].len = 0;
     }
 
@@ -1075,6 +1101,9 @@ static int svgtypesetter_newpage(void) {
 }
 
 static void svgtypesetter_spill_tabdiagram(void) {
+    // INFO(Rafael): This function effectively draws a TAB diagram into the SVG stream, taking into consideration the
+    //               current master y axis of the current page/image.
+
     int x, y, s, has_semi = 0;
     struct typesetter_curr_settings cset = typesetter_settings();
 
@@ -1125,7 +1154,8 @@ static void svgtypesetter_spill_tabdiagram(void) {
                            " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\"/>\n", g_svg_page.tab.xlim_right,
                                                                                           g_svg_page.tab.xlim_right,
                                                                                           g_svg_page.tab.fbrd[0].y,
-                                                                                          g_svg_page.tab.fbrd[0].y + SVGTYPESETTER_TAB_Y_SPAN * 5);
+                                                                                          g_svg_page.tab.fbrd[0].y +
+                                                                                            SVGTYPESETTER_TAB_Y_SPAN * 5);
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     *g_svg_page.tab.carriage_x = x + SVGTYPESETTER_TAB_X_SPAN;
 
@@ -1139,6 +1169,8 @@ static void svgtypesetter_spill_tabdiagram(void) {
 }
 
 static void svgtypesetter_fclose(void) {
+    // INFO(Rafael): This function closes the current SVG stream related to the page but add its numbering before actually
+    //               closing it.
     char pn[20];
 
     if (g_svg_page.fp != NULL) {
@@ -1157,6 +1189,7 @@ static void svgtypesetter_fclose(void) {
 }
 
 static int svgtypesetter_init(const char *filename) {
+    // INFO(Rafael): Initialisation function for g_svg_page global module struct.
     char *p;
 
     if (filename == NULL) {
@@ -1185,6 +1218,8 @@ static int svgtypesetter_init(const char *filename) {
 }
 
 static void svgtypesetter_spill_tab_notation(const tulip_single_note_ctx *song) {
+    //INFO(Rafael): It writes the TAB notation based on all used techniques present in tulip script. Here is being used a
+    //              monospaced font in order to seek a more a fancy alignment.
     struct typesetter_curr_settings cset = typesetter_settings();
     tulip_command_t used_techniques[31];
     size_t used_techniques_nr = 0, u = 0;
@@ -1325,6 +1360,7 @@ static void svgtypesetter_spill_tab_notation(const tulip_single_note_ctx *song) 
 }
 
 static void svgtypesetter_spill_tuning(void) {
+    // INFO(Rafael): It writes to SVG the configured tuning.
     struct typesetter_curr_settings cset = typesetter_settings();
     char **tuning;
     size_t tuning_nr;
@@ -1356,6 +1392,8 @@ static void svgtypesetter_spill_tuning(void) {
 }
 
 static void svgtypesetter_clean_old_pages_not_rewritten(void) {
+    // INFO(Rafael): Since this processor divides generated pages into numbered SVG files, after processing the last page
+    //               all remaining old files generated from a later processing is removed by this function.
     do {
         snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%03d.svg", g_svg_page.filename,
                                                                                                 g_svg_page.page_nr++);
