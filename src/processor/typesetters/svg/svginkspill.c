@@ -1257,7 +1257,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
     txttypesetter_sustained_technique_ctx *sp;
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
-        // INFO(Rafael): Each tp gathers comments, sustained techniques and TAB diagram
+        // INFO(Rafael): Each tp gathers comments, sustained techniques, times indications and TAB diagram.
 
         g_svg_page.tp = tp;
 
