@@ -234,39 +234,39 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
 
     tab_auto_break = (g_svg_page.tab.last_non_null_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN));
 
-    // INFO(Rafael): If it was an auto break could be more data in the same coordinate to be 'pinched'.
+    // INFO(Rafael): If it was an auto break could have more data in the same coordinate waiting for being 'pinched'.
 
     g_svg_page.tab.last_carriage_x = g_svg_page.tab.carriage_x;
     g_svg_page.tab.last_carriage_y = g_svg_page.tab.carriage_y;
 
-    // INFO(Rafael): Since it is a new TAB diagram we will start write it from left to right.
+    // INFO(Rafael): Since it is a new TAB diagram we will start write it from left to the right.
     //               There is no doubt, by now it is empty.
 
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     *g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left;
 
-    // INFO(Rafael): This if is for selecting the best y coordinate for the new TAB diagram.
+    // INFO(Rafael): This if-else block is for selecting the best y coordinate for the new TAB diagram.
 
     if (txttab->last != NULL && !tab_auto_break &&
         !has_unflushed_data((const char **)txttab->last->strings, 0, txttab->last->fretboard_sz)) {
         // INFO(Rafael): This if-clause covers the case where we got, as instance, '.literal{"blah blah"};'
-        //               that will generate a empty TAB diagram. In this case, we can assume the last fbrd[0].y
+        //               that will generate an empty TAB diagram. In this case, we can assume the last fbrd[0].y
         //               coordinate to get the next. But if it is an auto break, it indicates that there is TAB
-        //               data drawn above, and fbrd[5].y must be considered instead.
+        //               data drawn above and in this case, fbrd[5].y must be considered instead.
         //*g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left; DEPRECATED(Rafael): wtf...
         g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
     } else {
         if (txttab->last == NULL && !tab_auto_break) {
-            // INFO(Rafael): The real first TAB chunk.
+            // INFO(Rafael): The very first TAB chunk.
             g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
         } else {
-            // INFO(Rafael): An auto break or a subsequent TAB chunk.
+            // INFO(Rafael): An auto break of the first TAB chunk, an auto break or a subsequent TAB chunk.
             g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[5].y;
         }
     }
 
-    // INFO(Rafael): Verifying if this new TAB diagram has sustained techniques, which in this case will drawn above
-    //               TAB diagram with some heuristic fill spacing.
+    // INFO(Rafael): Verifying if this new TAB diagram has sustained techniques. They will drawn above
+    //               TAB diagram by using some heuristic fill spacing.
 
     for (sp = txttab->techniques; sp != NULL; sp = sp->next) {
         s_techniques_nr++;
@@ -279,7 +279,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
             p = cp->data;
             p_end = p + strlen(p);
             while (p != p_end) {
-                // INFO(Rafael): We must consider returns because they virtually become new .literal{} statements here
+                // INFO(Rafael): We must consider returns because they virtually become new '.literal{""}' statements here
                 //               in this processor.
                 comments_nr += (*p == '\n');
                 p++;
@@ -288,7 +288,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
         }
     }
 
-    // INFO(Rafael): Verifying if this new TAB diagram has some time indication. It will put immediately above the TAB
+    // INFO(Rafael): Verifying if this new TAB diagram has some time indication. It will put be immediately above the TAB
     //               diagram.
 
     p = txttab->times;
@@ -298,7 +298,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
         p++;
     }
 
-    // INFO(Rafael): It is a bit heuristic but becomes evident if you consider:
+    // INFO(Rafael): The y equation is a bit heuristic but becomes evident if you consider:
     //
     //                  [COMMENT AREA]
     //                  [SUSTAINED TECHNIQUES AREA]
@@ -324,7 +324,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
         // INFO(Rafael): The current page became full, we need a new one.
         svgtypesetter_newpage();
     } else if (tab_auto_break) {
-        // INFO(Rafael): When a auto break occurs, sometimes it can result in a overlap. Let's try to
+        // INFO(Rafael): When a auto break occurs, sometimes it can result in an overlap. Let's try to
         //               mitigate it.
         if (s_techniques_nr > 0) {
             y = g_svg_page.tab.fbrd[0].y;
