@@ -5,10 +5,12 @@
  * the terms of the GNU General Public License version 2.
  *
  */
-#ifndef TULIP_PROCESSOR_TYPESETTERS_SVG_SVG_DO_FLUSH_PINCH_H
-#define TULIP_PROCESSOR_TYPESETTERS_SVG_SVG_DO_FLUSH_PINCH_H 1
+#ifndef TULIP_PROCESSOR_TYPESETTERS_SVG_SVG_DO_PINCH_FLUSH_H
+#define TULIP_PROCESSOR_TYPESETTERS_SVG_SVG_DO_PINCH_FLUSH_H 1
 
 // WARN(Rafael): Those macros were designed to be used into svginkspill.c only.
+
+// TODO(Rafael): Add some documentation for do_xpack() and do_pinch_flush
 
 #define do_xpack(xspan) {\
     if (last_xstep != NULL) {\
@@ -19,7 +21,7 @@
     }\
 }
 
-#define do_flush_pinch(xstep, s, sn, arrow_string) {\
+#define do_pinch_flush(xstep, s, sn, arrow_string) {\
     if (*(s) == '~') {\
         do_xpack(7);\
         svgtypesetter_flush_vibrato_pinch();\

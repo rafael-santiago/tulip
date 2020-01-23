@@ -7,7 +7,7 @@
  */
 #include <processor/typesetters/svg/svginkspill.h>
 #include <processor/typesetters/svg/svgboundaries.h>
-#include <processor/typesetters/svg/svg_do_flush_pinch.h>
+#include <processor/typesetters/svg/svg_do_pinch_flush.h>
 #include <processor/typesetters/typeprefs.h>
 #include <processor/oututils.h>
 #include <processor/settings.h>
@@ -1407,6 +1407,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
             if (is_chord) {
                 // INFO(Rafael): The current section being a chord push us to store some info
                 //               about pinched notes in ascii TAB to apply an alignment beautify later, if necessary.
+                //               For more details take a look at 'svg_do_pinch_flush.h'.
                 for (s = 0; s < 6; s++) {
                     notes_span.is_beyond_9th_fret[s] = (isdigit(tp->strings[s][offset]) &&
                                                         isdigit(tp->strings[s][offset + 1]));
@@ -1452,7 +1453,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                 g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[s].y;
                 g_svg_page.tab.curr_ln_info = &g_svg_page.tab.ln_info[s];
                 // INFO(Rafael): Finally doing the flush of the current ascii TAB section to the SVG TAB section.
-                do_flush_pinch(xstep, &tp->strings[s][offset], s, bend_arrow_string);
+                do_pinch_flush(xstep, &tp->strings[s][offset], s, bend_arrow_string);
             }
 
             // INFO(Rafael): At this point the current ascii TAB section was processed already. We need to step the
