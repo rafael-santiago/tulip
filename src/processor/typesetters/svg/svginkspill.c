@@ -438,7 +438,7 @@ static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txtt
     }
 
     if (!has_unflushed_data((const char **)txttab->strings, 0, txttab->fretboard_sz)) {
-        // INFO(Rafael): A new TAB digram will actually drawn into current SVG stream.
+        // INFO(Rafael): A new TAB diagram will actually drawn into current SVG stream.
         g_svg_page.tab.fbrd[0].y = y;
         svgtypesetter_refresh_fbrd_xy();
     }
@@ -447,7 +447,7 @@ static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txtt
 // TIP(Rafael): A function named as 'technique_xstep' stands for a horizontal carriage stepper of a specific tablature symbol.
 //              All stepper x increase amounts are heuristic. The int dit received parameter is an acronym which stands for
 //              [di]rection and [t]imes, where the signal of this integer gives the horizontal direction and the absolute
-//              value gives how many times the x carriage must walk. In fact the xstep functions takes advantage of the
+//              value gives how many times the x carriage must walk. In fact the xstep functions take advantage of the
 //              implicit cartesian plane concept present in SVG coordinate system. Thus, by passing 1 means '- go one step
 //              ahead' and passing -1 means '- go one step behind'.
 
@@ -496,7 +496,7 @@ static inline void svgtypesetter_user_note_span_xstep(const int dit) {
 }
 
 static void svgtypesetter_insert_header_span(void) {
-    // INFO(Rafael): Until now this function is reponsible to insert a header blank span between header section and
+    // INFO(Rafael): Until now this function is responsible for inserting a header blank span between header section and
     //               the first TAB diagram.
     *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
     svgtypesetter_refresh_fbrd_xy();
