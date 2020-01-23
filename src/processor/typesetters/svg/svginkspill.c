@@ -18,7 +18,7 @@
 #include <stdio.h>
 
 // TIP(Rafael): 'Pinch', 'pinched' here is a lousy pun for 'punched' from punched cards ;)
-//              When you read TAB, please do not scream, I am just using the standard way of write it here.
+//              When reading the word 'TAB', please do not scream, I am just using the standard way of write it here.
 
 // INFO(Rafael): This structure represents the current (x;y) coordinate of a string represented inside a TAB diagram.
 struct svgtypesetter_pinch_point_ctx {
@@ -180,6 +180,14 @@ int svgtypesetter_inkspill(const char *filepath, txttypesetter_tablature_ctx *ta
     //
     //                                                          'Tsc! roman numbers are so...romans.'
     //                                                                             -- An ancient greek philosopher.
+    //
+    //               Maybe you could find that generate the SVG would be easier by following the pseudo code generated when
+    //               compiling the user's tulip script, pointed by song parameter, but it is not. Reading a well-normalized
+    //               ascii TAB is much more straight forward than do demuxing all recursive tags and re-implement SVG printers
+    //               based on those DSL statements.
+    //
+    //               In fact, all processor implemented until now takes advantage at some point of the txt processor's hard
+    //               work. Excepting txt processor, the remaining ones could be considered a kind of high-level processors.
 
     if (!svgtypesetter_init(filepath)) {
         return 0;
@@ -1207,7 +1215,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
     //                            |------...     |------...   + |...-----[-]|
     //                                                        +-----------^
     //
-    //                                                          where "Np" denotes the string processing iteration,
+    //                                                          where "Np" denotes the note processing iteration per string,
     //
     //               however, finding to seek a better typesetting in SVG output, the ascii TAB is processed in the follow
     //               traversing strategy:
@@ -1223,10 +1231,11 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
     //                        | [-] [-] [...] [-] |
     //                        | [-] [-] [...] [-] |
     //
+    //               This way of traversing the TAB notes process all stacked notes at each iteration.
     //
     //               A vertical traversing will make easier to find fancier chord alignments, among other advantages.
-    //               Opposingly, it will create some typesetting side-effects too. Those side-effects need to be
-    //               eliminated/compensated otherwise the user will get a screwed-up SVG output.
+    //               Opposingly, it will create some typesetting side-effects, too. Those side-effects need to be
+    //               eliminated/compensated otherwise the user will get a screwed-up SVG output at some point.
 
     txttypesetter_tablature_ctx *tp;
     size_t s, offset, null_nr = 0;
