@@ -449,7 +449,7 @@ static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txtt
 //              [di]rection and [t]imes, where the signal of this integer gives the horizontal direction and the absolute
 //              value gives how many times the x carriage must walk. In fact the xstep functions take advantage of the
 //              implicit cartesian plane concept present in SVG coordinate system. Thus, by passing 1 means '- go one step
-//              ahead' and passing -1 means '- go one step behind'.
+//              ahead' and passing -1 means '- go one step back'.
 
 static inline void svgtypesetter_hammer_on_xstep(const int dit) {
     *g_svg_page.tab.carriage_x += (SVGTYPESETTER_TAB_X_SPAN + 10) * dit;
@@ -1217,8 +1217,8 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
     //
     //                                                          where "Np" denotes the note processing iteration per string,
     //
-    //               however, finding to seek a better typesetting in SVG output, the ascii TAB is processed in the follow
-    //               traversing strategy:
+    //               however, finding to seek a better typesetting in SVG output, the ascii TAB is processed in the following
+    //               traverse strategy:
     //
     //                           0   1         N
     //                           p   p         p
@@ -1231,11 +1231,11 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
     //                        | [-] [-] [...] [-] |
     //                        | [-] [-] [...] [-] |
     //
-    //               This way of traversing the TAB notes process all stacked notes at each iteration.
+    //               This way of traversing the TAB notes will process all stacked notes at each iteration.
     //
     //               A vertical traversing will make easier to find fancier chord alignments, among other advantages.
     //               Opposingly, it will create some typesetting side-effects, too. Those side-effects need to be
-    //               eliminated/compensated otherwise the user will get a screwed-up SVG output at some point.
+    //               eliminated/compensated, otherwise the user will get a screwed-up SVG output at some point.
 
     txttypesetter_tablature_ctx *tp;
     size_t s, offset, null_nr = 0;
@@ -1257,29 +1257,50 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
     txttypesetter_sustained_technique_ctx *sp;
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
+        // INFO(Rafael): Each tp gathers comments, sustained techniques and TAB diagram
+
         g_svg_page.tp = tp;
 
         if (tp->comments != NULL) {
+            // INFO(Rafael): Write comments to the current SVG stream.
             svgtypesetter_spill_comments(tp);
         }
 
         if (!has_unflushed_data((const char **)tp->strings, 0, tp->fretboard_sz))  {
+            // INFO(Rafael): If it was only a comment followed by a save-point, e.g.:
+            //                            '.literal{"You got a monster in your parasol..."};'
+            //               There is nothing to be done beyond here.
             continue;
         }
 
+        // INFO(Rafael): Let's normalize it if necessary, in order to make fancy alignments, specially with chords
+        //               that mixes frets before 10th position and from 10th position to higher.
         svgtypesetter_normalize_ascii_tab(tp);
 
+        // INFO(Rafael): We need a TAB diagram to start pinching notes and techniques.
+
         svgtypesetter_newtabdiagram(tp);
+
+        // INFO(Rafael): The times pointer will traverse the buffer times when it is not NULL.
 
         times = tp->times;
         times_end = times + 3;
 
         if (tp->techniques != NULL) {
+            // INFO(Rafael): The svgtypesetter_newtabdiagram() function also considered the space
+            //               consumed by all sustained tecnhiques pilled up the TAB diagram.
+            //               All you must do is to compute the exact y coordinate taking into
+            //               consideration the fbrd[0].y, the first string in TAB diagram.
             stech_p = &stech_pts[0];
             stech_end = stech_p + sizeof(stech_pts) / sizeof(stech_pts[0]);
             sp = tp->techniques;
             while (stech_p != stech_end && sp != NULL) {
+                // INFO(Rafael): Initializing each sustained technique info record.
                 stech_p->x = *g_svg_page.tab.carriage_x;
+                // INFO(Rafael): Each sustained technique has its own buffer. It will make simple to manage
+                //               where start plotting the specific technique indication and where stopping.
+                //               Anyway, in the same buffer we can have more than one techinque being sustained
+                //               ahead. Fortunately it is indiferent for the approach followed here.
                 stech_p->data = sp->data;
                 stech_p->data_end = stech_p->data + strlen(stech_p->data);
                 stech_p->print_line = 0;
@@ -1291,6 +1312,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
             stech_p->y = g_svg_page.tab.fbrd[0].y - (SVGTYPESETTER_TAB_Y_SPAN * 2) - 10;
             stech_p++;
             while (stech_p != stech_end) {
+                // INFO(Rafael): Based on the first computed y the subsequent ones are derived.
                 stech_p[0].y = stech_p[-1].y - SVGTYPESETTER_TAB_Y_SPAN;
                 stech_p++;
             }
@@ -1298,14 +1320,23 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
             stech_p = stech_end = NULL;
         }
 
+        // INFO(Rafael): The following for-loop implements the traversing idea introduced at the beginning of this function.
+
         for (offset = 0; offset < tp->fretboard_sz; offset++) {
             // INFO(Rafael): Spilling sustained techniques.
             if (stech_end != NULL) {
                 for (stech_p = &stech_pts[0]; stech_p != stech_end; stech_p++) {
                     if (stech_p->data >= stech_p->data_end) {
+                        // INFO(Rafael): This technique was fully represented in the current SVG stream.
+                        //               There is nothing to do with it from now on.
                         continue;
                     }
                     if (!stech_p->print_line && isalpha(*stech_p->data)) {
+                        // INFO(Rafael): We have found the start of the current sustained technique. It involves to
+                        //               record the current carriage x, write its label to the SVG stream and flagging that
+                        //               this specific technique indication needs a dashed line right below indicating
+                        //               the whole section of it should be done during the song. With a recorded x and
+                        //               greater x value in the future, drawing this line will be pretty easy.
                         stech_p->x = *g_svg_page.tab.carriage_x;
                         fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
                                                " font-size=\"13\" font-weight=\"bold\">%c%c%c</text>\n", stech_p->x,
@@ -1315,14 +1346,31 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                                                                                                          stech_p->data[2]);
                         stech_p->print_line = 1;
                     } else if (stech_p->print_line && stech_p->data[0] == '.' && stech_p->data[1] != '.') {
+                        // INFO(Rafael): We have found the end of the current sustained technique. Let's draw a single
+                        //               dashed line and also recording the new x coordinate, if it is necessary.
                         fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
                                                " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\""
                                                " stroke-dasharray=\"5,5\"/>\n", stech_p->x, *g_svg_page.tab.carriage_x,
                                                                                 stech_p->y + 1, stech_p->y + 1);
                         if ((stech_p->data + 2) < stech_p->data_end &&
                             stech_p->data[1] == ' ' && tp->strings[0][offset + 1] == '|' && stech_p->data[2] == '.') {
+                            // INFO(Rafael): Ascii TAB do not wraps '|' with sustained lines, e.g:
+                            //
+                            //    l.r. ............. .........................
+                            //
+                            //  |-------------------|-------------------------
+                            //  |-------------------|-------------------------
+                            //  |-------------------|-------------------------
+                            //  |-------------------|-------------------------
+                            //  |-------------------|-------------------------
+                            //  |-------------------|-------------------------
+                            //
+                            // SVG processor does, due to it if sep bar is found in the current ascii TAB section,
+                            // it will interpreted as a false end. Completed later, because print_line will stay set.
+                            //
                             stech_p->x = *g_svg_page.tab.carriage_x;
                         } else {
+                            // INFO(Rafael): It is not a false end. It is end of the technique indication, actually.
                             stech_p->print_line = 0;
                         }
                     }
@@ -1332,6 +1380,8 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
 
             // INFO(Rafael): Spilling times.
             if (times != NULL && times > times_end && isdigit(*times)) {
+                // INFO(Rafael): We have found a tag times indication. We need to find where this indication ends and
+                //               write it out to SVG stream.
                 for (times_end = times; *times_end != 'X'; times_end++)
                     ;
                 memset(tm_buf, 0, sizeof(tm_buf));
@@ -1340,15 +1390,23 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                                        " font-size=\"13\" font-weight=\"bold\">%s</text>\n", *g_svg_page.tab.carriage_x,
                                                                                              g_svg_page.tab.fbrd[0].y -
                                                                                              SVGTYPESETTER_TAB_Y_SPAN, tm_buf);
+                // INFO(Rafael): Once a time indication written, it is not good idea write future data above it. The
+                //               TAB would become messy. Let's advance the carriage x and make all remaining strings of
+                //               the diagram aligned to this new position.
                 *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN;
                 svgtypesetter_refresh_fbrd_xy();
             }
+
+            // INFO(Rafael): Now we are effectively start inspecting the current TAB diagram section.
+            //               This section is created/given by shifting '(strings *) + offset' possitions.
 
             is_chord = svgtypesetter_is_chord((const char **)tp->strings, offset);
 
             memset(&notes_span, 0, sizeof(notes_span));
 
             if (is_chord) {
+                // INFO(Rafael): The current section being a chord push us to store some info
+                //               about pinched notes in ascii TAB to apply an alignment beautify later, if necessary.
                 for (s = 0; s < 6; s++) {
                     notes_span.is_beyond_9th_fret[s] = (isdigit(tp->strings[s][offset]) &&
                                                         isdigit(tp->strings[s][offset + 1]));
@@ -1358,32 +1416,56 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                 }
             }
 
+            // INFO(Rafael): Let's start taking into consideration that the current section is not about bends or
+            //               release bends.
+
             bend_arrow_string = 6;
-            //memset(g_svg_page.tab.xnote, 0, sizeof(g_svg_page.tab.xnote));
+
             for (s = 0; s < 6; s++) {
+                // INFO(Rafael): Vertically traversing each section note in the ascii TAB.
                 if (tp->strings[s][offset] == '-' ||
                     (offset > 0 && isdigit(tp->strings[s][offset-1]) && isdigit(tp->strings[s][offset]))) {
+                    // INFO(Rafael): If is just about a ordinary separator or a note done from 10th fret or higher.
+                    //               Notes are always entired written, so a note higher than '9' should be skipped
+                    //               at second time.
                     if (is_chord && tp->strings[s][offset] == '-' &&
                         (offset + 1) < tp->fretboard_sz           &&
                         isdigit(tp->strings[s][offset + 1])       &&
                         xstep == svgtypesetter_note_sep_xstep) {
+                        // INFO(Rafael): Using xstep when we got a chord and notes lower than '10' will ensure a fancy
+                        //               alignment to if this chord also mix notes higher than '9'.
                         xstep = svgtypesetter_chord_span_xstep;
                     }
                     continue;
                 }
                 if (tp->strings[s][offset] == 'b' && bend_arrow_string == 6) {
+                    // INFO(Rafael): If the current TAB section is about a bend, let's discover at what string iteration
+                    //               an arrow should be drawn in SVG stream.
                     bend_arrow_string = svgtypesetter_get_bend_arrow_string((const char **)tp->strings, offset);
                 } else if (tp->strings[s][offset] == 'r' && bend_arrow_string == 6) {
+                    // INFO(Rafael): If the current TAB section is about a release bend, let's discover at what string
+                    // iteration an arrow should be drawn in SVG stream.
                     bend_arrow_string = svgtypesetter_get_release_bend_arrow_string((const char **)tp->strings, offset);
                 }
+                // INFO(Rafael): Setting all handy control pointers to the current processed string.
                 g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[s].x;
                 g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[s].y;
                 g_svg_page.tab.curr_ln_info = &g_svg_page.tab.ln_info[s];
+                // INFO(Rafael): Finally doing the flush of the current ascii TAB section to the SVG TAB section.
                 do_flush_pinch(xstep, &tp->strings[s][offset], s, bend_arrow_string);
             }
 
+            // INFO(Rafael): At this point the current ascii TAB section was processed already. We need to step the
+            //               current carriage x according to the data written to the SVG stream. We known how much
+            //               to step by calling the function xstep passing '1' as its dit. If xstep is NULL it indicates
+            //               that the processed ascii TAB section was composed only by ordinary '-' separators, we still
+            //               have to step the carriage x, but not much.
+
+
             if (xstep != NULL) {
+                // INFO(Rafael): Going ahead horizontally.
                 xstep(1);
+                // INFO(Rafael): We also need to known how to go back, if necessary at the next iteration.
                 last_xstep = xstep;
                 xstep = NULL;
                 svgtypesetter_refresh_fbrd_xy();
@@ -1398,7 +1480,11 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
 
                 if (*g_svg_page.tab.carriage_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN) &&
                     has_unflushed_data((const char **)tp->strings, offset + 1, tp->fretboard_sz)) {
+                    // INFO(Rafael): The current tab diagram became full, we need a new empty one.
+
                     if (stech_end != NULL) {
+                        // INFO(Rafael): If a new TAB diagram will be requested, we need to finish up drawing
+                        //               the sustained techniques lines of the current full one.
                         stech_p = &stech_pts[0];
                         while (stech_p != stech_end) {
                             fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
@@ -1408,9 +1494,11 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                             stech_p++;
                         }
                     }
-                    // INFO(Rafael): The current tab diagram became full, we need a new empty one.
                     svgtypesetter_newtabdiagram(tp);
                     if (stech_end != NULL) {
+                        // INFO(Rafael): If a new TAB diagram requested, we need to indicate above this new one
+                        //               all sustained techniques indicated above the old one. In this case, only
+                        //               lines will be drawn.
                         stech_p = &stech_pts[0];
                         stech_p->x = *g_svg_page.tab.carriage_x;
                         stech_p->y = g_svg_page.tab.fbrd[0].y - (SVGTYPESETTER_TAB_Y_SPAN * 2) - 10;
@@ -1423,15 +1511,23 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                     }
                 }
             } else {
+                // INFO(Rafael): The current ascii TAB section was only about a section with ordinary '-' separators.
+                //               We will advance the carriage x less than with other steppers.
                 last_xstep = svgtypesetter_user_note_span_xstep;
                 svgtypesetter_user_note_span_xstep(1);
                 svgtypesetter_refresh_fbrd_xy();
             }
 
             if (times != NULL) {
+                // INFO(Rafael): The buffer pointer must be incremented because it was written above the entire ascii TAB
+                //               diagram.
                 times++;
             }
         }
+
+        // INFO(Rafael): All ascii TAB was flushed into the SVG TAB. We only need to refresh some horizontal coordinates for
+        //               a fancy typesetting and call svgtypesetter_cut_tab() to ensure that no empty TAB space will be let
+        //               on the last drawn TAB diagram.
 
         g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
         *g_svg_page.tab.carriage_x = g_svg_page.tab.last_non_null_x;
