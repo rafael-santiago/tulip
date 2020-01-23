@@ -1398,7 +1398,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
             }
 
             // INFO(Rafael): Now we are effectively start inspecting the current TAB diagram section.
-            //               This section is created/given by shifting '(strings *) + offset' possitions.
+            //               This section is created/given by shifting '(strings *) + offset' positions.
 
             is_chord = svgtypesetter_is_chord((const char **)tp->strings, offset);
 
