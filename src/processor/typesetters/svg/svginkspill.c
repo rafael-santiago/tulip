@@ -56,6 +56,7 @@ struct svgtypesetter_tab_diagram_ctx {
     // INFO(Rafael): Just a buffer that records the last processed relevant symbol.
     tulip_command_t last_symbol;
     int sched_cr;
+    int *offset;
 };
 
 struct svgtypesetter_page_ctx {
@@ -158,6 +159,8 @@ static void svgtypesetter_move_carriage_to_best_fit(const int min_space_amount, 
 
 static void svgtypesetter_carriage_return(const int space_amount, int *xreg);
 
+static int svgtypesetter_has_sep(const char *strings, const size_t offset, const size_t fretboard_sz, const char sep);
+
 static struct svgtypesetter_page_ctx g_svg_page; // INFO(Rafael): The current written page with all control info.
 
 int svgtypesetter_inkspill(const char *filepath, txttypesetter_tablature_ctx *tab,
@@ -223,8 +226,24 @@ int svgtypesetter_inkspill(const char *filepath, txttypesetter_tablature_ctx *ta
     return 1;
 }
 
+static int svgtypesetter_has_sep(const char *strings, const size_t offset, const size_t fretboard_sz, const char sep) {
+    const char *sp, *sp_end;
+    int has = 0;
+    sp = strings + offset;
+    sp_end = sp + strlen(sp);
+
+    //printf("%d - %d\n", sp_end - sp, strlen(strings));
+
+    while (sp != sp_end && !has) {
+        has = (*sp == sep);
+        sp++;
+    }
+
+    return has;
+}
+
 static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txttab) {
-    int comments_nr = 0, s_techniques_nr = 0, has_times = 0, tab_auto_break = 0, y, y0, y1;
+    int comments_nr = 0, s_techniques_nr = 0, has_times = 0, tab_auto_break = 0, y, y0, y1, has_bend_or_release_bend = 0;
     const txttypesetter_sustained_technique_ctx *sp;
     const txttypesetter_comment_ctx *cp;
     char *p, *p_end;
@@ -274,6 +293,23 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
         }
     }
 
+    // INFO(Rafael): Here is being verifying if there is a bend or release bend that could overlap the new tab diagram.
+
+
+    if (g_svg_page.tab.offset != NULL) {
+        if (txttab->last == NULL && tab_auto_break) {
+            printf("if (i)\n");
+            has_bend_or_release_bend = svgtypesetter_has_sep(txttab->strings[0], *g_svg_page.tab.offset, txttab->fretboard_sz, 'b') ||
+                                       svgtypesetter_has_sep(txttab->strings[5], 0, *g_svg_page.tab.offset, 'r');
+        } else if (txttab->last != NULL) {
+            printf("if (ii)\n");
+            has_bend_or_release_bend = svgtypesetter_has_sep(txttab->strings[0], *g_svg_page.tab.offset, txttab->fretboard_sz, 'b') ||
+                                       svgtypesetter_has_sep(txttab->strings[5], 0, *g_svg_page.tab.offset, 'r');
+        }
+        printf("'%s' (%d) (%d)\n", txttab->strings[0], has_bend_or_release_bend, *g_svg_page.tab.offset);
+        printf("'%s' (%d) (%d)\n\n", txttab->strings[5], has_bend_or_release_bend, *g_svg_page.tab.offset);
+    }
+
     // INFO(Rafael): Verifying if this new TAB diagram has sustained techniques. They will drawn above
     //               TAB diagram by using some heuristic fill spacing.
 
@@ -317,6 +353,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
     //  [] -> Flushed when it exists.
 
     *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN +
+                                  ((has_bend_or_release_bend) ? SVGTYPESETTER_TAB_Y_SPAN * 2 : 0) +
                                   ((tab_auto_break) ? SVGTYPESETTER_TAB_Y_SPAN : 0) +
                                   ((s_techniques_nr > 0) ? SVGTYPESETTER_TAB_Y_SPAN * 2 : 0) +
                                   ((SVGTYPESETTER_TAB_Y_SPAN * 2) * s_techniques_nr) +
@@ -345,7 +382,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
             y = y1 + SVGTYPESETTER_TAB_Y_SPAN + ((s_techniques_nr == 0) ? 5 : 0);
         }
 
-        g_svg_page.tab.fbrd[0].y = y;
+        g_svg_page.tab.fbrd[0].y = y + ((has_bend_or_release_bend) ? SVGTYPESETTER_TAB_Y_SPAN * 2 : 0);
         svgtypesetter_refresh_fbrd_xy();
 
         if (g_svg_page.tab.fbrd[5].y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
@@ -1009,6 +1046,7 @@ static int svgtypesetter_init(const char *filename) {
 
     g_svg_page.fp = NULL;
     g_svg_page.tp = NULL;
+    g_svg_page.tab.offset = NULL;
 
     g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[0].x;
     g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
@@ -1262,6 +1300,8 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
     } stech_pts[20], *stech_p, *stech_end;
     txttypesetter_sustained_technique_ctx *sp;
 
+    g_svg_page.tab.offset = &offset;
+
     for (tp = txttab; tp != NULL; tp = tp->next) {
         // INFO(Rafael): Each tp gathers comments, sustained techniques, times indications and TAB diagram.
 
@@ -1282,6 +1322,11 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
         // INFO(Rafael): Let's normalize it if necessary, in order to make fancy alignments, specially with chords
         //               that mixes frets before 10th position and from 10th position to higher.
         svgtypesetter_normalize_ascii_tab(tp);
+
+        g_svg_page.tab.last_non_null_x = 0;
+
+        // INFO(Rafael): This offset value will be used for the next TAB diagram.
+        *g_svg_page.tab.offset = 0;
 
         // INFO(Rafael): We need a TAB diagram to start pinching notes and techniques.
 
