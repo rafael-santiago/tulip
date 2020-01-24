@@ -298,16 +298,12 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
 
     if (g_svg_page.tab.offset != NULL) {
         if (txttab->last == NULL && tab_auto_break) {
-            printf("if (i)\n");
             has_bend_or_release_bend = svgtypesetter_has_sep(txttab->strings[0], *g_svg_page.tab.offset, txttab->fretboard_sz, 'b') ||
                                        svgtypesetter_has_sep(txttab->strings[5], 0, *g_svg_page.tab.offset, 'r');
         } else if (txttab->last != NULL) {
-            printf("if (ii)\n");
             has_bend_or_release_bend = svgtypesetter_has_sep(txttab->strings[0], *g_svg_page.tab.offset, txttab->fretboard_sz, 'b') ||
                                        svgtypesetter_has_sep(txttab->strings[5], 0, *g_svg_page.tab.offset, 'r');
         }
-        printf("'%s' (%d) (%d)\n", txttab->strings[0], has_bend_or_release_bend, *g_svg_page.tab.offset);
-        printf("'%s' (%d) (%d)\n\n", txttab->strings[5], has_bend_or_release_bend, *g_svg_page.tab.offset);
     }
 
     // INFO(Rafael): Verifying if this new TAB diagram has sustained techniques. They will drawn above
@@ -372,8 +368,8 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
     } else if (tab_auto_break) {
         // INFO(Rafael): When a auto break occurs, sometimes it can result in an overlap. Let's try to
         //               mitigate it.
+        y = g_svg_page.tab.fbrd[0].y;
         if (s_techniques_nr > 0) {
-            y = g_svg_page.tab.fbrd[0].y;
             y -= (SVGTYPESETTER_TAB_Y_SPAN * 2) - 10;
         }
 
@@ -381,7 +377,6 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
             // INFO(Rafael): The heuristic space was not so good we still have an overlapping.
             y = y1 + SVGTYPESETTER_TAB_Y_SPAN + ((s_techniques_nr == 0) ? 5 : 0);
         }
-
         g_svg_page.tab.fbrd[0].y = y + ((has_bend_or_release_bend) ? SVGTYPESETTER_TAB_Y_SPAN * 2 : 0);
         svgtypesetter_refresh_fbrd_xy();
 
@@ -392,7 +387,6 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
     }
 
 //svgtypesetter_newtabdiagram_epilogue: // DEPRECATED(Rafael): wtf...
-
     // INFO(Rafael): Finally drawing the TAB diagram.
     svgtypesetter_spill_tabdiagram();
 
