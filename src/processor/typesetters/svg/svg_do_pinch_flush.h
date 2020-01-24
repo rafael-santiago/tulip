@@ -36,6 +36,7 @@
     } else if (*(s) == 'b') {\
         do_xpack(7);\
         svgtypesetter_flush_bend_pinch(sn == arrow_string);\
+        g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
         g_svg_page.tab.last_symbol = kTlpBend;\
         if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
             if (xstep == svgtypesetter_user_note_span_xstep) {\
@@ -46,6 +47,7 @@
     } else if (*(s) == 'r') {\
         do_xpack(7);\
         svgtypesetter_flush_release_bend_pinch(sn == arrow_string);\
+        g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
         g_svg_page.tab.last_symbol = kTlpReleaseBend;\
         if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
             if (xstep == svgtypesetter_user_note_span_xstep) {\

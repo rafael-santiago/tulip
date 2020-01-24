@@ -55,6 +55,7 @@ struct svgtypesetter_tab_diagram_ctx {
     struct last_note_info_ctx ln_info[6], *curr_ln_info;
     // INFO(Rafael): Just a buffer that records the last processed relevant symbol.
     tulip_command_t last_symbol;
+    int sched_cr;
 };
 
 struct svgtypesetter_page_ctx {
@@ -153,7 +154,7 @@ static void svgtypesetter_clean_old_pages_not_rewritten(void);
 
 static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txttab);
 
-static void svgtypesetter_move_carriage_to_best_fit(const int min_space_amount);
+static void svgtypesetter_move_carriage_to_best_fit(const int min_space_amount, const int schedule_cr);
 
 static void svgtypesetter_carriage_return(const int space_amount, int *xreg);
 
@@ -566,6 +567,7 @@ static void svgtypesetter_flush_note_pinch(const char *note) {
 static void svgtypesetter_flush_bend_pinch(const int arrow) {
     // TODO(Rafael): Verify if find for best carriage fit is necessary here.
     char *arrow_markup = (arrow) ? " marker-end=\"url(#arrow)\"" : "";
+    svgtypesetter_move_carriage_to_best_fit(7, 0);
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d, %d,%d %d,%d\""
                            " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>\n", *g_svg_page.tab.carriage_x,
                                                                                        *g_svg_page.tab.carriage_y,
@@ -581,6 +583,7 @@ static void svgtypesetter_flush_bend_pinch(const int arrow) {
 static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
     // TODO(Rafael): Verify if find for best carriage fit is necessary here.
     char *arrow_markup = (arrow) ? " marker-end=\"url(#arrow)\"" : "";
+    svgtypesetter_move_carriage_to_best_fit(7, 0);
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d %d,%d %d,%d\""
                            " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>\n", *g_svg_page.tab.carriage_x,
                                                                                        *g_svg_page.tab.carriage_y,
@@ -593,7 +596,7 @@ static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
                                                                                        arrow_markup);
 }
 
-static void svgtypesetter_move_carriage_to_best_fit(const int min_space_amount) {
+static void svgtypesetter_move_carriage_to_best_fit(const int min_space_amount, const int schedule_cr) {
     // INFO(Rafael): This function moves the x carriage to a "best fit" defined by
     //               the minimum space (pixels) between current x and last effective x.
     //               It finds for this best fit.
@@ -607,13 +610,15 @@ static void svgtypesetter_move_carriage_to_best_fit(const int min_space_amount) 
             *g_svg_page.tab.carriage_x -= 1;
         } while ((*g_svg_page.tab.carriage_x - g_svg_page.tab.curr_ln_info->x) > ml);
     }
-    // INFO(Rafael): Let's schedule a carriage return. It certainly will be done before next note pinching.
-    g_svg_page.tab.curr_ln_info->do_carriage_return = svgtypesetter_carriage_return;
-    g_svg_page.tab.curr_ln_info->do_cr_arg = min_space_amount;
+    if (schedule_cr) {
+        // INFO(Rafael): Let's schedule a carriage return. It certainly will be done before next note pinching.
+        g_svg_page.tab.curr_ln_info->do_carriage_return = svgtypesetter_carriage_return;
+        g_svg_page.tab.curr_ln_info->do_cr_arg = min_space_amount;
+    }
 }
 
 static void svgtypesetter_flush_vibrato_pinch(void) {
-    svgtypesetter_move_carriage_to_best_fit(7);
+    svgtypesetter_move_carriage_to_best_fit(7, 0);
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\">~</text>\n", *g_svg_page.tab.carriage_x,
                                                                                     *g_svg_page.tab.carriage_y);
 }
@@ -627,14 +632,14 @@ static void svgtypesetter_flush_hammer_on_pull_off_pinch(void) {
 }
 
 static void svgtypesetter_flush_slide_down_pinch(void) {
-    svgtypesetter_move_carriage_to_best_fit(7);
+    svgtypesetter_move_carriage_to_best_fit(7, g_svg_page.tab.sched_cr);
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\">/</text>\n", *g_svg_page.tab.carriage_x,
                                                                                     *g_svg_page.tab.carriage_y +
                                                                                 SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
 }
 
 static void svgtypesetter_flush_slide_up_pinch(void) {
-    svgtypesetter_move_carriage_to_best_fit(7);
+    svgtypesetter_move_carriage_to_best_fit(7, g_svg_page.tab.sched_cr);
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\">\\</text>\n", *g_svg_page.tab.carriage_x,
                                                                                     *g_svg_page.tab.carriage_y +
                                                                                 SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
@@ -1245,7 +1250,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
         int is_beyond_9th_fret[6];
         int do_span;
     } notes_span;
-    int bend_arrow_string, spill_done, is_chord;
+    int bend_arrow_string, spill_done, is_chord, temp;
     char *times, *times_end, tm_buf[20];
     struct sustained_techniques_points_ctx {
         int x;
@@ -1414,6 +1419,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                     if (!notes_span.do_span && notes_span.is_beyond_9th_fret[s]) {
                         notes_span.do_span = 1;
                     }
+                    g_svg_page.tab.ln_info[s].x = 0;
                 }
             }
 
@@ -1421,11 +1427,15 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
             //               release bends.
 
             bend_arrow_string = 6;
+            g_svg_page.tab.sched_cr = 0;
 
             for (s = 0; s < 6; s++) {
                 // INFO(Rafael): Vertically traversing each section note in the ascii TAB.
                 if (tp->strings[s][offset] == '-' ||
                     (offset > 0 && isdigit(tp->strings[s][offset-1]) && isdigit(tp->strings[s][offset]))) {
+                    if (tp->strings[s][offset] == '-' && g_svg_page.tab.last_symbol != kTlpSepBar) {
+                        g_svg_page.tab.last_symbol = kTlpNoteSep;
+                    }
                     // INFO(Rafael): If is just about a ordinary separator or a note done from 10th fret or higher.
                     //               Notes are always entired written, so a note higher than '9' should be skipped
                     //               at second time.
@@ -1452,6 +1462,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                 g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[s].x;
                 g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[s].y;
                 g_svg_page.tab.curr_ln_info = &g_svg_page.tab.ln_info[s];
+                g_svg_page.tab.sched_cr = ((offset + 1 < tp->fretboard_sz) ? (tp->strings[s][offset + 1] != '-') : 0);
                 // INFO(Rafael): Finally doing the flush of the current ascii TAB section to the SVG TAB section.
                 do_pinch_flush(xstep, &tp->strings[s][offset], s, bend_arrow_string);
             }
