@@ -1250,7 +1250,8 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
         int is_beyond_9th_fret[6];
         int do_span;
     } notes_span;
-    int bend_arrow_string, spill_done, is_chord, temp[2];
+    int bend_arrow_string, spill_done, is_chord;
+    struct last_note_info_ctx ln_info;
     char *times, *times_end, tm_buf[20];
     struct sustained_techniques_points_ctx {
         int x;
@@ -1469,6 +1470,31 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                 g_svg_page.tab.sched_cr = ((offset + 1 < tp->fretboard_sz) ? (tp->strings[s][offset + 1] != '-') : 0);
                 // INFO(Rafael): Finally doing the flush of the current ascii TAB section to the SVG TAB section.
                 do_pinch_flush(xstep, &tp->strings[s][offset], s, bend_arrow_string);
+            }
+
+            if (is_chord) {
+                // INFO(Rafael): Since a chord have just been flushed into SVG stream, we need to
+                //               set all ln_info[].x to the maximum non-zero ln_info[].x and the
+                //               ln_info[].len follows the same idea. Those data into ln_info can
+                //               be used during carriage x best-fit computations at the next flush
+                //               iteration if the next symbol is not an ordinary note sep ('-').
+                ln_info.x = 0;
+                ln_info.len = 1;
+                ln_info.do_cr_arg = 0;
+                ln_info.do_carriage_return = NULL;
+                for (s = 0; s < 6; s++) {
+                    if (ln_info.x < g_svg_page.tab.ln_info[s].x) {
+                        ln_info.x = g_svg_page.tab.ln_info[s].x;
+                        ln_info.do_cr_arg = g_svg_page.tab.ln_info[s].do_cr_arg;
+                        ln_info.do_carriage_return = g_svg_page.tab.ln_info[s].do_carriage_return;
+                    }
+                    if (ln_info.len < g_svg_page.tab.ln_info[s].len) {
+                        ln_info.len = g_svg_page.tab.ln_info[s].len;
+                    }
+                }
+                for (s = 0; s < 6; s++) {
+                    g_svg_page.tab.ln_info[s] = ln_info;
+                }
             }
 
             // INFO(Rafael): At this point the current ascii TAB section was processed already. We need to step the
