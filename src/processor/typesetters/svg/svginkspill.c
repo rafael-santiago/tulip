@@ -298,11 +298,14 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
 
     if (g_svg_page.tab.offset != NULL) {
         if (txttab->last == NULL && tab_auto_break) {
-            has_bend_or_release_bend = svgtypesetter_has_sep(txttab->strings[0], *g_svg_page.tab.offset, txttab->fretboard_sz, 'b') ||
+            has_bend_or_release_bend = svgtypesetter_has_sep(txttab->strings[0],
+                                                             *g_svg_page.tab.offset, txttab->fretboard_sz, 'b') +
                                        svgtypesetter_has_sep(txttab->strings[5], 0, *g_svg_page.tab.offset, 'r');
         } else if (txttab->last != NULL) {
-            has_bend_or_release_bend = svgtypesetter_has_sep(txttab->strings[0], *g_svg_page.tab.offset, txttab->fretboard_sz, 'b') ||
-                                       svgtypesetter_has_sep(txttab->strings[5], 0, *g_svg_page.tab.offset, 'r');
+            has_bend_or_release_bend = svgtypesetter_has_sep(txttab->strings[0],
+                                                             *g_svg_page.tab.offset, txttab->fretboard_sz, 'b') +
+                                       svgtypesetter_has_sep(txttab->strings[5], 0, *g_svg_page.tab.offset, 'r') +
+                                       svgtypesetter_has_sep(txttab->last->strings[5], 0, txttab->last->fretboard_sz, 'r');
         }
     }
 
@@ -349,7 +352,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
     //  [] -> Flushed when it exists.
 
     *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN +
-                                  ((has_bend_or_release_bend) ? SVGTYPESETTER_TAB_Y_SPAN * 2 : 0) +
+                                  ((has_bend_or_release_bend > 0) ? SVGTYPESETTER_TAB_Y_SPAN * has_bend_or_release_bend : 0) +
                                   ((tab_auto_break) ? SVGTYPESETTER_TAB_Y_SPAN : 0) +
                                   ((s_techniques_nr > 0) ? SVGTYPESETTER_TAB_Y_SPAN * 2 : 0) +
                                   ((SVGTYPESETTER_TAB_Y_SPAN * 2) * s_techniques_nr) +
@@ -377,7 +380,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
             // INFO(Rafael): The heuristic space was not so good we still have an overlapping.
             y = y1 + SVGTYPESETTER_TAB_Y_SPAN + ((s_techniques_nr == 0) ? 5 : 0);
         }
-        g_svg_page.tab.fbrd[0].y = y + ((has_bend_or_release_bend) ? SVGTYPESETTER_TAB_Y_SPAN * 2 : 0);
+        g_svg_page.tab.fbrd[0].y = y;
         svgtypesetter_refresh_fbrd_xy();
 
         if (g_svg_page.tab.fbrd[5].y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
