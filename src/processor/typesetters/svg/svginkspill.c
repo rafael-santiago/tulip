@@ -1250,7 +1250,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
         int is_beyond_9th_fret[6];
         int do_span;
     } notes_span;
-    int bend_arrow_string, spill_done, is_chord, temp;
+    int bend_arrow_string, spill_done, is_chord, temp[2];
     char *times, *times_end, tm_buf[20];
     struct sustained_techniques_points_ctx {
         int x;
@@ -1419,7 +1419,11 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                     if (!notes_span.do_span && notes_span.is_beyond_9th_fret[s]) {
                         notes_span.do_span = 1;
                     }
-                    g_svg_page.tab.ln_info[s].x = 0;
+                    if (tp->strings[s][offset] == '-') {
+                        // INFO(Rafael): This if-clause ensures that for example '.chord{...}/' will have a fancy typesetting
+                        //               without a clamsy unexpected space filling.
+                        g_svg_page.tab.ln_info[s].x = 0;
+                    }
                 }
             }
 
