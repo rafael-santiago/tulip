@@ -17,6 +17,8 @@
 #include <string.h>
 #include <stdio.h>
 
+// TODO(Rafael): Use monospaced font in TAB diagram. Adjust every space filling where necessary.
+
 // TIP(Rafael): 'Pinch', 'pinched' here is a lousy pun for 'punched' from punched cards ;)
 //              When reading the word 'TAB', please do not scream, I am just using the standard way of write it here.
 
@@ -599,7 +601,8 @@ static void svgtypesetter_flush_note_pinch(const char *note) {
 }
 
 static void svgtypesetter_flush_bend_pinch(const int arrow) {
-    // TODO(Rafael): Verify if find for best carriage fit is necessary here.
+    // DEPRECATED(Rafael): Nice but it would add rendering limitations.
+    /*
     char *arrow_markup = (arrow) ? " marker-end=\"url(#arrow)\"" : "";
     svgtypesetter_move_carriage_to_best_fit(7, 0);
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d, %d,%d %d,%d\""
@@ -612,10 +615,34 @@ static void svgtypesetter_flush_bend_pinch(const int arrow) {
                                                                                        *g_svg_page.tab.carriage_x + 5,
                                                                                        *g_svg_page.tab.carriage_y - 15,
                                                                                        arrow_markup);
+    */
+    svgtypesetter_move_carriage_to_best_fit(7, 0);
+    fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d, %d,%d %d,%d\""
+                           " fill=\"none\" stroke=\"black\" stroke-width=\"1\"/>\n", *g_svg_page.tab.carriage_x,
+                                                                                       *g_svg_page.tab.carriage_y,
+                                                                                       *g_svg_page.tab.carriage_x,
+                                                                                       *g_svg_page.tab.carriage_y + 5,
+                                                                                       *g_svg_page.tab.carriage_x + 5,
+                                                                                       *g_svg_page.tab.carriage_y + 5,
+                                                                                       *g_svg_page.tab.carriage_x + 5,
+                                                                                       *g_svg_page.tab.carriage_y - 15);
+    if (arrow) {
+        // INFO(Rafael): For a best support let's avoid using marker-end point to a location inside the own file,
+        //               because certain viewers like gwenview 4.14 does not have support for this kind of location
+        //               feature and I use it for my own stuff sometimes. Here we will explicitly draw a triangle at
+        //               the end of the drawn curve.
+        fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d L%d,%d L%d,%d z\" fill=\"black\"/>\n", *g_svg_page.tab.carriage_x + 5,
+                                                                                          *g_svg_page.tab.carriage_y - 23,
+                                                                                          *g_svg_page.tab.carriage_x + 1,
+                                                                                          *g_svg_page.tab.carriage_y - 15,
+                                                                                          *g_svg_page.tab.carriage_x + 9,
+                                                                                          *g_svg_page.tab.carriage_y - 15);
+    }
 }
 
 static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
-    // TODO(Rafael): Verify if find for best carriage fit is necessary here.
+    // DEPRECATED(Rafael): Nice but it would add rendering limitations.
+    /*
     char *arrow_markup = (arrow) ? " marker-end=\"url(#arrow)\"" : "";
     svgtypesetter_move_carriage_to_best_fit(7, 0);
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d %d,%d %d,%d\""
@@ -627,7 +654,30 @@ static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
                                                                                        *g_svg_page.tab.carriage_y - 10,
                                                                                        *g_svg_page.tab.carriage_x + 4,
                                                                                        *g_svg_page.tab.carriage_y + 5,
-                                                                                       arrow_markup);
+                                                                                       arrow_markup);*/
+    svgtypesetter_move_carriage_to_best_fit(7, 0);
+    fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d %d,%d %d,%d\""
+                           " fill=\"none\" stroke=\"black\" stroke-width=\"1\"/>\n", *g_svg_page.tab.carriage_x,
+                                                                                     *g_svg_page.tab.carriage_y,
+                                                                                     *g_svg_page.tab.carriage_x,
+                                                                                     *g_svg_page.tab.carriage_y - 10,
+                                                                                     *g_svg_page.tab.carriage_x + 5,
+                                                                                     *g_svg_page.tab.carriage_y - 10,
+                                                                                     *g_svg_page.tab.carriage_x + 4,
+                                                                                     *g_svg_page.tab.carriage_y + 5);
+
+    if (arrow) {
+        // INFO(Rafael): For a best support let's avoid using marker-end point to a location inside the own file,
+        //               because certain viewers like gwenview 4.14 does not have support for this kind of location
+        //               feature and I use it for my own stuff sometimes. Here we will explicitly draw a triangle at
+        //               the end of the drawn curve.
+        fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d L%d,%d L%d,%d z\" fill=\"black\"/>\n", *g_svg_page.tab.carriage_x,
+                                                                                          *g_svg_page.tab.carriage_y + 4,
+                                                                                          *g_svg_page.tab.carriage_x + 4,
+                                                                                          *g_svg_page.tab.carriage_y + 12,
+                                                                                          *g_svg_page.tab.carriage_x + 9,
+                                                                                          *g_svg_page.tab.carriage_y + 4);
+    }
 }
 
 static void svgtypesetter_move_carriage_to_best_fit(const int min_space_amount, const int schedule_cr) {
@@ -970,8 +1020,8 @@ static int svgtypesetter_newpage(void) {
 
     svgtypesetter_refresh_fbrd_xy();
 
-    // TODO(Rafael): Read encoding scheme from user option letting (ISO-8859-1) as the default option.
-    fprintf(g_svg_page.fp, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>\n"
+    // DEPRECATED(Rafael): Seeking a wide support we will not use end-makers anymore.
+    /*fprintf(g_svg_page.fp, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>\n"
                            "<svg xmlns=\"http://www.w3.org/2000/svg\""
                            " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
                            "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n"
@@ -981,7 +1031,14 @@ static int svgtypesetter_newpage(void) {
                             "\t\t\t<path d=\"M0,0 L0,8 L9,3 z\" fill=\"black\"/>\n"
                             "\t\t</marker>\n"
                             "\t</defs>\n", SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT,
-                                           SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT);
+                                           SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT);*/
+    // TODO(Rafael): Read encoding scheme from user option letting (ISO-8859-1) as the default option.
+    fprintf(g_svg_page.fp, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>\n"
+                           "<svg xmlns=\"http://www.w3.org/2000/svg\""
+                           " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
+                           "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n",
+                           SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT, SVGTYPESETTER_PAGE_WIDTH,
+                           SVGTYPESETTER_PAGE_HEIGHT);
 
     g_svg_page.tab_per_page_nr = 1;
 
