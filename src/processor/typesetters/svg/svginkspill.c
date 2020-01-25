@@ -839,7 +839,7 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
 
     // INFO(Rafael): Dirty trick. Here we will undo any fancier chord alignment done by txt typesetter.
     //
-    //               Thus, if a chord alignment looking like,
+    //               Thus, considering a chord alignment looking like:
     //
     //               |-------...
     //               |-------...
@@ -848,7 +848,7 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
     //               |--10---...
     //               |-------...
     //
-    //               will become uglier like
+    //               It will become uglier, looking like:
     //
     //               |-------...
     //               |-------...
@@ -857,9 +857,9 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
     //               |--10---...
     //               |-------...
     //
-    //               Fancy chord alignments came from txt typesetting could confuse the SVG typesetter
+    //               Fancier chord alignments came from txt typesetting could confuse the SVG typesetter
     //               making it produce ugly alignments. The following for-loop is only for mitigating
-    //               this possibility.
+    //               this possibility. Resuming, we screw it up by now, for making it good again later.
 
     for (offset = 0; offset < txttab->fretboard_sz; offset++) {
         if (svgtypesetter_is_chord((const char **)txttab->strings, offset, txttab->fretboard_sz)) {
@@ -1565,7 +1565,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                 g_svg_page.tab.curr_ln_info = &g_svg_page.tab.ln_info[s];
                 g_svg_page.tab.sched_cr = ((offset + 1 < tp->fretboard_sz) ? (tp->strings[s][offset + 1] != '-') : 0);
                 // INFO(Rafael): Finally doing the flush of the current ascii TAB section to the SVG TAB section.
-                do_pinch_flush(xstep, &tp->strings[s][offset], s, bend_arrow_string);
+                do_pinch_flush(xstep, &tp->strings[s][offset], s, bend_arrow_string, is_chord);
             }
 
             if (is_chord) {
