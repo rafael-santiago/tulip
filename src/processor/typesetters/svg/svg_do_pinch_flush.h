@@ -10,9 +10,9 @@
 
 // WARN(Rafael): Those macros were designed to be used into svginkspill.c only.
 
-// INFO(Rafael): The macro do_xpack() performs a direct carriage return based on the last non null pinch, e.g. a pinch
-//               different of '-'. After returning it moves the x carriage for xspan positions; do_xpack is only called
-//               indirectly through the macro do_pinch_flush.
+// INFO(Rafael): The macro do_xpack() performs a direct carriage return based on the last non-null pinch, e.g. a pinch
+//               different from '-'. After decreasing x carriage, it moves the x carriage for xspan positions; do_xpack
+//               is only called indirectly, through the macro do_pinch_flush.
 
 #define do_xpack(xspan) {\
     if (last_xstep != NULL) {\
@@ -23,20 +23,20 @@
     }\
 }
 
-// INFO(Rafael): The macro do_pinch_flush() is where the major 'incantations' of the SVG typesetter happens.
+// INFO(Rafael): The macro do_pinch_flush() is where the major 'incantations' of the SVG typesetter happen.
 //               Based on the current non-null separator (a separator not equals to '-'), it adjusts the
-//               carriage x of the current string and also pinchs the separator representation on SVG tab diagram
+//               carriage x of the current string and also pinches the separator representation on SVG tab diagram
 //               of the current SVG stream. After adjusting and pinching, it schedules an increment for
 //               the carriage x by setting xstep to a proper related 'technique_xstep' function. However, notice
 //               that this x axis increment will only occur after traversing all six strings of the current TAB section.
-//               In this way, the xstep setting only happens when xstep is equalse to NULL, svgtypesetter_note_sep_xstep or
+//               In this way, the xstep setting only happens when xstep is equals to NULL, svgtypesetter_note_sep_xstep or
 //               svgtypesetter_user_note_span_xstep.
 //
 //               - svgtypesetter_note_sep_xstep stands for the single space of a single '-'. E.g.: '30-32'
-//               - svgtypesetter_user_note_span_xstep stands for a sequence of single '-' user by the user as a way of
+//               - svgtypesetter_user_note_span_xstep stands for a sequence of single '-' inserted by the user, as a way of
 //                 getting more space between last and current note(s). E.g.: '.letring{60-52-42-31-20-10-------}|'
 //
-//               This is the general idea behind do_pinch_flush, any other specific code chunk is direct commented.
+//               This is the general idea behind do_pinch_flush, any other specific code chunk is directly commented.
 
 #define do_pinch_flush(xstep, s, sn, arrow_string, is_chord) {\
     if (*(s) == '~') {\
@@ -44,12 +44,12 @@
         svgtypesetter_flush_vibrato_pinch();\
         /*INFO(Rafael): Setting the ln_info[s].x to the exact position where the technique was drawn.*/\
         g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
-        /*INFO(Rafael): Recording which symbol was last processed it quite important.*/\
+        /*INFO(Rafael): Recording which symbol was last processed is quite important.*/\
         g_svg_page.tab.last_symbol = kTlpVibrato;\
         if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
             if (xstep == svgtypesetter_user_note_span_xstep) {\
-                /*INFO(Rafael): Since was found the end of the user's space filling, let's undo the last xstep and set*/\
-                /*              xstep to the vibrato xstep.*/\
+                /*INFO(Rafael): Once found the end of the user's space filling, let's undo the last xstep and set*/\
+                /*              xstep to technique xstep.*/\
                 xstep(-1);\
             }\
             xstep = svgtypesetter_vibrato_xstep;\
@@ -124,7 +124,7 @@
     } else if (*(s) == '|' && sn == 5) {\
         svgtypesetter_flush_sep_bar();\
         g_svg_page.tab.last_symbol = kTlpSepBar;\
-        /*INFO(Rafael) If the TAB diagram was broke with a sep bar, from now on all strings x coordinates must be the same*/\
+        /*INFO(Rafael): If the TAB diagram was broke with a sep bar, from now on all strings x coordinates must be the same.*/\
         g_svg_page.tab.ln_info[0].x = *g_svg_page.tab.carriage_x;\
         g_svg_page.tab.ln_info[1].x = *g_svg_page.tab.carriage_x;\
         g_svg_page.tab.ln_info[2].x = *g_svg_page.tab.carriage_x;\
@@ -134,7 +134,7 @@
         xstep = svgtypesetter_sep_bar_xstep;\
     } else if (isdigit(*(s)) || *s == 'X' || *s == '?') {\
         if (is_chord && notes_span.do_span && !notes_span.is_beyond_9th_fret[sn]) {\
-            /*INFO(Rafael): It will send notes below 10th fret more right, resulting an facier typesetting.*/\
+            /*INFO(Rafael): It will send notes below 10th fret to more right, resulting an facier typesetting.*/\
             *g_svg_page.tab.carriage_x += 7;\
         }\
         svgtypesetter_flush_note_pinch(s);\
