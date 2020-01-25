@@ -121,7 +121,7 @@ static void svgtypesetter_flush_slide_up_pinch(void);
 
 static void svgtypesetter_flush_sep_bar(void);
 
-static int svgtypesetter_is_chord(const char **strings, const size_t offset);
+static int svgtypesetter_is_chord(const char **strings, const size_t offset, const size_t max_offset);
 
 static size_t svgtypesetter_get_release_bend_arrow_string(const char **strings, const size_t offset);
 
@@ -688,7 +688,7 @@ static void svgtypesetter_flush_sep_bar(void) {
                                                                                           y + SVGTYPESETTER_TAB_Y_SPAN * 5);
 }
 
-static int svgtypesetter_is_chord(const char **strings, const size_t offset) {
+static int svgtypesetter_is_chord(const char **strings, const size_t offset, const size_t max_offset) {
     // INFO(Rafael): If this function finds at least two notes or techniques stacked, it will consider the passed TAB snippet
     //               as being a chord.
     size_t s;
@@ -700,6 +700,12 @@ static int svgtypesetter_is_chord(const char **strings, const size_t offset) {
 
     for (s = 0; s < 6 && is < 2; s++) {
         is += (strings[s][offset] != '-');
+    }
+
+    if (is == 1 && (offset + 1) < max_offset) {
+        for (s = 0; s < 6 && is < 2; s++) {
+            is += (strings[s][offset + 1] != '-');
+        }
     }
 
     return (is == 2);
@@ -782,8 +788,8 @@ static int has_unflushed_data(const char **strings, const size_t offset, const s
 }
 
 static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txttab) {
-    size_t s, offset;
-    int has_bad_align;
+    size_t s, offset, s_temp;
+    int has_bad_align, is_chord;
     char *temp;
     char *sp, *sp_end;
 
@@ -831,6 +837,52 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
         }
     }
 
+    // INFO(Rafael): Dirty trick. Here we will undo any fancier chord alignment done by txt typesetter.
+    //
+    //               Thus, if a chord alignment looking like,
+    //
+    //               |-------...
+    //               |-------...
+    //               |---7---...
+    //               |---9---...
+    //               |--10---...
+    //               |-------...
+    //
+    //               will become uglier like
+    //
+    //               |-------...
+    //               |-------...
+    //               |--7----...
+    //               |--9----...
+    //               |--10---...
+    //               |-------...
+    //
+    //               Fancy chord alignments came from txt typesetting could confuse the SVG typesetter
+    //               making it produce ugly alignments. The following for-loop is only for mitigating
+    //               this possibility.
+
+    for (offset = 0; offset < txttab->fretboard_sz; offset++) {
+        if (svgtypesetter_is_chord((const char **)txttab->strings, offset, txttab->fretboard_sz)) {
+            for (s = 0; s < 6; s++) {
+                if (txttab->strings[s][offset] == '-' && isdigit(txttab->strings[s][offset + 1])) {
+                    txttab->strings[s][offset] = txttab->strings[s][offset + 1];
+                    txttab->strings[s][offset + 1] = '-';
+                }
+            }
+
+            while (svgtypesetter_is_chord((const char **)txttab->strings, offset++, txttab->fretboard_sz))
+                ;
+            offset--;
+
+        }
+    }
+
+
+    /*for (s = 0; s < 6; s++) {
+        printf("'%s'\n", txttab->strings[s]);
+    }
+    printf("\n");
+    system("read");*/
 }
 
 static int svgtypesetter_refresh_fbrd_xy(void) {
@@ -1450,7 +1502,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
             // INFO(Rafael): Now we are effectively start inspecting the current TAB diagram section.
             //               This section is created/given by shifting '(strings *) + offset' positions.
 
-            is_chord = svgtypesetter_is_chord((const char **)tp->strings, offset);
+            is_chord = svgtypesetter_is_chord((const char **)tp->strings, offset, tp->fretboard_sz);
 
             memset(&notes_span, 0, sizeof(notes_span));
 
@@ -1564,7 +1616,8 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                     svgtypesetter_newpage();
                 }
 
-                if (*g_svg_page.tab.carriage_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN) &&
+                // DEPRECATED(Rafael): Code chunk relocated.
+                /*if (*g_svg_page.tab.carriage_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN) &&
                     has_unflushed_data((const char **)tp->strings, offset + 1, tp->fretboard_sz)) {
                     // INFO(Rafael): The current tab diagram became full, we need a new empty one.
 
@@ -1595,13 +1648,51 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                             stech_p++;
                         }
                     }
-                }
+                }*/
             } else {
                 // INFO(Rafael): The current ascii TAB section was only about a section with ordinary '-' separators.
                 //               We will advance the carriage x less than with other steppers.
                 last_xstep = svgtypesetter_user_note_span_xstep;
                 svgtypesetter_user_note_span_xstep(1);
                 svgtypesetter_refresh_fbrd_xy();
+                if (*g_svg_page.tab.carriage_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN) &&
+                    has_unflushed_data((const char **)tp->strings, offset + 1, tp->fretboard_sz)) {
+                    // INFO(Rafael): The current tab diagram became full, we need a new empty one.
+                    g_svg_page.tab.last_non_null_x = *g_svg_page.tab.carriage_x;
+                }
+            }
+
+            if (*g_svg_page.tab.carriage_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN) &&
+                has_unflushed_data((const char **)tp->strings, offset + 1, tp->fretboard_sz)) {
+                // INFO(Rafael): The current tab diagram became full, we need a new empty one.
+
+                if (stech_end != NULL) {
+                    // INFO(Rafael): If a new TAB diagram will be requested, we need to finish up drawing
+                    //               the sustained techniques lines of the current full one.
+                    stech_p = &stech_pts[0];
+                    while (stech_p != stech_end) {
+                        fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
+                                           " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\""
+                                           " stroke-dasharray=\"5,5\"/>\n", stech_p->x, *g_svg_page.tab.carriage_x,
+                                                                            stech_p->y + 1, stech_p->y + 1);
+                        stech_p++;
+                    }
+                }
+                svgtypesetter_newtabdiagram(tp);
+                if (stech_end != NULL) {
+                    // INFO(Rafael): If a new TAB diagram requested, we need to indicate above this new one
+                    //               all sustained techniques indicated above the old one. In this case, only
+                    //               lines will be drawn.
+                    stech_p = &stech_pts[0];
+                    stech_p->x = *g_svg_page.tab.carriage_x;
+                    stech_p->y = g_svg_page.tab.fbrd[0].y - (SVGTYPESETTER_TAB_Y_SPAN * 2) - 10;
+                    stech_p += 1;
+                    while (stech_p != stech_end) {
+                        stech_p->x = *g_svg_page.tab.carriage_x;
+                        stech_p[0].y = stech_p[-1].y - SVGTYPESETTER_TAB_Y_SPAN;
+                        stech_p++;
+                    }
+                }
             }
 
             if (times != NULL) {
