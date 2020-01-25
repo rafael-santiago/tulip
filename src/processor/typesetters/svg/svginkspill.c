@@ -1013,11 +1013,11 @@ static void svgtypesetter_fclose(void) {
     if (g_svg_page.fp != NULL) {
         snprintf(pn, sizeof(pn) - 1, "-%d-", g_svg_page.page_nr);
         fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\""
-                               " font-size=\"13\" font-style=\"italic\">%s</text>\n", SVGTYPESETTER_PAGE_WIDTH / 2 -
-                                                                                        (strlen(pn) - 1),
-                                                                                      SVGTYPESETTER_PAGE_HEIGHT -
-                                                                                        SVGTYPESETTER_TAB_Y_SPAN + 5,
-                                                                                      pn);
+                               " font-size=\"13\">%s</text>\n", SVGTYPESETTER_PAGE_WIDTH / 2 -
+                                                                        (strlen(pn) - 1),
+                                                                SVGTYPESETTER_PAGE_HEIGHT -
+                                                                SVGTYPESETTER_TAB_Y_SPAN + 5,
+                                                                pn);
         fprintf(g_svg_page.fp, "</svg>\n");
         fclose(g_svg_page.fp);
         g_svg_page.fp = NULL;
