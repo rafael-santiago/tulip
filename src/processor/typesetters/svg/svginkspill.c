@@ -830,6 +830,7 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
             txttab->fretboard_sz += 1;
         }
     }
+
 }
 
 static int svgtypesetter_refresh_fbrd_xy(void) {
@@ -879,10 +880,11 @@ static int svgtypesetter_newpage(void) {
 
     size_t s;
 
-    if (g_svg_page.tp != NULL && g_svg_page.tp->last != NULL &&
+    // DEPRECATED(Rafael): wtf...
+    /*if (g_svg_page.tp != NULL && g_svg_page.tp->last != NULL &&
         has_unflushed_data((const char **)g_svg_page.tp->last->strings, 0, g_svg_page.tp->last->fretboard_sz)) {
         svgtypesetter_cut_tab();
-    }
+    }*/
 
     if (g_svg_page.fp != NULL) {
         svgtypesetter_fclose();
