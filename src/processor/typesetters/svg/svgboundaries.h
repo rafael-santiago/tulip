@@ -9,8 +9,8 @@
 #define TULIP_PROCESSOR_TYPESETTERS_SVG_SVGBOUNDARIES_H 1
 
 // INFO(Rafael): A4 paper w x h dimension.
-#define SVGTYPESETTER_PAGE_WIDTH                595
-#define SVGTYPESETTER_PAGE_HEIGHT               842
+#define SVGTYPESETTER_DEFAULT_PAGE_WIDTH        595
+#define SVGTYPESETTER_DEFAULT_PAGE_HEIGHT       842
 
 #define SVGTYPESETTER_TAB_XL_DELTA               10
 #define SVGTYPESETTER_TAB_XR_DELTA              -05
@@ -39,5 +39,8 @@
 
 #define SVGTYPESETTER_CHORD_NOTES_PADDING        07
 
+static int g_svgtypesetter_page_width = SVGTYPESETTER_DEFAULT_PAGE_WIDTH;
+
+static int g_svgtypesetter_page_height = SVGTYPESETTER_DEFAULT_PAGE_HEIGHT;
 
 #endif

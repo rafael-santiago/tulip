@@ -1,5 +1,5 @@
 /*
- *                           Copyright (C) 2005-2017 by Rafael Santiago
+ *                           Copyright (C) 2005-2020 by Rafael Santiago
  *
  * This is a free software. You can redistribute it and/or modify under
  * the terms of the GNU General Public License version 2.
@@ -17,5 +17,7 @@ struct typesetter_curr_settings {
 };
 
 struct typesetter_curr_settings  typesetter_settings(void);
+
+int typesetter_paper_size(int *width, int *height);
 
 #endif

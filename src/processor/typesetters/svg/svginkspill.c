@@ -18,7 +18,6 @@
 #include <stdio.h>
 
 // TODO(Rafael): Strip off all deprecated code.
-// TODO(Rafael): Make paper dimension configured by user if she/he wants to.
 
 // TIP(Rafael): 'Pinch', 'pinched' here is a lousy pun for 'punched' from punched cards ;)
 //              When reading the word 'TAB', please do not scream, I am just using the standard way of write it here.
@@ -266,7 +265,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
     //               Bear in mind that ascii TAB assumes monospaced fonts and all technique symbols are represented
     //               by only one ascii symbol, while a SVG TAB will use non-ascii symbols for some techniques.
 
-    tab_auto_break = (g_svg_page.tab.last_non_null_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN));
+    tab_auto_break = (g_svg_page.tab.last_non_null_x >= (g_svgtypesetter_page_width - SVGTYPESETTER_TAB_X_SPAN));
 
     // INFO(Rafael): If it was an auto break could have more data in the same coordinate waiting for being 'pinched'.
 
@@ -371,7 +370,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
     g_svg_page.tab.fbrd[0].y = *g_svg_page.tab.carriage_y;
     svgtypesetter_refresh_fbrd_xy();
 
-    if (g_svg_page.tab.fbrd[5].y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
+    if (g_svg_page.tab.fbrd[5].y >= (g_svgtypesetter_page_height - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
         // INFO(Rafael): The current page became full, we need a new one.
         svgtypesetter_newpage();
     } else if (tab_auto_break) {
@@ -389,7 +388,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
         g_svg_page.tab.fbrd[0].y = y;
         svgtypesetter_refresh_fbrd_xy();
 
-        if (g_svg_page.tab.fbrd[5].y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
+        if (g_svg_page.tab.fbrd[5].y >= (g_svgtypesetter_page_height - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
             // INFO(Rafael): The current page became full, we need a new one.
             svgtypesetter_newpage();
         }
@@ -428,7 +427,7 @@ static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txtt
             y = g_svg_page.tab.fbrd[0].y;
             y += SVGTYPESETTER_TAB_Y_SPAN + 2;
         }
-        if (y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
+        if (y >= (g_svgtypesetter_page_height - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
             // INFO(Rafael): The current page became full, we need a new one. Since we are adding y, we need to check
             //               it against the page vertical boundaries.
             svgtypesetter_newpage();
@@ -462,7 +461,7 @@ static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txtt
                                                   comment);
         }
         y += SVGTYPESETTER_TAB_Y_SPAN + 2;
-        if (y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
+        if (y >= (g_svgtypesetter_page_height - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
             // INFO(Rafael): The current page became full, we need a new one.
             svgtypesetter_newpage();
             y = g_svg_page.tab.fbrd[0].y;
@@ -980,7 +979,7 @@ static void svgtypesetter_cut_tab(void) {
     fprintf(g_svg_page.fp, "\t<rect x=\"%d\" y=\"%d\" width=\"%d\""
                            " height=\"%d\" fill=\"white\"/>\n", *g_svg_page.tab.carriage_x + 1,
                                                                 g_svg_page.tab.fbrd[0].y - SVGTYPESETTER_TAB_Y_SPAN,
-                                                                SVGTYPESETTER_PAGE_WIDTH - *g_svg_page.tab.carriage_x + 1,
+                                                                g_svgtypesetter_page_width - *g_svg_page.tab.carriage_x + 1,
                                                                 SVGTYPESETTER_TAB_Y_SPAN * 6 + SVGTYPESETTER_TAB_Y_SPAN / 2);
 }
 
@@ -1008,7 +1007,7 @@ static int svgtypesetter_newpage(void) {
     }
 
     g_svg_page.tab.xlim_left = SVGTYPESETTER_TAB_XL_DELTA;
-    g_svg_page.tab.xlim_right = SVGTYPESETTER_PAGE_WIDTH + SVGTYPESETTER_TAB_XR_DELTA;
+    g_svg_page.tab.xlim_right = g_svgtypesetter_page_width + SVGTYPESETTER_TAB_XR_DELTA;
 
     g_svg_page.tab.fbrd[0].x = g_svg_page.tab.xlim_left;
     g_svg_page.tab.fbrd[0].y = SVGTYPESETTER_TAB_Y;
@@ -1045,8 +1044,8 @@ static int svgtypesetter_newpage(void) {
                            "<svg xmlns=\"http://www.w3.org/2000/svg\""
                            " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
                            "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n",
-                           SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT, SVGTYPESETTER_PAGE_WIDTH,
-                           SVGTYPESETTER_PAGE_HEIGHT);
+                           g_svgtypesetter_page_width, g_svgtypesetter_page_height, g_svgtypesetter_page_width,
+                           g_svgtypesetter_page_height);
 
     g_svg_page.tab_per_page_nr = 1;
 
@@ -1132,9 +1131,9 @@ static void svgtypesetter_fclose(void) {
     if (g_svg_page.fp != NULL) {
         snprintf(pn, sizeof(pn) - 1, "-%d-", g_svg_page.page_nr);
         fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\""
-                               " font-size=\"13\" font-family=\"Courier\">%s</text>\n", SVGTYPESETTER_PAGE_WIDTH / 2 -
+                               " font-size=\"13\" font-family=\"Courier\">%s</text>\n", g_svgtypesetter_page_width / 2 -
                                                                                             (strlen(pn) - 1),
-                                                                                        SVGTYPESETTER_PAGE_HEIGHT -
+                                                                                        g_svgtypesetter_page_height -
                                                                                         SVGTYPESETTER_TAB_Y_SPAN,
                                                                                         pn);
         fprintf(g_svg_page.fp, "</svg>\n");
@@ -1679,7 +1678,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
 
                 g_svg_page.tab.last_non_null_x = *g_svg_page.tab.carriage_x;
 
-                if (g_svg_page.tab.fbrd[5].y >= (SVGTYPESETTER_PAGE_HEIGHT - (SVGTYPESETTER_TAB_Y_SPAN * 6)) &&
+                if (g_svg_page.tab.fbrd[5].y >= (g_svgtypesetter_page_height - (SVGTYPESETTER_TAB_Y_SPAN * 6)) &&
                     tp->next != NULL) {
                     // INFO(Rafael): The current page became full, we need a new one.
                     svgtypesetter_newpage();
@@ -1724,14 +1723,14 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                 last_xstep = svgtypesetter_user_note_span_xstep;
                 svgtypesetter_user_note_span_xstep(1);
                 svgtypesetter_refresh_fbrd_xy();
-                if (*g_svg_page.tab.carriage_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN) &&
+                if (*g_svg_page.tab.carriage_x >= (g_svgtypesetter_page_width - SVGTYPESETTER_TAB_X_SPAN) &&
                     has_unflushed_data((const char **)tp->strings, offset + 1, tp->fretboard_sz)) {
                     // INFO(Rafael): The current tab diagram became full, we need a new empty one.
                     g_svg_page.tab.last_non_null_x = *g_svg_page.tab.carriage_x;
                 }
             }
 
-            if (*g_svg_page.tab.carriage_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN) &&
+            if (*g_svg_page.tab.carriage_x >= (g_svgtypesetter_page_width - SVGTYPESETTER_TAB_X_SPAN) &&
                 has_unflushed_data((const char **)tp->strings, offset + 1, tp->fretboard_sz)) {
                 // INFO(Rafael): The current tab diagram became full, we need a new empty one.
 
