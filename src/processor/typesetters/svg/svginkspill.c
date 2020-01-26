@@ -17,7 +17,8 @@
 #include <string.h>
 #include <stdio.h>
 
-// TODO(Rafael): Use monospaced font in TAB diagram. Adjust every space filling where necessary.
+// TODO(Rafael): Strip off all deprecated code.
+// TODO(Rafael): Make paper dimension configured by user if she/he wants to.
 
 // TIP(Rafael): 'Pinch', 'pinched' here is a lousy pun for 'punched' from punched cards ;)
 //              When reading the word 'TAB', please do not scream, I am just using the standard way of write it here.
@@ -57,7 +58,10 @@ struct svgtypesetter_tab_diagram_ctx {
     struct last_note_info_ctx ln_info[6], *curr_ln_info;
     // INFO(Rafael): Just a buffer that records the last processed relevant symbol.
     tulip_command_t last_symbol;
+    // INFO(Rafael): Flags if a carriage return is sched or not.
     int sched_cr;
+    // INFO(Rafael): Points to the current processed offset in current TAB diagram,
+    //               it stands for the 'physical' section area of the TAB diagram currently under typesetting process.
     int *offset;
 };
 
@@ -452,7 +456,7 @@ static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txtt
         }
         p = lp + 1;
         if (strlen(comment) > 0) {
-            fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"11\">"
+            fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"11\" font-family=\"Courier\">"
                                    "%s</text>\n", g_svg_page.tab.xlim_left,
                                                   y,
                                                   comment);
@@ -584,9 +588,10 @@ static void svgtypesetter_flush_note_pinch(const char *note) {
         g_svg_page.tab.curr_ln_info->do_carriage_return(g_svg_page.tab.curr_ln_info->do_cr_arg, &xreg);
     }
 
-    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"13\" font-weight=\"bold\">", *g_svg_page.tab.carriage_x,
-                                                                                               *g_svg_page.tab.carriage_y +
-                                                                                               SVGTYPESETTER_TAB_NOTE_Y_OFFSET);
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"13\""
+                           " font-weight=\"bold\" font-family=\"Courier\">", *g_svg_page.tab.carriage_x,
+                                                                             *g_svg_page.tab.carriage_y +
+                                                                             SVGTYPESETTER_TAB_NOTE_Y_OFFSET);
     if (xreg > 0) {
         *g_svg_page.tab.carriage_x = xreg;
     }
@@ -616,7 +621,7 @@ static void svgtypesetter_flush_bend_pinch(const int arrow) {
                                                                                        *g_svg_page.tab.carriage_y - 15,
                                                                                        arrow_markup);
     */
-    svgtypesetter_move_carriage_to_best_fit(7, 0);
+    svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_BEND_MIN_SPACE, 0);
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d, %d,%d %d,%d\""
                            " fill=\"none\" stroke=\"black\" stroke-width=\"1\"/>\n", *g_svg_page.tab.carriage_x,
                                                                                        *g_svg_page.tab.carriage_y,
@@ -655,7 +660,7 @@ static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
                                                                                        *g_svg_page.tab.carriage_x + 4,
                                                                                        *g_svg_page.tab.carriage_y + 5,
                                                                                        arrow_markup);*/
-    svgtypesetter_move_carriage_to_best_fit(7, 0);
+    svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_RELEASE_BEND_MIN_SPACE, 0);
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d %d,%d %d,%d\""
                            " fill=\"none\" stroke=\"black\" stroke-width=\"1\"/>\n", *g_svg_page.tab.carriage_x,
                                                                                      *g_svg_page.tab.carriage_y,
@@ -702,31 +707,34 @@ static void svgtypesetter_move_carriage_to_best_fit(const int min_space_amount, 
 }
 
 static void svgtypesetter_flush_vibrato_pinch(void) {
-    svgtypesetter_move_carriage_to_best_fit(7, 0);
-    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\">~</text>\n", *g_svg_page.tab.carriage_x,
-                                                                                    *g_svg_page.tab.carriage_y);
+    svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_VIBRATO_MIN_SPACE, 0);
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\""
+                           " font-family=\"Courier\">~</text>\n", *g_svg_page.tab.carriage_x,
+                                                                  *g_svg_page.tab.carriage_y);
 }
 
 static void svgtypesetter_flush_hammer_on_pull_off_pinch(void) {
-    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\""
-                           " transform=\"rotate(90,%d,%d)\">(</text>\n", *g_svg_page.tab.carriage_x,
-                                                                         *g_svg_page.tab.carriage_y,
-                                                                         *g_svg_page.tab.carriage_x + 4,
-                                                                         *g_svg_page.tab.carriage_y);
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"22\""
+                           " transform=\"rotate(90,%d,%d)\" font-family=\"Courier\">(</text>\n", *g_svg_page.tab.carriage_x,
+                                                                                                 *g_svg_page.tab.carriage_y - 3,
+                                                                                                 *g_svg_page.tab.carriage_x + 4,
+                                                                                                 *g_svg_page.tab.carriage_y - 3);
 }
 
 static void svgtypesetter_flush_slide_down_pinch(void) {
-    svgtypesetter_move_carriage_to_best_fit(7, g_svg_page.tab.sched_cr);
-    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\">/</text>\n", *g_svg_page.tab.carriage_x,
-                                                                                    *g_svg_page.tab.carriage_y +
-                                                                                SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
+    svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_SLIDE_DOWN_MIN_SPACE, g_svg_page.tab.sched_cr);
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\""
+                           " font-family=\"Courier\">/</text>\n", *g_svg_page.tab.carriage_x,
+                                                                  *g_svg_page.tab.carriage_y +
+                                                                  SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
 }
 
 static void svgtypesetter_flush_slide_up_pinch(void) {
-    svgtypesetter_move_carriage_to_best_fit(7, g_svg_page.tab.sched_cr);
-    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\">\\</text>\n", *g_svg_page.tab.carriage_x,
-                                                                                    *g_svg_page.tab.carriage_y +
-                                                                                SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
+    svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_SLIDE_UP_MIN_SPACE, g_svg_page.tab.sched_cr);
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\""
+                           " font-family=\"Courier\">\\</text>\n", *g_svg_page.tab.carriage_x,
+                                                                   *g_svg_page.tab.carriage_y +
+                                                                   SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
 }
 
 static void svgtypesetter_flush_sep_bar(void) {
@@ -1124,11 +1132,11 @@ static void svgtypesetter_fclose(void) {
     if (g_svg_page.fp != NULL) {
         snprintf(pn, sizeof(pn) - 1, "-%d-", g_svg_page.page_nr);
         fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\""
-                               " font-size=\"13\">%s</text>\n", SVGTYPESETTER_PAGE_WIDTH / 2 -
-                                                                        (strlen(pn) - 1),
-                                                                SVGTYPESETTER_PAGE_HEIGHT -
-                                                                SVGTYPESETTER_TAB_Y_SPAN + 5,
-                                                                pn);
+                               " font-size=\"13\" font-family=\"Courier\">%s</text>\n", SVGTYPESETTER_PAGE_WIDTH / 2 -
+                                                                                            (strlen(pn) - 1),
+                                                                                        SVGTYPESETTER_PAGE_HEIGHT -
+                                                                                        SVGTYPESETTER_TAB_Y_SPAN,
+                                                                                        pn);
         fprintf(g_svg_page.fp, "</svg>\n");
         fclose(g_svg_page.fp);
         g_svg_page.fp = NULL;
@@ -1322,13 +1330,15 @@ static void svgtypesetter_spill_tuning(void) {
 
         tuning = get_processor_setting("tuning", &tuning_nr);
         fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"13\""
-                               " font-weight=\"bold\">Tuning [%d-1]:</text>\n", *g_svg_page.tab.carriage_x,
-                                                                                *g_svg_page.tab.carriage_y,
-                                                                                tuning_nr);
+                               " font-weight=\"bold\" font-family=\"Courier\">"
+                               "Tuning [%d-1]:</text>\n", *g_svg_page.tab.carriage_x,
+                                                          *g_svg_page.tab.carriage_y,
+                                                          tuning_nr);
 
-        fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"13\">", *g_svg_page.tab.carriage_x + 78,
-                                                                              *g_svg_page.tab.carriage_y,
-                                                                              tuning_nr);
+        fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"13\""
+                               " font-family=\"Courier\">", *g_svg_page.tab.carriage_x + 110,
+                                                            *g_svg_page.tab.carriage_y,
+                                                            tuning_nr);
 
         for (t = tuning_nr - 1; t >= 0; t--) {
             fprintf(g_svg_page.fp, "%s%s", tuning[t], (t >  0) ? ", " : ".");
@@ -1498,11 +1508,12 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                         //               greater x value in the future, drawing this line will be pretty easy.
                         stech_p->x = *g_svg_page.tab.carriage_x;
                         fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
-                                               " font-size=\"13\" font-weight=\"bold\">%c%c%c</text>\n", stech_p->x,
-                                                                                                         stech_p->y,
-                                                                                                         stech_p->data[0],
-                                                                                                         stech_p->data[1],
-                                                                                                         stech_p->data[2]);
+                                               " font-size=\"13\" font-weight=\"bold\""
+                                               " font-family=\"Courier\">%c%c%c</text>\n", stech_p->x,
+                                                                                           stech_p->y,
+                                                                                           stech_p->data[0],
+                                                                                           stech_p->data[1],
+                                                                                           stech_p->data[2]);
                         stech_p->print_line = 1;
                     } else if (stech_p->print_line && stech_p->data[0] == '.' && stech_p->data[1] != '.') {
                         // INFO(Rafael): We have found the end of the current sustained technique. Let's draw a single
@@ -1546,9 +1557,10 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                 memset(tm_buf, 0, sizeof(tm_buf));
                 memcpy(tm_buf, times, times_end - times + 1);
                 fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
-                                       " font-size=\"13\" font-weight=\"bold\">%s</text>\n", *g_svg_page.tab.carriage_x,
-                                                                                             g_svg_page.tab.fbrd[0].y -
-                                                                                             SVGTYPESETTER_TAB_Y_SPAN, tm_buf);
+                                       " font-size=\"13\" font-weight=\"bold\""
+                                       " font-family=\"Courier\">%s</text>\n", *g_svg_page.tab.carriage_x,
+                                                                               g_svg_page.tab.fbrd[0].y -
+                                                                               SVGTYPESETTER_TAB_Y_SPAN, tm_buf);
                 // INFO(Rafael): Once a time indication written, it is not good idea write future data above it. The
                 //               TAB would become messy. Let's advance the carriage x and make all remaining strings of
                 //               the diagram aligned to this new position.

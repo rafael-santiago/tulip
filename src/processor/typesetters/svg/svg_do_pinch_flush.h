@@ -40,7 +40,7 @@
 
 #define do_pinch_flush(xstep, s, sn, arrow_string, is_chord) {\
     if (*(s) == '~') {\
-        do_xpack(7);\
+        do_xpack(SVGTYPESETTER_VIBRATO_MIN_SPACE);\
         svgtypesetter_flush_vibrato_pinch();\
         /*INFO(Rafael): Setting the ln_info[s].x to the exact position where the technique was drawn.*/\
         g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
@@ -55,7 +55,7 @@
             xstep = svgtypesetter_vibrato_xstep;\
         }\
     } else if (*(s) == 'b') {\
-        do_xpack(7);\
+        do_xpack(SVGTYPESETTER_BEND_MIN_SPACE);\
         svgtypesetter_flush_bend_pinch(sn == arrow_string);\
         g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
         g_svg_page.tab.last_symbol = kTlpBend;\
@@ -66,7 +66,7 @@
             xstep = svgtypesetter_bend_xstep;\
         }\
     } else if (*(s) == 'r') {\
-        do_xpack(7);\
+        do_xpack(SVGTYPESETTER_RELEASE_BEND_MIN_SPACE);\
         svgtypesetter_flush_release_bend_pinch(sn == arrow_string);\
         g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
         g_svg_page.tab.last_symbol = kTlpReleaseBend;\
@@ -90,9 +90,9 @@
             /*INFO(Rafael): When this sepator is wrapped inside a chord there is a xstep excess side-effect. It is being*/\
             /*              compensated here.*/\
             last_xstep(-1);\
-            do_xpack(13);\
+            do_xpack(SVGTYPESETTER_SLIDE_DOWN_MIN_SPACE + SVGTYPESETTER_SLIDE_DOWN_MIN_SPACE - 1);\
         } else {\
-            do_xpack(10);\
+            do_xpack(SVGTYPESETTER_SLIDE_DOWN_MIN_SPACE + 3);\
         }\
         svgtypesetter_flush_slide_down_pinch();\
         g_svg_page.tab.last_symbol = kTlpSlideDown;\
@@ -108,9 +108,9 @@
             /*INFO(Rafael): When this sepator is wrapped inside a chord there is a xstep excess side-effect. It is being*/\
             /*              compensated here.*/\
             last_xstep(-1);\
-            do_xpack(14);\
+            do_xpack(SVGTYPESETTER_SLIDE_UP_MIN_SPACE + SVGTYPESETTER_SLIDE_UP_MIN_SPACE);\
         } else {\
-            do_xpack(11);\
+            do_xpack(SVGTYPESETTER_SLIDE_UP_MIN_SPACE + 4);\
         }\
         svgtypesetter_flush_slide_up_pinch();\
         g_svg_page.tab.last_symbol = kTlpSlideUp;\
@@ -135,13 +135,13 @@
     } else if (isdigit(*(s)) || *s == 'X' || *s == '?') {\
         if (is_chord && notes_span.do_span && !notes_span.is_beyond_9th_fret[sn]) {\
             /*INFO(Rafael): It will send notes below 10th fret to more right, resulting an facier typesetting.*/\
-            *g_svg_page.tab.carriage_x += 7;\
+            *g_svg_page.tab.carriage_x += SVGTYPESETTER_CHORD_NOTES_PADDING;\
         }\
         svgtypesetter_flush_note_pinch(s);\
         g_svg_page.tab.last_symbol = kTlpSingleNote;\
         if (is_chord && notes_span.do_span && !notes_span.is_beyond_9th_fret[sn]) {\
             /*INFO(Rafael): Moving it back again, thus, notes from 10th or higher will not be screwed-up.*/\
-            *g_svg_page.tab.carriage_x -= 7;\
+            *g_svg_page.tab.carriage_x -= SVGTYPESETTER_CHORD_NOTES_PADDING;\
         }\
         g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
         g_svg_page.tab.curr_ln_info->do_carriage_return = NULL;\

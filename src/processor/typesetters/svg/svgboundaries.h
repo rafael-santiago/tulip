@@ -28,5 +28,16 @@
 
 #define SVGTYPESETTER_FRETBOARD_SIZE             80
 
+//INFO(Rafael): It is totally heuristic and/or based on
+//              my own preferences.
+
+#define SVGTYPESETTER_BEND_MIN_SPACE             07
+#define SVGTYPESETTER_RELEASE_BEND_MIN_SPACE     07
+#define SVGTYPESETTER_VIBRATO_MIN_SPACE          07
+#define SVGTYPESETTER_SLIDE_DOWN_MIN_SPACE       07
+#define SVGTYPESETTER_SLIDE_UP_MIN_SPACE         07
+
+#define SVGTYPESETTER_CHORD_NOTES_PADDING        07
+
 
 #endif
