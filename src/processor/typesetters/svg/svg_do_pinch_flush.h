@@ -87,7 +87,7 @@
         }\
     } else if (*(s) == '/') {\
         if (last_xstep == svgtypesetter_chord_span_xstep) {\
-            /*INFO(Rafael): When this sepator is wrapped inside a chord there is a xstep excess side-effect. It is being*/\
+            /*INFO(Rafael): When this separator is wrapped inside a chord there is a xstep excess side-effect. It is being*/\
             /*              compensated here.*/\
             last_xstep(-1);\
             do_xpack(SVGTYPESETTER_SLIDE_DOWN_MIN_SPACE + SVGTYPESETTER_SLIDE_DOWN_MIN_SPACE - 1);\
@@ -105,7 +105,7 @@
         }\
     } else if (*(s) == '\\') {\
         if (last_xstep == svgtypesetter_chord_span_xstep) {\
-            /*INFO(Rafael): When this sepator is wrapped inside a chord there is a xstep excess side-effect. It is being*/\
+            /*INFO(Rafael): When this separator is wrapped inside a chord there is a xstep excess side-effect. It is being*/\
             /*              compensated here.*/\
             last_xstep(-1);\
             do_xpack(SVGTYPESETTER_SLIDE_UP_MIN_SPACE + SVGTYPESETTER_SLIDE_UP_MIN_SPACE);\

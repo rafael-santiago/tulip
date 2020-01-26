@@ -193,7 +193,7 @@ int svgtypesetter_inkspill(const char *filepath, txttypesetter_tablature_ctx *ta
     //
     //               Maybe you could find that generate the SVG would be easier by following the pseudo code generated when
     //               compiling the user's tulip script, pointed by song parameter, but it is not. Reading a well-normalized
-    //               ascii TAB is much more straight forward than do demuxing all recursive tags and re-implement SVG printers
+    //               ascii TAB is much more straightforward than do demuxing all recursive tags and re-implement SVG printers
     //               based on those DSL statements.
     //
     //               In fact, all processor implemented until now takes advantage at some point of the txt processor's hard
