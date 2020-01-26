@@ -1039,13 +1039,12 @@ static int svgtypesetter_newpage(void) {
                             "\t\t</marker>\n"
                             "\t</defs>\n", SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT,
                                            SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT);*/
-    // TODO(Rafael): Read encoding scheme from user option letting (ISO-8859-1) as the default option.
-    fprintf(g_svg_page.fp, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>\n"
+    fprintf(g_svg_page.fp, "<?xml version=\"1.0\" encoding=\"%s\" standalone=\"no\"?>\n"
                            "<svg xmlns=\"http://www.w3.org/2000/svg\""
                            " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
                            "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n",
                            g_svgtypesetter_page_width, g_svgtypesetter_page_height, g_svgtypesetter_page_width,
-                           g_svgtypesetter_page_height);
+                           g_svgtypesetter_page_height, g_svgtypesetter_svg_encoding);
 
     g_svg_page.tab_per_page_nr = 1;
 

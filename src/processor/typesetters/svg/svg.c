@@ -12,6 +12,7 @@
 #include <processor/typesetters/svg/svginkspill.h>
 #include <processor/typesetters/typeprefs.h>
 #include <processor/settings.h>
+#include <usrland/cmdlineoptions.h>
 #include <stdio.h>
 
 int svg_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
@@ -19,11 +20,14 @@ int svg_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     int has_error = 1;
     size_t fretboard_sz = SVGTYPESETTER_FRETBOARD_SIZE;
     extern int g_svgtypesetter_page_width, g_svgtypesetter_page_height;
+    extern char *g_svgtypesetter_svg_encoding;
 
     if (typesetter_paper_size(&g_svgtypesetter_page_width, &g_svgtypesetter_page_height) == 0) {
         fprintf(stderr, "processor ERROR: Invalid paper size.\n");
         return 0;
     }
+
+    g_svgtypesetter_svg_encoding = (char *)get_option("svg-encoding", SVGTYPESETTER_DEFAULT_SVG_ENCODING);
 
     set_processor_setting("fretboard-size", &fretboard_sz, sizeof(fretboard_sz));
 
