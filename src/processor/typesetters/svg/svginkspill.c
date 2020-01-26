@@ -1043,7 +1043,8 @@ static int svgtypesetter_newpage(void) {
                            "<svg xmlns=\"http://www.w3.org/2000/svg\""
                            " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
                            "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n",
-                           g_svgtypesetter_page_width, g_svgtypesetter_page_height, g_svgtypesetter_page_width,
+                           g_svgtypesetter_svg_encoding, g_svgtypesetter_page_width,
+                           g_svgtypesetter_page_height, g_svgtypesetter_page_width,
                            g_svgtypesetter_page_height, g_svgtypesetter_svg_encoding);
 
     g_svg_page.tab_per_page_nr = 1;
