@@ -22,8 +22,13 @@ int svg_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     extern char *g_svgtypesetter_svg_encoding;
 
     if (typesetter_paper_size(&g_svgtypesetter_page_width, &g_svgtypesetter_page_height) == 0) {
-        g_svgtypesetter_page_width = SVGTYPESETTER_DEFAULT_PAGE_WIDTH;
-        g_svgtypesetter_page_height = SVGTYPESETTER_DEFAULT_PAGE_HEIGHT;
+        if (g_svgtypesetter_page_width == 0) {
+            g_svgtypesetter_page_width = SVGTYPESETTER_DEFAULT_PAGE_WIDTH;
+        }
+
+        if (g_svgtypesetter_page_height == 0) {
+            g_svgtypesetter_page_height = SVGTYPESETTER_DEFAULT_PAGE_HEIGHT;
+        }
     }
 
     g_svgtypesetter_svg_encoding = (char *)get_option("svg-encoding", SVGTYPESETTER_DEFAULT_SVG_ENCODING);

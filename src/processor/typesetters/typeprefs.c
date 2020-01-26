@@ -69,14 +69,17 @@ int typesetter_paper_size(int *width, int *height) {
     if ((p_info = typesetter_get_paper_info()) != NULL) {
         *width = p_info->width;
         *height = p_info->height;
-    } else if ((option = get_option("paper-width", NULL)) != NULL) {
-        *width = atoi(option);
-        if (*width > 0 && (option = get_option("paper-height", NULL)) != NULL) {
+    } else {
+        if ((option = get_option("paper-width", NULL)) != NULL) {
+            *width = atoi(option);
+        }
+
+        if ((option = get_option("paper-height", NULL)) != NULL) {
             *height = atoi(option);
         }
     }
 
-    no_error = (*width > 0 && *height > 0);
+    no_error = (*width > 0 || *height > 0);
 
 typesetter_paper_size_epilogue:
 
