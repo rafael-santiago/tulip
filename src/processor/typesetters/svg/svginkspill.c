@@ -17,8 +17,6 @@
 #include <string.h>
 #include <stdio.h>
 
-// TODO(Rafael): Strip off all deprecated code.
-
 // TIP(Rafael): 'Pinch', 'pinched' here is a lousy pun for 'punched' from punched cards ;)
 //              When reading the word 'TAB', please do not scream, I am just using the standard way of write it here.
 
@@ -70,7 +68,6 @@ struct svgtypesetter_page_ctx {
     FILE *fp;
     // INFO(Rafael): Points to the current section of the ascii TAB
     const txttypesetter_tablature_ctx *tp;
-    int y; // DEPRECATED(Rafael): wtf...
     // INFO(Rafael): Some counting stuff for give us some clues to make some assumptions.
     int page_nr, tab_per_page_nr;
     // INFO(Rafael): filename stores the base name 'Foobar.svg' the curr_pagefile stores the effective numbered file name
@@ -234,10 +231,9 @@ int svgtypesetter_inkspill(const char *filepath, txttypesetter_tablature_ctx *ta
 static int svgtypesetter_has_sep(const char *strings, const size_t offset, const size_t fretboard_sz, const char sep) {
     const char *sp, *sp_end;
     int has = 0;
+
     sp = strings + offset;
     sp_end = sp + strlen(sp);
-
-    //printf("%d - %d\n", sp_end - sp, strlen(strings));
 
     while (sp != sp_end && !has) {
         has = (*sp == sep);
@@ -286,7 +282,6 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
         //               that will generate an empty TAB diagram. In this case, we can assume the last fbrd[0].y
         //               coordinate to get the next. But if it is an auto break, it indicates that there is TAB
         //               data drawn above and in this case, fbrd[5].y must be considered instead.
-        //*g_svg_page.tab.carriage_x = g_svg_page.tab.xlim_left; DEPRECATED(Rafael): wtf...
         g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
     } else {
         if (txttab->last == NULL && !tab_auto_break) {
@@ -394,7 +389,6 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
         }
     }
 
-//svgtypesetter_newtabdiagram_epilogue: // DEPRECATED(Rafael): wtf...
     // INFO(Rafael): Finally drawing the TAB diagram.
     svgtypesetter_spill_tabdiagram();
 
@@ -449,23 +443,30 @@ static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txtt
         while (lp != p_end && *lp != '\n') {
             lp++;
         }
+
         memset(comment, 0, sizeof(comment));
+
         if (p != NULL) {
             memcpy(comment, p, lp - p);
         }
+
         p = lp + 1;
+
         if (strlen(comment) > 0) {
             fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"11\" font-family=\"Courier\">"
                                    "%s</text>\n", g_svg_page.tab.xlim_left,
                                                   y,
                                                   comment);
         }
+
         y += SVGTYPESETTER_TAB_Y_SPAN + 2;
+
         if (y >= (g_svgtypesetter_page_height - (SVGTYPESETTER_TAB_Y_SPAN * 6))) {
             // INFO(Rafael): The current page became full, we need a new one.
             svgtypesetter_newpage();
             y = g_svg_page.tab.fbrd[0].y;
         }
+
         if (p >= p_end) {
             cp = cp->next;
             if (cp != NULL) {
@@ -570,6 +571,7 @@ static void svgtypesetter_carriage_return(const int space_amount, int *xreg) {
     if (xreg != NULL) {
         *xreg = *g_svg_page.tab.carriage_x;
     }
+
     *g_svg_page.tab.carriage_x = g_svg_page.tab.curr_ln_info->x + space_amount;
 }
 
@@ -600,27 +602,15 @@ static void svgtypesetter_flush_note_pinch(const char *note) {
         fprintf(g_svg_page.fp, "%c", *np);
         np++;
     }
+
     g_svg_page.tab.curr_ln_info->len = (np - note);
+
     fprintf(g_svg_page.fp, "</text>\n");
 }
 
 static void svgtypesetter_flush_bend_pinch(const int arrow) {
-    // DEPRECATED(Rafael): Nice but it would add rendering limitations.
-    /*
-    char *arrow_markup = (arrow) ? " marker-end=\"url(#arrow)\"" : "";
-    svgtypesetter_move_carriage_to_best_fit(7, 0);
-    fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d, %d,%d %d,%d\""
-                           " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>\n", *g_svg_page.tab.carriage_x,
-                                                                                       *g_svg_page.tab.carriage_y,
-                                                                                       *g_svg_page.tab.carriage_x,
-                                                                                       *g_svg_page.tab.carriage_y + 5,
-                                                                                       *g_svg_page.tab.carriage_x + 5,
-                                                                                       *g_svg_page.tab.carriage_y + 5,
-                                                                                       *g_svg_page.tab.carriage_x + 5,
-                                                                                       *g_svg_page.tab.carriage_y - 15,
-                                                                                       arrow_markup);
-    */
     svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_BEND_MIN_SPACE, 0);
+
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d, %d,%d %d,%d\""
                            " fill=\"none\" stroke=\"black\" stroke-width=\"1\"/>\n", *g_svg_page.tab.carriage_x,
                                                                                        *g_svg_page.tab.carriage_y,
@@ -630,6 +620,7 @@ static void svgtypesetter_flush_bend_pinch(const int arrow) {
                                                                                        *g_svg_page.tab.carriage_y + 5,
                                                                                        *g_svg_page.tab.carriage_x + 5,
                                                                                        *g_svg_page.tab.carriage_y - 15);
+
     if (arrow) {
         // INFO(Rafael): For a best support let's avoid using marker-end point to a location inside the own file,
         //               because certain viewers like gwenview 4.14 does not have support for this kind of location
@@ -645,21 +636,8 @@ static void svgtypesetter_flush_bend_pinch(const int arrow) {
 }
 
 static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
-    // DEPRECATED(Rafael): Nice but it would add rendering limitations.
-    /*
-    char *arrow_markup = (arrow) ? " marker-end=\"url(#arrow)\"" : "";
-    svgtypesetter_move_carriage_to_best_fit(7, 0);
-    fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d %d,%d %d,%d\""
-                           " fill=\"none\" stroke=\"black\" stroke-width=\"1\"%s/>\n", *g_svg_page.tab.carriage_x,
-                                                                                       *g_svg_page.tab.carriage_y,
-                                                                                       *g_svg_page.tab.carriage_x,
-                                                                                       *g_svg_page.tab.carriage_y - 10,
-                                                                                       *g_svg_page.tab.carriage_x + 5,
-                                                                                       *g_svg_page.tab.carriage_y - 10,
-                                                                                       *g_svg_page.tab.carriage_x + 4,
-                                                                                       *g_svg_page.tab.carriage_y + 5,
-                                                                                       arrow_markup);*/
     svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_RELEASE_BEND_MIN_SPACE, 0);
+
     fprintf(g_svg_page.fp, "\t<path d=\"M%d,%d C%d,%d %d,%d %d,%d\""
                            " fill=\"none\" stroke=\"black\" stroke-width=\"1\"/>\n", *g_svg_page.tab.carriage_x,
                                                                                      *g_svg_page.tab.carriage_y,
@@ -669,6 +647,7 @@ static void svgtypesetter_flush_release_bend_pinch(const int arrow) {
                                                                                      *g_svg_page.tab.carriage_y - 10,
                                                                                      *g_svg_page.tab.carriage_x + 4,
                                                                                      *g_svg_page.tab.carriage_y + 5);
+
 
     if (arrow) {
         // INFO(Rafael): For a best support let's avoid using marker-end point to a location inside the own file,
@@ -689,15 +668,19 @@ static void svgtypesetter_move_carriage_to_best_fit(const int min_space_amount, 
     //               the minimum space (pixels) between current x and last effective x.
     //               It finds for this best fit.
     int ml;
+
     if (g_svg_page.tab.curr_ln_info == NULL || g_svg_page.tab.curr_ln_info->x == 0) {
         return;
     }
+
     ml = min_space_amount * g_svg_page.tab.curr_ln_info->len;
+
     if ((*g_svg_page.tab.carriage_x - g_svg_page.tab.curr_ln_info->x) > ml) {
         do {
             *g_svg_page.tab.carriage_x -= 1;
         } while ((*g_svg_page.tab.carriage_x - g_svg_page.tab.curr_ln_info->x) > ml);
     }
+
     if (schedule_cr) {
         // INFO(Rafael): Let's schedule a carriage return. It certainly will be done before next note pinching.
         g_svg_page.tab.curr_ln_info->do_carriage_return = svgtypesetter_carriage_return;
@@ -707,6 +690,7 @@ static void svgtypesetter_move_carriage_to_best_fit(const int min_space_amount, 
 
 static void svgtypesetter_flush_vibrato_pinch(void) {
     svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_VIBRATO_MIN_SPACE, 0);
+
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\""
                            " font-family=\"Courier\">~</text>\n", *g_svg_page.tab.carriage_x,
                                                                   *g_svg_page.tab.carriage_y);
@@ -722,6 +706,7 @@ static void svgtypesetter_flush_hammer_on_pull_off_pinch(void) {
 
 static void svgtypesetter_flush_slide_down_pinch(void) {
     svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_SLIDE_DOWN_MIN_SPACE, g_svg_page.tab.sched_cr);
+
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\""
                            " font-family=\"Courier\">/</text>\n", *g_svg_page.tab.carriage_x,
                                                                   *g_svg_page.tab.carriage_y +
@@ -730,6 +715,7 @@ static void svgtypesetter_flush_slide_down_pinch(void) {
 
 static void svgtypesetter_flush_slide_up_pinch(void) {
     svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_SLIDE_UP_MIN_SPACE, g_svg_page.tab.sched_cr);
+
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\""
                            " font-family=\"Courier\">\\</text>\n", *g_svg_page.tab.carriage_x,
                                                                    *g_svg_page.tab.carriage_y +
@@ -798,31 +784,6 @@ static size_t svgtypesetter_get_bend_arrow_string(const char **strings, const si
     return 6;
 }
 
-static void svgtypesetter_reduce_blank_yspan(const txttypesetter_tablature_ctx *txttab) {
-    // DEPRECATED(Rafael): wtf...
-    const txttypesetter_comment_ctx *cp;
-    size_t cm_nr = 0;
-    char *p, *p_end;
-
-    if (txttab == NULL) {
-        return;
-    }
-
-    if (txttab->next != NULL && !has_unflushed_data((const char **)txttab->next->strings, 0, txttab->next->fretboard_sz)) {
-        return;
-    }
-
-    g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[0].y;
-
-    for (cp = txttab->comments; cp != NULL; cp = cp->next) {
-        cm_nr++;
-    }
-
-    *g_svg_page.tab.carriage_y -= (SVGTYPESETTER_TAB_Y_SPAN * cm_nr) * 6 + SVGTYPESETTER_TAB_Y_SPAN * 2;
-
-    svgtypesetter_refresh_fbrd_xy();
-}
-
 static int has_unflushed_data(const char **strings, const size_t offset, const size_t fretboard_size) {
     // INFO(Rafael): This function verifies if from current TAB snippet to its end has something different
     //               of the ordinary note sep '-'. Thus, by passing offset 0 means verify if the current
@@ -874,11 +835,13 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
     //
 
     for (offset = 0; offset < txttab->fretboard_sz - 2; offset++) {
+
         has_bad_align = 0;
         for (s = 0; s < 6 && !has_bad_align; s++) {
             has_bad_align = (isdigit(txttab->strings[s][offset]) && isdigit(txttab->strings[s][offset + 1]) &&
                              isdigit(txttab->strings[s][offset + 2]));
         }
+
         if (has_bad_align) {
             for (s = 0; s < 6; s++) {
                 temp = (char *) getseg(txttab->fretboard_sz + 4);
@@ -934,12 +897,6 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
         }
     }
 
-
-    /*for (s = 0; s < 6; s++) {
-        printf("'%s'\n", txttab->strings[s]);
-    }
-    printf("\n");
-    system("read");*/
 }
 
 static int svgtypesetter_refresh_fbrd_xy(void) {
@@ -947,6 +904,7 @@ static int svgtypesetter_refresh_fbrd_xy(void) {
     //               fbrd[0].y value. My choice for not using carriage_y is for the sake of a more foreseeable
     //               behavior of the refreshing process.
     size_t s;
+
     for (s = 0; s < 6; s++) {
         if (&g_svg_page.tab.fbrd[s].x != g_svg_page.tab.carriage_x) {
             g_svg_page.tab.fbrd[s].x = *g_svg_page.tab.carriage_x;
@@ -989,12 +947,6 @@ static int svgtypesetter_newpage(void) {
 
     size_t s;
 
-    // DEPRECATED(Rafael): wtf...
-    /*if (g_svg_page.tp != NULL && g_svg_page.tp->last != NULL &&
-        has_unflushed_data((const char **)g_svg_page.tp->last->strings, 0, g_svg_page.tp->last->fretboard_sz)) {
-        svgtypesetter_cut_tab();
-    }*/
-
     if (g_svg_page.fp != NULL) {
         svgtypesetter_fclose();
     }
@@ -1027,18 +979,6 @@ static int svgtypesetter_newpage(void) {
 
     svgtypesetter_refresh_fbrd_xy();
 
-    // DEPRECATED(Rafael): Seeking a wide support we will not use end-makers anymore.
-    /*fprintf(g_svg_page.fp, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>\n"
-                           "<svg xmlns=\"http://www.w3.org/2000/svg\""
-                           " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
-                           "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n"
-                           "\t<defs>\n"
-                            "\t\t<marker id=\"arrow\" markerWidth=\"10\" markerHeight=\"10\" refX=\"1\" refY=\"4\""
-                            " orient=\"auto\" markerUnits=\"strokeWidth\">\n"
-                            "\t\t\t<path d=\"M0,0 L0,8 L9,3 z\" fill=\"black\"/>\n"
-                            "\t\t</marker>\n"
-                            "\t</defs>\n", SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT,
-                                           SVGTYPESETTER_PAGE_WIDTH, SVGTYPESETTER_PAGE_HEIGHT);*/
     fprintf(g_svg_page.fp, "<?xml version=\"1.0\" encoding=\"%s\" standalone=\"no\"?>\n"
                            "<svg xmlns=\"http://www.w3.org/2000/svg\""
                            " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
@@ -1463,7 +1403,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
             stech_end = stech_p + sizeof(stech_pts) / sizeof(stech_pts[0]);
             sp = tp->techniques;
             while (stech_p != stech_end && sp != NULL) {
-                // INFO(Rafael): Initializing each sustained technique info record.
+                // INFO(Rafael): Initialising each sustained technique info record.
                 stech_p->x = *g_svg_page.tab.carriage_x;
                 // INFO(Rafael): Each sustained technique has its own buffer. It will make simple to manage
                 //               where start plotting the specific technique indication and where stopping.
@@ -1475,6 +1415,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                 stech_p++;
                 sp = sp->next;
             }
+
             stech_end = stech_p;
             stech_p = &stech_pts[0];
             stech_p->y = g_svg_page.tab.fbrd[0].y - (SVGTYPESETTER_TAB_Y_SPAN * 2) - 10;
@@ -1499,6 +1440,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                         //               There is nothing to do with it from now on.
                         continue;
                     }
+
                     if (!stech_p->print_line && isalpha(*stech_p->data)) {
                         // INFO(Rafael): We have found the start of the current sustained technique. It involves to
                         //               record the current carriage x, write its label to the SVG stream and flagging that
@@ -1605,6 +1547,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                     if (tp->strings[s][offset] == '-' && g_svg_page.tab.last_symbol != kTlpSepBar) {
                         g_svg_page.tab.last_symbol = kTlpNoteSep;
                     }
+
                     // INFO(Rafael): If is just about a ordinary separator or a note done from 10th fret or higher.
                     //               Notes are always entired written, so a note higher than '9' should be skipped
                     //               at second time.
@@ -1618,20 +1561,23 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                     }
                     continue;
                 }
+
                 if (tp->strings[s][offset] == 'b' && bend_arrow_string == 6) {
                     // INFO(Rafael): If the current TAB section is about a bend, let's discover at what string iteration
                     //               an arrow should be drawn in SVG stream.
                     bend_arrow_string = svgtypesetter_get_bend_arrow_string((const char **)tp->strings, offset);
                 } else if (tp->strings[s][offset] == 'r' && bend_arrow_string == 6) {
                     // INFO(Rafael): If the current TAB section is about a release bend, let's discover at what string
-                    // iteration an arrow should be drawn in SVG stream.
+                    //               iteration an arrow should be drawn in SVG stream.
                     bend_arrow_string = svgtypesetter_get_release_bend_arrow_string((const char **)tp->strings, offset);
                 }
+
                 // INFO(Rafael): Setting all handy control pointers to the current processed string.
                 g_svg_page.tab.carriage_x = &g_svg_page.tab.fbrd[s].x;
                 g_svg_page.tab.carriage_y = &g_svg_page.tab.fbrd[s].y;
                 g_svg_page.tab.curr_ln_info = &g_svg_page.tab.ln_info[s];
                 g_svg_page.tab.sched_cr = ((offset + 1 < tp->fretboard_sz) ? (tp->strings[s][offset + 1] != '-') : 0);
+
                 // INFO(Rafael): Finally doing the flush of the current ascii TAB section to the SVG TAB section.
                 do_pinch_flush(xstep, &tp->strings[s][offset], s, bend_arrow_string, is_chord);
             }
@@ -1683,40 +1629,6 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                     // INFO(Rafael): The current page became full, we need a new one.
                     svgtypesetter_newpage();
                 }
-
-                // DEPRECATED(Rafael): Code chunk relocated.
-                /*if (*g_svg_page.tab.carriage_x >= (SVGTYPESETTER_PAGE_WIDTH - SVGTYPESETTER_TAB_X_SPAN) &&
-                    has_unflushed_data((const char **)tp->strings, offset + 1, tp->fretboard_sz)) {
-                    // INFO(Rafael): The current tab diagram became full, we need a new empty one.
-
-                    if (stech_end != NULL) {
-                        // INFO(Rafael): If a new TAB diagram will be requested, we need to finish up drawing
-                        //               the sustained techniques lines of the current full one.
-                        stech_p = &stech_pts[0];
-                        while (stech_p != stech_end) {
-                            fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
-                                               " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\""
-                                               " stroke-dasharray=\"5,5\"/>\n", stech_p->x, *g_svg_page.tab.carriage_x,
-                                                                                stech_p->y + 1, stech_p->y + 1);
-                            stech_p++;
-                        }
-                    }
-                    svgtypesetter_newtabdiagram(tp);
-                    if (stech_end != NULL) {
-                        // INFO(Rafael): If a new TAB diagram requested, we need to indicate above this new one
-                        //               all sustained techniques indicated above the old one. In this case, only
-                        //               lines will be drawn.
-                        stech_p = &stech_pts[0];
-                        stech_p->x = *g_svg_page.tab.carriage_x;
-                        stech_p->y = g_svg_page.tab.fbrd[0].y - (SVGTYPESETTER_TAB_Y_SPAN * 2) - 10;
-                        stech_p += 1;
-                        while (stech_p != stech_end) {
-                            stech_p->x = *g_svg_page.tab.carriage_x;
-                            stech_p[0].y = stech_p[-1].y - SVGTYPESETTER_TAB_Y_SPAN;
-                            stech_p++;
-                        }
-                    }
-                }*/
             } else {
                 // INFO(Rafael): The current ascii TAB section was only about a section with ordinary '-' separators.
                 //               We will advance the carriage x less than with other steppers.
