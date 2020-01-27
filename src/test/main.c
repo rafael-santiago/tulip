@@ -26,6 +26,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+static void write_buffer_to_disk(const char *filepath, const char *buffer, const size_t buffer_size);
+
 CUTE_DECLARE_TEST_CASE(base_tulip_technique_stack_ctx_tests);
 CUTE_DECLARE_TEST_CASE(dsl_basic_dsl_utils_tests);
 CUTE_DECLARE_TEST_CASE(dsl_strutils_tests);
@@ -57,8 +59,10 @@ CUTE_DECLARE_TEST_CASE(processor_fancy_outputs_assurance);
 CUTE_DECLARE_TEST_CASE(append_tests);
 CUTE_DECLARE_TEST_CASE(users_binary_tests);
 CUTE_DECLARE_TEST_CASE(processor_typesetters_typesetter_paper_size_tests);
+CUTE_DECLARE_TEST_CASE(processor_typesetter_settings_tests);
 
 CUTE_TEST_CASE(tulips_tester_monkey)
+    remove(".tulipprefs");
     CUTE_RUN_TEST(base_tulip_technique_stack_ctx_tests);
     CUTE_RUN_TEST(base_tulip_single_note_ctx_tests);
     CUTE_RUN_TEST(base_tulip_part_ctx_tests);
@@ -84,11 +88,11 @@ CUTE_TEST_CASE(tulips_tester_monkey)
         printf("***\n*** WARNING: The compiler's fuzz tests were skipped.\n***\n");
     }
     CUTE_RUN_TEST(append_tests);
-    //  WARN(Santiago): It is important to run the following test after
-    //                  the test "dsl_utils_tlp_cmd_code_to_plain_index_tests"
-    //                  because the following tested function is quite dependant
-    //                  from the previous one. Being totally non-sense try to test
-    //                  it with the another broken.
+    //  WARN(Rafael): It is important to run the following test after
+    //                the test "dsl_utils_tlp_cmd_code_to_plain_index_tests"
+    //                because the following tested function is quite dependant
+    //                from the previous one. Being totally non-sense try to test
+    //                it with the another broken.
     CUTE_RUN_TEST(processor_oututils_get_technique_label_tests);
     CUTE_RUN_TEST(processor_oututils_single_note_to_tab_fret_nr_tests);
     CUTE_RUN_TEST(processor_typesetters_txt_sustained_technique_ctx_tests);
@@ -97,8 +101,8 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     // WARN(Rafael): This specific test must run after cmdlineoptions_tests because
     //               typesetter_paper_size() must be able to read options from command line.
     CUTE_RUN_TEST(processor_typesetters_typesetter_paper_size_tests);
-    //  WARN(Santiago): The tests related with the system module should
-    //                  run after.
+    //  WARN(Rafael): The tests related with the system module should
+    //                run after.
     CUTE_RUN_TEST(system_get_tulip_system_version_tests);
     CUTE_RUN_TEST(system_tulip_task_exec_tests);
     if (CUTE_GET_OPTION("skip-fancy-outputs-assurance") == NULL) {
@@ -106,11 +110,44 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     } else {
         printf("***\n*** WARNING: The fancy outputs assurance tests were skipped.\n***\n");
     }
-    //  WARN(Santiago): If all is ok, it is time to test the user's binary.
+    //  WARN(Rafael): If all is ok, it is time to test the user's binary.
     CUTE_RUN_TEST(users_binary_tests);
+    // WARN(Rafael): This test will run last, because it will change all default settings that
+    //               are expected for getting all fancy ouputs assurance results.
+    CUTE_RUN_TEST(processor_typesetter_settings_tests);
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulips_tester_monkey);
+
+CUTE_TEST_CASE(processor_typesetter_settings_tests)
+    struct typesetter_curr_settings cset;
+    char *tulipprefs = "indentation-deepness=8\n"
+                       "fretboard-style=continuous\n"
+                       "close-tab-to-save=yes\n"
+                       "include-tab-notation=yes\n"
+                       "cut-tab-on-the-last-note=yes\n"
+                       "add-tuning-to-the-fretboard=yes\n"
+                       "show-tuning=yes\n";
+    char *argv[] = { "(null)" };
+
+    write_buffer_to_disk(".tulipprefs", tulipprefs, strlen(tulipprefs));
+
+    tulip_system_init(1, argv);
+
+    cset = typesetter_settings();
+
+    CUTE_ASSERT(cset.indentation_deepness == 8);
+    CUTE_ASSERT(cset.prefs & kTlpPrefsFretboardStyleContinuous);
+    CUTE_ASSERT(cset.prefs & kTlpPrefsCloseTabToSave);
+    CUTE_ASSERT(cset.prefs & kTlpPrefsIncludeTabNotation);
+    CUTE_ASSERT(cset.prefs & kTlpPrefsCutTabOnTheLastNote);
+    CUTE_ASSERT(cset.prefs & kTlpPrefsAddTuningToTheFretboard);
+    CUTE_ASSERT(cset.prefs & kTlpPrefsShowTuning);
+
+    CUTE_ASSERT(remove(".tulipprefs") == 0);
+
+    tulip_system_init(1, argv);
+CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(processor_typesetters_typesetter_paper_size_tests)
     // INFO(Rafael): This rad profane dance among argvs and their items is because typesetter_paper_size() can write
@@ -389,7 +426,7 @@ CUTE_TEST_CASE(base_tulip_technique_stack_ctx_tests)
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(dsl_basic_dsl_utils_tests)
-    //  INFO(Santiago): it tests the basic aspects of the DSL.
+    //  INFO(Rafael): it tests the basic aspects of the DSL.
     struct expected_results {
         const char *tech;
         tulip_command_t cmd;
@@ -633,7 +670,7 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
         int valid;
     };
     struct tlpcode_test_vector tlpcodes[] = {
-        //  INFO(Santiago): Toy productions.
+        //  INFO(Rafael): Toy productions.
         { ".chord{60-52-42-31-20-10}", 1 },
         { ".chord 60-52-42-31-20-10}", 0 },
         { "30", 1 },
@@ -713,7 +750,7 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
         { ".chord{60-57-49-39}%this a good area to comment\n", 1 },
         { ".chord{60-57-49-39}\n%this a good area to comment", 1 },
         { ".chord{60-57-49-39}\n%this a good area to comment\n", 1 },
-        //  INFO(Santiago): Real world productions. All following must compile without any error.
+        //  INFO(Rafael): Real world productions. All following must compile without any error.
         { ".chord{40-30}-.chord{43-33}-.chord{45-35}.chord{4:~3:~}-|-.chord{40-30}-.chord{43-33}-.chord{46-36}.chord{4:p3:p}.chord{45-35}.chord{4:~3:~}-|-.chord{40-30}-.chord{43-33}-.chord{45-35}-.chord{43-33}-.chord{40-30}-;", 1 },
         { ".letring{55-47-37-27---27-37-47-55-47-27--54-46-36-26--46-36-26--24h26h27-14--55-47-37-27--47-37-27--55-27-14b15r--54-46-36-26--46-36-26--26b27r};", 1 },
         { ".chord{600-500-402}--.chord{601-501-403}--.chord{602-502-404}-|;", 1 },
@@ -869,7 +906,7 @@ CUTE_TEST_CASE(system_get_tulip_system_version_tests)
     CUTE_ASSERT(get_tulip_system_version() != NULL);
 CUTE_TEST_CASE_END
 
-void write_buffer_to_disk(const char *filepath, const char *buffer, const size_t buffer_size) {
+static void write_buffer_to_disk(const char *filepath, const char *buffer, const size_t buffer_size) {
     FILE *fp = fopen(filepath, "wb");
     if (fp == NULL) {
         return;
@@ -879,8 +916,8 @@ void write_buffer_to_disk(const char *filepath, const char *buffer, const size_t
 }
 
 CUTE_TEST_CASE(system_tulip_task_exec_tests)
-    //  WARN(Santiago): This test will test indirectly the tulip_system_init() function.
-    //                  If it is failing nothing here will make sense too.
+    //  WARN(Rafael): This test will test indirectly the tulip_system_init() function.
+    //                If it is failing nothing here will make sense too.
     struct task_ctx {
         int exit_code;
         int argc;
@@ -918,9 +955,9 @@ CUTE_TEST_CASE(processor_typesetters_txt_sustained_technique_ctx_tests)
     techniques = add_technique_to_txttypesetter_sustained_technique_ctx(techniques);
     CUTE_ASSERT(techniques == head);
 
-    //  INFO(Santiago): The following test will test indirectly the adding sequence and the
-    //                  free_txttypesetter_sustained_technique_ctx() because the "rm"
-    //                  internally uses it to free the passed memory address.
+    //  INFO(Rafael): The following test will test indirectly the adding sequence and the
+    //                free_txttypesetter_sustained_technique_ctx() because the "rm"
+    //                internally uses it to free the passed memory address.
 
     neck = head->next;
 
@@ -957,7 +994,7 @@ CUTE_TEST_CASE(processor_typesetters_txt_sustained_technique_ctx_tests)
     techniques = rm_technique_from_txttypesetter_sustained_technique_ctx(neck, techniques);
     CUTE_ASSERT(techniques == NULL);
 
-    //  INFO(Santiago): Now it is up to the memory leak system check stuff.
+    //  INFO(Rafael): Now it is up to the memory leak system check stuff.
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(processor_typesetters_txt_tablature_ctx_tests)
@@ -1211,7 +1248,7 @@ CUTE_TEST_CASE(dsl_compiler_fuzz_tests)
         for (b = 0; b < buf_sz; b++) {
             buf[b] = rand() % 255;
         }
-        write_buffer_to_disk("fuzz.tlp", buf, buf_sz);  //  WARN(Santiago): If it can cause any unexpected behavior we need to known more about this buffer.
+        write_buffer_to_disk("fuzz.tlp", buf, buf_sz);  //  WARN(Rafael): If it can cause any unexpected behavior we need to known more about this buffer.
         compile_tulip_codebuf(buf, NULL, &song, NULL);
         if (song != NULL) {
             free_tulip_single_note_ctx(song);
@@ -1347,7 +1384,7 @@ CUTE_TEST_CASE(users_binary_tests)
     printf("\n\tTULIP's TESTER MONKEY SAID: Hello, do not worry about the output..."
            "\n\t                            Now I will effectively poke the binary that you will install & use.\n\n");
 
-    //  INFO(Santiago): Firstly, the compilation tests.
+    //  INFO(Rafael): Firstly, the compilation tests.
     sprintf(cmdline, "%s%s", basepath, "--tlp=not-here.tlp");
     exit_code = system(cmdline);
     CUTE_ASSERT(exit_code != 0);
@@ -1377,12 +1414,12 @@ CUTE_TEST_CASE(users_binary_tests)
     }
 
     write_buffer_to_disk("final.tlp", g_fancy_outputs_test_vector[0].tlp_code, g_fancy_outputs_test_vector[0].tlp_code_sz);
-    //  INFO(Santiago): It can not produce any Segmentation Fault.
+    //  INFO(Rafael): It can not produce any Segmentation Fault.
     sprintf(cmdline, "%s --tlp=final.tlp --out=final.tlp", basepath);
     exit_code = system(cmdline);
     CUTE_ASSERT(exit_code != 0);
 
-    //  INFO(Santiago): Now, the typesetting must be verified too.
+    //  INFO(Rafael): Now, the typesetting must be verified too.
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
         sprintf(cmdline, "%s --tlp=final.tlp --out=%s", basepath, g_fancy_outputs_test_vector[t].filepath);
 

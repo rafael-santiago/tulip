@@ -1,5 +1,5 @@
 /*
- *                           Copyright (C) 2005-2016 by Rafael Santiago
+ *                           Copyright (C) 2005-2020 by Rafael Santiago
  *
  * This is a free software. You can redistribute it and/or modify under
  * the terms of the GNU General Public License version 2.
@@ -24,8 +24,8 @@ void tulip_system_init(int argc, char **argv) {
         "indentation-deepness",
         "include-tab-notation",
         "cut-tab-on-the-last-note",
-        "add-tunning-to-the-fretboard",
-        "show-tunning"
+        "add-tuning-to-the-fretboard",
+        "show-tuning"
     };
     const size_t overwritten_options_nr = sizeof(overwritten_options) / sizeof(overwritten_options[0]);
     size_t o = 0;
