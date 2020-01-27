@@ -113,7 +113,7 @@ CUTE_TEST_CASE_END
 CUTE_MAIN(tulips_tester_monkey);
 
 CUTE_TEST_CASE(processor_typesetters_typesetter_paper_size_tests)
-    // INFO(Rafael): This rad profane dance among argvs and their items is because typesetter_paper_size() can written
+    // INFO(Rafael): This rad profane dance among argvs and their items is because typesetter_paper_size() can write
     //               to memory pointed by those items.
     //
     //               Muahauah

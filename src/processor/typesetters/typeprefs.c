@@ -11,7 +11,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <stdio.h>
 
 struct typesetter_paper_info_ctx {
     char *name;
