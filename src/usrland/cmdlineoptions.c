@@ -22,7 +22,7 @@ void set_option_argc_argv(const int argc, char **argv) {
 static const char *get_option_value(const char *option, int boolean_option, const char *default_value) {
     char temp[255] = "";
     int a = 0;
-    if (option == NULL || g_argv == NULL) {
+    if (option == NULL || g_argc == 0 || g_argv == NULL || *g_argv == NULL) {
         return default_value;
     }
     strncpy(temp, "--", sizeof(temp) - 1);

@@ -146,7 +146,7 @@ CUTE_TEST_CASE(processor_typesetter_settings_tests)
 
     CUTE_ASSERT(remove(".tulipprefs") == 0);
 
-    tulip_system_init(1, argv);
+    set_option_argc_argv(0, NULL);
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(processor_typesetters_typesetter_paper_size_tests)
@@ -406,6 +406,8 @@ CUTE_TEST_CASE(processor_typesetters_typesetter_paper_size_tests)
         CUTE_ASSERT(height == test->expected_height);
         test++;
     }
+
+    set_option_argc_argv(0, NULL);
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(base_tulip_technique_stack_ctx_tests)
@@ -1264,15 +1266,21 @@ CUTE_TEST_CASE(processor_fancy_outputs_assurance)
     size_t t;
     tulip_single_note_ctx *song = NULL;
     char *output_buf = NULL;
+    unsigned char *outpath;
     size_t output_buf_sz = 0, b = 0;
     FILE *output = NULL;
+
+    tulip_system_init(0, NULL);
+
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
         CUTE_ASSERT(compile_tulip_codebuf(g_fancy_outputs_test_vector[t].tlp_code, NULL, &song, NULL) == 1);
         CUTE_ASSERT(song != NULL);
         CUTE_ASSERT(mktab(song, g_fancy_outputs_test_vector[t].filepath) == 0);
         free_tulip_single_note_ctx(song);
         song = NULL;
-        output = fopen(g_fancy_outputs_test_vector[t].filepath, "rb");
+        outpath = (strstr(g_fancy_outputs_test_vector[t].filepath, ".svg") == NULL) ? g_fancy_outputs_test_vector[t].filepath :
+                                                                                      (unsigned char *)"output-001.svg";
+        output = fopen(outpath, "rb");
         CUTE_ASSERT(output != NULL);
         fseek(output, 0L, SEEK_END);
         output_buf_sz = (size_t) ftell(output);
@@ -1286,7 +1294,7 @@ CUTE_TEST_CASE(processor_fancy_outputs_assurance)
             CUTE_ASSERT(output_buf[b] == g_fancy_outputs_test_vector[t].output[b]);
         }
         free(output_buf);
-        remove(g_fancy_outputs_test_vector[t].filepath);
+        remove(outpath);
     }
 CUTE_TEST_CASE_END
 
@@ -1296,6 +1304,7 @@ CUTE_TEST_CASE(append_tests)
     char cmdline[200];
     FILE *fp;
     char *output;
+    unsigned char *outpath;
     size_t output_sz;
 #ifndef _WIN32
     char *binpath = "../../bin/tulip";
@@ -1309,9 +1318,11 @@ CUTE_TEST_CASE(append_tests)
         write_buffer_to_disk("inc.tlp",
                              g_fancy_outputs_test_vector[t].tlp_code,
                              strlen(g_fancy_outputs_test_vector[t].tlp_code));
-        sprintf(cmdline, "%s --tlp=main.tlp --out=%s", binpath, g_fancy_outputs_test_vector[t].filepath);
+        snprintf(cmdline, sizeof(cmdline) - 1, "%s --tlp=main.tlp --out=%s", binpath, g_fancy_outputs_test_vector[t].filepath);
         CUTE_ASSERT(system(cmdline) == 0);
-        fp = fopen(g_fancy_outputs_test_vector[t].filepath, "rb");
+        outpath = (strstr(g_fancy_outputs_test_vector[t].filepath, ".svg") == NULL) ? g_fancy_outputs_test_vector[t].filepath :
+                                                                                      (unsigned char *)"output-001.svg";
+        fp = fopen(outpath, "rb");
         CUTE_ASSERT(fp != NULL);
         fseek(fp, 0L, SEEK_END);
         output_sz = ftell(fp);
@@ -1323,7 +1334,7 @@ CUTE_TEST_CASE(append_tests)
         fclose(fp);
         CUTE_ASSERT(output_sz == g_fancy_outputs_test_vector[t].output_sz);
         CUTE_ASSERT(memcmp(output, g_fancy_outputs_test_vector[t].output, output_sz) == 0);
-        remove(g_fancy_outputs_test_vector[t].filepath);
+        remove(outpath);
         free(output);
     }
 
@@ -1361,6 +1372,7 @@ CUTE_TEST_CASE(users_binary_tests)
     size_t t = 0, o = 0;
     FILE *output = NULL;
     char *output_buf = NULL;
+    unsigned char *outpath;
     long osize = 0;
     char *dummy_options[] = {
         " --larry",
@@ -1385,49 +1397,52 @@ CUTE_TEST_CASE(users_binary_tests)
            "\n\t                            Now I will effectively poke the binary that you will install & use.\n\n");
 
     //  INFO(Rafael): Firstly, the compilation tests.
-    sprintf(cmdline, "%s%s", basepath, "--tlp=not-here.tlp");
+    snprintf(cmdline, sizeof(cmdline) - 1, "%s%s", basepath, "--tlp=not-here.tlp");
     exit_code = system(cmdline);
     CUTE_ASSERT(exit_code != 0);
 
-    sprintf(cmdline, "%s%s", basepath, "--tlp=final.tlp");
+    snprintf(cmdline, sizeof(cmdline) - 1, "%s%s", basepath, "--tlp=final.tlp");
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
         write_buffer_to_disk("final.tlp", g_fancy_outputs_test_vector[t].tlp_code, g_fancy_outputs_test_vector[t].tlp_code_sz);
         CUTE_ASSERT(system(cmdline) == 0);
         remove("final.tlp");
     }
 
-    sprintf(cmdline, "%s", basepath);
+    snprintf(cmdline, sizeof(cmdline) - 1, "%s", basepath);
     exit_code = system(cmdline);
     CUTE_ASSERT(exit_code != 0);
 
-    sprintf(cmdline, "%s --help", basepath);
+    snprintf(cmdline, sizeof(cmdline) - 1, "%s --help", basepath);
     exit_code = system(cmdline);
     CUTE_ASSERT(exit_code == 0);
 
-    sprintf(cmdline, "%s --version", basepath);
+    snprintf(cmdline, sizeof(cmdline) - 1, "%s --version", basepath);
     exit_code = system(cmdline);
     CUTE_ASSERT(exit_code == 0);
 
     for (t = 0; t < dummy_options_sz; t++) {
-        sprintf(cmdline, "%s%s", basepath, dummy_options[rand() % dummy_options_sz]);
+        snprintf(cmdline, sizeof(cmdline) - 1, "%s%s", basepath, dummy_options[rand() % dummy_options_sz]);
         CUTE_ASSERT(system(cmdline) != 0);
     }
 
     write_buffer_to_disk("final.tlp", g_fancy_outputs_test_vector[0].tlp_code, g_fancy_outputs_test_vector[0].tlp_code_sz);
     //  INFO(Rafael): It can not produce any Segmentation Fault.
-    sprintf(cmdline, "%s --tlp=final.tlp --out=final.tlp", basepath);
+    snprintf(cmdline, sizeof(cmdline) - 1, "%s --tlp=final.tlp --out=final.tlp", basepath);
     exit_code = system(cmdline);
     CUTE_ASSERT(exit_code != 0);
 
     //  INFO(Rafael): Now, the typesetting must be verified too.
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
-        sprintf(cmdline, "%s --tlp=final.tlp --out=%s", basepath, g_fancy_outputs_test_vector[t].filepath);
+        snprintf(cmdline, sizeof(cmdline) - 1, "%s --tlp=final.tlp --out=%s", basepath,
+                                                                              g_fancy_outputs_test_vector[t].filepath);
 
         write_buffer_to_disk("final.tlp", g_fancy_outputs_test_vector[t].tlp_code, g_fancy_outputs_test_vector[t].tlp_code_sz);
 
         CUTE_ASSERT(system(cmdline) == 0);
 
-        output = fopen(g_fancy_outputs_test_vector[t].filepath, "rb");
+        outpath = (strstr(g_fancy_outputs_test_vector[t].filepath, ".svg") == NULL) ? g_fancy_outputs_test_vector[t].filepath :
+                                                                                      (unsigned char *)"output-001.svg";
+        output = fopen(outpath, "rb");
         CUTE_ASSERT(output != NULL);
         fseek(output, 0L, SEEK_END);
         osize = ftell(output);
@@ -1447,7 +1462,7 @@ CUTE_TEST_CASE(users_binary_tests)
 
         free(output_buf);
         remove("final.tlp");
-        remove(g_fancy_outputs_test_vector[t].filepath);
+        remove(outpath);
     }
 
     printf("\n\tTULIP's TESTER MONKEY SAID: All done! All clean! All my tests said that this software is good for using."

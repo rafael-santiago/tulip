@@ -834,7 +834,9 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
     // The SVG processor will beautify it a little more later.
     //
 
-    for (offset = 0; offset < txttab->fretboard_sz - 2; offset++) {
+    has_bad_align = 1;
+
+    for (offset = 0; offset < txttab->fretboard_sz - 2 && has_bad_align; offset++) {
 
         has_bad_align = 0;
         for (s = 0; s < 6 && !has_bad_align; s++) {
@@ -844,11 +846,12 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
 
         if (has_bad_align) {
             for (s = 0; s < 6; s++) {
-                temp = (char *) getseg(txttab->fretboard_sz + 4);
-                memset(temp, 0, txttab->fretboard_sz + 4);
+                temp = (char *) getseg(txttab->fretboard_sz + 32);
+                memset(temp, 0, txttab->fretboard_sz + 32);
                 memcpy(temp, txttab->strings[s], offset + 2);
                 temp[offset + 2] = '-';
-                memcpy(&temp[offset + 3], &txttab->strings[s][offset + 2], txttab->fretboard_sz - offset);
+                s_temp = strlen(&txttab->strings[s][offset + 2]);
+                memcpy(&temp[offset + 3], &txttab->strings[s][offset + 2], s_temp);
                 free(txttab->strings[s]);
                 txttab->strings[s] = temp;
             }

@@ -35,7 +35,8 @@ struct typesetter_fancy_outputs_assurance g_fancy_outputs_test_vector[] = {
     add_new_output_fancy_testing_step(born_to_hula, ps),
     add_new_output_fancy_testing_step(born_to_hula, md),
     add_new_output_fancy_testing_step(born_to_hula, html),
-    add_new_output_fancy_testing_step(haitian_fight_song, eps)
+    add_new_output_fancy_testing_step(haitian_fight_song, eps),
+    add_new_output_fancy_testing_step(pisces, svg)
 };
 
 size_t g_fancy_outputs_test_vector_nr = sizeof(g_fancy_outputs_test_vector) / sizeof(g_fancy_outputs_test_vector[0]);
