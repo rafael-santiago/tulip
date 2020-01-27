@@ -18,12 +18,358 @@
 #include <system/version.h>
 #include <system/init.h>
 #include <system/exec.h>
+#include <processor/typesetters/typeprefs.h>
 #include <processor/typesetters/txt/txtctx.h>
 #include <processor/processor.h>
 #include "fancytesting.h"
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
+
+CUTE_DECLARE_TEST_CASE(base_tulip_technique_stack_ctx_tests);
+CUTE_DECLARE_TEST_CASE(dsl_basic_dsl_utils_tests);
+CUTE_DECLARE_TEST_CASE(dsl_strutils_tests);
+CUTE_DECLARE_TEST_CASE(dsl_parser_skip_string_chunk_tests);
+CUTE_DECLARE_TEST_CASE(dsl_parser_get_next_tlp_technique_block_begin_tests);
+CUTE_DECLARE_TEST_CASE(dsl_parser_get_next_tlp_technique_block_end_tests);
+CUTE_DECLARE_TEST_CASE(dsl_parser_get_next_tlp_technique_block_size_tests);
+CUTE_DECLARE_TEST_CASE(dsl_parser_get_codebuf_from_filepath_tests);
+CUTE_DECLARE_TEST_CASE(dsl_parser_get_next_tlp_command_tests);
+CUTE_DECLARE_TEST_CASE(dsl_parser_set_curr_code_line_number_tests);
+CUTE_DECLARE_TEST_CASE(dsl_parser_get_curr_code_line_number_tests);
+CUTE_DECLARE_TEST_CASE(base_tulip_single_note_ctx_tests);
+CUTE_DECLARE_TEST_CASE(dsl_utils_tlp_cmd_code_to_plain_index_tests);
+CUTE_DECLARE_TEST_CASE(dsl_compiler_compile_tulip_codebuf);
+CUTE_DECLARE_TEST_CASE(dsl_utils_demux_tlp_commands_tests);
+CUTE_DECLARE_TEST_CASE(processor_oututils_get_technique_label_tests);
+CUTE_DECLARE_TEST_CASE(processor_oututils_single_note_to_tab_fret_nr_tests);
+CUTE_DECLARE_TEST_CASE(system_get_tulip_system_version_tests);
+CUTE_DECLARE_TEST_CASE(system_tulip_task_exec_tests);
+CUTE_DECLARE_TEST_CASE(processor_typesetters_txt_sustained_technique_ctx_tests);
+CUTE_DECLARE_TEST_CASE(processor_typesetters_txt_tablature_ctx_tests);
+CUTE_DECLARE_TEST_CASE(base_tulip_part_ctx_tests);
+CUTE_DECLARE_TEST_CASE(dsl_utils_get_cmd_tag_from_cmd_code_tests);
+CUTE_DECLARE_TEST_CASE(dsl_utils_has_sustained_technique_tests);
+CUTE_DECLARE_TEST_CASE(dsl_utils_has_non_sustained_technique_tests);
+CUTE_DECLARE_TEST_CASE(usrland_cmdlineoptions_tests);
+CUTE_DECLARE_TEST_CASE(dsl_compiler_fuzz_tests);
+CUTE_DECLARE_TEST_CASE(processor_fancy_outputs_assurance);
+CUTE_DECLARE_TEST_CASE(append_tests);
+CUTE_DECLARE_TEST_CASE(users_binary_tests);
+CUTE_DECLARE_TEST_CASE(processor_typesetters_typesetter_paper_size_tests);
+
+CUTE_TEST_CASE(tulips_tester_monkey)
+    CUTE_RUN_TEST(base_tulip_technique_stack_ctx_tests);
+    CUTE_RUN_TEST(base_tulip_single_note_ctx_tests);
+    CUTE_RUN_TEST(base_tulip_part_ctx_tests);
+    CUTE_RUN_TEST(dsl_basic_dsl_utils_tests);
+    CUTE_RUN_TEST(dsl_strutils_tests);
+    CUTE_RUN_TEST(dsl_parser_skip_string_chunk_tests);
+    CUTE_RUN_TEST(dsl_parser_get_next_tlp_technique_block_begin_tests);
+    CUTE_RUN_TEST(dsl_parser_get_next_tlp_technique_block_end_tests);
+    CUTE_RUN_TEST(dsl_parser_get_next_tlp_technique_block_size_tests);
+    CUTE_RUN_TEST(dsl_parser_get_codebuf_from_filepath_tests);
+    CUTE_RUN_TEST(dsl_parser_get_next_tlp_command_tests);
+    CUTE_RUN_TEST(dsl_parser_set_curr_code_line_number_tests);
+    CUTE_RUN_TEST(dsl_parser_get_curr_code_line_number_tests);
+    CUTE_RUN_TEST(dsl_utils_tlp_cmd_code_to_plain_index_tests);
+    CUTE_RUN_TEST(dsl_utils_demux_tlp_commands_tests);
+    CUTE_RUN_TEST(dsl_utils_get_cmd_tag_from_cmd_code_tests);
+    CUTE_RUN_TEST(dsl_utils_has_sustained_technique_tests);
+    CUTE_RUN_TEST(dsl_utils_has_non_sustained_technique_tests);
+    CUTE_RUN_TEST(dsl_compiler_compile_tulip_codebuf);
+    if (CUTE_GET_OPTION("skip-fuzz-tests") == NULL) {
+        CUTE_RUN_TEST(dsl_compiler_fuzz_tests);
+    } else {
+        printf("***\n*** WARNING: The compiler's fuzz tests were skipped.\n***\n");
+    }
+    CUTE_RUN_TEST(append_tests);
+    //  WARN(Santiago): It is important to run the following test after
+    //                  the test "dsl_utils_tlp_cmd_code_to_plain_index_tests"
+    //                  because the following tested function is quite dependant
+    //                  from the previous one. Being totally non-sense try to test
+    //                  it with the another broken.
+    CUTE_RUN_TEST(processor_oututils_get_technique_label_tests);
+    CUTE_RUN_TEST(processor_oututils_single_note_to_tab_fret_nr_tests);
+    CUTE_RUN_TEST(processor_typesetters_txt_sustained_technique_ctx_tests);
+    CUTE_RUN_TEST(processor_typesetters_txt_tablature_ctx_tests);
+    CUTE_RUN_TEST(usrland_cmdlineoptions_tests);
+    // WARN(Rafael): This specific test must run after cmdlineoptions_tests because
+    //               typesetter_paper_size() must be able to read options from command line.
+    CUTE_RUN_TEST(processor_typesetters_typesetter_paper_size_tests);
+    //  WARN(Santiago): The tests related with the system module should
+    //                  run after.
+    CUTE_RUN_TEST(system_get_tulip_system_version_tests);
+    CUTE_RUN_TEST(system_tulip_task_exec_tests);
+    if (CUTE_GET_OPTION("skip-fancy-outputs-assurance") == NULL) {
+        CUTE_RUN_TEST(processor_fancy_outputs_assurance);
+    } else {
+        printf("***\n*** WARNING: The fancy outputs assurance tests were skipped.\n***\n");
+    }
+    //  WARN(Santiago): If all is ok, it is time to test the user's binary.
+    CUTE_RUN_TEST(users_binary_tests);
+CUTE_TEST_CASE_END
+
+CUTE_MAIN(tulips_tester_monkey);
+
+CUTE_TEST_CASE(processor_typesetters_typesetter_paper_size_tests)
+    // INFO(Rafael): This rad profane dance among argvs and their items is because typesetter_paper_size() can written
+    //               to memory pointed by those items.
+    //
+    //               Muahauah
+    //               Muhuahauhauahua
+    //               Muhauhauhauahuahuahuahuahauhauahauhauahauhauahuahauh!
+    //
+    char argv_4a0_data[] = "--paper=4a0";
+    char *argv_4a0[] = {
+        argv_4a0_data
+    };
+    char argv_2a0_data[] = "--paper=2a0";
+    char *argv_2a0[] = {
+        argv_2a0_data
+    };
+    char argv_a0_data[] = "--paper=a0";
+    char *argv_a0[] = {
+        argv_a0_data
+    };
+    char argv_a1_data[] = "--paper=a1";
+    char *argv_a1[] = {
+        argv_a1_data
+    };
+    char argv_a2_data[] = "--paper=a2";
+    char *argv_a2[] = {
+        argv_a2_data
+    };
+    char argv_a3_data[] = "--paper=a3";
+    char *argv_a3[] = {
+        argv_a3_data
+    };
+    char argv_a4_data[] = "--paper=a4";
+    char *argv_a4[] = {
+        argv_a4_data
+    };
+    char argv_a5_data[] = "--paper=a5";
+    char *argv_a5[] = {
+        argv_a5_data
+    };
+    char argv_a6_data[] = "--paper=a6";
+    char *argv_a6[] = {
+        argv_a6_data
+    };
+    char argv_a7_data[] = "--paper=a7";
+    char *argv_a7[] = {
+        argv_a7_data
+    };
+    char argv_a8_data[] = "--paper=a8";
+    char *argv_a8[] = {
+        argv_a8_data
+    };
+    char argv_a9_data[] = "--paper=a9";
+    char *argv_a9[] = {
+        argv_a9_data
+    };
+    char argv_a10_data[] = "--paper=a10";
+    char *argv_a10[] = {
+        argv_a10_data
+    };
+    char argv_4A0_data[] = "--paper=4A0";
+    char *argv_4A0[] = {
+        argv_4A0_data
+    };
+    char argv_2A0_data[] = "--paper=2A0";
+    char *argv_2A0[] = {
+        argv_2A0_data
+    };
+    char argv_A0_data[] = "--paper=A0";
+    char *argv_A0[] = {
+        argv_A0_data
+    };
+    char argv_A1_data[] = "--paper=A1";
+    char *argv_A1[] = {
+        argv_A1_data
+    };
+    char argv_A2_data[] = "--paper=A2";
+    char *argv_A2[] = {
+        argv_A2_data
+    };
+    char argv_A3_data[] = "--paper=A3";
+    char *argv_A3[] = {
+        argv_A3_data
+    };
+    char argv_A4_data[] = "--paper=A4";
+    char *argv_A4[] = {
+        argv_A4_data
+    };
+    char argv_A5_data[] = "--paper=A5";
+    char *argv_A5[] = {
+        argv_A5_data
+    };
+    char argv_A6_data[] = "--paper=A6";
+    char *argv_A6[] = {
+        argv_A6_data
+    };
+    char argv_A7_data[] = "--paper=A7";
+    char *argv_A7[] = {
+        argv_A7_data
+    };
+    char argv_A8_data[] = "--paper=A8";
+    char *argv_A8[] = {
+        argv_A8_data
+    };
+    char argv_A9_data[] = "--paper=A9";
+    char *argv_A9[] = {
+        argv_A9_data
+    };
+    char argv_A10_data[] = "--paper=A10";
+    char *argv_A10[] = {
+        argv_A10_data
+    };
+    char argv_paper_width_no_height_data[] = "--paper-width=320";
+    char *argv_paper_width_no_height[] = {
+        argv_paper_width_no_height_data
+    };
+    char argv_paper_height_no_width_data[] = "--paper-height=200";
+    char *argv_paper_height_no_width[] = {
+        argv_paper_height_no_width_data
+    };
+    char argv_paper_width_height_data0[] = "--paper-width=320";
+    char argv_paper_width_height_data1[] = "--paper-height=200";
+    char *argv_paper_width_height[] = {
+        argv_paper_width_height_data0,
+        argv_paper_width_height_data1
+    };
+    char argv_paper_width_invalid_height_data0[] = "--paper-width=320";
+    char argv_paper_width_invalid_height_data1[] = "--paper-height=foo";
+    char *argv_paper_width_invalid_height[] = {
+        argv_paper_width_invalid_height_data0,
+        argv_paper_width_invalid_height_data1
+    };
+    char argv_paper_height_invalid_width_data0[] = "--paper-width=bar";
+    char argv_paper_height_invalid_width_data1[] = "--paper-height=200";
+    char *argv_paper_height_invalid_width[] = {
+        argv_paper_height_invalid_width_data0,
+        argv_paper_height_invalid_width_data1
+    };
+    char argv_invalid_width_invalid_height_data0[] = "--paper-width=live2";
+    char argv_invalid_width_invalid_height_data1[] = "--paper-height=win";
+    char *argv_invalid_width_invalid_height[] = {
+        argv_invalid_width_invalid_height_data0,
+        argv_invalid_width_invalid_height_data1
+    };
+    char argv_paper_name_width_height_data0[] = "--paper=A4";
+    char argv_paper_name_width_height_data1[] = "--paper-width=320";
+    char argv_paper_name_width_height_data2[] = "--paper-height=200";
+    char *argv_paper_name_width_height[] = {
+        argv_paper_name_width_height_data0,
+        argv_paper_name_width_height_data1,
+        argv_paper_name_width_height_data2
+    };
+    char argv_unk_paper_width_no_height_data0[] = "--paper=WTF4";
+    char argv_unk_paper_width_no_height_data1[] = "--paper-width=320";
+    char *argv_unk_paper_width_no_height[] = {
+        argv_unk_paper_width_no_height_data0,
+        argv_unk_paper_width_no_height_data1
+    };
+    char argv_unk_paper_height_no_width_data0[] = "--paper=wtf4";
+    char argv_unk_paper_height_no_width_data1[] = "--paper-height=200";
+    char *argv_unk_paper_height_no_width[] = {
+        argv_unk_paper_height_no_width_data0,
+        argv_unk_paper_height_no_width_data1
+    };
+    char argv_unk_paper_width_height_data0[] = "--paper=Wtf4";
+    char argv_unk_paper_width_height_data1[] = "--paper-width=320";
+    char argv_unk_paper_width_height_data2[] = "--paper-height=200";
+    char *argv_unk_paper_width_height[] = {
+        argv_unk_paper_width_height_data0,
+        argv_unk_paper_width_height_data1,
+        argv_unk_paper_width_height_data2
+    };
+    char argv_unk_paper_width_invalid_height_data0[] = "--paper=wtf-bro";
+    char argv_unk_paper_width_invalid_height_data1[] = "--paper-width=320";
+    char argv_unk_paper_width_invalid_height_data2[] = "--paper-height=yo!";
+    char *argv_unk_paper_width_invalid_height[] = {
+        argv_unk_paper_width_invalid_height_data0,
+        argv_unk_paper_width_invalid_height_data1,
+        argv_unk_paper_width_invalid_height_data2
+    };
+    char argv_unk_paper_height_invalid_width_data0[] = "--paper=wtf-bro";
+    char argv_unk_paper_height_invalid_width_data1[] = "--paper-height=200";
+    char argv_unk_paper_height_invalid_width_data2[] = "--paper-width=yo!";
+    char *argv_unk_paper_height_invalid_width[] = {
+        argv_unk_paper_height_invalid_width_data0,
+        argv_unk_paper_height_invalid_width_data1,
+        argv_unk_paper_height_invalid_width_data2
+    };
+    char argv_dumb_user_data0[] = "--paper=what?";
+    char argv_dumb_user_data1[] = "--paper-width=ahm?!";
+    char argv_dumb_user_data2[] = "--paper-height=cuma?!";
+    char *argv_dumb_user[] = {
+        argv_dumb_user_data0,
+        argv_dumb_user_data1,
+        argv_dumb_user_data2
+    };
+#define register_paper_test_step(a, er, ew, eh) { (a), sizeof((a)) / sizeof((a)[0]), er, ew, eh }
+    struct test_ctx {
+        char **argv;
+        int argc;
+        int expected_return;
+        int expected_width, expected_height;
+    } test_vector[] = {
+        register_paper_test_step(                           argv_4a0, 1, 4768, 6741),
+        register_paper_test_step(                           argv_2a0, 1, 3370, 4768),
+        register_paper_test_step(                            argv_a0, 1, 2384, 3370),
+        register_paper_test_step(                            argv_a1, 1, 1684, 2384),
+        register_paper_test_step(                            argv_a2, 1, 1191, 1684),
+        register_paper_test_step(                            argv_a3, 1,  842, 1191),
+        register_paper_test_step(                            argv_a4, 1,  595,  842),
+        register_paper_test_step(                            argv_a5, 1,  420,  595),
+        register_paper_test_step(                            argv_a6, 1,  298,  420),
+        register_paper_test_step(                            argv_a7, 1,  210,  298),
+        register_paper_test_step(                            argv_a8, 1,  147,  210),
+        register_paper_test_step(                            argv_a9, 1,  105,  147),
+        register_paper_test_step(                           argv_a10, 1,   74,  105),
+        register_paper_test_step(                           argv_4A0, 1, 4768, 6741),
+        register_paper_test_step(                           argv_2A0, 1, 3370, 4768),
+        register_paper_test_step(                            argv_A0, 1, 2384, 3370),
+        register_paper_test_step(                            argv_A1, 1, 1684, 2384),
+        register_paper_test_step(                            argv_A2, 1, 1191, 1684),
+        register_paper_test_step(                            argv_A3, 1,  842, 1191),
+        register_paper_test_step(                            argv_A4, 1,  595,  842),
+        register_paper_test_step(                            argv_A5, 1,  420,  595),
+        register_paper_test_step(                            argv_A6, 1,  298,  420),
+        register_paper_test_step(                            argv_A7, 1,  210,  298),
+        register_paper_test_step(                            argv_A8, 1,  147,  210),
+        register_paper_test_step(                            argv_A9, 1,  105,  147),
+        register_paper_test_step(                           argv_A10, 1,   74,  105),
+        register_paper_test_step(         argv_paper_width_no_height, 1,  320,    0),
+        register_paper_test_step(         argv_paper_height_no_width, 1,    0,  200),
+        register_paper_test_step(            argv_paper_width_height, 1,  320,  200),
+        register_paper_test_step(    argv_paper_width_invalid_height, 1,  320,    0),
+        register_paper_test_step(    argv_paper_height_invalid_width, 1,    0,  200),
+        register_paper_test_step(  argv_invalid_width_invalid_height, 0,    0,    0),
+        register_paper_test_step(       argv_paper_name_width_height, 1,  595,  842),
+        register_paper_test_step(     argv_unk_paper_width_no_height, 1,  320,    0),
+        register_paper_test_step(     argv_unk_paper_height_no_width, 1,    0,  200),
+        register_paper_test_step(        argv_unk_paper_width_height, 1,  320,  200),
+        register_paper_test_step(argv_unk_paper_width_invalid_height, 1,  320,    0),
+        register_paper_test_step(argv_unk_paper_height_invalid_width, 1,    0,  200),
+        register_paper_test_step(                     argv_dumb_user, 0,    0,    0)
+    }, *test, *test_end;
+#undef register_paper_test_step
+    int width, height;
+
+    test = &test_vector[0];
+    test_end = test + sizeof(test_vector) / sizeof(test_vector[0]);
+
+    while (test != test_end) {
+        width = height = -1;
+        set_option_argc_argv(test->argc, test->argv);
+        CUTE_ASSERT(typesetter_paper_size(&width, &height) == test->expected_return);
+        CUTE_ASSERT(width == test->expected_width);
+        CUTE_ASSERT(height == test->expected_height);
+        test++;
+    }
+CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(base_tulip_technique_stack_ctx_tests)
     tulip_technique_stack_ctx *stack = NULL, *top = NULL;
@@ -1071,54 +1417,3 @@ CUTE_TEST_CASE(users_binary_tests)
            "\n\t                            Go ahead, install and enjoy it!\n\n");
 
 CUTE_TEST_CASE_END
-
-CUTE_TEST_CASE(tulips_tester_monkey)
-    CUTE_RUN_TEST(base_tulip_technique_stack_ctx_tests);
-    CUTE_RUN_TEST(base_tulip_single_note_ctx_tests);
-    CUTE_RUN_TEST(base_tulip_part_ctx_tests);
-    CUTE_RUN_TEST(dsl_basic_dsl_utils_tests);
-    CUTE_RUN_TEST(dsl_strutils_tests);
-    CUTE_RUN_TEST(dsl_parser_skip_string_chunk_tests);
-    CUTE_RUN_TEST(dsl_parser_get_next_tlp_technique_block_begin_tests);
-    CUTE_RUN_TEST(dsl_parser_get_next_tlp_technique_block_end_tests);
-    CUTE_RUN_TEST(dsl_parser_get_next_tlp_technique_block_size_tests);
-    CUTE_RUN_TEST(dsl_parser_get_codebuf_from_filepath_tests);
-    CUTE_RUN_TEST(dsl_parser_get_next_tlp_command_tests);
-    CUTE_RUN_TEST(dsl_parser_set_curr_code_line_number_tests);
-    CUTE_RUN_TEST(dsl_parser_get_curr_code_line_number_tests);
-    CUTE_RUN_TEST(dsl_utils_tlp_cmd_code_to_plain_index_tests);
-    CUTE_RUN_TEST(dsl_utils_demux_tlp_commands_tests);
-    CUTE_RUN_TEST(dsl_utils_get_cmd_tag_from_cmd_code_tests);
-    CUTE_RUN_TEST(dsl_utils_has_sustained_technique_tests);
-    CUTE_RUN_TEST(dsl_utils_has_non_sustained_technique_tests);
-    CUTE_RUN_TEST(dsl_compiler_compile_tulip_codebuf);
-    if (CUTE_GET_OPTION("skip-fuzz-tests") == NULL) {
-        CUTE_RUN_TEST(dsl_compiler_fuzz_tests);
-    } else {
-        printf("***\n*** WARNING: The compiler's fuzz tests were skipped.\n***\n");
-    }
-    //  WARN(Santiago): It is important to run the following test after
-    //                  the test "dsl_utils_tlp_cmd_code_to_plain_index_tests"
-    //                  because the following tested function is quite dependant
-    //                  from the previous one. Being totally non-sense try to test
-    //                  it with the another broken.
-    CUTE_RUN_TEST(processor_oututils_get_technique_label_tests);
-    CUTE_RUN_TEST(processor_oututils_single_note_to_tab_fret_nr_tests);
-    CUTE_RUN_TEST(processor_typesetters_txt_sustained_technique_ctx_tests);
-    CUTE_RUN_TEST(processor_typesetters_txt_tablature_ctx_tests);
-    CUTE_RUN_TEST(usrland_cmdlineoptions_tests);
-    //  WARN(Santiago): The tests related with the system module should
-    //                  run after.
-    CUTE_RUN_TEST(system_get_tulip_system_version_tests);
-    CUTE_RUN_TEST(system_tulip_task_exec_tests);
-    if (CUTE_GET_OPTION("skip-fancy-outputs-assurance") == NULL) {
-        CUTE_RUN_TEST(processor_fancy_outputs_assurance);
-    } else {
-        printf("***\n*** WARNING: The fancy outputs assurance tests were skipped.\n***\n");
-    }
-    //  WARN(Santiago): If all is ok, it is time to test the user's binary.
-    CUTE_RUN_TEST(append_tests);
-    CUTE_RUN_TEST(users_binary_tests);
-CUTE_TEST_CASE_END
-
-CUTE_MAIN(tulips_tester_monkey);

@@ -1,5 +1,5 @@
 /*
- *                           Copyright (C) 2005-2017 by Rafael Santiago
+ *                           Copyright (C) 2005-2020 by Rafael Santiago
  *
  * This is a free software. You can redistribute it and/or modify under
  * the terms of the GNU General Public License version 2.
@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdio.h>
 
 struct typesetter_paper_info_ctx {
     char *name;
@@ -93,7 +94,7 @@ static struct typesetter_paper_info_ctx *typesetter_get_paper_info(void) {
     if ((paper = (char *)get_option("paper", NULL)) != NULL) {
 
         p = paper;
-        p = p + strlen(p);
+        p_end = p + strlen(p);
 
         while (p != p_end) {
             *p = toupper(*p);
@@ -107,6 +108,7 @@ static struct typesetter_paper_info_ctx *typesetter_get_paper_info(void) {
             if (strcmp(paper, p_info->name) == 0) {
                 return p_info;
             }
+            p_info++;
         }
     }
 
