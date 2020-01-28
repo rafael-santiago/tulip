@@ -555,7 +555,7 @@ static void svgtypesetter_spill_song_title(const char *title) {
         if (*tp == '\n' || (tp + 1) == tp_end && (tp - l_tp) < (sizeof(title_chunk) - 1)) {
             title_chunk_size = tp - l_tp;
             if (title_chunk_size > 0) {
-                memset(title_chunk, 0, sizeof(title_chunk) - 1);
+                memset(title_chunk, 0, sizeof(title_chunk));
                 memcpy(title_chunk, l_tp, title_chunk_size);
                 fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"30\""
                                        " font-weight=\"bold\">%s</text>\n", *g_svg_page.tab.carriage_x,
