@@ -954,11 +954,16 @@ static int svgtypesetter_newpage(void) {
         svgtypesetter_fclose();
     }
 
-    snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%03d.svg", g_svg_page.filename,
-                                                                                            g_svg_page.page_nr);
+    // INFO(Rafael): SVG processor is able to redirect its typesetting to stdout if user pass 'stdout.svg' as output file path.
+    if (strcmp(g_svg_page.filename, "stdout") != 0) {
+        snprintf(g_svg_page.curr_pagefile, sizeof(g_svg_page.curr_pagefile) - 1, "%s-%03d.svg", g_svg_page.filename,
+                                                                                                g_svg_page.page_nr);
 
-    if ((g_svg_page.fp = fopen(g_svg_page.curr_pagefile, "w")) == NULL) {
-        return 0;
+        if ((g_svg_page.fp = fopen(g_svg_page.curr_pagefile, "w")) == NULL) {
+            return 0;
+        }
+    } else {
+        g_svg_page.fp = stdout;
     }
 
     g_svg_page.tab.xlim_left = SVGTYPESETTER_TAB_XL_DELTA;
@@ -1080,7 +1085,9 @@ static void svgtypesetter_fclose(void) {
                                                                                         SVGTYPESETTER_TAB_Y_SPAN,
                                                                                         pn);
         fprintf(g_svg_page.fp, "</svg>\n");
-        fclose(g_svg_page.fp);
+        if (strcmp(g_svg_page.filename, "stdout") != 0) {
+            fclose(g_svg_page.fp);
+        }
         g_svg_page.fp = NULL;
         g_svg_page.page_nr++;
     }
