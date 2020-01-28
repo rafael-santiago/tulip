@@ -1,3 +1,4 @@
+(A) Create some unit test for --out=foobar.html --svg. It will nice for testing SVG page breaking stuff, too. +Tests
 (A) Extend repeat tag, making it also accept the construction '.repeat{<part>}{"+"|"-"<number>(<number>*|".5")}'.
     The second part will be responsible for the transposition stuff. Thus, '.repeat{outro}{+3.5}' will transcribe
     'outro' part 3 steps 1/2 higher than the original part. +NewFeature
