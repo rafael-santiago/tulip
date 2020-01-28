@@ -544,9 +544,27 @@ static void svgtypesetter_insert_header_span(void) {
 }
 
 static void svgtypesetter_spill_song_title(const char *title) {
-    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"30\""
-                           " font-weight=\"bold\">%s</text>\n", *g_svg_page.tab.carriage_x,
-                                                                *g_svg_page.tab.carriage_y, title);
+    const char *tp, *tp_end, *l_tp;
+    char title_chunk[256];
+
+    l_tp = tp = title;
+    tp_end = tp + strlen(tp) + 1;
+
+    while (tp != tp_end) {
+        if (*tp == '\n' || (tp + 1) == tp_end && (tp - l_tp) < (sizeof(title_chunk) - 1)) {
+            memset(title_chunk, 0, sizeof(title_chunk) - 1);
+            memcpy(title_chunk, l_tp, tp - l_tp);
+            fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"30\""
+                                   " font-weight=\"bold\">%s</text>\n", *g_svg_page.tab.carriage_x,
+                                                                        *g_svg_page.tab.carriage_y, title_chunk);
+            if (*tp == '\n') {
+                *g_svg_page.tab.carriage_y += (SVGTYPESETTER_TAB_Y_SPAN * 2) + 5;
+            }
+            l_tp = tp + 1;
+        }
+        tp++;
+    }
+
     *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
     svgtypesetter_refresh_fbrd_xy();
 }
