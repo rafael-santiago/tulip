@@ -47,6 +47,14 @@ const char *get_option(const char *option, const char *default_value) {
     return get_option_value(option, 0, default_value);
 }
 
+const char *get_binary_path(void) {
+    if (g_argv == NULL) {
+        return NULL;
+    }
+
+    return &g_argv[0][0];
+}
+
 int get_bool_option(const char *option, const int default_value) {
     return get_option_value(option, 1, NULL) == NULL ? default_value : 1;
 }

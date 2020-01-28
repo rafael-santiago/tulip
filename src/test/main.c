@@ -9,6 +9,8 @@
 #include <base/types.h>
 #include <base/ctx.h>
 #include <base/memory.h>
+#include <encoding/base64.h>
+#include <encoding/inline_svg_into_html.h>
 #include <dsl/utils.h>
 #include <dsl/str/strutils.h>
 #include <dsl/parser/parser.h>
@@ -60,6 +62,8 @@ CUTE_DECLARE_TEST_CASE(append_tests);
 CUTE_DECLARE_TEST_CASE(users_binary_tests);
 CUTE_DECLARE_TEST_CASE(processor_typesetters_typesetter_paper_size_tests);
 CUTE_DECLARE_TEST_CASE(processor_typesetter_settings_tests);
+CUTE_DECLARE_TEST_CASE(encoding_base64_encode_buffer_tests);
+CUTE_DECLARE_TEST_CASE(encoding_inline_svg_into_html_tests);
 
 CUTE_TEST_CASE(tulips_tester_monkey)
     remove(".tulipprefs");
@@ -87,6 +91,8 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     } else {
         printf("***\n*** WARNING: The compiler's fuzz tests were skipped.\n***\n");
     }
+    CUTE_RUN_TEST(encoding_base64_encode_buffer_tests);
+    CUTE_RUN_TEST(encoding_inline_svg_into_html_tests);
     CUTE_RUN_TEST(append_tests);
     //  WARN(Rafael): It is important to run the following test after
     //                the test "dsl_utils_tlp_cmd_code_to_plain_index_tests"
@@ -118,6 +124,70 @@ CUTE_TEST_CASE(tulips_tester_monkey)
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulips_tester_monkey);
+
+CUTE_TEST_CASE(encoding_inline_svg_into_html_tests)
+    char *svg_data = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>"
+                     "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"595\" height=\"842\">"
+                     "<rect x=\"1\" y=\"1\" width=\"595\" height=\"842\" fill=\"white\"/>"
+                     "<text x=\"10\" y=\"50\" fill=\"black\" font-size=\"30\" font-weight=\"bold\">It works!</text>"
+                     "</svg>";
+    char *expected_data = "<img src = \"data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iSVNPLTg4NT"
+                          "ktMSIgc3RhbmRhbG9uZT0ibm8iPz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg"
+                          "9IjU5NSIgaGVpZ2h0PSI4NDIiPjxyZWN0IHg9IjEiIHk9IjEiIHdpZHRoPSI1OTUiIGhlaWdodD0iODQyIiBmaWxs"
+                          "PSJ3aGl0ZSIvPjx0ZXh0IHg9IjEwIiB5PSI1MCIgZmlsbD0iYmxhY2siIGZvbnQtc2l6ZT0iMzAiIGZvbnQtd2VpZ"
+                          "2h0PSJib2xkIj5JdCB3b3JrcyE8L3RleHQ+PC9zdmc+\">";
+    char *img;
+    size_t img_size;
+
+    CUTE_ASSERT(inline_svg_into_html(NULL, strlen(svg_data), NULL) == NULL);
+    CUTE_ASSERT(inline_svg_into_html(svg_data, 0, NULL) == NULL);
+
+    img = inline_svg_into_html(svg_data, strlen(svg_data), &img_size);
+
+    CUTE_ASSERT(img != NULL);
+    CUTE_ASSERT(img_size == strlen(expected_data));
+    CUTE_ASSERT(memcmp(img, expected_data, img_size) == 0);
+
+    free(img);
+
+    img = inline_svg_into_html(svg_data, strlen(svg_data), NULL);
+
+    CUTE_ASSERT(img != NULL);
+    CUTE_ASSERT(img_size == strlen(img));
+    CUTE_ASSERT(memcmp(img, expected_data, img_size) == 0);
+
+    free(img);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(encoding_base64_encode_buffer_tests)
+    struct base64_test {
+        unsigned char *in;
+        size_t in_size;
+        unsigned char *out;
+        size_t out_size;
+    } test_vector[] = {
+        {      "f", 1,     "Zg==", 4 },
+        {     "fo", 2,     "Zm8=", 4 },
+        {    "foo", 3,     "Zm9v", 4 },
+        {   "foob", 4, "Zm9vYg==", 8 },
+        {  "fooba", 5, "Zm9vYmE=", 8 },
+        { "foobar", 6, "Zm9vYmFy", 8 }
+    }, *test, *test_end;
+    unsigned char *enc_buffer;
+    size_t enc_buffer_size;
+
+    test = &test_vector[0];
+    test_end = test + sizeof(test_vector) / sizeof(test_vector[0]);
+
+    while (test != test_end) {
+        enc_buffer = base64_encode_buffer(test->in, test->in_size, &enc_buffer_size);
+        CUTE_ASSERT(enc_buffer != NULL);
+        CUTE_ASSERT(enc_buffer_size == test->out_size);
+        CUTE_ASSERT(memcmp(enc_buffer, test->out, enc_buffer_size) == 0);
+        free(enc_buffer);
+        test++;
+    }
+CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(processor_typesetter_settings_tests)
     struct typesetter_curr_settings cset;

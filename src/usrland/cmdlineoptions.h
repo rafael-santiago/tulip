@@ -14,4 +14,6 @@ const char *get_option(const char *option, const char *default_value);
 
 int get_bool_option(const char *option, const int default_value);
 
+const char *get_binary_path(void);
+
 #endif
