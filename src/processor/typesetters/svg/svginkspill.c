@@ -1111,6 +1111,8 @@ static void svgtypesetter_fclose(void) {
         fprintf(g_svg_page.fp, "</svg>\n");
         if (strcmp(g_svg_page.filename, "stdout") != 0) {
             fclose(g_svg_page.fp);
+        } else {
+            fflush(g_svg_page.fp);
         }
         g_svg_page.fp = NULL;
         g_svg_page.page_nr++;
