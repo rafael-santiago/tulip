@@ -33,7 +33,7 @@ char *inline_svg_into_html(const char *svg_data, const size_t svg_data_size,
     img = (char *) getseg(img_size + 1);
     memset(img, 0, img_size + 1);
 
-    snprintf(img, img_size, "<img src = \"%s", SVG_DATA_CONTENT_TYPE);
+    snprintf(img, img_size, "<IMG SRC = \"%s", SVG_DATA_CONTENT_TYPE);
     memcpy(img + SVG_DATA_CONTENT_TYPE_LEN + 12, enc_image, enc_image_size);
     memcpy(img + SVG_DATA_CONTENT_TYPE_LEN + 12 + enc_image_size, "\">", 2);
 

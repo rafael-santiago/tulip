@@ -150,6 +150,7 @@ static int htmltypesetter_inkspill_htmltabviewer(const char *filepath) {
     size_t svg_nr, s;
     ssize_t output_size;
     const char *tulip_script_path = get_option("tlp", NULL);
+    const char *option;
 
     if (tulip_script_path == NULL) {
         // WARN(Rafael): It should never happen in normal conditions.
@@ -166,11 +167,39 @@ static int htmltypesetter_inkspill_htmltabviewer(const char *filepath) {
 
     snprintf(cmdline, sizeof(cmdline) - 1, "%s --tlp=%s --out=stdout.svg", get_binary_path(), tulip_script_path);
 
+    // INFO(Rafael): Forwarding relevant SVG typesetter specific options if necessary.
+
+    if ((option = get_option("paper", NULL)) != NULL) {
+        strncat(cmdline, " --paper=", sizeof(cmdline) - 1);
+        strncat(cmdline, option, sizeof(cmdline) - 1);
+    }
+
+    if ((option = get_option("paper-width", NULL)) != NULL) {
+        strncat(cmdline, " --paper-width=", sizeof(cmdline) - 1);
+        strncat(cmdline, option, sizeof(cmdline) - 1);
+    }
+
+    if ((option = get_option("paper-height", NULL)) != NULL) {
+        strncat(cmdline, " --paper-height=", sizeof(cmdline) - 1);
+        strncat(cmdline, option, sizeof(cmdline) - 1);
+    }
+
+    if ((option = get_option("svg-encoding", NULL)) != NULL) {
+        strncat(cmdline, "--svg-encoding=", sizeof(cmdline) - 1);
+        strncat(cmdline, option, sizeof(cmdline) - 1);
+    }
+
+    if ((option = get_option("fretboard-size", NULL)) != NULL) {
+        strncat(cmdline, " --fretboard-size=", sizeof(cmdline) - 1);
+        strncat(cmdline, option, sizeof(cmdline) - 1);
+    }
+
+    // INFO(Rafael): Getting SVG TAB.
+
     if ((svg_typesetter_stream = popen(cmdline, "r")) == NULL) {
         fprintf(stderr, "processor ERROR: Unable to get the SVG output stream.\n");
         return 0;
     }
-
 
     output_size = HTMLTYPESETTER_TABVIEW_MAX_SVG_OUTPUT_STREAM_SIZE;
     output = (char *)getseg(output_size + 1);
@@ -186,6 +215,8 @@ static int htmltypesetter_inkspill_htmltabviewer(const char *filepath) {
     output_size = strlen(output);
 
     fclose(svg_typesetter_stream);
+
+    // INFO(Rafael): Now is only about parsing and inlining the TAB pages in svg into the HTML document.
 
     fprintf(fp, HTMLTYPESETTER_TAB_VIEWER_CODE_BEGIN);
 
@@ -211,6 +242,9 @@ static int htmltypesetter_inkspill_htmltabviewer(const char *filepath) {
                         "</CENTER>\n"
                         "<DIV CLASS=\"page-number\">%d / %d"
                         "</DIV>\n", img_tag, s, svg_nr);
+            while (svg_end < output_end && *svg_end == '\n') {
+                svg_end++;
+            }
             svg = svg_end;
             s++;
             free(img_tag);

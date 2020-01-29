@@ -131,7 +131,7 @@ CUTE_TEST_CASE(encoding_inline_svg_into_html_tests)
                      "<rect x=\"1\" y=\"1\" width=\"595\" height=\"842\" fill=\"white\"/>"
                      "<text x=\"10\" y=\"50\" fill=\"black\" font-size=\"30\" font-weight=\"bold\">It works!</text>"
                      "</svg>";
-    char *expected_data = "<img src = \"data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iSVNPLTg4NT"
+    char *expected_data = "<IMG SRC = \"data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iSVNPLTg4NT"
                           "ktMSIgc3RhbmRhbG9uZT0ibm8iPz48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg"
                           "9IjU5NSIgaGVpZ2h0PSI4NDIiPjxyZWN0IHg9IjEiIHk9IjEiIHdpZHRoPSI1OTUiIGhlaWdodD0iODQyIiBmaWxs"
                           "PSJ3aGl0ZSIvPjx0ZXh0IHg9IjEwIiB5PSI1MCIgZmlsbD0iYmxhY2siIGZvbnQtc2l6ZT0iMzAiIGZvbnQtd2VpZ"
