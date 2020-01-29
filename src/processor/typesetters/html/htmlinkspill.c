@@ -216,7 +216,7 @@ static int htmltypesetter_inkspill_htmltabviewer(const char *filepath) {
 
     fclose(svg_typesetter_stream);
 
-    // INFO(Rafael): Now is only about parsing and inlining the TAB pages in svg into the HTML document.
+    // INFO(Rafael): Now is only about parsing and inlining the TAB pages in SVG into the HTML document.
 
     fprintf(fp, HTMLTYPESETTER_TAB_VIEWER_CODE_BEGIN);
 
@@ -240,7 +240,8 @@ static int htmltypesetter_inkspill_htmltabviewer(const char *filepath) {
                         "<CENTER>\n"
                         "%s\n"
                         "</CENTER>\n"
-                        "<DIV CLASS=\"page-number\">%d / %d"
+                        "<DIV CLASS=\"page-number\">%d / %d\n"
+                        "</DIV>\n"
                         "</DIV>\n", img_tag, s, svg_nr);
             while (svg_end < output_end && *svg_end == '\n') {
                 svg_end++;
