@@ -24,7 +24,7 @@
                                              ".prev, .next {\n"\
                                              "  cursor: pointer;\n"\
                                              "  position: absolute;\n"\
-                                             "  top: 50%;\n"\
+                                             "  top: 50%%;\n"\
                                              "  width: auto;\n"\
                                              "  padding: 16px;\n"\
                                              "  margin-top: -22px;\n"\
@@ -46,7 +46,7 @@
                                              ".page-number {\n"\
                                              "  color: #000000;\n"\
                                              "  font-size: 12px;\n"\
-                                             "  width: 100%;\n"\
+                                             "  width: 100%%;\n"\
                                              "  padding: 8px 12px;\n"\
                                              "  position: absolute;\n"\
                                              "  top: 8px;\n"\
@@ -58,7 +58,7 @@
                                              "  width: 15px;\n"\
                                              "  margin: 0 2px;\n"\
                                              "  background-color: #bbb;\n"\
-                                             "  border-radius: 50%;\n"\
+                                             "  border-radius: 50%%;\n"\
                                              "  display: inline-block;\n"\
                                              "  transition: background-color 0.6s ease;\n"\
                                              "}\n"\
