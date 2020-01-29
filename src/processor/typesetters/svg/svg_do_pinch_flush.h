@@ -127,6 +127,42 @@
             }\
             xstep = svgtypesetter_slide_up_xstep;\
         }\
+    } else if (*(s) == '*') {\
+        do_xpack(SVGTYPESETTER_NATURAL_HARMONIC_MIN_SPACE);\
+        svgtypesetter_flush_natural_harmonic_pinch();\
+        g_svg_page.flush_nr++;\
+        g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
+        g_svg_page.tab.last_symbol = kTlpNaturalHarmonic;\
+        if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
+            if (xstep == svgtypesetter_user_note_span_xstep) {\
+                xstep(-1);\
+            }\
+            xstep = svgtypesetter_natural_harmonic_xstep;\
+        }\
+    } else if (*(s) == 'v') {\
+        do_xpack(SVGTYPESETTER_ARTIFICIAL_HARMONIC_MIN_SPACE);\
+        svgtypesetter_flush_artificial_harmonic_pinch();\
+        g_svg_page.flush_nr++;\
+        g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
+        g_svg_page.tab.last_symbol = kTlpArtificialHarmonic;\
+        if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
+            if (xstep == svgtypesetter_user_note_span_xstep) {\
+                xstep(-1);\
+            }\
+            xstep = svgtypesetter_artificial_harmonic_xstep;\
+        }\
+    } else if (*(s) == 'T') {\
+        do_xpack(SVGTYPESETTER_TAPPING_MIN_SPACE);\
+        svgtypesetter_flush_tapping_pinch();\
+        g_svg_page.flush_nr++;\
+        g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
+        g_svg_page.tab.last_symbol = kTlpTapping;\
+        if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
+            if (xstep == svgtypesetter_user_note_span_xstep) {\
+                xstep(-1);\
+            }\
+            xstep = svgtypesetter_tapping_xstep;\
+        }\
     } else if (*(s) == '|' && sn == 5) {\
         if (g_svg_page.flush_nr > 0) {\
             /*INFO(Rafael): It will avoid clumsy sep bars heading the TAB diagram.*/\

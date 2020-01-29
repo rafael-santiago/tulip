@@ -98,6 +98,12 @@ static inline void svgtypesetter_sep_bar_xstep(const int dit);
 
 static inline void svgtypesetter_chord_span_xstep(const int dit);
 
+static inline void svgtypesetter_natural_harmonic_xstep(const int dit);
+
+static inline void svgtypesetter_artificial_harmonic_xstep(const int dit);
+
+static inline void svgtypesetter_tapping_xstep(const int dit);
+
 static inline void svgtypesetter_user_note_span_xstep(const int dit);
 
 static void svgtypesetter_insert_header_span(void);
@@ -121,6 +127,12 @@ static void svgtypesetter_flush_hammer_on_pull_off_pinch(void);
 static void svgtypesetter_flush_slide_down_pinch(void);
 
 static void svgtypesetter_flush_slide_up_pinch(void);
+
+static void svgtypesetter_flush_natural_harmonic_pinch(void);
+
+static void svgtypesetter_flush_artificial_harmonic_pinch(void);
+
+static void svgtypesetter_flush_tapping_pinch(void);
 
 static void svgtypesetter_flush_sep_bar(void);
 
@@ -538,6 +550,18 @@ static inline void svgtypesetter_user_note_span_xstep(const int dit) {
     *g_svg_page.tab.carriage_x += SVGTYPESETTER_USER_NOTE_SPAN_X_STEP;
 }
 
+static inline void svgtypesetter_natural_harmonic_xstep(const int dit) {
+    *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN * dit;
+}
+
+static inline void svgtypesetter_artificial_harmonic_xstep(const int dit) {
+    *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN * dit;
+}
+
+static inline void svgtypesetter_tapping_xstep(const int dit) {
+    *g_svg_page.tab.carriage_x += SVGTYPESETTER_TAB_X_SPAN * dit;
+}
+
 static void svgtypesetter_insert_header_span(void) {
     // INFO(Rafael): Until now this function is responsible for inserting a header blank span between header section and
     //               the first TAB diagram.
@@ -746,6 +770,30 @@ static void svgtypesetter_flush_slide_up_pinch(void) {
                            " font-family=\"Courier\">\\</text>\n", *g_svg_page.tab.carriage_x,
                                                                    *g_svg_page.tab.carriage_y +
                                                                    SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
+}
+
+static void svgtypesetter_flush_natural_harmonic_pinch(void) {
+    svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_NATURAL_HARMONIC_MIN_SPACE, 0);
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\""
+                           " font-family=\"Courier\">*</text>\n", *g_svg_page.tab.carriage_x,
+                                                                  *g_svg_page.tab.carriage_y +
+                                                                  SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
+}
+
+static void svgtypesetter_flush_artificial_harmonic_pinch(void) {
+    svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_ARTIFICIAL_HARMONIC_MIN_SPACE, 0);
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\""
+                           " font-family=\"Courier\">V</text>\n", *g_svg_page.tab.carriage_x,
+                                                                  *g_svg_page.tab.carriage_y +
+                                                                  SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
+}
+
+static void svgtypesetter_flush_tapping_pinch(void) {
+    svgtypesetter_move_carriage_to_best_fit(SVGTYPESETTER_TAPPING_MIN_SPACE, 0);
+    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" font-size=\"18\""
+                           " font-family=\"Courier\">T</text>\n", *g_svg_page.tab.carriage_x,
+                                                                  *g_svg_page.tab.carriage_y +
+                                                                  SVGTYPESETTER_TAB_NOTE_Y_OFFSET + 2);
 }
 
 static void svgtypesetter_flush_sep_bar(void) {
@@ -1269,6 +1317,41 @@ static void svgtypesetter_spill_tab_notation(const tulip_single_note_ctx *song) 
                                                         get_technique_notation_label(kTlpSlideDown));
                     break;
 
+                case kTlpNaturalHarmonic:
+                    *g_svg_page.tab.carriage_y -= 4;
+                    svgtypesetter_flush_natural_harmonic_pinch();
+                    *g_svg_page.tab.carriage_y += 4;
+                    svgtypesetter_natural_harmonic_xstep(1);
+                    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                           " font-size=\"11\" font-family=\"Courier\"> ............ %s"
+                                           "</text>\n", *g_svg_page.tab.carriage_x + 15,
+                                                        *g_svg_page.tab.carriage_y,
+                                                        get_technique_notation_label(kTlpNaturalHarmonic));
+                    break;
+
+                case kTlpArtificialHarmonic:
+                    *g_svg_page.tab.carriage_y -= 4;
+                    svgtypesetter_flush_artificial_harmonic_pinch();
+                    *g_svg_page.tab.carriage_y += 4;
+                    svgtypesetter_artificial_harmonic_xstep(1);
+                    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                           " font-size=\"11\" font-family=\"Courier\"> ............ %s"
+                                           "</text>\n", *g_svg_page.tab.carriage_x + 15,
+                                                        *g_svg_page.tab.carriage_y,
+                                                        get_technique_notation_label(kTlpArtificialHarmonic));
+                    break;
+
+                case kTlpTapping:
+                    *g_svg_page.tab.carriage_y -= 4;
+                    svgtypesetter_flush_tapping_pinch();
+                    *g_svg_page.tab.carriage_y += 4;
+                    svgtypesetter_tapping_xstep(1);
+                    fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
+                                           " font-size=\"11\" font-family=\"Courier\"> ............ %s"
+                                           "</text>\n", *g_svg_page.tab.carriage_x + 15,
+                                                        *g_svg_page.tab.carriage_y,
+                                                        get_technique_notation_label(kTlpTapping));
+                    break;
 
                 default:
                     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\""
