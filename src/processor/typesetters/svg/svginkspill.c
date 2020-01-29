@@ -949,7 +949,9 @@ static void svgtypesetter_cut_tab(void) {
     // INFO(Rafael): This function closes the TAB more right by adding a vertical bar and erasing all
     //               remaining empty TAB diagram. Notice that "erasing" here is a dirty trick of drawing
     //               an white rect by overlapping all excedent TAB diagram area.
-    size_t s;
+    size_t stechs_nr;
+    int y;
+    txttypesetter_sustained_technique_ctx *sp;
 
     if (g_svg_page.fp == NULL) {
         return;
@@ -963,11 +965,31 @@ static void svgtypesetter_cut_tab(void) {
         *g_svg_page.tab.carriage_x = g_svg_page.tab.ln_info[0].x;
     }
 
-    fprintf(g_svg_page.fp, "\t<rect x=\"%d\" y=\"%d\" width=\"%d\""
-                           " height=\"%d\" fill=\"white\"/>\n", *g_svg_page.tab.carriage_x + 1,
-                                                                g_svg_page.tab.fbrd[0].y - SVGTYPESETTER_TAB_Y_SPAN,
-                                                                g_svgtypesetter_page_width - *g_svg_page.tab.carriage_x + 1,
-                                                                SVGTYPESETTER_TAB_Y_SPAN * 6 + SVGTYPESETTER_TAB_Y_SPAN / 2);
+    if (g_svg_page.tp == NULL || (g_svg_page.tp != NULL && g_svg_page.tp->techniques == NULL)) {
+        fprintf(g_svg_page.fp, "\t<rect x=\"%d\" y=\"%d\" width=\"%d\""
+                               " height=\"%d\" fill=\"white\"/>\n", *g_svg_page.tab.carriage_x + 1,
+                                                                    g_svg_page.tab.fbrd[0].y -
+                                                                                SVGTYPESETTER_TAB_Y_SPAN,
+                                                                    g_svgtypesetter_page_width -
+                                                                                *g_svg_page.tab.carriage_x + 1,
+                                                                    SVGTYPESETTER_TAB_Y_SPAN * 6 +
+                                                                                SVGTYPESETTER_TAB_Y_SPAN / 2);
+    } else if (g_svg_page.tp != NULL && g_svg_page.tp->techniques != NULL) {
+        stechs_nr = 0;
+        for (sp = g_svg_page.tp->techniques; sp != NULL; sp = sp->next) {
+            stechs_nr++;
+        }
+
+        y = (g_svg_page.tab.fbrd[0].y - (SVGTYPESETTER_TAB_Y_SPAN * 2) - 10) - (stechs_nr * SVGTYPESETTER_TAB_Y_SPAN);
+
+        fprintf(g_svg_page.fp, "\t<rect x=\"%d\" y=\"%d\" width=\"%d\""
+                               " height=\"%d\" fill=\"white\"/>\n", *g_svg_page.tab.carriage_x + 1,
+                                                                    y,
+                                                                    g_svgtypesetter_page_width -
+                                                                                *g_svg_page.tab.carriage_x + 1,
+                                                                    (SVGTYPESETTER_TAB_Y_SPAN * 6) +
+                                                                    (stechs_nr * 2 * SVGTYPESETTER_TAB_Y_SPAN + 15));
+    }
 }
 
 static int svgtypesetter_newpage(void) {
