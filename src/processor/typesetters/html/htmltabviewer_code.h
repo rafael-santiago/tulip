@@ -95,7 +95,7 @@
                                               "<DIV style=\"text-align:center\">\n"
 
 #define HTMLTYPESETTER_TAB_VIEWER_CODE_END "</DIV>\n"\
-                                           "<SCRIPT>\n"\
+                                           "<SCRIPT type=\"text/javascript\">\n"\
                                            "var pageIndex = 1;\n"\
                                            "showPage(pageIndex);\n"\
                                            "function incPage(n) {\n"\
@@ -122,6 +122,14 @@
                                            "  pages[pageIndex-1].style.display = \"block\";\n"\
                                            "  dots[pageIndex-1].className += \" active\";\n"\
                                            "}\n"\
+                                           "document.onkeydown = function(event) {\n"\
+                                           "  event = event || window.event;\n"\
+                                           "  if (event.keyCode == \"37\") {\n"\
+                                           "    incPage(-1);\n"\
+                                           "  } else if (event.keyCode == \"39\") {\n"\
+                                           "    incPage(1);\n"\
+                                           "  }\n"\
+                                           "};"\
                                            "</SCRIPT>\n"\
                                            "</BODY>\n"\
                                            "</HTML>\n"
