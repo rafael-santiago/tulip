@@ -155,12 +155,12 @@ static int htmltypesetter_inkspill_htmltabviewer(const char *filepath) {
     if (tulip_script_path == NULL) {
         // WARN(Rafael): It should never happen in normal conditions.
         fprintf(stderr, "processor ERROR: Null tlp script path.\n");
-        return 0;
+        return 1;
     }
 
     if ((fp = fopen(filepath, "wb")) == NULL) {
         fprintf(stderr, "processor ERROR: Unable to write to '%s'\n", filepath);
-        return 0;
+        return 1;
     }
 
     // INFO(Rafael): Getting the SVG stream.
@@ -198,7 +198,7 @@ static int htmltypesetter_inkspill_htmltabviewer(const char *filepath) {
 
     if ((svg_typesetter_stream = popen(cmdline, "r")) == NULL) {
         fprintf(stderr, "processor ERROR: Unable to get the SVG output stream.\n");
-        return 0;
+        return 1;
     }
 
     output_size = HTMLTYPESETTER_TABVIEW_MAX_SVG_OUTPUT_STREAM_SIZE;
@@ -263,5 +263,5 @@ static int htmltypesetter_inkspill_htmltabviewer(const char *filepath) {
 
     fclose(fp);
 
-    return 1;
+    return 0;
 }

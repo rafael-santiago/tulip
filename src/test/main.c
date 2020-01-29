@@ -1535,6 +1535,40 @@ CUTE_TEST_CASE(users_binary_tests)
         remove(outpath);
     }
 
+    // INFO(Rafael): Let's test HTML by using TAB viewer.
+
+    for (t = 0; t < g_fancy_tab_viewer_test_vector_nr; t++) {
+        snprintf(cmdline, sizeof(cmdline) - 1, "%s --tlp=final.tlp --out=%s --svg", basepath,
+                                                                                    g_fancy_tab_viewer_test_vector[t].filepath);
+
+        write_buffer_to_disk("final.tlp", g_fancy_tab_viewer_test_vector[t].tlp_code,
+                                          g_fancy_tab_viewer_test_vector[t].tlp_code_sz);
+
+
+        printf("cmd: '%s'\n", cmdline);
+        CUTE_ASSERT(system(cmdline) == 0);
+
+        output = fopen(g_fancy_tab_viewer_test_vector[t].filepath, "rb");
+        CUTE_ASSERT(output != NULL);
+        fseek(output, 0L, SEEK_END);
+        osize = ftell(output);
+
+        CUTE_ASSERT(osize == g_fancy_tab_viewer_test_vector[t].output_sz);
+
+        fseek(output, 0L, SEEK_SET);
+
+        output_buf = (char *) getseg(osize + 1);
+        memset(output_buf, 0, osize + 1);
+        fread(output_buf, 1, osize, output);
+        fclose(output);
+
+        CUTE_ASSERT(memcmp(output_buf, g_fancy_tab_viewer_test_vector[t].output, osize) == 0);
+
+        free(output_buf);
+        remove("final.tlp");
+        remove(g_fancy_tab_viewer_test_vector[t].filepath);
+    }
+
     printf("\n\tTULIP's TESTER MONKEY SAID: All done! All clean! All my tests said that this software is good for using."
            "\n\t                            Go ahead, install and enjoy it!\n\n");
 
