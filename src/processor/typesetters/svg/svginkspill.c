@@ -261,8 +261,7 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
     // INFO(Rafael): A 'TAB auto break' occurs when the ascii tab diagram not fits into the SVG diagram.
     //               Bear in mind that ascii TAB assumes monospaced fonts and all technique symbols are represented
     //               by only one ascii symbol, while a SVG TAB will use non-ascii symbols for some techniques.
-
-    tab_auto_break = (g_svg_page.tab.last_non_null_x >= (g_svgtypesetter_page_width - SVGTYPESETTER_TAB_X_SPAN));
+    tab_auto_break = svgtypesetter_is_off_xmargin(g_svg_page.tab.last_non_null_x);
 
     // INFO(Rafael): If it was an auto break could have more data in the same coordinate waiting for being 'pinched'.
 
@@ -1697,14 +1696,14 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                 last_xstep = svgtypesetter_user_note_span_xstep;
                 svgtypesetter_user_note_span_xstep(1);
                 svgtypesetter_refresh_fbrd_xy();
-                if (*g_svg_page.tab.carriage_x >= (g_svgtypesetter_page_width - SVGTYPESETTER_TAB_X_SPAN) &&
+                if (svgtypesetter_is_off_xmargin(*g_svg_page.tab.carriage_x) &&
                     has_unflushed_data((const char **)tp->strings, offset + 1, tp->fretboard_sz)) {
                     // INFO(Rafael): The current tab diagram became full, we need a new empty one.
                     g_svg_page.tab.last_non_null_x = *g_svg_page.tab.carriage_x;
                 }
             }
 
-            if (*g_svg_page.tab.carriage_x >= (g_svgtypesetter_page_width - SVGTYPESETTER_TAB_X_SPAN) &&
+            if (svgtypesetter_is_off_xmargin(*g_svg_page.tab.carriage_x) &&
                 has_unflushed_data((const char **)tp->strings, offset + 1, tp->fretboard_sz)) {
                 // INFO(Rafael): The current tab diagram became full, we need a new empty one.
 

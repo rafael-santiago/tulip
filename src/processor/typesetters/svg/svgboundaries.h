@@ -41,6 +41,8 @@
 
 #define SVGTYPESETTER_DEFAULT_SVG_ENCODING       "ISO-8859-1"
 
+#define svgtypesetter_is_off_xmargin(x) ((x) >= (g_svgtypesetter_page_width - SVGTYPESETTER_TAB_X_SPAN - 10))
+
 static int g_svgtypesetter_page_width = SVGTYPESETTER_DEFAULT_PAGE_WIDTH;
 
 static int g_svgtypesetter_page_height = SVGTYPESETTER_DEFAULT_PAGE_HEIGHT;
