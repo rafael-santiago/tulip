@@ -75,6 +75,7 @@ struct svgtypesetter_page_ctx {
     char filename[4096], curr_pagefile[4096];
     // INFO(Rafael): It represents the TAB diagram drawed or being drawn into current written SVG file.
     struct svgtypesetter_tab_diagram_ctx tab;
+    int flush_nr;
 };
 
 static inline void svgtypesetter_hammer_on_xstep(const int dit);
@@ -395,6 +396,8 @@ static void svgtypesetter_newtabdiagram(const txttypesetter_tablature_ctx *txtta
     // INFO(Rafael): Restore the coordinate pointers state as before asking for a new TAB diagram.
     g_svg_page.tab.carriage_x = g_svg_page.tab.last_carriage_x;
     g_svg_page.tab.carriage_y = g_svg_page.tab.last_carriage_y;
+
+    g_svg_page.flush_nr = 0;
 }
 
 static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txttab) {
@@ -923,7 +926,6 @@ static void svgtypesetter_normalize_ascii_tab(txttypesetter_tablature_ctx *txtta
 
         }
     }
-
 }
 
 static int svgtypesetter_refresh_fbrd_xy(void) {
@@ -1145,6 +1147,8 @@ static int svgtypesetter_init(const char *filename) {
     g_svg_page.tab.last_non_null_x = 0;
 
     g_svg_page.tab.last_symbol = kTlpNone;
+
+    g_svg_page.flush_nr = 0;
 
     return 1;
 }

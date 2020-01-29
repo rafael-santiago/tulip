@@ -42,6 +42,7 @@
     if (*(s) == '~') {\
         do_xpack(SVGTYPESETTER_VIBRATO_MIN_SPACE);\
         svgtypesetter_flush_vibrato_pinch();\
+        g_svg_page.flush_nr++;\
         /*INFO(Rafael): Setting the ln_info[s].x to the exact position where the technique was drawn.*/\
         g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
         /*INFO(Rafael): Recording which symbol was last processed is quite important.*/\
@@ -57,6 +58,7 @@
     } else if (*(s) == 'b') {\
         do_xpack(SVGTYPESETTER_BEND_MIN_SPACE);\
         svgtypesetter_flush_bend_pinch(sn == arrow_string);\
+        g_svg_page.flush_nr++;\
         g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
         g_svg_page.tab.last_symbol = kTlpBend;\
         if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
@@ -68,6 +70,7 @@
     } else if (*(s) == 'r') {\
         do_xpack(SVGTYPESETTER_RELEASE_BEND_MIN_SPACE);\
         svgtypesetter_flush_release_bend_pinch(sn == arrow_string);\
+        g_svg_page.flush_nr++;\
         g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
         g_svg_page.tab.last_symbol = kTlpReleaseBend;\
         if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
@@ -78,6 +81,7 @@
         }\
     } else if (*(s) == 'h' || *(s) == 'p') {\
         svgtypesetter_flush_hammer_on_pull_off_pinch();\
+        g_svg_page.flush_nr++;\
         g_svg_page.tab.last_symbol = kTlpHammerOn;\
         if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
             if (xstep == svgtypesetter_user_note_span_xstep) {\
@@ -95,6 +99,7 @@
             do_xpack(SVGTYPESETTER_SLIDE_DOWN_MIN_SPACE + 3);\
         }\
         svgtypesetter_flush_slide_down_pinch();\
+        g_svg_page.flush_nr++;\
         g_svg_page.tab.last_symbol = kTlpSlideDown;\
         g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
         if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
@@ -113,6 +118,7 @@
             do_xpack(SVGTYPESETTER_SLIDE_UP_MIN_SPACE + 4);\
         }\
         svgtypesetter_flush_slide_up_pinch();\
+        g_svg_page.flush_nr++;\
         g_svg_page.tab.last_symbol = kTlpSlideUp;\
         g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
         if (xstep == NULL || (xstep == svgtypesetter_note_sep_xstep || xstep == svgtypesetter_user_note_span_xstep)) {\
@@ -122,7 +128,11 @@
             xstep = svgtypesetter_slide_up_xstep;\
         }\
     } else if (*(s) == '|' && sn == 5) {\
-        svgtypesetter_flush_sep_bar();\
+        if (g_svg_page.flush_nr > 0) {\
+            /*INFO(Rafael): It will avoid clumsy sep bars heading the TAB diagram.*/\
+            svgtypesetter_flush_sep_bar();\
+            g_svg_page.flush_nr++;\
+        }\
         g_svg_page.tab.last_symbol = kTlpSepBar;\
         /*INFO(Rafael): If the TAB diagram was broke with a sep bar, from now on all strings x coordinates must be the same.*/\
         g_svg_page.tab.ln_info[0].x = *g_svg_page.tab.carriage_x;\
@@ -138,6 +148,7 @@
             *g_svg_page.tab.carriage_x += SVGTYPESETTER_CHORD_NOTES_PADDING;\
         }\
         svgtypesetter_flush_note_pinch(s);\
+        g_svg_page.flush_nr++;\
         g_svg_page.tab.last_symbol = kTlpSingleNote;\
         if (is_chord && notes_span.do_span && !notes_span.is_beyond_9th_fret[sn]) {\
             /*INFO(Rafael): Moving it back again, thus, notes from 10th or higher will not be screwed-up.*/\
@@ -146,6 +157,15 @@
         g_svg_page.tab.curr_ln_info->x = *g_svg_page.tab.carriage_x;\
         g_svg_page.tab.curr_ln_info->do_carriage_return = NULL;\
         xstep = svgtypesetter_note_sep_xstep;\
+        if (!is_chord) {\
+            /*INFO(Rafael): Since it is not a chord any further return must be done until this current x.*/\
+            g_svg_page.tab.ln_info[0].x = *g_svg_page.tab.carriage_x;\
+            g_svg_page.tab.ln_info[1].x = *g_svg_page.tab.carriage_x;\
+            g_svg_page.tab.ln_info[2].x = *g_svg_page.tab.carriage_x;\
+            g_svg_page.tab.ln_info[3].x = *g_svg_page.tab.carriage_x;\
+            g_svg_page.tab.ln_info[4].x = *g_svg_page.tab.carriage_x;\
+            g_svg_page.tab.ln_info[5].x = *g_svg_page.tab.carriage_x;\
+        }\
     }\
 }
 

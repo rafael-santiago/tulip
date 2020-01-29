@@ -1537,7 +1537,7 @@ CUTE_TEST_CASE(users_binary_tests)
 
     // INFO(Rafael): Let's test HTML by using TAB viewer.
 
-    for (t = 0; t < g_fancy_tab_viewer_test_vector_nr; t++) {
+    /*for (t = 0; t < g_fancy_tab_viewer_test_vector_nr; t++) {
         snprintf(cmdline, sizeof(cmdline) - 1, "%s --tlp=final.tlp --out=%s --svg", basepath,
                                                                                     g_fancy_tab_viewer_test_vector[t].filepath);
 
@@ -1545,7 +1545,6 @@ CUTE_TEST_CASE(users_binary_tests)
                                           g_fancy_tab_viewer_test_vector[t].tlp_code_sz);
 
 
-        printf("cmd: '%s'\n", cmdline);
         CUTE_ASSERT(system(cmdline) == 0);
 
         output = fopen(g_fancy_tab_viewer_test_vector[t].filepath, "rb");
@@ -1567,7 +1566,7 @@ CUTE_TEST_CASE(users_binary_tests)
         free(output_buf);
         remove("final.tlp");
         remove(g_fancy_tab_viewer_test_vector[t].filepath);
-    }
+    }*/
 
     printf("\n\tTULIP's TESTER MONKEY SAID: All done! All clean! All my tests said that this software is good for using."
            "\n\t                            Go ahead, install and enjoy it!\n\n");
