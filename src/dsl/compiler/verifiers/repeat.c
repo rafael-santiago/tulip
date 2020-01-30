@@ -1,5 +1,5 @@
 /*
- *                           Copyright (C) 2005-2016 by Rafael Santiago
+ *                           Copyright (C) 2005-2020 by Rafael Santiago
  *
  * This is a free software. You can redistribute it and/or modify under
  * the terms of the GNU General Public License version 2.
@@ -12,6 +12,7 @@
 #include <dsl/utils.h>
 #include <base/ctx.h>
 #include <string.h>
+#include <stdio.h>
 
 typedef int (*verifier_t)(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next);
 
@@ -54,6 +55,8 @@ static verifier_t get_suitable_repeat_tag_verifier(const char *buf, char *error_
 static void get_repeat_data(char *data, const size_t data_size, const char *buf);
 
 static int check_transposition_level(const char *level, const size_t level_size);
+
+static int transposition_level_to_fret_shifting_level(const char *tlevel);
 
 int repeat_tag_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next) {
     return get_suitable_repeat_tag_verifier(buf, error_message, song, next)(buf, error_message, song, next);
@@ -127,7 +130,7 @@ static int v6_repeat_tag_verifier(const char *buf, char *error_message, tulip_si
         return 0;
     }
 
-    tulip_single_note_ctx_cpy(song, part->begin, part->end);
+    tulip_single_note_ctx_cpy(song, part->begin, part->end, 0);
     (*next) = get_next_tlp_technique_block_end(buf) + 1;
 
     return 1;
@@ -136,7 +139,8 @@ static int v6_repeat_tag_verifier(const char *buf, char *error_message, tulip_si
 static int v7_repeat_tag_verifier(const char *buf, char *error_message, tulip_single_note_ctx **song, const char **next) {
     const char *bp = NULL, *bp_end = NULL;
     char label[255] = "", tlevel[255] = "";
-    tulip_part_ctx *part = NULL;
+    tulip_part_ctx *part = NULL, *part_cpy = NULL, *p;
+    int frets_nr;
 
     get_repeat_data(label, sizeof(label) - 1, buf);
 
@@ -146,7 +150,7 @@ static int v7_repeat_tag_verifier(const char *buf, char *error_message, tulip_si
     get_repeat_data(tlevel, sizeof(tlevel) - 1, bp);
 
     if (!check_transposition_level(tlevel, strlen(tlevel))) {
-        tlperr_s(error_message, "The given transposition level is invalid : \"%s\".\n", tlevel);
+        tlperr_s(error_message, "The given transposition level is invalid : \"%s\".", tlevel);
         return 0;
     }
 
@@ -155,75 +159,25 @@ static int v7_repeat_tag_verifier(const char *buf, char *error_message, tulip_si
         return 0;
     }
 
-    // TODO(Rafael): Transposition stuff.
-
-    tulip_single_note_ctx_cpy(song, part->begin, part->end);
+    tulip_single_note_ctx_cpy(song, part->begin, part->end, transposition_level_to_fret_shifting_level(tlevel));
     (*next) = get_next_tlp_technique_block_end(bp) + 1;
 
     return 1;
 }
 
-static int tlcheck_ms_ini(const char **lp, const char *lp_end, tlcheck_machine_state_t *curr_state) {
-    int out = 0;
+static int transposition_level_to_fret_shifting_level(const char *tlevel) {
+    // WARN(Rafael): tlevel gots a  valid content inside.
+    char temp[10], *tp;
+    int has_half = 0;
 
-    if (*(*lp) == '+' || *(*lp) == '-') {
-        (*lp) += 1;
-        *curr_state = kTlCheckNumber;
-        out = 1;
+    snprintf(temp, sizeof(temp) - 1, "%s", &tlevel[1]);
+
+    if ((tp = strstr(temp, ".5")) != NULL) {
+        has_half = 1;
+        *tp = 0;
     }
 
-    return out;
-}
-
-static int tlcheck_ms_number(const char **lp, const char *lp_end, tlcheck_machine_state_t *curr_state) {
-    int out = 0;
-
-    if ((*lp) < lp_end && isdigit(*(*lp))) {
-        (*lp)++;
-        if ((*lp) == lp_end) {
-            out = 1;
-            *curr_state = kTlCheckFinis;
-        } else if (*(*lp) == '.') {
-            out = 1;
-            *curr_state = kTlCheckDot;
-        }
-    }
-
-    return out;
-}
-
-static int tlcheck_ms_dot(const char **lp, const char *lp_end, tlcheck_machine_state_t *curr_state) {
-    int out = 0;
-
-    if (*(*lp) == '.') {
-        (*lp) += 1;
-        *curr_state = kTlCheckHalf;
-        out = 1;
-    }
-
-    return out;
-}
-
-static int tlcheck_ms_half(const char **lp, const char *lp_end, tlcheck_machine_state_t *curr_state) {
-    int out = 0;
-
-    if (*(*lp) == '5') {
-        (*lp) += 1;
-        *curr_state = kTlCheckFinis;
-        out = 1;
-    }
-
-    return out;
-}
-
-static int tlcheck_ms_finis(const char **lp, const char *lp_end, tlcheck_machine_state_t *curr_state) {
-    int out = 0;
-
-    if ((*lp) == lp_end) {
-        out = 1;
-    }
-
-    return out;
+    return (((*tlevel) == '+') ? +1 : -1) * (2 * atoi(temp) + has_half);
 }
 
 static int check_transposition_level(const char *level, const size_t level_size) {
@@ -261,4 +215,66 @@ static int check_transposition_level(const char *level, const size_t level_size)
     } while (curr_state != kTlCheckFinis && m_out != 0);
 
     return m_out;
+}
+
+static int tlcheck_ms_ini(const char **lp, const char *lp_end, tlcheck_machine_state_t *curr_state) {
+    int out = 0;
+
+    if (*(*lp) == '+' || *(*lp) == '-') {
+        (*lp) += 1;
+        *curr_state = kTlCheckNumber;
+        out = 1;
+    }
+
+    return out;
+}
+
+static int tlcheck_ms_number(const char **lp, const char *lp_end, tlcheck_machine_state_t *curr_state) {
+    int out = 0;
+
+    if ((*lp) < lp_end && isdigit(*(*lp))) {
+        (*lp)++;
+        if ((*lp) == lp_end) {
+            *curr_state = kTlCheckFinis;
+        } else if (*(*lp) == '.') {
+            *curr_state = kTlCheckDot;
+        }
+        out = 1;
+    }
+
+    return out;
+}
+
+static int tlcheck_ms_dot(const char **lp, const char *lp_end, tlcheck_machine_state_t *curr_state) {
+    int out = 0;
+
+    if (*(*lp) == '.') {
+        (*lp) += 1;
+        *curr_state = kTlCheckHalf;
+        out = 1;
+    }
+
+    return out;
+}
+
+static int tlcheck_ms_half(const char **lp, const char *lp_end, tlcheck_machine_state_t *curr_state) {
+    int out = 0;
+
+    if (*(*lp) == '5') {
+        (*lp) += 1;
+        *curr_state = kTlCheckFinis;
+        out = 1;
+    }
+
+    return out;
+}
+
+static int tlcheck_ms_finis(const char **lp, const char *lp_end, tlcheck_machine_state_t *curr_state) {
+    int out = 0;
+
+    if ((*lp) == lp_end) {
+        out = 1;
+    }
+
+    return out;
 }

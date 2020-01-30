@@ -802,6 +802,7 @@ CUTE_TEST_CASE(dsl_compiler_compile_tulip_codebuf)
         { ".part{V7-Tag-New-Format}{.chord{65-57-47-36-25-15}}-.repeat{V7-Tag-New-Format}{-2.5}", 1 },
         { ".part{V7-Tag-New-Format}{.chord{65-57-47-36-25-15}}-.repeat{V7-Tag-New-Format}{-2.05}", 0 },
         { ".part{V7-Tag-New-Format}{.chord{65-57-47-36-25-15}}-.repeat{V7-Tag-New-Format}{-2.15}", 0 },
+        { ".part{V7-Tag-New-Format}{.chord{65-57-47-36-25-15}}-.repeat{V7-Tag-New-Format}{+12}", 1 },
         // INFO(Rafael): This is a valid production besides pretty silly.
         { ".part{V7-Tag-New-Format}{.chord{65-57-47-36-25-15}}-.repeat{V7-Tag-New-Format}{+0}", 1 },
         { ".part{V7-Tag-New-Format}{.chord{65-57-47-36-25-15}}-.repeat{V7-Tag-New-Format}{+0.0}", 0 },

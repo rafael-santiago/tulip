@@ -1,5 +1,5 @@
 /*
- *                           Copyright (C) 2005-2016 by Rafael Santiago
+ *                           Copyright (C) 2005-2020 by Rafael Santiago
  *
  * This is a free software. You can redistribute it and/or modify under
  * the terms of the GNU General Public License version 2.
@@ -22,7 +22,7 @@ void free_technique_stack_ctx(tulip_technique_stack_ctx *stack);
 
 tulip_single_note_ctx *add_note_to_tulip_single_note_ctx(tulip_single_note_ctx *song, tulip_command_t techniques, const char *buf);
 
-void tulip_single_note_ctx_cpy(tulip_single_note_ctx **song, const tulip_single_note_ctx *begin, const tulip_single_note_ctx *end);
+void tulip_single_note_ctx_cpy(tulip_single_note_ctx **song, const tulip_single_note_ctx *begin, const tulip_single_note_ctx *end, const int fret_shifting_level);
 
 void free_tulip_single_note_ctx(tulip_single_note_ctx *song);
 

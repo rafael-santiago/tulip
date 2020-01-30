@@ -1,5 +1,5 @@
 /*
- *                           Copyright (C) 2005-2016 by Rafael Santiago
+ *                           Copyright (C) 2005-2020 by Rafael Santiago
  *
  * This is a free software. You can redistribute it and/or modify under
  * the terms of the GNU General Public License version 2.
@@ -7,8 +7,10 @@
  */
 #include <base/ctx.h>
 #include <base/memory.h>
-#include <string.h>
 #include <dsl/parser/parser.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdio.h>
 
 #define new_technique_stack_ctx(t) ( (t) = (tulip_technique_stack_ctx *) getseg(sizeof(tulip_technique_stack_ctx)),\
                                      (t)->technique_code = kTlpNone, (t)->next = NULL )
@@ -23,6 +25,8 @@
 static tulip_single_note_ctx *get_tulip_single_note_ctx_tail(tulip_single_note_ctx *song);
 
 static tulip_part_ctx *get_tulip_part_ctx_tail(tulip_part_ctx *parts);
+
+static void shift_note(char *note, const size_t note_size, const int frets_nr);
 
 tulip_technique_stack_ctx *push_technique_to_technique_stack_ctx(tulip_technique_stack_ctx *stack, tulip_command_t technique) {
     tulip_technique_stack_ctx *top = NULL;
@@ -87,7 +91,66 @@ static tulip_single_note_ctx *get_tulip_single_note_ctx_tail(tulip_single_note_c
     return p;
 }
 
-void tulip_single_note_ctx_cpy(tulip_single_note_ctx **song, const tulip_single_note_ctx *begin, const tulip_single_note_ctx *end) {
+static void shift_note(char *note, const size_t note_size, const int frets_nr) {
+    int n, f;
+
+    if (!isdigit(*note)) {
+        return;
+    }
+
+    // INFO(Rafael): The transposition here is physical, so the guitar tuning does not matter.
+    //               A negative transposition over open strings will be screwed-up, anyway, it is up to the user
+    //               be careful for not doing it.
+
+    n = atoi(note);
+
+    if (frets_nr < 0) {
+        f = -frets_nr;
+        while (f-- > 0) {
+            if (n == 100) {
+                n = 19;
+            } else if (n == 200) {
+                n = 29;
+            } else if (n == 300) {
+                n = 39;
+            } else if (n == 400) {
+                n = 49;
+            } else if (n == 500) {
+                n = 59;
+            } else if (n == 600) {
+                n = 69;
+            } else {
+                n--;
+            }
+        }
+    } else {
+        f = frets_nr;
+        while (f-- > 0) {
+            if (n == 19) {
+                n = 100;
+            } else if (n == 29) {
+                n = 200;
+            } else if (n == 39) {
+                n = 300;
+            } else if (n == 49) {
+                n = 400;
+            } else if (n == 59) {
+                n = 500;
+            } else if (n == 69) {
+                n = 600;
+            } else {
+                n++;
+            }
+        }
+    }
+
+    if (n >= 10) {
+        snprintf(note, note_size - 1, "%d", n);
+    }
+}
+
+void tulip_single_note_ctx_cpy(tulip_single_note_ctx **song, const tulip_single_note_ctx *begin, const tulip_single_note_ctx *end, const int fret_shifting_level) {
+    char temp[255], *buf;
     const tulip_single_note_ctx *bp = NULL;
     if (song == NULL || begin == NULL || end == NULL) {
         return;
@@ -97,13 +160,29 @@ void tulip_single_note_ctx_cpy(tulip_single_note_ctx **song, const tulip_single_
 
     while (bp != end) {
         if (bp->techniques != kTlpSavePoint && bp->techniques != kTlpLiteral && bp->techniques != kTlpSong && bp->techniques != kTlpTranscriber) {
-            (*song) = add_note_to_tulip_single_note_ctx((*song), bp->techniques, bp->buf);
+            if (fret_shifting_level == 0) {
+                buf = (char *)bp->buf;
+            } else {
+                snprintf(temp, sizeof(temp) - 1, "%s", bp->buf);
+                shift_note(temp, sizeof(temp), fret_shifting_level);
+                buf = &temp[0];
+            }
+
+            (*song) = add_note_to_tulip_single_note_ctx((*song), bp->techniques, buf);
         }
         bp = bp->next;
     }
 
     if (end->techniques != kTlpSavePoint && bp->techniques != kTlpLiteral) {
-        (*song) = add_note_to_tulip_single_note_ctx((*song), end->techniques , end->buf);
+        if (fret_shifting_level == 0) {
+            buf = (char *)end->buf;
+        } else {
+            snprintf(temp, sizeof(temp) - 1, "%s", end->buf);
+            shift_note(temp, sizeof(temp), fret_shifting_level);
+            buf = &temp[0];
+        }
+
+        (*song) = add_note_to_tulip_single_note_ctx((*song), end->techniques , buf);
     }
 }
 
