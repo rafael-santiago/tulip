@@ -114,9 +114,11 @@ files is painful. It is astonishing how people do not follow any standard... We 
 manufacturers) inside the main standard and it is such a mess. In ``v3`` the software was re-written. The ``v4`` brought a
 ``postscript`` and ``PDF`` processor in addition to the standard ``plain-text`` processor from later versions.
 The ``MIDI`` processor is still not integrated in ``v4``. Maybe this feature will never go back again.
-The version ``v6`` have introduced minor improvements on ``bend`` and ``release bend`` typesetting (for ``Postscript/PDF`` outputs)
+The version ``v6`` has introduced minor improvements on ``bend`` and ``release bend`` typesetting (for ``Postscript/PDF`` outputs)
 and support for Latin1 symbols (for ``Postscript/PDF`` outputs). The current version is ``v6``. This version introduced the
 ``.append`` tag and the possibility of adding comments to the source code.
+The version ``v7`` has introduced ``SVG`` processor, an extension in ``HTML`` processor for combining ``HTML/SVG`` output.
+A extension for ``.repeat`` related to transposition was introduced.
 
 Then, here is the main versioning idea:
 
@@ -1043,7 +1045,18 @@ something that you judge good enough. The tablature is what follows:
             |-?/7-------------|--------------------12------------------?/7~~~~----|
 
 Since ``v7`` part tag can also be used following this syntax: ``.part{tag-label}{<tlp-code>}``. This new syntax is much more
-flexible and generic to handle with different song and transcription constructions.
+flexible and generic to handle with different song and transcription constructions. 
+
+The ``v7`` also has introduced an extension for ``.repeat`` tag related to "shifted-repeats". Usually, when transcribing a
+song you will have some parts that are equal in fretting stuff but in a different tone. A "shifted-repeat" allows you
+to repeat a part following the same shape but in a lower/higher tone. The new syntax is: ``.repeat{outro}{+1}``.
+This given sample would repeat "outro" one tone higher. For one tone lower: ``.repeat{outro}{-1}``. A half tone higher:
+``.repeat{outro}{+0.5}``. A half tone lower: ``.repeat{outro}{-0.5}``. Two tones and a half lower: ``.repeat{outro}{-2.5}``.
+Using ``.repeat{outro}{+0}`` or ``.repeat{outro}{-0}`` is valid but useless, you should stay with the "single-repeat":
+``.repeat{outro}``. A "shifted-repeat" is not possible if a tone regression operation does not go beyond an open string.
+Otherwise, the result will be probably incorrect. You have to know that it only considers the physical shape, the fretting
+stuff for being repeated and it also assumes that you knew that would be frets enough for performing the shift when you are
+scripting.
 
 Okay as we started to talk about ``jazz``, then let's pick up a nice ``jazz-funk`` by ``Grant Green``. The song is
 ``High Heeled Sneakers``. Originally, this song is an old ``blues`` song, recorded by a ``blues man`` called ``Tommy Tucker``.
@@ -2315,9 +2328,32 @@ currently implemented in ``Tulip``.
 |     ``Portable document file``|    ``pdf``  |
 |     ``Markdown``              |     ``md``  |
 |     ``HTML``                  |    ``html`` |
+|     ``SVG``                   |    ``svg``  |
+|     ``HTML/SVG``              |    ``html`` |
 
 The ``PDF`` processor depends on an external application called ``pspdf``, commonly it can be found in ``TeX/Live`` or even
 ``MikTeX`` if you are on ``Windows``.
+
+The ``SVG`` output splits pages by files by numbering it. When you pass ``--out=your-song.svg``, if the processed script
+generates four pages, you will get ``your-song-001.svg``, ``your-song-002.svg``, ``your-song-003.svg`` and ``your-song-004.svg``.
+Now let's suppose you have cut some parts from your transcription and regenerate the output and then it has created only two pages,
+the remaining files from the last typesetting process will be removed.
+
+``SVG`` processor allows you to change the paper size by passing the option ``--paper-width=<number>`` and/or
+``--paper-height=<number>``. You can also use standard size by passing the paper name with the option ``--paper=<name>``.
+Until now are supported the following standard paper sizes: ``4A0``, ``2A0``, ``A0``, ``A1``, ``A2``, ``A3``, ``A4``, ``A5``,
+``A6``, ``A7``, ``A8``, ``A9``, ``A10``. You can also pass the paper name by using lower-case letters.
+
+It is also possible to change the fretboard size when using ``SVG`` processor by passing the option
+``--fretboard-size=<number>``. Another nice option is related to ``svg-encoding=<encoding-name>``, it can be handy if
+you are having encoding issues when rendering your ``SVG`` TAB. The default used encoding is ``ISO-8859-1``.
+
+With the introduction of ``SVG`` processor was possible to produce a nice TAB viewer in ``HTML``. It is nice for studing and
+also for generating a more device independent self-contained way of reading the TAB. In order to generate ``HTML`` outputs
+with TAB viewer instead of plain ``ASCII`` you must pass the additional ``--svg`` option flag when generating your ``HTML``
+output. If you want to change some option in ``SVG`` you can pass the related options together, too. In TAB viewer you can
+easily navigate through the pages by pressing left/right arrow keys. TIP: Try to render it in your favorite browser in
+full-screen mode, no distractions only you and your TAB ;)
 
 **An important remark**: The ``EPS`` output is only possible when your transcription is limited to one page. A ``EPS`` output is
 nice when you want to add a short idea into another text. Usually when you write some instructional document short tablatures

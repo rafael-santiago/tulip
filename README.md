@@ -8,7 +8,7 @@ This software works based on a ``DSL`` designed taking into consideration my own
 
 You can follow reading the [user's manual](https://github.com/rafael-santiago/tulip/blob/master/doc/MANUAL.md) in order to know more about.
 
-Until now you will be able to generate tablature outputs based on ``ASCII``, ``Postscript``, ``Encapsulated Postscript``, ``PDF``, ``Markdown`` and ``HTML``. You can
+Until now you will be able to generate tablature outputs based on ``ASCII``, ``Postscript``, ``Encapsulated Postscript``, ``PDF``, ``Markdown``, ``SVG``, ``HTML/ASCII``, ``HTML/SVG``. You can
 check an output sample in ``Postscript`` [here](https://github.com/rafael-santiago/tulip/blob/master/etc/tulip-output-sample.gif?raw=true).
 
 ## How to clone this repo?

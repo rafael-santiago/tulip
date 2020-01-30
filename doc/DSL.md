@@ -58,7 +58,9 @@ and forget about tech stuff.
         <part-tag-code>           ::= "part" <tag-begin> (<US-ASCII-SET-EXCEPTING-{-}-">)+ <tag-end> |
                                       "part" <tag-begin> (<US-ASCII-SET-EXCEPTING-{-}-">)+ <tag-end>
                                       <tag-begin> <tlp-code> <tag-end>
-        <repeat-tag-code>         ::= "repeat" <tag-begin> (<US-ASCII-SET-EXCEPTING-{-}-">)+ <tag-end>
+        <repeat-tag-code>         ::= "repeat" <tag-begin> (<US-ASCII-SET-EXCEPTING-{-}-">)+ <tag-end> |
+                                      "repeat" <tag-begin> (<US-ASCII-SET-EXCEPTING-{-}-">)+ <tag-end>
+                                      <tag-begin> ("+"| "-") <number> (<number>* | ".5") <tag-end>
         <chord-stmt-list>         ::= (<note><sep>)+ | <note>
         <note-cipher>             ::= "C"  | "D"  | "E"  | "F"  | "G"  | "A"  | "B"  | "C#" | "D#" |
                                       "F#" | "G#" | "A#" | "Db" | "Eb" | "Gb" | "Ab" | "Bb" | "c"  |
