@@ -1,5 +1,5 @@
 /*
- *                           Copyright (C) 2005-2016 by Rafael Santiago
+ *                           Copyright (C) 2005-2020 by Rafael Santiago
  *
  * This is a free software. You can redistribute it and/or modify under
  * the terms of the GNU General Public License version 2.
@@ -83,13 +83,15 @@ static int tulip_task_help() {
            "Tulip Encapsulated Postscript typesetter is Copyright (C) 2017 by Rafael Santiago.\n"
            "Tulip PDF typesetter is Copyright (C) 2017 by Rafael Santiago.\n"
            "Tulip Markdown typesetter is Copyright (C) 2017 by Rafael Santiago.\n"
-           "Tulip HTML typesetter is Copyright (C) 2017 by Rafael Santiago.\n\n"
-           "Bug reports, feedback, etc: <voidbrainvoid@gmail.com> or <https://github.com/rafael-santiago/tulip/issues>\n\n");
+           "Tulip HTML typesetter is Copyright (C) 2017 by Rafael Santiago.\n"
+           "Tulip SVG typesetter is Copyright (C) 2020 by Rafael Santiago.\n"
+           "Tulip HTML/SVG typesetter is Copyright (C) 2020 by Rafael Santiago.\n\n"
+           "Bug reports, feedback, etc: <voidbrainvoid@tutanota.com> or <https://github.com/rafael-santiago/tulip/issues>\n\n");
     return 0;
 }
 
 static int tulip_task_notask() {
-    printf("tulip: What do you mean? Try to call me again using --help option.\n");
+    printf("tulip: What did you mean? Try to call me again by using --help option.\n");
     return 1;
 }
 
