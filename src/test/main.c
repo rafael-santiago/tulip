@@ -996,7 +996,7 @@ CUTE_TEST_CASE(processor_oututils_single_note_to_tab_fret_nr_tests)
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(system_get_tulip_system_version_tests)
-    CUTE_ASSERT(get_tulip_system_version() != NULL);
+    CUTE_ASSERT(strcmp(get_tulip_system_version(), "v7") == 0);
 CUTE_TEST_CASE_END
 
 static void write_buffer_to_disk(const char *filepath, const char *buffer, const size_t buffer_size) {
