@@ -11,7 +11,7 @@ You can follow reading the [user's manual](https://github.com/rafael-santiago/tu
 Until now you will be able to generate tablature outputs based on ``ASCII``, ``Postscript``, ``Encapsulated Postscript``, ``PDF``, ``Markdown``, ``SVG``, ``HTML/ASCII``, ``HTML/SVG``. You can
 check an output sample in ``Postscript`` [here](https://github.com/rafael-santiago/tulip/blob/master/etc/tulip-output-sample.gif?raw=true).
 
-## How to clone this repo?
+## How can I clone this repo?
 
 Use the ordinary ``git-clone`` command:
 
@@ -28,7 +28,7 @@ emmettbrown@DELOREAN:~/internet/github.com/src/tulip# git submodule update --ini
 
 All done!
 
-## How to build this software?
+## How can I build this software?
 
 This software uses [Hefesto](https://github.com/rafael-santiago/hefesto) as its build system, so after following the steps
 to put ``Hefesto`` to work on your system you should move to the ``src`` sub-directory and invoke ``Hefesto`` from there.
