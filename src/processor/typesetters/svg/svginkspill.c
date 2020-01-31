@@ -1489,7 +1489,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
         int is_beyond_9th_fret[6];
         int do_span;
     } notes_span;
-    int bend_arrow_string, spill_done, is_chord;
+    int bend_arrow_string, spill_done, is_chord, last_is_chord = 0;
     struct last_note_info_ctx ln_info;
     char *times, *times_end, tm_buf[20];
     struct sustained_techniques_points_ctx {
@@ -1657,6 +1657,19 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
             //               This section is created/given by shifting '(strings *) + offset' positions.
 
             is_chord = svgtypesetter_is_chord((const char **)tp->strings, offset, tp->fretboard_sz);
+
+            if (!last_is_chord && is_chord) {
+                // INFO(Rafael): If the last TAB diagram offset inspected was not about a chord we need to
+                //               make sure that the current chord will not be aligned to it. This will
+                //               ensure that the current stacked notes will not be aligned more left, resulting
+                //               in a ugly and confuse typesetting. In this case, we will get a space between it
+                //               and the current chord will have a fancy alignment.
+                for (s = 0; s < 6; s++) {
+                    g_svg_page.tab.ln_info[s].x = 0;
+                }
+            }
+
+            last_is_chord = is_chord;
 
             memset(&notes_span, 0, sizeof(notes_span));
 
