@@ -1,5 +1,5 @@
-(D) Create v7 tag. +SCMStuff,+SanityKeeping,+ReleaseStuff
 (Z) Implement a new processor which spits tabs as JPEGs (files per page, it would be useful for Kindle stuff). +NewFeature
+x (D) Create v7 tag. +SCMStuff,+SanityKeeping,+ReleaseStuff
 x (C) V7 prebuilt for Windows. +ReleaseStuff
 x (C) V7 prebuilt for Linux. +ReleaseStuff
 x (C) V7 prebuilt for FreeBSD. +ReleaseStuff
