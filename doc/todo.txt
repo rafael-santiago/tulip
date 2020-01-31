@@ -1,4 +1,10 @@
+(A) From now on start maintaining a plain ascii version of release notes ('RELNOTES.txt') located at the
+    project's top-level directory. +MinorImprovement,+SanityKeeping
 (B) Change the syntax highlighting for 'shifted-repeats'. +MinorImprovement
+(C) V7 builtin for FreeBSD. +ReleaseStuff
+(C) V7 builtin for Linux. +ReleaseStuff
+(C) V7 builtin for Windows. +ReleaseStuff
+(D) Create v7 tag. +SCMStuff,+SanityKeeping,+ReleaseStuff
 (Z) Implement a new processor which spits tabs as JPEGs (files per page, it would be useful for Kindle stuff). +NewFeature
 x (A) Add some test for 'shifted-repeats'. +Tests
 x (A) Extend repeat tag, making it also accept the construction '.repeat{<part>}{"+"|"-"<number>(<number>*|".5")}'.
