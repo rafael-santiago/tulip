@@ -1,0 +1,95 @@
+1. Latest releases are in the top.
+2. Usually, I try to do my best in order to bring you 'RELNOTES' instead of notes from hell ;)
+
+    Rafael
+--
+v7 [git-tag: 'v7']
+
+    Features:
+
+        - New SVG processor.
+        - HTML processor can also embed SVG TABs and including a rad viewer for them, too. You can easily navigate through
+          the pages of your transcription. It could be quite nice when studying, remembering old transcriptions, etc.
+          It can be awesome if you do not have a nice SVG viewer or want to produce a more device-independent output but
+          keeping on some fancy stuff that would be dropped out in plain ASCII TABs.
+        - New '.part' tag extension that makes possible to mark-up an ??? song part.
+        - Now 'shifted-repeats' are possible by using: '.repeat{<part>}{+|- <tones total> [.5]}'.
+        - For the sake of my sanity, now release notes are being stored into 'RELNOTES.txt', too.
+        - Minor changes in syntax highlighting files related to 'v7' language extensions.
+
+    Bugfixes:
+
+        - Some options related to tuning info were not being properly read when explicitly passed by command line, due
+          to a pre-historic dummy typo ('tunning' instead of 'tuning') [commit-id#e537ef].
+
+v6 [git-tag: 'v6']
+
+    Features:
+
+        - Support for code inclusion by using the tag '.append'.
+        - Support for comments by using the comment token '%'.
+
+    Bugfixes:
+
+        - None! :)
+
+v5 [git-tag: 'v5']
+
+    Features:
+
+        - Improvements on typesetting for 'bend' and 'release bend' techniques ('Postscript/PDF' out).
+        - Support for Latin1 symbols for the '.literal' tag ('Postscript/PDF' out). '.literal{"É isso aí..."}'.
+
+    Bugfixes:
+
+        - None! :)
+
+v4 [git-tag: 'v4']
+
+    Features:
+
+        - `Postscript` processor.
+        - `Encapsulated Postscript` processor.
+        - `PDF` processor (need `pspdf` tool).
+        - `Markdown` processor.
+        - `HTML` processor.
+        - Minor improvements on `ASCII` processor heuristics'.
+        - Separating the master tuning indication from the Tablature's notation table.
+
+    Housekeeping:
+
+        - Making easier the addition of new typesetting testing steps.
+        - Minor build improvement: bypassing `Valgrind's` still reachable reports.
+
+    Bugfixes:
+
+        - Comments line breaking [commit-id: #3fdc225].
+        - Repoprefs loading [commit-id: #34fa61a].
+        - Muffled notes considered kTlpTimes [commit-id: #e1ac632].
+        - Tuning that mixes natural and half step notes [commit-id: #a59f61d].
+        - Tuning loading [commit-id: #9b2a31c].
+        - `.tunning` -> `.tuning` [commit-id: #cab8763].
+
+v3 [git-tag: 'v3']
+
+    Features:
+
+        - Compiler re-written from scratch.
+        - Now generating object code instead of dumping the Tab directly by the user's code (I was a damn crazy... ?_?).
+          A pretty simple Processor's "machine code" was introduced.
+        - Speed improvements. Running the compilation step in just one single pass (the old compiler had two).
+        - Text processor (`ASCII` Tab) re-written from scratch.
+        - Formalizing a little the `DSL`.
+        - New tags added to the `DSL`. Tags related with repetition. They are: `@` (once more), `.part` and `.repeat`.
+        - Processor behavior now is controlled with command line option and/or "repoprefs" instead of a "set section".
+        - New typesetting heuristics' besides some improvements on the old ones.
+        - Now `FreeBSD` is a supported platform.
+        - `MIDI` support stripped out.
+
+    Housekeeping:
+
+        - A more decent build: Test for typesetting's consistency, Installing/Uninstalling, Prebuilts, etc.
+
+    Bugfixes:
+
+        - All old bugs had gone! I have not seen any new... ¬¬
