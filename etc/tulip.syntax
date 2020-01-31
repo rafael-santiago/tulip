@@ -1,5 +1,10 @@
+# Syntax rules for Tulip guitar tablature typesetting language.
+
 wholechars abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_%-
 context default
+    keyword             {\+*}           brightgreen
+    keyword             {\-*}           brightred
+
     keyword		.mute		brightcyan
     keyword		.chord		brightcyan
     keyword		.strum		brightcyan
@@ -23,11 +28,11 @@ context default
     keyword		/		brightcyan
     keyword		\\		brightcyan
     keyword		:		brightcyan
-    keyword		|		red
+    keyword		|		brightmagenta
     keyword		-		brightcyan
     keyword		?		brightcyan
-    keyword		;		red
-    keyword             @               red
+    keyword		;		brightmagenta
+    keyword             @               brightmagenta
 # letters
     keyword             a               brightcyan
     keyword             b               brightcyan
@@ -98,7 +103,6 @@ context default
     keyword		"*"		green
     keyword 		\\n		brightgreen
     keyword		\\t		brightgreen
-
 
 context % \n lightgray
     spellcheck
