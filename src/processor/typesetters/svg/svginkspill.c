@@ -1808,10 +1808,12 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
                     //               the sustained techniques lines of the current full one.
                     stech_p = &stech_pts[0];
                     while (stech_p != stech_end) {
-                        fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
-                                           " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\""
-                                           " stroke-dasharray=\"5,5\"/>\n", stech_p->x, *g_svg_page.tab.carriage_x,
-                                                                            stech_p->y + 1, stech_p->y + 1);
+                        if (stech_p->print_line) {
+                            fprintf(g_svg_page.fp, "\t<line x1=\"%d\" x2=\"%d\" y1=\"%d\" y2=\"%d\""
+                                               " style=\"stroke:rgb(0,0,0);stroke-width:1;opacity:0.5\""
+                                               " stroke-dasharray=\"5,5\"/>\n", stech_p->x, *g_svg_page.tab.carriage_x,
+                                                                                stech_p->y + 1, stech_p->y + 1);
+                        }
                         stech_p++;
                     }
                 }
