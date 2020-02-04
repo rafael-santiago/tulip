@@ -20,6 +20,7 @@ int svg_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     size_t fretboard_sz = SVGTYPESETTER_FRETBOARD_SIZE;
     extern int g_svgtypesetter_page_width, g_svgtypesetter_page_height;
     extern char *g_svgtypesetter_svg_encoding;
+    extern int g_svgtypesetter_svg_embed_font;
 
     if (typesetter_paper_size(&g_svgtypesetter_page_width, &g_svgtypesetter_page_height) == 0) {
         if (g_svgtypesetter_page_width == 0) {
@@ -32,6 +33,8 @@ int svg_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     }
 
     g_svgtypesetter_svg_encoding = (char *)get_option("svg-encoding", SVGTYPESETTER_DEFAULT_SVG_ENCODING);
+
+    g_svgtypesetter_svg_embed_font = get_bool_option("svg-embed-font", SVGTYPESETTER_DEFAULT_SVG_EMBED_FONT);
 
     set_processor_setting("fretboard-size", &fretboard_sz, sizeof(fretboard_sz));
 

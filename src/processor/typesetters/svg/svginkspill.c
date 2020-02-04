@@ -8,6 +8,7 @@
 #include <processor/typesetters/svg/svginkspill.h>
 #include <processor/typesetters/svg/svgboundaries.h>
 #include <processor/typesetters/svg/svg_do_pinch_flush.h>
+#include <processor/typesetters/svg/svgfont.h>
 #include <processor/typesetters/typeprefs.h>
 #include <processor/oututils.h>
 #include <processor/settings.h>
@@ -1086,13 +1087,33 @@ static int svgtypesetter_newpage(void) {
 
     svgtypesetter_refresh_fbrd_xy();
 
-    fprintf(g_svg_page.fp, "<?xml version=\"1.0\" encoding=\"%s\" standalone=\"no\"?>\n"
-                           "<svg xmlns=\"http://www.w3.org/2000/svg\""
-                           " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
-                           "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n",
-                           g_svgtypesetter_svg_encoding, g_svgtypesetter_page_width,
-                           g_svgtypesetter_page_height, g_svgtypesetter_page_width,
-                           g_svgtypesetter_page_height, g_svgtypesetter_svg_encoding);
+    if (g_svgtypesetter_svg_embed_font) {
+        fprintf(g_svg_page.fp, "<?xml version=\"1.0\" encoding=\"%s\" standalone=\"no\"?>\n"
+                               "<svg xmlns=\"http://www.w3.org/2000/svg\""
+                               " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
+                               "\t<defs>\n"
+                               "\t\t<style type=\"text/css\">\n"
+                               "\t\t<![CDATA[\n"
+                               "\t\t\t@font-face {\n"
+                               "\t\t\t\tfont-family: \"Courier\";\n"
+                               "\t\t\t\tsrc: url(" SVG_COURIER_FONT_DATA ")\n"
+                               "\t\t\t}\n"
+                               "\t\t]]>\n"
+                               "\t\t</style>\n"
+                               "\t</defs>\n"
+                               "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n",
+                               g_svgtypesetter_svg_encoding, g_svgtypesetter_page_width,
+                               g_svgtypesetter_page_height, g_svgtypesetter_page_width,
+                               g_svgtypesetter_page_height, g_svgtypesetter_svg_encoding);
+    } else {
+        fprintf(g_svg_page.fp, "<?xml version=\"1.0\" encoding=\"%s\" standalone=\"no\"?>\n"
+                               "<svg xmlns=\"http://www.w3.org/2000/svg\""
+                               " width=\"%d\" height=\"%d\" style=\"background-color:white\">\n"
+                               "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n",
+                               g_svgtypesetter_svg_encoding, g_svgtypesetter_page_width,
+                               g_svgtypesetter_page_height, g_svgtypesetter_page_width,
+                               g_svgtypesetter_page_height, g_svgtypesetter_svg_encoding);
+    }
 
     g_svg_page.tab_per_page_nr = 1;
 

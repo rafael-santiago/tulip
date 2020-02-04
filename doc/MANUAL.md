@@ -2345,8 +2345,11 @@ Until now are supported the following standard paper sizes: ``4A0``, ``2A0``, ``
 ``A6``, ``A7``, ``A8``, ``A9``, ``A10``. You can also pass the paper name by using lower-case letters.
 
 It is also possible to change the fretboard size when using ``SVG`` processor by passing the option
-``--fretboard-size=<number>``. Another nice option is related to ``svg-encoding=<encoding-name>``, it can be handy if
+``--fretboard-size=<number>``. Another nice option is related to ``--svg-encoding=<encoding-name>``, it can be handy if
 you are having encoding issues when rendering your ``SVG`` TAB. The default used encoding is ``ISO-8859-1``.
+
+If you want to ensure a more exact renderization related to fonts from a system to another, you should use the option
+``--svg-embed-font``. However, it will bloat a little your ``SVG`` output, if size is not a problem to you go ahead.
 
 With the introduction of ``SVG`` processor was possible to produce a nice TAB viewer in ``HTML``. It is nice for studing and
 also for generating a more device independent self-contained way of reading the TAB. In order to generate ``HTML`` outputs
