@@ -14,6 +14,7 @@
 #include <processor/oututils.h>
 #include <processor/settings.h>
 #include <encoding/inline_svg_into_html.h>
+#include <encoding/html_str_normalize.h>
 #include <base/memory.h>
 #include <usrland/cmdlineoptions.h>
 #include <stdlib.h>
@@ -82,13 +83,15 @@ static void htmltypesetter_spill_tab_notation(FILE *fp, const tulip_single_note_
 }
 
 static void htmltypesetter_spill_transcribers_name(FILE *fp, const char *name) {
+    char buf[256];
     if (name == NULL) {
         return;
     }
-    fprintf(fp, " <SMALL><I>transcribed by %s</I></SMALL><BR><BR>\n", name);
+    fprintf(fp, " <SMALL><I>transcribed by %s</I></SMALL><BR><BR>\n", html_str_normalize(buf, sizeof(buf), name));
 }
 
 static void htmltypesetter_spill_song_title(FILE *fp, const char *title) {
+    char buf[256];
     fprintf(fp, "<HTML>\n"
                 " <HEAD>\n"
                 "  <META CHARSET=\"UTF-8\">\n"
@@ -98,7 +101,7 @@ static void htmltypesetter_spill_song_title(FILE *fp, const char *title) {
         return;
     }
 
-    fprintf(fp, " <H1>%s</H1>\n", title);
+    fprintf(fp, " <H1>%s</H1>\n", html_str_normalize(buf, sizeof(buf), title));
 }
 
 static void htmltypesetter_spill_tuning(FILE *fp) {

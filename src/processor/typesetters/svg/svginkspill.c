@@ -11,6 +11,7 @@
 #include <processor/typesetters/typeprefs.h>
 #include <processor/oututils.h>
 #include <processor/settings.h>
+#include <encoding/html_str_normalize.h>
 #include <base/types.h>
 #include <base/memory.h>
 #include <ctype.h>
@@ -571,7 +572,7 @@ static void svgtypesetter_insert_header_span(void) {
 
 static void svgtypesetter_spill_song_title(const char *title) {
     const char *tp, *tp_end, *l_tp;
-    char title_chunk[256];
+    char title_chunk[256], buf[256];
     size_t title_chunk_size;
 
     l_tp = tp = title;
@@ -583,9 +584,10 @@ static void svgtypesetter_spill_song_title(const char *title) {
             if (title_chunk_size > 0) {
                 memset(title_chunk, 0, sizeof(title_chunk));
                 memcpy(title_chunk, l_tp, title_chunk_size);
+                html_str_normalize(buf, sizeof(buf), title_chunk);
                 fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"30\""
                                        " font-weight=\"bold\">%s</text>\n", *g_svg_page.tab.carriage_x,
-                                                                            *g_svg_page.tab.carriage_y, title_chunk);
+                                                                            *g_svg_page.tab.carriage_y, buf);
             }
 
             if (*tp == '\n') {
@@ -602,9 +604,11 @@ static void svgtypesetter_spill_song_title(const char *title) {
 }
 
 static void svgtypesetter_spill_transcriber(const char *name) {
+    char buf[256];
+    html_str_normalize(buf, sizeof(buf), name);
     fprintf(g_svg_page.fp, "\t<text x=\"%d\" y=\"%d\" fill=\"black\" font-size=\"13\""
                            " font-weight=\"bold\">transcribed by %s</text>\n", *g_svg_page.tab.carriage_x,
-                                                                               *g_svg_page.tab.carriage_y, name);
+                                                                               *g_svg_page.tab.carriage_y, buf);
     *g_svg_page.tab.carriage_y += SVGTYPESETTER_TAB_Y_SPAN * 2;
     svgtypesetter_refresh_fbrd_xy();
 }

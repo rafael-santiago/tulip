@@ -11,6 +11,7 @@
 #include <base/memory.h>
 #include <encoding/base64.h>
 #include <encoding/inline_svg_into_html.h>
+#include <encoding/html_str_normalize.h>
 #include <dsl/utils.h>
 #include <dsl/str/strutils.h>
 #include <dsl/parser/parser.h>
@@ -64,6 +65,7 @@ CUTE_DECLARE_TEST_CASE(processor_typesetters_typesetter_paper_size_tests);
 CUTE_DECLARE_TEST_CASE(processor_typesetter_settings_tests);
 CUTE_DECLARE_TEST_CASE(encoding_base64_encode_buffer_tests);
 CUTE_DECLARE_TEST_CASE(encoding_inline_svg_into_html_tests);
+CUTE_DECLARE_TEST_CASE(encoding_html_str_normalize_tests);
 
 CUTE_TEST_CASE(tulips_tester_monkey)
     remove(".tulipprefs");
@@ -93,6 +95,7 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     }
     CUTE_RUN_TEST(encoding_base64_encode_buffer_tests);
     CUTE_RUN_TEST(encoding_inline_svg_into_html_tests);
+    CUTE_RUN_TEST(encoding_html_str_normalize_tests);
     CUTE_RUN_TEST(append_tests);
     //  WARN(Rafael): It is important to run the following test after
     //                the test "dsl_utils_tlp_cmd_code_to_plain_index_tests"
@@ -124,6 +127,33 @@ CUTE_TEST_CASE(tulips_tester_monkey)
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulips_tester_monkey);
+
+CUTE_TEST_CASE(encoding_html_str_normalize_tests)
+    struct test_ctx {
+        char *str;
+        char *exp_str;
+    } test_vector[] = {
+        { "Swagger & Sway", "Swagger &amp; Sway"           },
+        { "Sei la <bobeira i>", "Sei la &lt;bobeira i&gt;" },
+        { "Ob-La-Di, Ob-La-Da", "Ob-La-Di, Ob-La-Da"       },
+        { "Octopuss Garden", "Octopuss Garden"             },
+        { "Let It Be", "Let It Be"                         },
+        { "Write In C", "Write In C"                       }
+    }, *test, *test_end;
+    char buf[4096];
+    size_t exp_str_size;
+
+    test = &test_vector[0];
+    test_end = test + sizeof(test_vector) / sizeof(test_vector[0]);
+
+    while (test != test_end) {
+        CUTE_ASSERT(html_str_normalize(buf, sizeof(buf), test->str) == &buf[0]);
+        exp_str_size = strlen(test->exp_str);
+        CUTE_ASSERT(exp_str_size == strlen(buf));
+        CUTE_ASSERT(memcmp(buf, test->exp_str, exp_str_size) == 0);
+        test++;
+    }
+CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(encoding_inline_svg_into_html_tests)
     char *svg_data = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>"
