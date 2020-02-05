@@ -99,7 +99,7 @@ local function runtests() : result type int {
                 hefesto.sys.echo("PACK AND GO WARN: Nothing was done. Try to fix the related issues and return later.\n");
             } else {
                 hefesto.sys.echo("PACK AND GO INFO: A new pre-built for " + hefesto.sys.os_name() + " was generated. Do not forget to commit/push it if you really want to.\n" +
-                                 "                  After committing you should remove the rescue copy (\"README.md~\") of the old README.md done under the repo's\n"
+                                 "                  After committing you should remove the rescue copy (\"README.md~\") of the old README.md done under the repo's\n" +
                                  "                  top-level path.\n");
             }
             hefesto.sys.echo("___\n");
