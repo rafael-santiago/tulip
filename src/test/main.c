@@ -12,6 +12,7 @@
 #include <encoding/base64.h>
 #include <encoding/inline_svg_into_html.h>
 #include <encoding/html_str_normalize.h>
+#include <encoding/inline_font_data.h>
 #include <dsl/utils.h>
 #include <dsl/str/strutils.h>
 #include <dsl/parser/parser.h>
@@ -66,6 +67,7 @@ CUTE_DECLARE_TEST_CASE(processor_typesetter_settings_tests);
 CUTE_DECLARE_TEST_CASE(encoding_base64_encode_buffer_tests);
 CUTE_DECLARE_TEST_CASE(encoding_inline_svg_into_html_tests);
 CUTE_DECLARE_TEST_CASE(encoding_html_str_normalize_tests);
+CUTE_DECLARE_TEST_CASE(encoding_inline_font_data_tests);
 
 CUTE_TEST_CASE(tulips_tester_monkey)
     remove(".tulipprefs");
@@ -96,6 +98,7 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     CUTE_RUN_TEST(encoding_base64_encode_buffer_tests);
     CUTE_RUN_TEST(encoding_inline_svg_into_html_tests);
     CUTE_RUN_TEST(encoding_html_str_normalize_tests);
+    CUTE_RUN_TEST(encoding_inline_font_data_tests);
     CUTE_RUN_TEST(append_tests);
     //  WARN(Rafael): It is important to run the following test after
     //                the test "dsl_utils_tlp_cmd_code_to_plain_index_tests"
@@ -127,6 +130,68 @@ CUTE_TEST_CASE(tulips_tester_monkey)
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulips_tester_monkey);
+
+CUTE_TEST_CASE(encoding_inline_font_data_tests)
+    struct test_ctx {
+        char *font_file;
+        char *font_data;
+        char font_data_size;
+        char *out;
+        char out_size;
+    } test_vector[] = {
+        { "foo.woff", "foo", 3, "\"data:application/x-font-woff;base64,Zm9v\"", 42 },
+        { "foo.ttf", "foo", 3, "\"data:application/x-font-ttf;base64,Zm9v\"", 41 },
+        { "foo.otf", "foo", 3, "\"data:application/x-font-opentype;base64,Zm9v\"", 46 },
+        { "foo.eot", "foo", 3, "\"data:application/vnd.ms-fontobject;base64,Zm9v\"", 48 },
+        { "foo.txt.woff", "foo", 3, "\"data:application/x-font-woff;base64,Zm9v\"", 42 },
+        { "foo..txt.ttf", "foo", 3, "\"data:application/x-font-ttf;base64,Zm9v\"", 41 },
+        { "foo...txt..otf", "foo", 3, "\"data:application/x-font-opentype;base64,Zm9v\"", 46 },
+        { "foo.txt.eot", "foo", 3, "\"data:application/vnd.ms-fontobject;base64,Zm9v\"", 48 },
+        { "foo.txt", "foo", 3, NULL, 0 },
+        { "foo", "foo", 3, NULL, 0 },
+        { NULL, "foo", 3, NULL, 0 }
+    }, *test, *test_end;
+    char *out;
+    size_t out_size;
+
+    test = &test_vector[0];
+    test_end = test + sizeof(test_vector) / sizeof(test_vector[0]);
+
+    while (test != test_end) {
+        if (test->font_file != NULL) {
+            write_buffer_to_disk(test->font_file, test->font_data, test->font_data_size);
+        }
+
+        out = inline_font_data(test->font_file, &out_size);
+
+        if (test->out != NULL) {
+            CUTE_ASSERT(out_size == test->out_size);
+            CUTE_ASSERT(memcmp(out, test->out, out_size) == 0);
+        } else {
+            CUTE_ASSERT(out == NULL);
+            CUTE_ASSERT(out_size == 0);
+        }
+
+        if (out != NULL) {
+            free(out);
+        }
+
+        out = inline_font_data(test->font_file, NULL);
+
+        if (test->out != NULL) {
+            CUTE_ASSERT(memcmp(out, test->out, test->out_size) == 0);
+            free(out);
+        } else {
+            CUTE_ASSERT(out == NULL);
+        }
+
+        if (test->font_file != NULL) {
+            CUTE_ASSERT(remove(test->font_file) == 0);
+        }
+
+        test++;
+    }
+CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(encoding_html_str_normalize_tests)
     struct test_ctx {
