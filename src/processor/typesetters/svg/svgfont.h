@@ -8,7 +8,11 @@
 #ifndef TULIP_PROCESSOR_TYPESETTERS_SVG_SVGFONT_H
 #define TULIP_PROCESSOR_TYPESETTERS_SVG_SVGFONT_H 1
 
-#define SVG_COURIER_FONT_DATA "\"data:application/x-font-woff;base64,"\
+// INFO(Rafael): This default font is the license free Droid Sans Mono, but internally
+//               we will can it 'Courier', since it came from the same font-family,
+//               monospaced and so on.
+
+#define SVGTYPESETTER_DROIDSANSMONO_FONT_DATA "\"data:application/x-font-woff;base64,"\
         "d09GRgABAAAAASXoABAAAAAByzQAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABGRlRNAAElzAAAABwA"\
         "AAAcZVv/JkdERUYAASWsAAAAHgAAAB4AJwOKT1MvMgAAAeQAAABeAAAAYKDLlcFjbWFwAAAGAAAA"\
         "AwUAAARO+9Jz8mN2dCAAAA90AAABIwAAAhBEnU1yZnBnbQAACQgAAAQ3AAAHBXPTI7BnYXNwAAEl"\

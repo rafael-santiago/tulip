@@ -39,6 +39,7 @@ char *inline_font_data(const char *filepath, size_t *out_size) {
     }
 
     if (fp == filepath && *fp != '.') {
+        fprintf(stderr, "processor ERROR: Font file name has no extension.\n");
         goto inline_font_into_html_epilogue;
     }
 

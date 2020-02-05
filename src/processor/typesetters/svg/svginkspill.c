@@ -1096,15 +1096,15 @@ static int svgtypesetter_newpage(void) {
                                "\t\t<![CDATA[\n"
                                "\t\t\t@font-face {\n"
                                "\t\t\t\tfont-family: \"Courier\";\n"
-                               "\t\t\t\tsrc: url(" SVG_COURIER_FONT_DATA ")\n"
+                               "\t\t\t\tsrc: url(%s)\n"
                                "\t\t\t}\n"
                                "\t\t]]>\n"
                                "\t\t</style>\n"
                                "\t</defs>\n"
                                "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n",
                                g_svgtypesetter_svg_encoding, g_svgtypesetter_page_width,
-                               g_svgtypesetter_page_height, g_svgtypesetter_page_width,
-                               g_svgtypesetter_page_height, g_svgtypesetter_svg_encoding);
+                               g_svgtypesetter_page_height, g_svgtypesetter_svg_font,
+                               g_svgtypesetter_page_width,  g_svgtypesetter_page_height);
     } else {
         fprintf(g_svg_page.fp, "<?xml version=\"1.0\" encoding=\"%s\" standalone=\"no\"?>\n"
                                "<svg xmlns=\"http://www.w3.org/2000/svg\""
@@ -1112,7 +1112,7 @@ static int svgtypesetter_newpage(void) {
                                "\t<rect x=\"1\" y=\"1\" width=\"%d\" height=\"%d\" fill=\"white\"/>\n",
                                g_svgtypesetter_svg_encoding, g_svgtypesetter_page_width,
                                g_svgtypesetter_page_height, g_svgtypesetter_page_width,
-                               g_svgtypesetter_page_height, g_svgtypesetter_svg_encoding);
+                               g_svgtypesetter_page_height);
     }
 
     g_svg_page.tab_per_page_nr = 1;

@@ -6,6 +6,7 @@
  *
  */
 #include <processor/typesetters/svg/svgboundaries.h>
+#include <processor/typesetters/svg/svgfont.h>
 
 int g_svgtypesetter_page_width = SVGTYPESETTER_DEFAULT_PAGE_WIDTH;
 
@@ -14,3 +15,5 @@ int g_svgtypesetter_page_height = SVGTYPESETTER_DEFAULT_PAGE_HEIGHT;
 char *g_svgtypesetter_svg_encoding = SVGTYPESETTER_DEFAULT_SVG_ENCODING;
 
 int g_svgtypesetter_svg_embed_font = SVGTYPESETTER_DEFAULT_SVG_EMBED_FONT;
+
+char *g_svgtypesetter_svg_font = SVGTYPESETTER_DROIDSANSMONO_FONT_DATA;

@@ -2351,6 +2351,12 @@ you are having encoding issues when rendering your ``SVG`` TAB. The default used
 If you want to ensure a more exact renderization related to fonts from a system to another, you should use the option
 ``--svg-embed-font``. However, it will bloat a little your ``SVG`` output, if size is not a problem to you go ahead.
 
+When embedding a font you can use the license free default internal font ``Droid Sans Mono`` or you can use an external font
+of your choice, in this case you must use the additional option ``--svg-font=<file-path>``. Notice that you should watch the
+license restrictions of this external font by checking if it fits to your case. I am not responsible for any license
+infringement done you. The ``--svg-font`` option accepts font files in the following formats: ``woff``, ``ttf``, ``otf``
+and ``eot``.
+
 With the introduction of ``SVG`` processor was possible to produce a nice TAB viewer in ``HTML``. It is nice for studing and
 also for generating a more device independent self-contained way of reading the TAB. In order to generate ``HTML`` outputs
 with TAB viewer instead of plain ``ASCII`` you must pass the additional ``--svg`` option flag when generating your ``HTML``

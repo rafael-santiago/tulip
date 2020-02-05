@@ -56,4 +56,6 @@ extern char *g_svgtypesetter_svg_encoding;
 
 extern int g_svgtypesetter_svg_embed_font;
 
+extern char *g_svgtypesetter_svg_font;
+
 #endif
