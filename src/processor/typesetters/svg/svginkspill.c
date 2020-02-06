@@ -428,7 +428,14 @@ static void svgtypesetter_spill_comments(const txttypesetter_tablature_ctx *txtt
         y = g_svg_page.tab.fbrd[0].y;
     } else {
         // INFO(Rafael): At least one TAB diagram was written.
-        if (has_unflushed_data((const char **)txttab->last->strings, 0, txttab->last->fretboard_sz)) {
+        //
+        //               'g_svg_page.tab.last_non_null_x > g_svg_page.tab.xlim_left' is important to be verified
+        //               because if a save-point is defined exactly before a '.literal{"Lipsum"};' it can
+        //               confuse the processor making it forget about the last tab diagram written and so
+        //               start assuming fbrd[0].y what will result an ugly overlapping at the output.
+        //
+        if (g_svg_page.tab.last_non_null_x > g_svg_page.tab.xlim_left ||
+            has_unflushed_data((const char **)txttab->last->strings, 0, txttab->last->fretboard_sz)) {
             // INFO(Rafael): Non empty TAB.
             y = g_svg_page.tab.fbrd[5].y;
             y += (SVGTYPESETTER_TAB_Y_SPAN + 2) * 2;
