@@ -62,7 +62,7 @@ fits to your environment is a good practice to check if your copy has the same r
 |                **File**              |   **Platform**      |                    **MD5 hash**               |
 |:------------------------------------:|:-------------------:|:---------------------------------------------:|
 | [``prebuilt/tulip-bin-linux.zip``](https://github.com/rafael-santiago/tulip/raw/master/prebuilt/tulip-bin-linux.zip) | ``linux`` | ``98804a1e6babcfdd8c5c25421b597f81`` |
-| [``prebuilt/tulip-bin-freebsd.zip``](https://github.com/rafael-santiago/tulip/raw/master/prebuilt/tulip-bin-freebsd.zip) | ``freebsd`` | ``190ecb6984eb311588745c854bd3ac2e`` |
+| [``prebuilt/tulip-bin-freebsd.zip``](https://github.com/rafael-santiago/tulip/raw/master/prebuilt/tulip-bin-freebsd.zip) | ``freebsd`` | ``a44d2ad4d492512a507a57e7c27a1aa0`` |
 | [``prebuilt/tulip-bin-windows.zip``](https://github.com/rafael-santiago/tulip/raw/master/prebuilt/tulip-bin-windows.zip) | ``windows`` | ``d5c659a44f384c8a6403294fc572b6f9`` |
 
 All executables listed in the **Table 1** are ``32-bit`` based.
