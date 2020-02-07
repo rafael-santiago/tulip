@@ -22,6 +22,8 @@ v7 [git-tag: 'v7']
 
         - Some options related to tuning info were not being properly read when explicitly passed by command line, due
           to a pre-historic dummy typo ('tunning' instead of 'tuning') [commit-id#e537ef].
+        - HTML and Markdown processors was writing incomplete TABS. The problem was in TXT processor, where sometimes NULLs
+          were being written to output. [commit-id#6ffe59].
 
 v6 [git-tag: 'v6']
 
