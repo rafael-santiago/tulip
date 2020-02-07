@@ -66,7 +66,7 @@ static void txttypesetter_spill_fretboard_pinches(FILE *fp, const txttypesetter_
             fprintf(fp, "|");
         }
 
-        if (s_limit == -1) {
+        if (s_limit == -1 || tab->strings[s][s_limit - 1] == 0) {
             fprintf(fp, "%s", tab->strings[s]);
         } else {
             /*real_s_limit = s_limit;
