@@ -1,6 +1,8 @@
-(A) Implement fancy assurance tests for JPEG processor. Tests
 (A) Implement a PNG processor too. +NewFeature
+(A) Implement fancy assurance tests for PNG processor. +Tests
 (A) Implement a mobi processor (Kindle). +NewFeature
+(A) Implement fancy assurance tests for mobi processor. +Tests
+x (A) Implement fancy assurance tests for JPEG processor. +Tests
 x (A) Implement a new processor which spits tabs as JPEGs (files per page, it would be useful for Kindle stuff). +NewFeature
 x (D) Create v7 tag. +SCMStuff,+SanityKeeping,+ReleaseStuff
 x (C) V7 prebuilt for Windows. +ReleaseStuff
