@@ -1525,7 +1525,7 @@ CUTE_TEST_CASE_END
 CUTE_TEST_CASE(processor_fancy_outputs_assurance)
     size_t t;
     tulip_single_note_ctx *song = NULL;
-    char *output_buf = NULL;
+    unsigned char *output_buf = NULL;
     unsigned char *outpath;
     size_t output_buf_sz = 0, b = 0;
     FILE *output = NULL;
@@ -1538,15 +1538,24 @@ CUTE_TEST_CASE(processor_fancy_outputs_assurance)
         CUTE_ASSERT(mktab(song, g_fancy_outputs_test_vector[t].filepath) == 0);
         free_tulip_single_note_ctx(song);
         song = NULL;
-        outpath = (strstr(g_fancy_outputs_test_vector[t].filepath, ".svg") == NULL) ? g_fancy_outputs_test_vector[t].filepath :
-                                                                                      (unsigned char *)"output-001.svg";
+
+        if (strstr(g_fancy_outputs_test_vector[t].filepath, ".svg") != NULL) {
+            outpath = (unsigned char *)"output-001.svg";
+        } else if (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpeg") != NULL) {
+            outpath = (unsigned char *)"output-001.jpeg";
+        } else if (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL) {
+            outpath = (unsigned char *)"output-001.jpg";
+        } else {
+            outpath = g_fancy_outputs_test_vector[t].filepath;
+        }
+
         output = fopen(outpath, "rb");
         CUTE_ASSERT(output != NULL);
         fseek(output, 0L, SEEK_END);
         output_buf_sz = (size_t) ftell(output);
         fseek(output, 0L, SEEK_SET);
         CUTE_ASSERT(output_buf_sz == g_fancy_outputs_test_vector[t].output_sz);
-        output_buf = (char *) getseg(output_buf_sz + 1);
+        output_buf = (unsigned char *) getseg(output_buf_sz + 1);
         memset(output_buf, 0, output_buf_sz + 1);
         fread(output_buf, 1, output_buf_sz, output);
         fclose(output);
@@ -1580,8 +1589,17 @@ CUTE_TEST_CASE(append_tests)
                              strlen(g_fancy_outputs_test_vector[t].tlp_code));
         snprintf(cmdline, sizeof(cmdline) - 1, "%s --tlp=main.tlp --out=%s", binpath, g_fancy_outputs_test_vector[t].filepath);
         CUTE_ASSERT(system(cmdline) == 0);
-        outpath = (strstr(g_fancy_outputs_test_vector[t].filepath, ".svg") == NULL) ? g_fancy_outputs_test_vector[t].filepath :
-                                                                                      (unsigned char *)"output-001.svg";
+
+        if (strstr(g_fancy_outputs_test_vector[t].filepath, ".svg") != NULL) {
+            outpath = (unsigned char *)"output-001.svg";
+        } else if (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpeg") != NULL) {
+            outpath = (unsigned char *)"output-001.jpeg";
+        } else if (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL) {
+            outpath = (unsigned char *)"output-001.jpg";
+        } else {
+            outpath = g_fancy_outputs_test_vector[t].filepath;
+        }
+
         fp = fopen(outpath, "rb");
         CUTE_ASSERT(fp != NULL);
         fseek(fp, 0L, SEEK_END);
@@ -1631,7 +1649,7 @@ CUTE_TEST_CASE(users_binary_tests)
     int exit_code = 0;
     size_t t = 0, o = 0;
     FILE *output = NULL;
-    char *output_buf = NULL;
+    unsigned char *output_buf = NULL;
     unsigned char *outpath;
     long osize = 0;
     char *dummy_options[] = {
@@ -1700,8 +1718,16 @@ CUTE_TEST_CASE(users_binary_tests)
 
         CUTE_ASSERT(system(cmdline) == 0);
 
-        outpath = (strstr(g_fancy_outputs_test_vector[t].filepath, ".svg") == NULL) ? g_fancy_outputs_test_vector[t].filepath :
-                                                                                      (unsigned char *)"output-001.svg";
+        if (strstr(g_fancy_outputs_test_vector[t].filepath, ".svg") != NULL) {
+            outpath = (unsigned char *)"output-001.svg";
+        } else if (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpeg") != NULL) {
+            outpath = (unsigned char *)"output-001.jpeg";
+        } else if (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL) {
+            outpath = (unsigned char *)"output-001.jpg";
+        } else {
+            outpath = g_fancy_outputs_test_vector[t].filepath;
+        }
+
         output = fopen(outpath, "rb");
         CUTE_ASSERT(output != NULL);
         fseek(output, 0L, SEEK_END);
@@ -1711,7 +1737,7 @@ CUTE_TEST_CASE(users_binary_tests)
 
         fseek(output, 0L, SEEK_SET);
 
-        output_buf = (char *) getseg(osize + 1);
+        output_buf = (unsigned char *) getseg(osize + 1);
         memset(output_buf, 0, osize + 1);
         fread(output_buf, 1, osize, output);
         fclose(output);

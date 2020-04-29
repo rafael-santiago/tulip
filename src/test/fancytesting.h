@@ -38,7 +38,9 @@ struct typesetter_fancy_outputs_assurance g_fancy_outputs_test_vector[] = {
     add_new_output_fancy_testing_step(haitian_fight_song, eps),
     add_new_output_fancy_testing_step(pisces, svg),
     add_new_output_fancy_testing_step(the_bronze_intro, svg),
-    add_new_output_fancy_testing_step(shifted_repeats_poking_first_movement, txt)
+    add_new_output_fancy_testing_step(shifted_repeats_poking_first_movement, txt),
+    add_new_output_fancy_testing_step(the_bronze_intro, jpeg),
+    add_new_output_fancy_testing_step(the_bronze_intro, jpg)
 };
 
 size_t g_fancy_outputs_test_vector_nr = sizeof(g_fancy_outputs_test_vector) / sizeof(g_fancy_outputs_test_vector[0]);
