@@ -1536,7 +1536,8 @@ CUTE_TEST_CASE(processor_fancy_outputs_assurance)
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
         if (!hc &&
             (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpeg") != NULL ||
-             strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL)) {
+             strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL ||
+             strstr(g_fancy_outputs_test_vector[t].filepath, ".png") != NULL)) {
             printf("WARN: Unable to test JPEG processor. You do not have ImageMagick suite installed. Skipping.\n");
             continue;
         }
@@ -1552,6 +1553,8 @@ CUTE_TEST_CASE(processor_fancy_outputs_assurance)
             outpath = (unsigned char *)"output-001.jpeg";
         } else if (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL) {
             outpath = (unsigned char *)"output-001.jpg";
+        } else if (strstr(g_fancy_outputs_test_vector[t].filepath, ".png") != NULL) {
+            outpath = (unsigned char *)"output-001.png";
         } else {
             outpath = g_fancy_outputs_test_vector[t].filepath;
         }
@@ -1560,16 +1563,19 @@ CUTE_TEST_CASE(processor_fancy_outputs_assurance)
         CUTE_ASSERT(output != NULL);
         fseek(output, 0L, SEEK_END);
         output_buf_sz = (size_t) ftell(output);
-        fseek(output, 0L, SEEK_SET);
         CUTE_ASSERT(output_buf_sz == g_fancy_outputs_test_vector[t].output_sz);
-        output_buf = (unsigned char *) getseg(output_buf_sz + 1);
-        memset(output_buf, 0, output_buf_sz + 1);
-        fread(output_buf, 1, output_buf_sz, output);
-        fclose(output);
-        for (b = 0; b < output_buf_sz; b++) {
-            CUTE_ASSERT(output_buf[b] == g_fancy_outputs_test_vector[t].output[b]);
+
+        if (strstr(outpath, ".png") == NULL) { //INFO(Rafael): PNG output always vary.
+            fseek(output, 0L, SEEK_SET);
+            output_buf = (unsigned char *) getseg(output_buf_sz + 1);
+            memset(output_buf, 0, output_buf_sz + 1);
+            fread(output_buf, 1, output_buf_sz, output);
+            for (b = 0; b < output_buf_sz; b++) {
+                CUTE_ASSERT(output_buf[b] == g_fancy_outputs_test_vector[t].output[b]);
+            }
+            free(output_buf);
         }
-        free(output_buf);
+        fclose(output);
         remove(outpath);
     }
 CUTE_TEST_CASE_END
@@ -1594,7 +1600,8 @@ CUTE_TEST_CASE(append_tests)
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
         if (!hc &&
             (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpeg") != NULL ||
-             strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL)) {
+             strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL ||
+             strstr(g_fancy_outputs_test_vector[t].filepath, ".png") != NULL)) {
             printf("WARN: Unable to test JPEG processor. You do not have ImageMagick suite installed. Skipping.\n");
             continue;
         }
@@ -1610,6 +1617,8 @@ CUTE_TEST_CASE(append_tests)
             outpath = (unsigned char *)"output-001.jpeg";
         } else if (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL) {
             outpath = (unsigned char *)"output-001.jpg";
+        } else if (strstr(g_fancy_outputs_test_vector[t].filepath, ".png") != NULL) {
+            outpath = (unsigned char *)"output-001.png";
         } else {
             outpath = g_fancy_outputs_test_vector[t].filepath;
         }
@@ -1618,16 +1627,22 @@ CUTE_TEST_CASE(append_tests)
         CUTE_ASSERT(fp != NULL);
         fseek(fp, 0L, SEEK_END);
         output_sz = ftell(fp);
-        fseek(fp, 0L, SEEK_SET);
-        output = (char *) getseg(output_sz + 1);
-        CUTE_ASSERT(output != NULL);
-        memset(output, 0, output_sz + 1);
-        fread(output, 1, output_sz, fp);
-        fclose(fp);
         CUTE_ASSERT(output_sz == g_fancy_outputs_test_vector[t].output_sz);
-        CUTE_ASSERT(memcmp(output, g_fancy_outputs_test_vector[t].output, output_sz) == 0);
+
+        if (strstr(outpath, ".png") == NULL) { // INFO(Rafael): PNG output always vary.
+            fseek(fp, 0L, SEEK_SET);
+            output = (char *) getseg(output_sz + 1);
+            CUTE_ASSERT(output != NULL);
+            memset(output, 0, output_sz + 1);
+            fread(output, 1, output_sz, fp);
+            CUTE_ASSERT(memcmp(output, g_fancy_outputs_test_vector[t].output, output_sz) == 0);
+            free(output);
+        }
+
+        fclose(fp);
+
         remove(outpath);
-        free(output);
+
     }
 
     remove("inc.tlp");
@@ -1728,7 +1743,8 @@ CUTE_TEST_CASE(users_binary_tests)
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
         if (!hc &&
             (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpeg") != NULL ||
-             strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL)) {
+             strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL ||
+             strstr(g_fancy_outputs_test_vector[t].filepath, ".png") != NULL)) {
             printf("WARN: Unable to test JPEG processor. You do not have ImageMagick suite installed. Skipping.\n");
             continue;
         }
@@ -1745,6 +1761,8 @@ CUTE_TEST_CASE(users_binary_tests)
             outpath = (unsigned char *)"output-001.jpeg";
         } else if (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL) {
             outpath = (unsigned char *)"output-001.jpg";
+        } else if (strstr(g_fancy_outputs_test_vector[t].filepath, ".png") != NULL) {
+            outpath = (unsigned char *)"output-001.png";
         } else {
             outpath = g_fancy_outputs_test_vector[t].filepath;
         }
@@ -1756,18 +1774,22 @@ CUTE_TEST_CASE(users_binary_tests)
 
         CUTE_ASSERT(osize == g_fancy_outputs_test_vector[t].output_sz);
 
-        fseek(output, 0L, SEEK_SET);
+        if (strstr(outpath, ".png") == NULL) { // INFO(Rafael): PNG output always vary.
+            fseek(output, 0L, SEEK_SET);
 
-        output_buf = (unsigned char *) getseg(osize + 1);
-        memset(output_buf, 0, osize + 1);
-        fread(output_buf, 1, osize, output);
-        fclose(output);
+            output_buf = (unsigned char *) getseg(osize + 1);
+            memset(output_buf, 0, osize + 1);
+            fread(output_buf, 1, osize, output);
 
-        for (o = 0; o < g_fancy_outputs_test_vector[t].output_sz; o++) {
-            CUTE_ASSERT(output_buf[o] == g_fancy_outputs_test_vector[t].output[o]);
+            for (o = 0; o < g_fancy_outputs_test_vector[t].output_sz; o++) {
+                CUTE_ASSERT(output_buf[o] == g_fancy_outputs_test_vector[t].output[o]);
+            }
+
+            free(output_buf);
         }
 
-        free(output_buf);
+        fclose(output);
+
         remove("final.tlp");
         remove(outpath);
     }
