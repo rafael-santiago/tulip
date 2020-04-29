@@ -1529,10 +1529,17 @@ CUTE_TEST_CASE(processor_fancy_outputs_assurance)
     unsigned char *outpath;
     size_t output_buf_sz = 0, b = 0;
     FILE *output = NULL;
+    int hc = has_convert();
 
     tulip_system_init(0, NULL);
 
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
+        if (!hc &&
+            (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpeg") != NULL ||
+             strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL)) {
+            printf("WARN: Unable to test JPEG processor. You do not have ImageMagick suite installed. Skipping.\n");
+            continue;
+        }
         CUTE_ASSERT(compile_tulip_codebuf(g_fancy_outputs_test_vector[t].tlp_code, NULL, &song, NULL) == 1);
         CUTE_ASSERT(song != NULL);
         CUTE_ASSERT(mktab(song, g_fancy_outputs_test_vector[t].filepath) == 0);
@@ -1580,10 +1587,17 @@ CUTE_TEST_CASE(append_tests)
 #else
     char *binpath = "..\\..\\bin\\tulip";
 #endif
+    int hc = has_convert();
 
     write_buffer_to_disk("main.tlp", append_stmt, strlen(append_stmt));
 
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
+        if (!hc &&
+            (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpeg") != NULL ||
+             strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL)) {
+            printf("WARN: Unable to test JPEG processor. You do not have ImageMagick suite installed. Skipping.\n");
+            continue;
+        }
         write_buffer_to_disk("inc.tlp",
                              g_fancy_outputs_test_vector[t].tlp_code,
                              strlen(g_fancy_outputs_test_vector[t].tlp_code));
@@ -1664,6 +1678,7 @@ CUTE_TEST_CASE(users_binary_tests)
         " --abc"
     };
     size_t dummy_options_sz = sizeof(dummy_options) / sizeof(dummy_options[0]);
+    int hc = has_convert();
 
 #ifndef _WIN32
     basepath = "../../bin/tulip ";
@@ -1711,6 +1726,12 @@ CUTE_TEST_CASE(users_binary_tests)
 
     //  INFO(Rafael): Now, the typesetting must be verified too.
     for (t = 0; t < g_fancy_outputs_test_vector_nr; t++) {
+        if (!hc &&
+            (strstr(g_fancy_outputs_test_vector[t].filepath, ".jpeg") != NULL ||
+             strstr(g_fancy_outputs_test_vector[t].filepath, ".jpg") != NULL)) {
+            printf("WARN: Unable to test JPEG processor. You do not have ImageMagick suite installed. Skipping.\n");
+            continue;
+        }
         snprintf(cmdline, sizeof(cmdline) - 1, "%s --tlp=final.tlp --out=%s", basepath,
                                                                               g_fancy_outputs_test_vector[t].filepath);
 
