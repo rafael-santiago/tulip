@@ -1,4 +1,6 @@
-(Z) Implement a new processor which spits tabs as JPEGs (files per page, it would be useful for Kindle stuff). +NewFeature
+(A) Implement a new processor which spits tabs as JPEGs (files per page, it would be useful for Kindle stuff). +NewFeature
+(A) Implement a PNG processor too. +NewFeature
+(A) Implement a mobi processor (Kindle). +NewFeature
 x (D) Create v7 tag. +SCMStuff,+SanityKeeping,+ReleaseStuff
 x (C) V7 prebuilt for Windows. +ReleaseStuff
 x (C) V7 prebuilt for Linux. +ReleaseStuff
