@@ -14,6 +14,7 @@
 #include <processor/typesetters/html/html.h>
 #include <processor/typesetters/svg/svg.h>
 #include <processor/typesetters/jpeg/jpeg.h>
+#include <processor/typesetters/png/png.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -41,7 +42,8 @@ register_tulip_processors
     register_new_tlp_processor(html),
     register_new_tlp_processor(svg),
     register_new_tlp_processor(jpeg),
-    register_new_tlp_processor(jpg)
+    register_new_tlp_processor(jpg),
+    register_new_tlp_processor(png)
 register_tulip_processors_end
 
 int blackhole_processor(const tulip_single_note_ctx *song, const char *tabpath) {
