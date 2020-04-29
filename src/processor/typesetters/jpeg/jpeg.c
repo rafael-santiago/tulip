@@ -19,6 +19,7 @@ int jpeg_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
     int has_error = 1;
     char tempsvg[70];
     char temppath[70];
+    int svg_generated = 0;
 
     memset(tempsvg, 0, sizeof(tempsvg));
 
@@ -44,11 +45,13 @@ int jpeg_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
         goto jpeg_typesetter_epilogue;
     }
 
+    svg_generated = 1;
+
     has_error = convert_image(tempsvg, "svg", tabpath);
 
 jpeg_typesetter_epilogue:
 
-    if (has_error != 0 && remove_svg_pages(tempsvg) == 0) {
+    if (svg_generated && remove_svg_pages(tempsvg) == 0) {
         fprintf(stderr, "WARN: Unable to remove temporary SVG data generated.\n"
                         "      Do it yourself. The used base name was '%s'.\n", tempsvg);
     }
