@@ -25,10 +25,15 @@
 #include <processor/typesetters/typeprefs.h>
 #include <processor/typesetters/txt/txtctx.h>
 #include <processor/processor.h>
+#include <processor/utils/has_convert.h>
+#include <processor/utils/remove_svg_pages.h>
+#include <processor/utils/get_temp_filename.h>
 #include "fancytesting.h"
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
 
 static void write_buffer_to_disk(const char *filepath, const char *buffer, const size_t buffer_size);
 
@@ -68,6 +73,9 @@ CUTE_DECLARE_TEST_CASE(encoding_base64_encode_buffer_tests);
 CUTE_DECLARE_TEST_CASE(encoding_inline_svg_into_html_tests);
 CUTE_DECLARE_TEST_CASE(encoding_html_str_normalize_tests);
 CUTE_DECLARE_TEST_CASE(encoding_inline_font_data_tests);
+CUTE_DECLARE_TEST_CASE(processor_utils_get_temp_filename);
+CUTE_DECLARE_TEST_CASE(processor_utils_has_convert);
+CUTE_DECLARE_TEST_CASE(processor_utils_remove_svg_pages);
 
 CUTE_TEST_CASE(tulips_tester_monkey)
     remove(".tulipprefs");
@@ -113,6 +121,10 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     // WARN(Rafael): This specific test must run after cmdlineoptions_tests because
     //               typesetter_paper_size() must be able to read options from command line.
     CUTE_RUN_TEST(processor_typesetters_typesetter_paper_size_tests);
+    // WARN(Rafael): Tests related with general utilities for processors.
+    CUTE_RUN_TEST(processor_utils_get_temp_filename);
+    CUTE_RUN_TEST(processor_utils_has_convert);
+    CUTE_RUN_TEST(processor_utils_remove_svg_pages);
     //  WARN(Rafael): The tests related with the system module should
     //                run after.
     CUTE_RUN_TEST(system_get_tulip_system_version_tests);
@@ -130,6 +142,68 @@ CUTE_TEST_CASE(tulips_tester_monkey)
 CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulips_tester_monkey);
+
+CUTE_TEST_CASE(processor_utils_get_temp_filename)
+    char tmp[4096];
+    char *tp, *tp_end;
+    CUTE_ASSERT(get_temp_filename(NULL, sizeof(tmp), "tmp", 3) == NULL);
+    CUTE_ASSERT(get_temp_filename(tmp, 0, "tmp", 3) == NULL);
+    CUTE_ASSERT(get_temp_filename(tmp, 3, "tmp", 3) == NULL);
+    CUTE_ASSERT(get_temp_filename(tmp, sizeof(tmp), NULL, 3) == NULL);
+    CUTE_ASSERT(get_temp_filename(tmp, sizeof(tmp), "tmp", 3) == &tmp[0]);
+    tp = &tmp[0];
+    tp_end = tp + strlen(tmp);
+    while (tp != tp_end) {
+        CUTE_ASSERT(isdigit(*tp) || isalpha(*tp));
+        tp++;
+    }
+    CUTE_ASSERT(get_temp_filename(tmp, sizeof(tmp),  NULL, 0) == &tmp[0]);
+    tp = &tmp[0];
+    tp_end = tp + strlen(tmp);
+    while (tp != tp_end) {
+        CUTE_ASSERT(isdigit(*tp) || isalpha(*tp));
+        tp++;
+    }
+    // INFO(Rafael): This functions spits the prefix (if passed one) and eight random digits or letters.
+    CUTE_ASSERT(get_temp_filename(tmp, 3, NULL, 0) == NULL);
+    CUTE_ASSERT(get_temp_filename(tmp, 8, NULL, 0) == NULL);
+    CUTE_ASSERT(get_temp_filename(tmp, 9, NULL, 0) == &tmp[0]);
+    tp = &tmp[0];
+    tp_end = tp + strlen(tmp);
+    while (tp != tp_end) {
+        CUTE_ASSERT(isdigit(*tp) || isalpha(*tp));
+        tp++;
+    }
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(processor_utils_has_convert)
+    int has = (system("convert --version") == 0);
+    CUTE_ASSERT(has_convert() == has);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(processor_utils_remove_svg_pages)
+    FILE *fp;
+    size_t page_nr = 1;
+    char tempname[4096];
+    char temppath[4096];
+
+    CUTE_ASSERT(get_temp_filename(tempname, sizeof(tempname) - 1, "tmpPage", 7) != NULL);
+
+    for (page_nr = 1; page_nr <= 100; page_nr++) {
+        snprintf(temppath, sizeof(temppath) - 1, "%s-%03d.svg", tempname, page_nr);
+        fp = fopen(temppath, "wb");
+        CUTE_ASSERT(fp != NULL);
+        fclose(fp);
+    }
+
+    CUTE_ASSERT(remove_svg_pages(tempname) == 1);
+
+    for (page_nr = 1; page_nr <= 100; page_nr++) {
+        snprintf(temppath, sizeof(temppath) - 1, "%s-%03d.svg", tempname, page_nr);
+        fp = fopen(temppath, "rb");
+        CUTE_ASSERT(fp == NULL);
+    }
+CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(encoding_inline_font_data_tests)
     struct test_ctx {
