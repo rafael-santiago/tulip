@@ -1,0 +1,6 @@
+#ifndef TULIP_PROCESSOR_UTILS_HAS_KINDLEGEN_H
+#define TULIP_PROCESSOR_UTILS_HAS_KINDLEGEN_H 1
+
+int has_kindlegen(void);
+
+#endif
