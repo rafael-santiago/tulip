@@ -9,9 +9,9 @@
 #include <processor/typesetters/imagick.h>
 
 int jpeg_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
-    return imagick_typesetter(song, tabpath);
+    return imagick_spill(song, tabpath);
 }
 
 int jpg_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
-    return imagick_typesetter(song, tabpath);
+    return imagick_spill(song, tabpath);
 }

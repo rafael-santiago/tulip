@@ -28,6 +28,8 @@
 #include <processor/utils/has_convert.h>
 #include <processor/utils/remove_svg_pages.h>
 #include <processor/utils/get_temp_filename.h>
+#include <processor/utils/template.h>
+#include <processor/utils/has_kindlegen.h>
 #include "fancytesting.h"
 #include <time.h>
 #include <string.h>
@@ -73,9 +75,12 @@ CUTE_DECLARE_TEST_CASE(encoding_base64_encode_buffer_tests);
 CUTE_DECLARE_TEST_CASE(encoding_inline_svg_into_html_tests);
 CUTE_DECLARE_TEST_CASE(encoding_html_str_normalize_tests);
 CUTE_DECLARE_TEST_CASE(encoding_inline_font_data_tests);
-CUTE_DECLARE_TEST_CASE(processor_utils_get_temp_filename);
-CUTE_DECLARE_TEST_CASE(processor_utils_has_convert);
-CUTE_DECLARE_TEST_CASE(processor_utils_remove_svg_pages);
+CUTE_DECLARE_TEST_CASE(processor_utils_get_temp_filename_tests);
+CUTE_DECLARE_TEST_CASE(processor_utils_has_convert_tests);
+CUTE_DECLARE_TEST_CASE(processor_utils_remove_svg_pages_tests);
+CUTE_DECLARE_TEST_CASE(processor_utils_get_action_default_value_tests);
+CUTE_DECLARE_TEST_CASE(processor_utils_has_kindlegen_tests);
+CUTE_DECLARE_TEST_CASE(processor_utils_apply_action_to_template_tests);
 
 CUTE_TEST_CASE(tulips_tester_monkey)
     remove(".tulipprefs");
@@ -122,9 +127,12 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     //               typesetter_paper_size() must be able to read options from command line.
     CUTE_RUN_TEST(processor_typesetters_typesetter_paper_size_tests);
     // WARN(Rafael): Tests related with general utilities for processors.
-    CUTE_RUN_TEST(processor_utils_get_temp_filename);
-    CUTE_RUN_TEST(processor_utils_has_convert);
-    CUTE_RUN_TEST(processor_utils_remove_svg_pages);
+    CUTE_RUN_TEST(processor_utils_get_temp_filename_tests);
+    CUTE_RUN_TEST(processor_utils_has_convert_tests);
+    CUTE_RUN_TEST(processor_utils_remove_svg_pages_tests);
+    CUTE_RUN_TEST(processor_utils_get_action_default_value_tests);
+    CUTE_RUN_TEST(processor_utils_has_kindlegen_tests);
+    CUTE_RUN_TEST(processor_utils_apply_action_to_template_tests);
     //  WARN(Rafael): The tests related with the system module should
     //                run after.
     CUTE_RUN_TEST(system_get_tulip_system_version_tests);
@@ -143,7 +151,82 @@ CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulips_tester_monkey);
 
-CUTE_TEST_CASE(processor_utils_get_temp_filename)
+CUTE_TEST_CASE(processor_utils_apply_action_to_template_tests)
+    struct test_ctx {
+        char *buffer;
+        char *action;
+        char *value;
+        int rep_nr;
+        char *exp_out;
+    } test_vector[] = {
+        { "Naked in the rain by {{.author}}", "{{.author}}", "Red hot chili peppers", 1,
+          "Naked in the rain by Red hot chili peppers" },
+        { "{{.foo}}bar {{.foo}}baz", "{{.foo}}", "foo", 2, "foobar foobaz" },
+        { "'{{.sky-color:Gray}} skies living in the city'", "{{.sky-color}}", "Grey", 1,
+          "'Grey skies living in the city'" },
+        { "O bode faz {{.baaaaaaad", "{{.baaaaaaad}}", "xi!", 0, "O bode faz {{.baaaaaaad" },
+        { "O bode faz {{.baaaaaaad:beh", "{{.baaaaaaad}}", "xi!", 0, "O bode faz {{.baaaaaaad:beh" },
+        { "I spend my holidays", "{{.bird-of-paradise}}", "piu!", 0, "I spend my holidays" }
+    }, *test, *test_end;
+    char *buffer;
+    size_t buffer_size;
+
+    test = &test_vector[0];
+    test_end = test + sizeof(test_vector) / sizeof(test_vector[0]);
+
+    while (test != test_end) {
+        buffer_size = strlen(test->buffer);
+        buffer = (char *) malloc(buffer_size + 1);
+        CUTE_ASSERT(buffer != NULL);
+        memset(buffer, 0, buffer_size + 1);
+        memcpy(buffer, test->buffer, buffer_size);
+
+        CUTE_ASSERT(apply_action_to_template(&buffer, &buffer_size, test->action,
+                                             test->value, strlen(test->value)) == test->rep_nr);
+
+        CUTE_ASSERT(buffer_size == strlen(test->exp_out));
+
+        CUTE_ASSERT(memcmp(buffer, test->exp_out, buffer_size) == 0);
+
+        free(buffer);
+
+        test++;
+    }
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(processor_utils_has_kindlegen_tests)
+    int has = system("kindlegen") == 0;
+    CUTE_ASSERT(has_kindlegen() == has);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(processor_utils_get_action_default_value_tests)
+    char *template = "Listen here by {{.author:Eddie Harris}}";
+    char *value;
+    size_t value_size;
+    char *action = "{{.author}}";
+
+    CUTE_ASSERT(get_action_default_value(NULL, strlen(template), action, &value_size) == NULL);
+    CUTE_ASSERT(get_action_default_value(template, 0, action, &value_size) == NULL);
+    CUTE_ASSERT(get_action_default_value(template, strlen(template), NULL, &value_size) == NULL);
+
+    value = get_action_default_value(template, strlen(template), action, NULL);
+    CUTE_ASSERT(value != NULL);
+    CUTE_ASSERT(strcmp(value, "Eddie Harris") == 0);
+    free(value);
+
+    value = get_action_default_value(template, strlen(template), action, &value_size);
+    CUTE_ASSERT(value != NULL);
+    CUTE_ASSERT(value_size == 12);
+    CUTE_ASSERT(memcmp(value, "Eddie Harris", value_size) == 0);
+    free(value);
+
+    CUTE_ASSERT(get_action_default_value(template, strlen(template), "{{.not-found}}", NULL) == NULL);
+
+    CUTE_ASSERT(get_action_default_value(template, strlen(template), "{{.not-found}}", &value_size) == NULL);
+    CUTE_ASSERT(value_size == 0);
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(processor_utils_get_temp_filename_tests)
     char tmp[4096];
     char *tp, *tp_end;
     CUTE_ASSERT(get_temp_filename(NULL, sizeof(tmp), "tmp", 3) == NULL);
@@ -176,12 +259,12 @@ CUTE_TEST_CASE(processor_utils_get_temp_filename)
     }
 CUTE_TEST_CASE_END
 
-CUTE_TEST_CASE(processor_utils_has_convert)
+CUTE_TEST_CASE(processor_utils_has_convert_tests)
     int has = (system("convert --version") == 0);
     CUTE_ASSERT(has_convert() == has);
 CUTE_TEST_CASE_END
 
-CUTE_TEST_CASE(processor_utils_remove_svg_pages)
+CUTE_TEST_CASE(processor_utils_remove_svg_pages_tests)
     FILE *fp;
     size_t page_nr = 1;
     char tempname[4096];

@@ -15,7 +15,7 @@
 #include <errno.h>
 #include <string.h>
 
-int imagick_typesetter(const tulip_single_note_ctx *song, const char *tabpath) {
+int imagick_spill(const tulip_single_note_ctx *song, const char *tabpath) {
     int has_error = 1;
     char tempsvg[70];
     char temppath[70];

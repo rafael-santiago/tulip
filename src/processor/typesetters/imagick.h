@@ -10,6 +10,6 @@
 
 #include <base/types.h>
 
-int imagick_typesetter(const tulip_single_note_ctx *song, const char *tabpath);
+int imagick_spill(const tulip_single_note_ctx *song, const char *tabpath);
 
 #endif
