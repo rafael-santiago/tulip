@@ -10,7 +10,12 @@
 #include <processor/typesetters/txt/txt.h>
 #include <processor/typesetters/txt/txtctx.h>
 #include <processor/utils/get_temp_filename.h>
+#include <processor/utils/has_convert.h>
+#include <processor/utils/convert_image.h>
+#include <processor/utils/template.h>
+#include <processor/utils/kindlegen.h>
 #include <usrland/cmdlineoptions.h>
+#include <base/memory.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <stdio.h>
@@ -27,7 +32,7 @@ enum mobitypesetter_filename_indexes {
     kFileNamesNr
 };
 
-static char *g_mobitypesetter_opf[] = {
+static char *g_mobitypesetter_opf = {
     "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
     "<package xmlns=\"http://www.idpf.org/2007/opf\"\n"
     "         xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n"
@@ -41,7 +46,7 @@ static char *g_mobitypesetter_opf[] = {
     "<manifest>\n"
     "    <item id=\"cover\" href=\"%s\" media-type=\"application/xhtml+xml\"/>\n"
     "    <item id=\"tab\" href=\"%s\" media-type=\"application/xhtml+xml\"/>\n"
-    "    <item id=\"cover-image\" href=\"%s\" media-type=\"image/png\"/>\n"
+    "    <item id=\"cover-image\" media-type=\"image/png\"/>\n"
     "</manifest>\n"
     "<spine toc=\"ncx\">\n"
     "    <itemref idref=\"cover\" linear=\"no\"/>\n"
@@ -53,7 +58,7 @@ static char *g_mobitypesetter_opf[] = {
     "</package>\n"
 };
 
-static char *g_mobitypesetter_ncx_head[] = {
+static char *g_mobitypesetter_ncx_head = {
     "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
     "<!DOCTYPE ncx PUBLIC \"-//NISO//DTD ncx 2005-1//EN\"\n"
     "                 \"http://www.daisy.org/z3986/2005/ncx-2005-1.dtd\">\n"
@@ -69,7 +74,7 @@ static char *g_mobitypesetter_ncx_head[] = {
     "  <navMap>\n"
 };
 
-static char *g_mobitypesetter_ncx_body[] = {
+static char *g_mobitypesetter_ncx_body = {
     "    <navPoint id=\"navpoint-%d\" playOrder=\"%d\">\n"
     "      <navLabel>\n"
     "        <text>%s</text>\n"
@@ -78,7 +83,7 @@ static char *g_mobitypesetter_ncx_body[] = {
     "    </navPoint>\n"
 };
 
-static char *g_mobitypesetter_ncx_tail[] = {
+static char *g_mobitypesetter_ncx_tail = {
     "  </navMap>\n"
     "</ncx>\n"
 };
@@ -100,13 +105,20 @@ static int mobitypesetter_create_ncx(const char *ncx_filename, const char *title
                                      const char *tab_html_filename,
                                      const char *language);
 
-static void mobitypesetter_cleanup_tempfiles(const char **filenames, const char *basename);
+static void mobitypesetter_cleanup_tempfiles(char *filenames, const size_t filename_max_size, const size_t temp_nr,
+                                             const char *basename);
+
+static int mobitypesetter_create_cover_image(const char *template_filepath,
+                                             const char *song,
+                                             const char *transcriber,
+                                             const char *basename,
+                                             const char *image_filename);
 
 int mobitypesetter_inkspill(const char *filepath, const tulip_single_note_ctx *song) {
     int has_error = 1;
     char basename[4096], filename[kFileNamesNr][4096];
     txttypesetter_tablature_ctx *tab = NULL;
-    const char *language;
+    const char *language, *cover_template;
 
     if (filepath == NULL || song == NULL) {
         goto mobitypesetter_inkspill_epilogue;
@@ -127,9 +139,9 @@ int mobitypesetter_inkspill(const char *filepath, const tulip_single_note_ctx *s
     snprintf(filename[kCoverHtml], sizeof(filename[kCoverHtml]) - 1, "%s-cover.html", basename);
     snprintf(filename[kTabHtml], sizeof(filename[kTabHtml]) - 1, "%s-tab.html", basename);
     snprintf(filename[kOpf], sizeof(filename[kOpf]) - 1, "%s.opf", basename);
-    snprintf(filename[kOpf], sizeof(filename[kNcx]) - 1, "%s.ncx", basename);
+    snprintf(filename[kNcx], sizeof(filename[kNcx]) - 1, "%s.ncx", basename);
 
-    if ((has_error = jpeg_typesetter(song, filename[kTabImage])) == NULL) {
+    if ((has_error = jpeg_typesetter(song, filename[kTabImage])) != 0) {
         goto mobitypesetter_inkspill_epilogue;
     }
 
@@ -145,13 +157,23 @@ int mobitypesetter_inkspill(const char *filepath, const tulip_single_note_ctx *s
         goto mobitypesetter_inkspill_epilogue;
     }
 
-    // TODO(Rafael): Generate cover image.
+    if ((cover_template = get_option("mobi-cover-template", NULL)) != NULL) {
+        if ((has_error = mobitypesetter_create_cover_image(cover_template,
+                                                           tab->song,
+                                                           tab->transcriber,
+                                                           basename,
+                                                           filename[kCoverImage])) != 0) {
+            goto mobitypesetter_inkspill_epilogue;
+        }
+    }
 
     if ((has_error = mobitypesetter_create_cover_html(filename[kCoverHtml],
-                                                      filename[kCoverImage],
+                                                      (cover_template != NULL) ? filename[kCoverImage]
+                                                                               : NULL,
                                                       tab->song)) != 0) {
         goto mobitypesetter_inkspill_epilogue;
     }
+
 
     if ((has_error = mobitypesetter_create_tab_html(filename[kTabHtml])) != 0) {
         goto mobitypesetter_inkspill_epilogue;
@@ -165,7 +187,7 @@ int mobitypesetter_inkspill(const char *filepath, const tulip_single_note_ctx *s
         goto mobitypesetter_inkspill_epilogue;
     }
 
-    // TODO(Rafael): Generate MOBI.
+    has_error = kindlegen(filename[kOpf], filepath);
 
 mobitypesetter_inkspill_epilogue:
 
@@ -173,23 +195,159 @@ mobitypesetter_inkspill_epilogue:
         free_txttypesetter_tablature_ctx(tab);
     }
 
-    mobitypesetter_cleanup_tempfiles((char **)filename, basename);
+    mobitypesetter_cleanup_tempfiles(&filename[0][0], sizeof(filename[0]), kFileNamesNr, basename);
 
     return has_error;
 }
 
-static void mobitypesetter_cleanup_tempfiles(const char **filenames, const char *basename) {
-    char **filename, **filename_end;
+static int mobitypesetter_create_cover_image(const char *template_filepath,
+                                             const char *song,
+                                             const char *transcriber,
+                                             const char *basename,
+                                             const char *image_filename) {
+    char *template = NULL;
+    size_t template_size;
+    FILE *fp = fopen(template_filepath, "rb");
+    int has_error = 1;
+    char *song_font_size = NULL, *transcriber_font_size = NULL;
+    char svgfilename[4096];
+    const char *temp;
+    char usrdata[4096];
+    const char *up, *up_end;
+    size_t u;
+
+    if (fp == NULL) {
+        fprintf(stderr, "ERROR: Unable to open the cover template file.\n");
+        goto mobitypesetter_create_cover_image_epilogue;
+    }
+
+    if (!has_convert()) {
+        fprintf(stderr, "ERROR: The system has not 'convert' from ImageMagick suite installed.\n"
+                        "       Install it by exporting its path properly and try again.\n");
+        goto mobitypesetter_create_cover_image_epilogue;
+    }
+
+    fseek(fp, 0L, SEEK_END);
+    template_size = ftell(fp);
+    fseek(fp, 0L, SEEK_SET);
+
+    template = (char *) getseg(template_size + 1);
+    memset(template, 0, template_size + 1);
+    fread(template, 1, template_size, fp);
+    fclose(fp);
+    fp = NULL;
+
+    song_font_size = get_action_default_value(template, template_size, "{{.song-font-size}}", NULL);
+
+    transcriber_font_size = get_action_default_value(template, template_size, "{{.transcriber-font-size}}", NULL);
+
+    if ((temp = get_option("song-font-size", song_font_size)) == NULL) {
+        temp = "";
+    }
+
+    apply_action_to_template(&template, &template_size, "{{.song-font-size}}", temp, strlen(temp));
+
+    if ((temp = get_option("transcriber-font-size", song_font_size)) == NULL) {
+        temp = "";
+    }
+
+    apply_action_to_template(&template, &template_size, "{{.transcriber-font-size}}", temp, strlen(temp));
+
+    if (song != NULL) {
+        up = song;
+        up_end = up + strlen(song);
+        u = 0;
+        while (up < up_end) {
+            if (*up == '\\') {
+                up += 2;
+                continue;
+            }
+            usrdata[u++] = *up;
+            up++;
+        }
+        usrdata[u] = 0;
+    }
+
+    apply_action_to_template(&template, &template_size, "{{.song}}", (song != NULL) ? usrdata : "Untitled",
+                                                                     (song != NULL) ? strlen(usrdata) : 8);
+
+    if (transcriber != NULL) {
+        up = transcriber;
+        up_end = up + strlen(transcriber);
+        u = 0;
+        while (up < up_end) {
+            if (*up == '\\') {
+                up += 2;
+                continue;
+            }
+            usrdata[u++] = *up;
+            up++;
+        }
+        usrdata[u] = 0;
+    }
+
+    apply_action_to_template(&template, &template_size, "{{.transcriber}}", (transcriber != NULL) ? usrdata : "Unknown",
+                                                                            (transcriber != NULL) ? strlen(usrdata)
+                                                                                                  : 7);
+
+    snprintf(svgfilename, sizeof(svgfilename) - 1, "%s-001.svg", basename);
+
+    if ((fp = fopen(svgfilename, "wb")) == NULL) {
+        fprintf(stderr, "ERROR: Unable to generate SVG cover image.\n");
+        goto mobitypesetter_create_cover_image_epilogue;
+    }
+
+    fwrite(template, 1, template_size, fp);
+    fclose(fp);
+    fp = NULL;
+
+    if ((has_error = convert_image(basename, "svg", image_filename)) != 0) {
+        fprintf(stderr, "ERROR: Unable to generate cover image.\n");
+        goto mobitypesetter_create_cover_image_epilogue;
+    }
+
+    snprintf(usrdata, sizeof(usrdata) - 1, "%s-001.png", basename);
+
+    if ((has_error = rename(usrdata, image_filename)) != 0) {
+        fprintf(stderr, "ERROR: Unable to rename cover image.\n");
+    }
+
+mobitypesetter_create_cover_image_epilogue:
+
+    if (fp != NULL) {
+        fclose(fp);
+    }
+
+    remove(svgfilename);
+
+    if (template != NULL) {
+        free(template);
+    }
+
+    if (song_font_size != NULL) {
+        free(song_font_size);
+    }
+
+    if (transcriber_font_size != NULL) {
+        free(transcriber_font_size);
+    }
+
+    return has_error;
+}
+
+static void mobitypesetter_cleanup_tempfiles(char *filenames, const size_t filename_max_size, const size_t temp_nr,
+                                             const char *basename) {
+    const char *filename, *filename_end;
     struct stat st;
     char temp[4096];
     size_t page_nr;
 
     filename = filenames;
-    filename_end = filenames + kFileNamesNr;
+    filename_end = filenames + filename_max_size * temp_nr;
 
     while (filename != filename_end) {
-        if (strstr(*filename, ".jpeg") != NULL) {
-            remove(*filename);
+        if (strstr(filename, ".jpeg") == NULL) {
+            remove(filename);
         } else {
             page_nr = 1;
             snprintf(temp, sizeof(temp) - 1, "%s-%03d.jpeg", basename, page_nr);
@@ -199,7 +357,7 @@ static void mobitypesetter_cleanup_tempfiles(const char **filenames, const char 
                 snprintf(temp, sizeof(temp) - 1, "%s-%03d.jpeg", basename, page_nr);
             }
         }
-        filename++;
+        filename += filename_max_size;
     }
 }
 
@@ -241,15 +399,15 @@ static int mobitypesetter_create_ncx(const char *ncx_filename, const char *title
 
     page_nr += 1;
 
-    fprintf(ncx, "%s", g_mobitypesetter_ncx_head, (title != NULL) ? title : "Untitled");
+    fprintf(ncx, g_mobitypesetter_ncx_head, (title != NULL) ? title : "Untitled");
 
-    fprintf(ncx, "%s", g_mobitypesetter_ncx_body, 1, 1, "Cover", cover_html_filename);
+    fprintf(ncx, g_mobitypesetter_ncx_body, 1, 1, "Cover", cover_html_filename);
 
     for (p = 2; p < page_nr; p++) {
-        fprintf(ncx, "%s", g_mobitypesetter_ncx_body, page_nr, page_nr, "Page", tab_html_filename);
+        fprintf(ncx, g_mobitypesetter_ncx_body, page_nr, page_nr, "Page", tab_html_filename);
     }
 
-    fprintf(ncx, "%s", g_mobitypesetter_ncx_tail);
+    fprintf(ncx, g_mobitypesetter_ncx_tail);
 
     has_error = 0;
 
@@ -275,7 +433,7 @@ static int mobitypesetter_create_tab_html(const char *tab_html_filename) {
     }
 
     snprintf(temp_basename, sizeof(temp_basename) - 1, "%s", tab_html_filename);
-    if ((tp = strstr(temp_basename, ".html")) == NULL) {
+    if ((tp = strstr(temp_basename, "-tab.html")) == NULL) {
         fprintf(stderr, "ERROR: Unable to guess up the basename from temporary file name : '%s'.\n", tab_html_filename);
         goto mobitypesetter_create_tab_html_epilogue;
     }
@@ -337,7 +495,7 @@ static int mobitypesetter_create_cover_html(const char *cover_filename, const ch
                   "\t<body>\n");
 
     if (cover_image_filename != NULL) {
-        fprintf(html, "\t\t<div><img src=\"%s\"></div>\n", cover_image_filename);
+        fprintf(html, "\t\t<center><div><img src=\"%s\"></div></center>\n", cover_image_filename);
     } else {
         fprintf(html, "\t\t<h1>%s</h1>\n", (title != NULL) ? title : "Untitled");
     }
@@ -371,10 +529,10 @@ static int mobitypesetter_create_opf(const char *opf_filename,
         goto mobitypesetter_create_opf_epilogue;
     }
 
-    fprintf(opf, "%s", g_mobitypesetter_opf, (title != NULL) ? title : "Untitled",
-                                             (creator != NULL) ? creator : "Unknown",
-                                             (language != NULL) ? language : "en-US",
-                                             cover_html_filename, tab_html_filename, cover_image_filename);
+    fprintf(opf, g_mobitypesetter_opf, (title != NULL) ? title : "Untitled",
+                                       (creator != NULL) ? creator : "Unknown",
+                                       (language != NULL) ? language : "en-US",
+                                       cover_html_filename, tab_html_filename, cover_image_filename);
 
     has_error = 0;
 

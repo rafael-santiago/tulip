@@ -93,6 +93,6 @@
       </cc:License>
     </rdf:RDF>
   </metadata>
-  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#c13f35" font-size="{{.song-font-size:50}}" font-weight="bold">{{.song}}</text>
-  <text x="50%" y="83%" dominant-baseline="middle" text-anchor="middle" fill="#c13f35" font-size="{{.transcriber-font-size:20}}" font-weight="bold">{{.transcriber}}</text>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#c13f35" font-size="{{.song-font-size:18}}" font-weight="bold">{{.song}}</text>
+  <text x="50%" y="83%" dominant-baseline="middle" text-anchor="middle" fill="#c13f35" font-size="{{.transcriber-font-size:14}" font-weight="bold">{{.transcriber}}</text>
 </svg>

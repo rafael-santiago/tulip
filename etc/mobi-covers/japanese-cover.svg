@@ -173,7 +173,7 @@
     >
   </metadata
   >
-  <text x="55%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="{{.song-font-size:50}}" font-weight="bold">{{.song}}</text>
-  <text x="55%" y="53%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="{{.transcriber-font-size:20}}" font-weight="bold">{{.transcriber}}</text>
+  <text x="55%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="{{.song-font-size:20}}" font-weight="bold">{{.song}}</text>
+  <text x="55%" y="53%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="{{.transcriber-font-size:10}}" font-weight="bold">{{.transcriber}}</text>
 </svg
 >

@@ -28,7 +28,7 @@ int imagick_spill(const tulip_single_note_ctx *song, const char *tabpath) {
     }
 
     if (!has_convert()) {
-        fprintf(stderr, "ERROR: The system seems not to has convert from ImageMagick suite installed.\n"
+        fprintf(stderr, "ERROR: The system has not 'convert' from ImageMagick suite installed.\n"
                         "       Install it by exporting its path properly and try again.\n");
         goto imagick_typesetter_epilogue;
     }
