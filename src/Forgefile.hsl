@@ -123,9 +123,9 @@ tulip.prologue() {
 
 tulip.epilogue() {
     if (hefesto.sys.last_forge_result() == 0) {
-#        if (runtests() == 0) {
+        if (runtests() == 0) {
             hefesto.sys.echo("\n___\n*** SUCCESS.\n");
-#        }
+        }
     } else {
         hefesto.sys.echo("\n___\n~~~ FAILURE.\n");
     }

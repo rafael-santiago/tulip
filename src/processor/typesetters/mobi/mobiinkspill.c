@@ -46,7 +46,7 @@ static char *g_mobitypesetter_opf = {
     "<manifest>\n"
     "    <item id=\"cover\" href=\"%s\" media-type=\"application/xhtml+xml\"/>\n"
     "    <item id=\"tab\" href=\"%s\" media-type=\"application/xhtml+xml\"/>\n"
-    "    <item id=\"cover-image\" media-type=\"image/png\"/>\n"
+    "    <item id=\"cover-image\" href=\"%s\" media-type=\"image/png\"/>\n"
     "</manifest>\n"
     "<spine toc=\"ncx\">\n"
     "    <itemref idref=\"cover\" linear=\"no\"/>\n"
@@ -495,7 +495,7 @@ static int mobitypesetter_create_cover_html(const char *cover_filename, const ch
                   "\t<body>\n");
 
     if (cover_image_filename != NULL) {
-        fprintf(html, "\t\t<center><div><img src=\"%s\"></div></center>\n", cover_image_filename);
+        fprintf(html, "\t\t<center><div><img src=\"%s\" class=\"cover\" height=\"100%\" max-width=\"100%\"></div></center>\n", cover_image_filename);
     } else {
         fprintf(html, "\t\t<h1>%s</h1>\n", (title != NULL) ? title : "Untitled");
     }
@@ -532,7 +532,7 @@ static int mobitypesetter_create_opf(const char *opf_filename,
     fprintf(opf, g_mobitypesetter_opf, (title != NULL) ? title : "Untitled",
                                        (creator != NULL) ? creator : "Unknown",
                                        (language != NULL) ? language : "en-US",
-                                       cover_html_filename, tab_html_filename, cover_image_filename);
+                                       cover_html_filename, tab_html_filename, cover_image_filename, cover_image_filename);
 
     has_error = 0;
 
