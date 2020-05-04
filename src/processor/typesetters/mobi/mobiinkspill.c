@@ -6,11 +6,26 @@
  *
  */
 #include <processor/typesetters/mobi/mobiinkspill.h>
+#include <processor/typesetters/jpeg/jpeg.h>
+#include <processor/typesetters/txt/txt.h>
+#include <processor/typesetters/txt/txtctx.h>
+#include <processor/utils/get_temp_filename.h>
+#include <usrland/cmdlineoptions.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <stdio.h>
 
 #define MOBITYPESETTER_PAGE_BREAK "<br style=\"page-break-after:always\">"
+
+enum mobitypesetter_filename_indexes {
+    kCoverImage = 0,
+    kTabImage,
+    kCoverHtml,
+    kTabHtml,
+    kOpf,
+    kNcx,
+    kFileNamesNr
+};
 
 static char *g_mobitypesetter_opf[] = {
     "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
@@ -85,9 +100,107 @@ static int mobitypesetter_create_ncx(const char *ncx_filename, const char *title
                                      const char *tab_html_filename,
                                      const char *language);
 
+static void mobitypesetter_cleanup_tempfiles(const char **filenames, const char *basename);
+
 int mobitypesetter_inkspill(const char *filepath, const tulip_single_note_ctx *song) {
-    // TODO(Rafael): Guess what?
-    return 1;
+    int has_error = 1;
+    char basename[4096], filename[kFileNamesNr][4096];
+    txttypesetter_tablature_ctx *tab = NULL;
+    const char *language;
+
+    if (filepath == NULL || song == NULL) {
+        goto mobitypesetter_inkspill_epilogue;
+    }
+
+    if ((tab = txt_typesetter_gettab(song)) == NULL) {
+        goto mobitypesetter_inkspill_epilogue;
+    }
+
+    if (get_temp_filename(basename, sizeof(basename) - 1, "tmpMobi", 7) == NULL) {
+        fprintf(stderr, "ERROR: Unable to get a temporary basename.\n");
+        goto mobitypesetter_inkspill_epilogue;
+    }
+
+    // INFO(Rafael): Setting up all temp file names.
+    snprintf(filename[kTabImage], sizeof(filename[kTabImage]) - 1, "%s.jpeg", basename);
+    snprintf(filename[kCoverImage], sizeof(filename[kCoverImage]) - 1, "%s.png", basename);
+    snprintf(filename[kCoverHtml], sizeof(filename[kCoverHtml]) - 1, "%s-cover.html", basename);
+    snprintf(filename[kTabHtml], sizeof(filename[kTabHtml]) - 1, "%s-tab.html", basename);
+    snprintf(filename[kOpf], sizeof(filename[kOpf]) - 1, "%s.opf", basename);
+    snprintf(filename[kOpf], sizeof(filename[kNcx]) - 1, "%s.ncx", basename);
+
+    if ((has_error = jpeg_typesetter(song, filename[kTabImage])) == NULL) {
+        goto mobitypesetter_inkspill_epilogue;
+    }
+
+    language = get_option("mobi-language", NULL);
+
+    if ((has_error = mobitypesetter_create_opf(filename[kOpf],
+                                               tab->song,
+                                               tab->transcriber,
+                                               language,
+                                               filename[kCoverHtml],
+                                               filename[kTabHtml],
+                                               filename[kCoverImage])) != 0) {
+        goto mobitypesetter_inkspill_epilogue;
+    }
+
+    // TODO(Rafael): Generate cover image.
+
+    if ((has_error = mobitypesetter_create_cover_html(filename[kCoverHtml],
+                                                      filename[kCoverImage],
+                                                      tab->song)) != 0) {
+        goto mobitypesetter_inkspill_epilogue;
+    }
+
+    if ((has_error = mobitypesetter_create_tab_html(filename[kTabHtml])) != 0) {
+        goto mobitypesetter_inkspill_epilogue;
+    }
+
+    if ((has_error = mobitypesetter_create_ncx(filename[kNcx],
+                                               tab->song,
+                                               filename[kCoverHtml],
+                                               filename[kTabHtml],
+                                               language)) != 0) {
+        goto mobitypesetter_inkspill_epilogue;
+    }
+
+    // TODO(Rafael): Generate MOBI.
+
+mobitypesetter_inkspill_epilogue:
+
+    if (tab != NULL) {
+        free_txttypesetter_tablature_ctx(tab);
+    }
+
+    mobitypesetter_cleanup_tempfiles((char **)filename, basename);
+
+    return has_error;
+}
+
+static void mobitypesetter_cleanup_tempfiles(const char **filenames, const char *basename) {
+    char **filename, **filename_end;
+    struct stat st;
+    char temp[4096];
+    size_t page_nr;
+
+    filename = filenames;
+    filename_end = filenames + kFileNamesNr;
+
+    while (filename != filename_end) {
+        if (strstr(*filename, ".jpeg") != NULL) {
+            remove(*filename);
+        } else {
+            page_nr = 1;
+            snprintf(temp, sizeof(temp) - 1, "%s-%03d.jpeg", basename, page_nr);
+            while (stat(temp, &st) == 0) {
+                remove(temp);
+                page_nr++;
+                snprintf(temp, sizeof(temp) - 1, "%s-%03d.jpeg", basename, page_nr);
+            }
+        }
+        filename++;
+    }
 }
 
 static int mobitypesetter_create_ncx(const char *ncx_filename, const char *title,
