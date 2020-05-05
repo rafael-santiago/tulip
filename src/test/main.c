@@ -24,6 +24,8 @@
 #include <system/exec.h>
 #include <processor/typesetters/typeprefs.h>
 #include <processor/typesetters/txt/txtctx.h>
+#include <processor/typesetters/jpeg/jpeg.h>
+#include <processor/typesetters/png/png.h>
 #include <processor/typesetters/mobi/mobi.h>
 #include <processor/processor.h>
 #include <processor/utils/has_convert.h>
@@ -82,7 +84,7 @@ CUTE_DECLARE_TEST_CASE(processor_utils_remove_svg_pages_tests);
 CUTE_DECLARE_TEST_CASE(processor_utils_get_action_default_value_tests);
 CUTE_DECLARE_TEST_CASE(processor_utils_has_kindlegen_tests);
 CUTE_DECLARE_TEST_CASE(processor_utils_apply_action_to_template_tests);
-CUTE_DECLARE_TEST_CASE(processor_mobi_general_tests);
+CUTE_DECLARE_TEST_CASE(processor_general_tests);
 
 CUTE_TEST_CASE(tulips_tester_monkey)
     remove(".tulipprefs");
@@ -144,7 +146,7 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     } else {
         printf("***\n*** WARNING: The fancy outputs assurance tests were skipped.\n***\n");
     }
-    CUTE_RUN_TEST(processor_mobi_general_tests);
+    CUTE_RUN_TEST(processor_general_tests);
     //  WARN(Rafael): If all is ok, it is time to test the user's binary.
     CUTE_RUN_TEST(users_binary_tests);
     // WARN(Rafael): This test will run last, because it will change all default settings that
@@ -154,7 +156,7 @@ CUTE_TEST_CASE_END
 
 CUTE_MAIN(tulips_tester_monkey);
 
-CUTE_TEST_CASE(processor_mobi_general_tests)
+CUTE_TEST_CASE(processor_general_tests)
     // INFO(Rafael): The MOBI output always vary. Thus we will only test the basic aspects,
     //               i.e.: call it without any explosion.
     char *buf = ".song{\"The Bronze introduction -\n\tQueens of the Stone Age\"}\n"
@@ -164,15 +166,31 @@ CUTE_TEST_CASE(processor_mobi_general_tests)
                 "55-47-37-27--47-37-27-|-55-27-14br-54-46-36-26-;-54-36-26---54-26br\n"
                 "}\n";
     tulip_single_note_ctx *song = NULL;
+    struct test_ctx {
+        int (*typesetter)(const tulip_single_note_ctx *, const char *);
+        char *tabpath;
+        char *realpath;
+    } test_vector[] = {
+        { jpeg_typesetter, "the-bronze-intro.jpeg", "the-bronze-intro-001.jpeg" },
+        { jpg_typesetter,  "the-bronze-intro.jpg",  "the-bronze-intro-001.jpg"  },
+        { png_typesetter,  "the-bronze-intro.png",  "the-bronze-intro-001.png"  },
+        { mobi_typesetter, "the-bronze-intro.mobi", "the-bronze-intro.mobi" }
+    }, *test, *test_end;
 
     if (has_convert() && has_kindlegen()) {
-        write_buffer_to_disk("the-bronze-intro.tlp", buf, strlen(buf));
-        compile_tulip_codebuf(buf, NULL, &song, NULL);
-        CUTE_ASSERT(song != NULL);
-        CUTE_ASSERT(mobi_typesetter(song, "the-bronze-intro.mobi") == 0);
-        CUTE_ASSERT(remove("the-bronze-intro.mobi") == 0);
-        free_tulip_single_note_ctx(song);
-        remove("the-bronze-intro.tlp");
+        test = &test_vector[0];
+        test_end = test + sizeof(test_vector) / sizeof(test_vector[0]);
+        while (test != test_end) {
+            write_buffer_to_disk("the-bronze-intro.tlp", buf, strlen(buf));
+            compile_tulip_codebuf(buf, NULL, &song, NULL);
+            CUTE_ASSERT(song != NULL);
+            CUTE_ASSERT(test->typesetter(song, test->tabpath) == 0);
+            CUTE_ASSERT(remove(test->realpath) == 0);
+            free_tulip_single_note_ctx(song);
+            song = NULL;
+            remove("the-bronze-intro.tlp");
+            test++;
+        }
     } else {
         fprintf(stdout, "WARN: Unable to run this test you must have convert and kindlegen installed.\n");
     }
