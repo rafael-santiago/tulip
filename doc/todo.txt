@@ -1,5 +1,5 @@
-(A) Find a way of showing cover image at kindle navigation page. +Improvement
 (A) Implement fancy assurance tests for mobi processor. +Tests
+x (A) Find a way of showing cover image at kindle navigation page. +Improvement
 x (A) Implement a mobi processor (Kindle). +NewFeature
 x (A) Implement fancy assurance tests for PNG processor. +Tests
 x (A) Implement a PNG processor too. +NewFeature

@@ -42,11 +42,11 @@ static char *g_mobitypesetter_opf = {
     "        <dc:creator>%s</dc:creator>\n"
     "        <dc:language>%s</dc:language>\n"
     "        <meta name=\"cover\" content=\"cover-image\"/>\n"
-    "</metada>\n"
+    "</metadata>\n"
     "<manifest>\n"
     "    <item id=\"cover\" href=\"%s\" media-type=\"application/xhtml+xml\"/>\n"
     "    <item id=\"tab\" href=\"%s\" media-type=\"application/xhtml+xml\"/>\n"
-    "    <item id=\"cover-image\" href=\"%s\" media-type=\"image/png\"/>\n"
+    "    <item id=\"cover-image\" href=\"%s\" media-type=\"image/jpeg\"/>\n"
     "</manifest>\n"
     "<spine toc=\"ncx\">\n"
     "    <itemref idref=\"cover\" linear=\"no\"/>\n"
@@ -135,15 +135,11 @@ int mobitypesetter_inkspill(const char *filepath, const tulip_single_note_ctx *s
 
     // INFO(Rafael): Setting up all temp file names.
     snprintf(filename[kTabImage], sizeof(filename[kTabImage]) - 1, "%s.jpeg", basename);
-    snprintf(filename[kCoverImage], sizeof(filename[kCoverImage]) - 1, "%s.png", basename);
+    snprintf(filename[kCoverImage], sizeof(filename[kCoverImage]) - 1, "%s-cover.jpeg", basename);
     snprintf(filename[kCoverHtml], sizeof(filename[kCoverHtml]) - 1, "%s-cover.html", basename);
     snprintf(filename[kTabHtml], sizeof(filename[kTabHtml]) - 1, "%s-tab.html", basename);
     snprintf(filename[kOpf], sizeof(filename[kOpf]) - 1, "%s.opf", basename);
     snprintf(filename[kNcx], sizeof(filename[kNcx]) - 1, "%s.ncx", basename);
-
-    if ((has_error = jpeg_typesetter(song, filename[kTabImage])) != 0) {
-        goto mobitypesetter_inkspill_epilogue;
-    }
 
     language = get_option("mobi-language", NULL);
 
@@ -165,6 +161,10 @@ int mobitypesetter_inkspill(const char *filepath, const tulip_single_note_ctx *s
                                                            filename[kCoverImage])) != 0) {
             goto mobitypesetter_inkspill_epilogue;
         }
+    }
+
+    if ((has_error = jpeg_typesetter(song, filename[kTabImage])) != 0) {
+        goto mobitypesetter_inkspill_epilogue;
     }
 
     if ((has_error = mobitypesetter_create_cover_html(filename[kCoverHtml],
@@ -306,7 +306,7 @@ static int mobitypesetter_create_cover_image(const char *template_filepath,
         goto mobitypesetter_create_cover_image_epilogue;
     }
 
-    snprintf(usrdata, sizeof(usrdata) - 1, "%s-001.png", basename);
+    snprintf(usrdata, sizeof(usrdata) - 1, "%s-cover-001.jpeg", basename);
 
     if ((has_error = rename(usrdata, image_filename)) != 0) {
         fprintf(stderr, "ERROR: Unable to rename cover image.\n");
@@ -346,7 +346,7 @@ static void mobitypesetter_cleanup_tempfiles(char *filenames, const size_t filen
     filename_end = filenames + filename_max_size * temp_nr;
 
     while (filename != filename_end) {
-        if (strstr(filename, ".jpeg") == NULL) {
+        if (strstr(filename, ".jpeg") == NULL || strstr(filename, "-cover.jpeg") != NULL) {
             remove(filename);
         } else {
             page_nr = 1;
