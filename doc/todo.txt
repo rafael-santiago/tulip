@@ -1,8 +1,8 @@
-(A) Install MOBI cover templates. +Installer
 (A) Increment version to v8. +ReleaseStuff
 (A) Generate Linux v8 pre-built. +ReleaseStuff
 (A) Generate FreeBSD v8 pre-built. +ReleaseStuff
 (A) Generate Windows v8 pre-built. +ReleaseStuff
+x (A) Install MOBI cover templates. +Installer
 x (A) Documentation update. +Documentation
 x (A) Find a way of showing cover image at kindle navigation page. +Improvement
 x (A) Implement a mobi processor (Kindle). +NewFeature
