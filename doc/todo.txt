@@ -1,7 +1,7 @@
-(A) Generate Linux v8 pre-built. +ReleaseStuff
 (A) Generate FreeBSD v8 pre-built. +ReleaseStuff
 (A) Generate Windows v8 pre-built. +ReleaseStuff
 (A) RELNOTES. +ReleaseStuff
+x (A) Generate Linux v8 pre-built. +ReleaseStuff
 x (A) Implement general tests for MOBI processor. +Tests
 x (A) Increment version to v8. +ReleaseStuff
 x (A) Install MOBI cover templates. +Installer
