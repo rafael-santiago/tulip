@@ -3,6 +3,18 @@
 
     Rafael
 --
+v8 [git-tag: 'v8']
+
+    Features:
+
+        - JPEG processor.
+        - PNG processor.
+        - MOBI processor.
+
+    Bugfixes:
+
+        - None! :)
+
 v7 [git-tag: 'v7']
 
     Features:
