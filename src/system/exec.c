@@ -87,7 +87,8 @@ static int tulip_task_help() {
            "Tulip SVG typesetter is Copyright (C) 2020 by Rafael Santiago.\n"
            "Tulip HTML/SVG typesetter is Copyright (C) 2020 by Rafael Santiago.\n"
            "Tulip JPEG typesetter is Copyright (C) 2020 by Rafael Santiago.\n"
-           "Tulip PNG typesetter is Copyright (C) 2020 by Rafael Santiago.\n\n"
+           "Tulip PNG typesetter is Copyright (C) 2020 by Rafael Santiago.\n"
+           "Tulip MOBI typesetter is Copyright (C) 2020 by Rafael Santiago.\n\n"
            "Bug reports, feedback, etc: <voidbrainvoid@tutanota.com> or <https://github.com/rafael-santiago/tulip/issues>\n\n");
     return 0;
 }
