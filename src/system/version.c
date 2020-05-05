@@ -7,7 +7,7 @@
  */
 #include <system/version.h>
 
-static const char *g_tulip_system_version = "v7";
+static const char *g_tulip_system_version = "v8";
 
 const char *get_tulip_system_version() {
     return g_tulip_system_version;
