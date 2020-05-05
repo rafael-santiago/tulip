@@ -61,7 +61,7 @@ fits to your environment is a good practice to check if your copy has the same r
 
 |                **File**              |   **Platform**      |                    **MD5 hash**               |
 |:------------------------------------:|:-------------------:|:---------------------------------------------:|
-| [``prebuilt/tulip-bin-linux.zip``](https://github.com/rafael-santiago/tulip/raw/master/prebuilt/tulip-bin-linux.zip) | ``linux`` | ``dc319931360289f3506b7a8b72c88663`` |
+| [``prebuilt/tulip-bin-linux.zip``](https://github.com/rafael-santiago/tulip/raw/master/prebuilt/tulip-bin-linux.zip) | ``linux`` | ``558e4342769841690f298101ad04903e`` |
 | [``prebuilt/tulip-bin-freebsd.zip``](https://github.com/rafael-santiago/tulip/raw/master/prebuilt/tulip-bin-freebsd.zip) | ``freebsd`` | ``ac2ed360e011dcc450b51b8853f243a3`` |
 | [``prebuilt/tulip-bin-windows.zip``](https://github.com/rafael-santiago/tulip/raw/master/prebuilt/tulip-bin-windows.zip) | ``windows`` | ``10315e5817f1383e44ba5b45ba1bdfca`` |
 
