@@ -21,16 +21,16 @@ int kindlegen(const char *opf_filepath, const char *outpath) {
 # error Some code wanted.
 #endif
 
-    if ((has_error = system(cmdline)) == 0) {
-        snprintf(cmdline, sizeof(cmdline) - 1, "%s", opf_filepath);
-        if ((cp = strstr(cmdline, ".opf")) != NULL) {
-            *cp = 0;
-        }
-        memcpy(&cmdline[0] + strlen(cmdline), ".mobi\0", 6);
-        if ((has_error = rename(cmdline, outpath)) != 0) {
-            fprintf(stderr, "ERROR: Unable to rename .mobi file.\n");
-        }
-    } else {
+    system(cmdline); // INFO(Rafael): Kindlegen is rather pedantic let's ignore its complaints.
+
+    snprintf(cmdline, sizeof(cmdline) - 1, "%s", opf_filepath);
+    if ((cp = strstr(cmdline, ".opf")) != NULL) {
+        *cp = 0;
+    }
+
+    memcpy(&cmdline[0] + strlen(cmdline), ".mobi\0", 6);
+
+    if ((has_error = rename(cmdline, outpath)) != 0) {
         fprintf(stderr, "ERROR: Unable to generate .mobi file.\n");
     }
 

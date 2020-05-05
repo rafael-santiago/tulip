@@ -63,14 +63,14 @@
        id="path4496"
        inkscape:connector-curvature="0" />
   </g>
-  <text x="50%" y="14%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="50" font-weight="bold">TAB</text>
-  <text x="50%" y="20.3%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="10" font-weight="bold">{{.transcriber}}</text>
-  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="{{.song-font-size:20}}" font-weight="bold">{{.song}}</text>
+  <text x="50%" y="16%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="80" font-weight="bold">TAB</text>
+  <text x="50%" y="20.6%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="15" font-weight="bold">{{.transcriber}}</text>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="{{.song-font-size:30}}" font-weight="bold">{{.song}}</text>
   <text x="19%" y="98.9%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="15" font-style="italic">H</text>
   <text x="25%" y="98.8%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="15" font-style="italic">a</text>
   <text x="31%" y="98.5%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="15" font-style="italic">v</text>
   <text x="37%" y="97.8%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="15" font-style="italic">e</text>
-  <text x="65%" y="97.8%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="15" font-style="italic">f</text>
+  <text x="65%" y="97.9%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="15" font-style="italic">f</text>
   <text x="69%" y="98.1%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="15" font-style="italic">u</text>
   <text x="73%" y="98.3%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="15" font-style="italic">n</text>
   <text x="77%" y="98.6%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="15" font-style="italic">!</text>
