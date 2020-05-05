@@ -2320,16 +2320,19 @@ currently implemented in ``Tulip``.
 
 **Table 4**: Available processors.
 
-|   **Processor/Format name**   |**Extension**|
-|:-----------------------------:|:-----------:|
-|     ``text/based``            |    ``txt``  |
-|     ``Postscript``            |     ``ps``  |
-|     ``Encapsulated Postcript``|    ``eps``  |
-|     ``Portable document file``|    ``pdf``  |
-|     ``Markdown``              |     ``md``  |
-|     ``HTML``                  |    ``html`` |
-|     ``SVG``                   |    ``svg``  |
-|     ``HTML/SVG``              |    ``html`` |
+|   **Processor/Format name**   |   **Extension**      |
+|:-----------------------------:|:--------------------:|
+|     ``text/based``            |    ``txt``           |
+|     ``Postscript``            |     ``ps``           |
+|     ``Encapsulated Postcript``|    ``eps``           |
+|     ``Portable document file``|    ``pdf``           |
+|     ``Markdown``              |     ``md``           |
+|     ``HTML``                  |    ``html``          |
+|     ``SVG``                   |    ``svg``           |
+|     ``HTML/SVG``              |    ``html``          |
+|     ``JPEG``                  |    ``jpeg``, ``jpg`` |
+|     ``PNG``                   |    ``png``           |
+|     ``MOBI``                  |    ``mobi``          |
 
 The ``PDF`` processor depends on an external application called ``pspdf``, commonly it can be found in ``TeX/Live`` or even
 ``MikTeX`` if you are on ``Windows``.
@@ -2364,6 +2367,39 @@ output. If you want to change some option in ``SVG`` you can pass the related op
 easily navigate through the pages by pressing left/right arrow keys. TIP: Try to render it in your favorite browser in
 full-screen mode, no distractions only you and your TAB ;)
 
+If you prefer storing your tabs into your e-reader of choice you should use the ``MOBI`` processor. I written this processor
+based on my own requirements so I took into consideration ``Kindle``. For this reason you need to have ``kindlegen`` installed
+on your system. Until now the ``MOBI`` processor does not give support to other EPUB converters.
+
+The ``MOBI`` processor allows you to specify a cover for you transcription. In order to do it you need to use the processor
+option  ``--mobi-cover-template``. This option expects a file path to the cover ``SVG`` template. This ``SVG`` template
+is just about a plain ``SVG`` file which you can use some actions related to song and transcriber name. **Table 5** lists
+all supported actions.
+
+**Table 5**: Template actions supported by ``MOBI`` processor.
+
+|       **Action**                 |           **Expands to**                                               |
+|:--------------------------------:|-----------------------------------------------------------------------:|
+|     ``{{.song}}``                | The song name given through TLP tag ``.song``.                         |
+|     ``{{.transcriber}}``         | The transcriber name given through TLP tag ``.transcriber``.           |
+|    ``{{.song-font-size}}``       | The font size used on ``SVG`` text tag related to the song name.       |
+|   ``{{.transcriber-font-size}}`` | The font size used on ``SVG`` text tag related to the transcriber name.|
+
+The actions ``{{.song-font-size}}`` and ``{{.transcriber-font-size}}`` allow default values. Those values must be set in
+the following way: ``{{.song-font-size:50}}``, in this case if no song font size is explicitly passed through command line
+the size will be ``50``.
+
+In order to pass song and transcriber font sizes through command line, use the options ``--song-font-size=<size>`` and
+``--transcriber-font-size=<size>`` respectively.
+
+Take a look into the directory ``etc/mobi-covers`` to get more details about how ``MOBI`` cover templates should be written.
+The default templates are installed into your local tulip's etc directory.
+
+The ``JPEG``, ``PNG`` and ``MOBI`` processors indirectly uses svg, thus any ``SVG`` processor option passed will change
+any dependent processor.
+
+``JPEG`` and ``PNG`` processors requires the Image magick convert tool.
+
 **An important remark**: The ``EPS`` output is only possible when your transcription is limited to one page. A ``EPS`` output is
 nice when you want to add a short idea into another text. Usually when you write some instructional document short tablatures
 are common. Maybe this short tablature can be some scale shape, some part of a Music, etc... The ``EPS`` is handy for
@@ -2390,11 +2426,11 @@ Also the ``EPS`` bounding box is automatically adjusted ("cropped") so you will 
 
 It is possible to change the behavior of the processor in some cases using explict options.
 
-Firstly, let's see what behavior changes we can apply on a ``Tulip`` processor. It follows listed into the **Table 5**.
+Firstly, let's see what behavior changes we can apply on a ``Tulip`` processor. It follows listed into the **Table 6**.
 Inside the ``Tulip`` a processor is responsible to care about the tablature typesetting, so when you use an option present
-in the **Table 5** you are directly influencing the output typesetting.
+in the **Table 6** you are directly influencing the output typesetting.
 
-**Table 5**: Options for processor's behavior changing.
+**Table 6**: Options for processor's behavior changing.
 
 |       **Option**                 |           **Handy for**                                                                  |        **Setting sample**                                   |
 |:--------------------------------:|-----------------------------------------------------------------------------------------:|:-----------------------------------------------------------:|
