@@ -14,6 +14,7 @@
 #include <processor/utils/convert_image.h>
 #include <processor/utils/template.h>
 #include <processor/utils/kindlegen.h>
+#include <encoding/html_str_normalize.h>
 #include <usrland/cmdlineoptions.h>
 #include <base/memory.h>
 #include <sys/stat.h>
@@ -212,7 +213,7 @@ static int mobitypesetter_create_cover_image(const char *template_filepath,
     char *song_font_size = NULL, *transcriber_font_size = NULL;
     char svgfilename[4096];
     const char *temp;
-    char usrdata[4096];
+    char usrdata[2][4096];
     const char *up, *up_end;
     size_t u;
 
@@ -247,7 +248,7 @@ static int mobitypesetter_create_cover_image(const char *template_filepath,
 
     apply_action_to_template(&template, &template_size, "{{.song-font-size}}", temp, strlen(temp));
 
-    if ((temp = get_option("transcriber-font-size", song_font_size)) == NULL) {
+    if ((temp = get_option("transcriber-font-size", transcriber_font_size)) == NULL) {
         temp = "";
     }
 
@@ -262,14 +263,15 @@ static int mobitypesetter_create_cover_image(const char *template_filepath,
                 up += 2;
                 continue;
             }
-            usrdata[u++] = *up;
+            usrdata[0][u++] = *up;
             up++;
         }
-        usrdata[u] = 0;
+        usrdata[0][u] = 0;
+        html_str_normalize(usrdata[1], sizeof(usrdata[1]) - 1, usrdata[0]);
     }
 
-    apply_action_to_template(&template, &template_size, "{{.song}}", (song != NULL) ? usrdata : "Untitled",
-                                                                     (song != NULL) ? strlen(usrdata) : 8);
+    apply_action_to_template(&template, &template_size, "{{.song}}", (song != NULL) ? usrdata[1] : "Untitled",
+                                                                     (song != NULL) ? strlen(usrdata[1]) : 8);
 
     if (transcriber != NULL) {
         up = transcriber;
@@ -280,14 +282,15 @@ static int mobitypesetter_create_cover_image(const char *template_filepath,
                 up += 2;
                 continue;
             }
-            usrdata[u++] = *up;
+            usrdata[0][u++] = *up;
             up++;
         }
-        usrdata[u] = 0;
+        usrdata[0][u] = 0;
+        html_str_normalize(usrdata[1], sizeof(usrdata[1]) - 1, usrdata[0]);
     }
 
-    apply_action_to_template(&template, &template_size, "{{.transcriber}}", (transcriber != NULL) ? usrdata : "Unknown",
-                                                                            (transcriber != NULL) ? strlen(usrdata)
+    apply_action_to_template(&template, &template_size, "{{.transcriber}}", (transcriber != NULL) ? usrdata[1] : "Unknown",
+                                                                            (transcriber != NULL) ? strlen(usrdata[1])
                                                                                                   : 7);
 
     snprintf(svgfilename, sizeof(svgfilename) - 1, "%s-001.svg", basename);
@@ -306,9 +309,9 @@ static int mobitypesetter_create_cover_image(const char *template_filepath,
         goto mobitypesetter_create_cover_image_epilogue;
     }
 
-    snprintf(usrdata, sizeof(usrdata) - 1, "%s-cover-001.jpeg", basename);
+    snprintf(usrdata[0], sizeof(usrdata[0]) - 1, "%s-cover-001.jpeg", basename);
 
-    if ((has_error = rename(usrdata, image_filename)) != 0) {
+    if ((has_error = rename(usrdata[0], image_filename)) != 0) {
         fprintf(stderr, "ERROR: Unable to rename cover image.\n");
     }
 
@@ -477,6 +480,7 @@ mobitypesetter_create_tab_html_epilogue:
 static int mobitypesetter_create_cover_html(const char *cover_filename, const char *cover_image_filename, const char *title) {
     FILE *html = fopen(cover_filename, "wb");
     int has_error = 1;
+    char temp[4096];
 
     if (html == NULL) {
         fprintf(stderr, "ERROR: Unable to create cover HTML file.\n");
@@ -488,7 +492,7 @@ static int mobitypesetter_create_cover_html(const char *cover_filename, const ch
                   "\t\t<link type=\"text/css\" rel=\"stylesheet\" href=\"stylesheet.css\"/>\n");
 
     if (title != NULL) {
-        fprintf(html, "\t\t<title>%s</title>\n", title);
+        fprintf(html, "\t\t<title>%s</title>\n", html_str_normalize(temp, sizeof(temp) - 1, title));
     }
 
     fprintf(html, "\t</head>\n"
@@ -497,7 +501,7 @@ static int mobitypesetter_create_cover_html(const char *cover_filename, const ch
     if (cover_image_filename != NULL) {
         fprintf(html, "\t\t<center><div><img src=\"%s\" class=\"cover\" height=\"100%\" max-width=\"100%\"></div></center>\n", cover_image_filename);
     } else {
-        fprintf(html, "\t\t<h1>%s</h1>\n", (title != NULL) ? title : "Untitled");
+        fprintf(html, "\t\t<h1>%s</h1>\n", (title != NULL) ? temp : "Untitled");
     }
 
     fprintf(html,"\t</body>\n"
