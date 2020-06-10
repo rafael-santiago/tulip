@@ -93,6 +93,10 @@ int append_tag_verifier(const char *buf, char *error_message, tulip_single_note_
     tlp_data_size = (size_t) ftell(fp);
     fseek(fp, 0L, SEEK_SET);
 
+    if (tlp_data_size == 0) {
+        goto append_tag_verifier_epilogue;
+    }
+
     tlp_data = (char *) getseg(tlp_data_size + 1);
 
     memset(tlp_data, 0, tlp_data_size + 1);

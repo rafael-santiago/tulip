@@ -1797,7 +1797,15 @@ CUTE_TEST_CASE(append_tests)
 
     CUTE_ASSERT(system(cmdline) != 0);
 
+    // INFO(Rafael): Empty appended files must not get a SIGSEGV.
+    write_buffer_to_disk("empty-bomb.tlp", "", 0);
+    append_stmt = ".append{\"empty-bomb.tlp\"}";
+    write_buffer_to_disk("main.tlp", append_stmt, strlen(append_stmt));
+
+    CUTE_ASSERT(system(cmdline) == 0);
+
     remove("main.tlp");
+    remove("empty-bomb.tlp");
 CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(users_binary_tests)
