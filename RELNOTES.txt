@@ -10,10 +10,11 @@ v8 [git-tag: 'v8']
         - JPEG processor.
         - PNG processor.
         - MOBI processor.
+        - Now redirecting errors and infos to their correct standard outputs.
 
     Bugfixes:
 
-        - None! :)
+        - SIGSEGV when appending empty files [commit-id#5568d4].
 
 v7 [git-tag: 'v7']
 
