@@ -72,7 +72,7 @@ int times_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
 
     strncat(times, "X", sizeof(times) - 1);
 
-    (*song) = add_note_to_tulip_single_note_ctx((*song), get_used_techniques() | kTlpTimes, times);
+    (*song) = add_note_to_tulip_single_note_ctx(song, get_used_techniques() | kTlpTimes, times);
     (*next) = bp_end + 1;
 
     return 1;

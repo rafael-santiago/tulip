@@ -20,7 +20,7 @@ int sepbar_verifier(const char *buf, char *error_message, tulip_single_note_ctx 
         return 0;
     }
 
-    (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpSepBar, NULL);
+    (*song) = add_note_to_tulip_single_note_ctx(song, kTlpSepBar, NULL);
     (*next) = buf + 1;
 
     return 1;

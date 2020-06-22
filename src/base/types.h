@@ -52,7 +52,7 @@ typedef struct _tulip_single_note_ctx {
     tulip_command_t techniques;
     char buf[255];
     int line_nr;
-    struct _tulip_single_note_ctx *last, *next;
+    struct _tulip_single_note_ctx *last, *next, *head, *tail;
 }tulip_single_note_ctx;
 
 typedef struct _tulip_part_ctx {

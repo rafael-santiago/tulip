@@ -16,7 +16,8 @@
                                      (t)->technique_code = kTlpNone, (t)->next = NULL )
 
 #define new_tulip_single_note_ctx(t) ( (t) = (tulip_single_note_ctx *) getseg(sizeof(tulip_single_note_ctx)),\
-                                       (t)->next = (t)->last = NULL, (t)->techniques = kTlpNone, (t)->line_nr = 0,\
+                                       (t)->next = (t)->last = (t)->head = (t)->tail = NULL,\
+                                       (t)->techniques = kTlpNone, (t)->line_nr = 0,\
                                        memset((t)->buf, 0, sizeof((t)->buf)) )
 
 #define new_tulip_part_ctx(t) ( (t) = (tulip_part_ctx *) getseg(sizeof(tulip_part_ctx)),\
@@ -65,18 +66,25 @@ void free_technique_stack_ctx(tulip_technique_stack_ctx *stack) {
     }
 }
 
-tulip_single_note_ctx *add_note_to_tulip_single_note_ctx(tulip_single_note_ctx *song, tulip_command_t techniques, const char *buf) {
+tulip_single_note_ctx *add_note_to_tulip_single_note_ctx(tulip_single_note_ctx **song, tulip_command_t techniques, const char *buf) {
     tulip_single_note_ctx *new = NULL, *last = NULL;
-    tulip_single_note_ctx *head = song;
+    tulip_single_note_ctx *head = *song;
     if (head == NULL) {
         new_tulip_single_note_ctx(head);
         new = head;
+        *song = head;
     } else {
-        last = get_tulip_single_note_ctx_tail(head);
+        head = (*song)->head;
+        if (head->tail == NULL) {
+            fprintf(stderr, "WARN: `head->tail == NULL`.\n");
+        }
+        last = (head->tail != NULL) ? head->tail : get_tulip_single_note_ctx_tail(head);
         new_tulip_single_note_ctx(last->next);
         new = last->next;
         new->last = last;
     }
+    head->tail = new;
+    new->head = head;
     new->techniques = techniques;
     if (buf != NULL) {
         strncpy(new->buf, buf, sizeof(new->buf) - 1);
@@ -168,7 +176,7 @@ void tulip_single_note_ctx_cpy(tulip_single_note_ctx **song, const tulip_single_
                 buf = &temp[0];
             }
 
-            (*song) = add_note_to_tulip_single_note_ctx((*song), bp->techniques, buf);
+            (*song) = add_note_to_tulip_single_note_ctx(song, bp->techniques, buf);
         }
         bp = bp->next;
     }
@@ -182,7 +190,7 @@ void tulip_single_note_ctx_cpy(tulip_single_note_ctx **song, const tulip_single_
             buf = &temp[0];
         }
 
-        (*song) = add_note_to_tulip_single_note_ctx((*song), end->techniques , buf);
+        (*song) = add_note_to_tulip_single_note_ctx(song, end->techniques , buf);
     }
 }
 

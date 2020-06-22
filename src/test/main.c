@@ -978,13 +978,13 @@ CUTE_TEST_CASE_END
 
 CUTE_TEST_CASE(base_tulip_single_note_ctx_tests)
     tulip_single_note_ctx *song = NULL;
-    song = add_note_to_tulip_single_note_ctx(song, kTlpChord, "53-42-30-21-10");
+    song = add_note_to_tulip_single_note_ctx(&song, kTlpChord, "53-42-30-21-10");
     CUTE_ASSERT(song != NULL);
     CUTE_ASSERT(song->next == NULL);
     CUTE_ASSERT(song->last == NULL);
     CUTE_ASSERT(song->techniques == kTlpChord);
     CUTE_ASSERT(strcmp(song->buf, "53-42-30-21-10") == 0);
-    song = add_note_to_tulip_single_note_ctx(song, kTlpChord | kTlpLetRing, "53-42-30-21-10");
+    song = add_note_to_tulip_single_note_ctx(&song, kTlpChord | kTlpLetRing, "53-42-30-21-10");
     CUTE_ASSERT(song->next != NULL);
     CUTE_ASSERT(song->last == NULL);
     CUTE_ASSERT(song->next->next == NULL);

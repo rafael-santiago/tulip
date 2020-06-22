@@ -20,7 +20,7 @@ int savepoint_verifier(const char *buf, char *error_message, tulip_single_note_c
         return 0;
     }
 
-    (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpSavePoint, NULL);
+    (*song) = add_note_to_tulip_single_note_ctx(song, kTlpSavePoint, NULL);
     (*next) = buf + 1;
 
     return 1;

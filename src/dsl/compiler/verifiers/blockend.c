@@ -29,7 +29,7 @@ int blockend_verifier(const char *buf, char *error_message, tulip_single_note_ct
 
     //  INFO(Santiago): D i r t y  t r i c k -> The following code is useless in the song context but handfull for song
     //                                          structures mirroring.
-    (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpBlockEnd, NULL);
+    (*song) = add_note_to_tulip_single_note_ctx(song, kTlpBlockEnd, NULL);
     (*next) = buf + 1;
 
     return 1;

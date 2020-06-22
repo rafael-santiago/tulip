@@ -91,7 +91,7 @@ int chord_tag_verifier(const char *buf, char *error_message, tulip_single_note_c
         bp++;
     }
 
-    (*song) = add_note_to_tulip_single_note_ctx((*song), get_used_techniques() | kTlpChord, NULL);
+    (*song) = add_note_to_tulip_single_note_ctx(song, get_used_techniques() | kTlpChord, NULL);
 
     return 1;
 }

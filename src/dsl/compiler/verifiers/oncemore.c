@@ -106,34 +106,34 @@ static tulip_single_note_ctx *find_oncemore_from_tlp_block(tulip_single_note_ctx
     return sp;
 }
 
-tulip_single_note_ctx *find_oncemore_begin(tulip_single_note_ctx *song) {
+tulip_single_note_ctx *find_oncemore_begin(tulip_single_note_ctx **song) {
     tulip_single_note_ctx *mp = NULL, *lp = NULL;
 
-    if (song == NULL) {
+    if (song == NULL || (*song) == NULL) {
         return NULL;
     }
 
-    switch (song->techniques) {
+    switch ((*song)->techniques) {
 
         case kTlpBlockEnd:
-            mp = song->last;
+            mp = (*song)->last;
             while (mp->techniques & kTlpBlockEnd) {
                 mp = mp->last;
             }
             mp = find_oncemore_from_tlp_block(mp);
             //  INFO(Santiago): Adding a note separator in order to get a more fancy typesetting from
             //                  this "once more".
-            lp = song;
+            lp = *song;
             while (lp != NULL && lp->next != NULL) {
                 lp = lp->next;
             }
             if (lp == NULL || (lp->techniques & kTlpNoteSep) == 0) {
-                song = add_note_to_tulip_single_note_ctx(song, get_used_techniques() | kTlpNoteSep, NULL);
+                add_note_to_tulip_single_note_ctx(song, get_used_techniques() | kTlpNoteSep, NULL);
             }
             break;
 
         default:
-            mp = song;
+            mp = *song;
             if (mp->techniques & kTlpSepBar) {
                 mp = mp->last;
                 lp = mp;
@@ -153,19 +153,19 @@ tulip_single_note_ctx *find_oncemore_begin(tulip_single_note_ctx *song) {
                     (mp->last->techniques & kTlpSlideUp    )) {
                     mp = mp->last;
                     if (mp->last != NULL && (mp->techniques & kTlpSingleNote)) {
-                        mp = find_oncemore_begin(mp->last);
+                        mp = find_oncemore_begin(&mp->last);
                     }
                 }
             } else if (mp->techniques & kTlpTimes && mp->last != NULL) {
                 //  WARN(Santiago): This is a kind of naive construction, anyway let's try to
                 //                  reduce the badness here.
-                mp = find_oncemore_begin(mp->last);
+                mp = find_oncemore_begin(&mp->last);
             } else if (mp->techniques & kTlpNoteSep && mp->last != NULL) {
                 //  WARN(Santiago): Yes, this is the same of the kTlpTimes rules. However,
                 //                  these rules do not have any relation. In case of a further
                 //                  change behavior in one of them this will not mess with the
                 //                  another one.
-                mp = find_oncemore_begin(mp->last);
+                mp = find_oncemore_begin(&mp->last);
             }
             break;
 
@@ -205,7 +205,7 @@ int oncemore_verifier(const char *buf, char *error_message, tulip_single_note_ct
 
     mp_end = sp;
 
-    mp = find_oncemore_begin(sp);
+    mp = find_oncemore_begin(&sp);
 
     if (mp == NULL) { //  WARN(Santiago): Paranoic care.
         mp = (*song);

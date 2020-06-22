@@ -53,7 +53,7 @@ int datatag_verifier(const tulip_command_t command, const char *buf, char *error
         return 0;
     }
 
-    (*song) = add_note_to_tulip_single_note_ctx((*song), command, string);
+    (*song) = add_note_to_tulip_single_note_ctx(song, command, string);
     (*next) = bp_end + 1;
 
     return 1;

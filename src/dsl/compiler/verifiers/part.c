@@ -184,7 +184,7 @@ static int v6_part_tag_verifier(const char *buf, char *error_message, tulip_sing
         return 0;
     }
 
-    begin = find_oncemore_begin(end);
+    begin = find_oncemore_begin(&end);
 
     set_parts_listing(add_part_to_tulip_part_ctx(get_parts_listing(), label, begin, end));
 

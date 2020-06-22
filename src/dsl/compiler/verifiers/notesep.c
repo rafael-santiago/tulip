@@ -20,7 +20,7 @@ int notesep_verifier(const char *buf, char *error_message, tulip_single_note_ctx
         return 0;
     }
 
-    (*song) = add_note_to_tulip_single_note_ctx((*song), get_used_techniques() | kTlpNoteSep, NULL);
+    (*song) = add_note_to_tulip_single_note_ctx(song, get_used_techniques() | kTlpNoteSep, NULL);
     (*next) = buf + 1;
 
     return 1;

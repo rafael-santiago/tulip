@@ -80,15 +80,15 @@ void expand_chordextsep(const tulip_command_t separator, tulip_single_note_ctx *
     }
 
     //  INFO(Santiago): For sure that this is a chord beginning.
-    (*song) = add_note_to_tulip_single_note_ctx((*song), sp->techniques, NULL);
+    (*song) = add_note_to_tulip_single_note_ctx(song, sp->techniques, NULL);
     sp = sp->next;
     while (sp->techniques & kTlpChord) {
         if (sp->techniques & kTlpSingleNote) {
             sprintf(buf, "%c:", sp->buf[0]);
-            (*song) = add_note_to_tulip_single_note_ctx((*song), root_techniques | kTlpSingleNote, buf);
-            (*song) = add_note_to_tulip_single_note_ctx((*song), root_techniques | separator, NULL);
+            (*song) = add_note_to_tulip_single_note_ctx(song, root_techniques | kTlpSingleNote, buf);
+            (*song) = add_note_to_tulip_single_note_ctx(song, root_techniques | separator, NULL);
         }
         sp = sp->next;
     }
-    (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpBlockEnd, NULL);
+    (*song) = add_note_to_tulip_single_note_ctx(song, kTlpBlockEnd, NULL);
 }

@@ -57,7 +57,7 @@ int literal_tag_verifier(const char *buf, char *error_message, tulip_single_note
         tlperr_s(error_message, "Invalid string: %s", string);
         is_ok = 0;
     } else {
-        (*song) = add_note_to_tulip_single_note_ctx((*song), kTlpLiteral, string);
+        (*song) = add_note_to_tulip_single_note_ctx(song, kTlpLiteral, string);
         (*next) = bp_end;
     }
 
