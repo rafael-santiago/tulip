@@ -124,6 +124,9 @@ int append_tag_verifier(const char *buf, char *error_message, tulip_single_note_
         if (sp == NULL) {
             (*song) = incl_code;
         } else {
+            // INFO(Rafael): We need to patch song context otherwise we will lose all append data.
+            (*song)->head->tail = incl_code->head->tail;
+            incl_code->head = (*song)->head;
             sp->next = incl_code;
         }
     }
