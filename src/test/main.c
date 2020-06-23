@@ -39,6 +39,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <sys/stat.h>
 
 static void write_buffer_to_disk(const char *filepath, const char *buffer, const size_t buffer_size);
 
@@ -85,6 +86,7 @@ CUTE_DECLARE_TEST_CASE(processor_utils_get_action_default_value_tests);
 CUTE_DECLARE_TEST_CASE(processor_utils_has_kindlegen_tests);
 CUTE_DECLARE_TEST_CASE(processor_utils_apply_action_to_template_tests);
 CUTE_DECLARE_TEST_CASE(processor_general_tests);
+CUTE_DECLARE_TEST_CASE(append_patching_tests);
 
 CUTE_TEST_CASE(tulips_tester_monkey)
     remove(".tulipprefs");
@@ -117,6 +119,7 @@ CUTE_TEST_CASE(tulips_tester_monkey)
     CUTE_RUN_TEST(encoding_html_str_normalize_tests);
     CUTE_RUN_TEST(encoding_inline_font_data_tests);
     CUTE_RUN_TEST(append_tests);
+    CUTE_RUN_TEST(append_patching_tests);
     //  WARN(Rafael): It is important to run the following test after
     //                the test "dsl_utils_tlp_cmd_code_to_plain_index_tests"
     //                because the following tested function is quite dependant
@@ -1966,4 +1969,159 @@ CUTE_TEST_CASE(users_binary_tests)
     printf("\n\tTULIP's TESTER MONKEY SAID: All done! All clean! All my tests said that this software is good for using."
            "\n\t                            Go ahead, install and enjoy it!\n\n");
 
+CUTE_TEST_CASE_END
+
+CUTE_TEST_CASE(append_patching_tests)
+    // INFO(Rafael): From v8 the add operation of the song context was speed up. It saves the address of the list tail
+    //               instead of traversing all list finding out its end. Due to it appending turned into a less trivial
+    //               stuff. The append song list must be patched well as the main song list that will receive the appended
+    //               data at its end. Not applying the patch means that appended data will be lost and as a result the TAB
+    //               will be generated without those indirect parts.
+    struct script_files_ctx {
+        char *directory;
+        char *filename;
+        char *data;
+    };
+    struct script_files_ctx test_data[] = {
+        { ".",
+          "boys-dont-cry.tlp",
+          ".song{\"Boys don't cry - The Cure\"}\n"
+          ".transcriber{\"Rafael Santiago\"}\n"
+          ".literal{\"[Intro]\"};\n"
+          ".append{\"part/boys-dont-cry-intro.tlp\"};\n"
+          ".literal{\"[Riff]\"};\n"
+          ".append{\"part/boys-dont-cry-riff.tlp\"};\n"
+          ".literal{\"[Verses i]\"};\n"
+          ".append{\"part/boys-dont-cry-verses-i.tlp\"};\n"
+          ".literal{\"[Verses ii]\"};\n"
+          ".append{\"part/boys-dont-cry-verses-ii.tlp\"};\n"
+          ".literal{\"\"};\n"
+          ".literal{\"[Bridge i]\"};\n"
+          ".append{\"part/boys-dont-cry-bridge-i.tlp\"};\n"
+          ".literal{\"[Bridge ii]\"};\n"
+          ".append{\"part/boys-dont-cry-bridge-ii.tlp\"}\n" },
+
+        { "part",
+          "boys-dont-cry-intro.tlp",
+         ".letring{\n"
+         "    .chord{56-46-36-26}----|-\n"
+         "    .chord{56-48-38-28}----|-\n"
+         "    .chord{58-400-300-200}----|-\n"
+         "    .chord{503-405-305-205}----|-\n"
+         "};\n"
+         ".chord{58-48-300-201}-.chord{58-48-38-29}-\n"
+         ".chord{56-46-36-27}-.chord{56-46-36-26}\n" },
+
+        { "part",
+          "boys-dont-cry-riff.tlp",
+          ".chord{36-26}-.chord{36-26}-.chord{36-26}-|-\n"
+          ".chord{36-27}-.chord{36-29}-|-\n"
+          ".chord{36-26}-.chord{36-26}-.chord{36-26}-|-\n"
+          ".chord{36-27}-.chord{36-29}-.chord{36-29}-|-\n"
+          ".chord{36-29}-.chord{36-29}-|-\n"
+          ".chord{38-201}-.chord{300-203}-.chord{301-204}-|-\n"
+          ".chord{308-201}-.chord{36-29}-.chord{36-27}\n" },
+
+        { "part",
+          "boys-dont-cry-verses-i.tlp",
+          ".strum{\n"
+          "    .chord{56-46-36-26}------|-\n"
+          "    .chord{56-48-38-28}------|-\n"
+          "    .chord{58-400-300-200}-----|-\n"
+          "    .chord{59-401-301-201}-----\n"
+          "}-|-\n"
+          ".chord{58-48-300-201}-.chord{58-48-38-29}-\n"
+          ".chord{56-46-36-27}-.chord{56-46-36-26}\n" },
+
+        { "part",
+          "boys-dont-cry-verses-ii.tlp",
+          ".strum{\n"
+          "    .chord{56-46-36-26}------|-\n"
+          "    .chord{56-48-38-28}------|-\n"
+          "    .chord{58-400-300-200}-----|-\n"
+          "    .chord{59-401-301-201}-----\n"
+          "}\n" },
+
+        { "part",
+          "boys-dont-cry-bridge-i.tlp",
+          ".strum{\n"
+          "    .chord{58-400-300-29-18}-----|-\n"
+          "    .chord{56-48-38-27-16}------|-\n"
+          "    .chord{58-400-300-29-18}-----\n"
+          "}-|-\n"
+          ".chord{58-400-300-29-18}--.chord{58-400-300-29-18}--\n"
+          ".chord{58-400-300-29-18}--.chord{56-48-38-27-16}\n" },
+
+        { "part",
+          "boys-dont-cry-bridge-ii.tlp",
+          ".strum{\n"
+          "    .chord{501-403-303-203}---|-\n"
+          "    .chord{58-48-300-201-19}---|-\n"
+          "    .chord{501-403-303-203}---|-\n"
+          "    .chord{505-405-307-208-104}---|-\n"
+          "    .chord{501-403-303-203}---|-\n"
+          "    .chord{58-48-300-201-19}---|-\n"
+          "    .chord{56-46-36-27}---|-\n"
+          "    .chord{56-46-38-29}---\n"
+          "}|\n" }
+    }, *data, *data_end;
+    char filepath[4096];
+    tulip_single_note_ctx *song = NULL;
+    unsigned char *tab;
+    size_t tab_size;
+    FILE *fp;
+
+    data = &test_data[0];
+    data_end = data + sizeof(test_data) / sizeof(test_data[0]);
+    data += 1;
+
+    while (data != data_end) {
+        if (strcmp(data->directory, ".") != 0) {
+#if defined(__unix__)
+            mkdir(data->directory, 0666);
+#elif defined(_WIN32)
+            mkdir(data->directory);
+#else
+# error Some code wanted.
+#endif
+        }
+        snprintf(filepath, sizeof(filepath) - 1, "%s/%s", data->directory, data->filename);
+        write_buffer_to_disk(filepath, data->data, strlen(data->data));
+        data++;
+    }
+
+    CUTE_ASSERT(compile_tulip_codebuf(test_data[0].data, NULL, &song, NULL) == 1);
+    CUTE_ASSERT(song != NULL);
+    CUTE_ASSERT(mktab(song, "boys-dont-cry.txt") == 0);
+    free_tulip_single_note_ctx(song);
+    song = NULL;
+
+    data = &test_data[1];
+
+    while (data != data_end) {
+        snprintf(filepath, sizeof(filepath) - 1, "%s/%s", data->directory, data->filename);
+        remove(filepath);
+        if (strcmp(data->directory, ".") != 0) {
+            rmdir(data->directory);
+        }
+        data++;
+    }
+
+    fp = fopen("boys-dont-cry.txt", "rb");
+    CUTE_ASSERT(fp != NULL);
+
+    fseek(fp, 0L, SEEK_END);
+    tab_size = ftell(fp);
+    fseek(fp, 0L, SEEK_SET);
+
+    tab = (unsigned char *) getseg(tab_size + 1);
+    fread(tab, 1, tab_size, fp);
+    fclose(fp);
+
+    remove("boys-dont-cry.txt");
+
+    CUTE_ASSERT(tab_size == sizeof(___boys_dont_cry_txt));
+    CUTE_ASSERT(memcmp(tab, ___boys_dont_cry_txt, tab_size) == 0);
+
+    free(tab);
 CUTE_TEST_CASE_END
