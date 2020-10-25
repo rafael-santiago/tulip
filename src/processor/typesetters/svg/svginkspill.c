@@ -1533,7 +1533,7 @@ static void svgtypesetter_flush_fretboard_pinches(txttypesetter_tablature_ctx *t
     } stech_pts[20], *stech_p, *stech_end;
     txttypesetter_sustained_technique_ctx *sp;
 
-    g_svg_page.tab.offset = &offset;
+    g_svg_page.tab.offset = (int *)&offset;
 
     for (tp = txttab; tp != NULL; tp = tp->next) {
         // INFO(Rafael): Each tp gathers comments, sustained techniques, times indications and TAB diagram.

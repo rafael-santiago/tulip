@@ -132,7 +132,7 @@ void txttypesetter_print_sustained_technique_mark(const tulip_command_t command,
         tp = (*tab);
     }
 
-    tp->active_techniques = push_technique_to_txttypesetter_active_technique_ctx(tp->active_techniques, command, &tp->techniques, &tp->curr_row);
+    tp->active_techniques = push_technique_to_txttypesetter_active_technique_ctx(tp->active_techniques, command, &tp->techniques, (int *)&tp->curr_row);
 }
 
 txttypesetter_tablature_ctx *txttypesetter_get_properly_output_location(txttypesetter_tablature_ctx **tab, const tulip_single_note_ctx *note, const int row_usage) {
