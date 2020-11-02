@@ -17,9 +17,10 @@ function help() : result type none {
         hefesto.sys.echo("--help -> You got the main info about these options\n" +
                          "--devels-forge -> It runs a faster build. Desired while developing some stuff or maintaining\n" +
                          "--pack-and-go -> It generates a prebuilt for the current platform under prebuilt sub-directory and updates README.md\n" +
-                         "--test-options ->  Concentrates specific options to be passed to the testing build\n" + 
+                         "--test-options ->  Concentrates specific options to be passed to the testing build\n" +
                          "--sub-modules ->  Concentrates the relevant directories containing the Tulip's parts\n" +
-                         "--includes -> Specifies the additional include's path\n" + 
+                         "--includes -> Specifies the additional include's path\n" +
+                         "--toolset=<gcc|clang> -> Specifies the chosen compiler\n" +
                          "--install -> Installs Tulip\n" +
                          "--uninstall -> Uninstalls Tulip\n");
         hefesto.project.abort(0);

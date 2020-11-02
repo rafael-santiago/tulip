@@ -5,8 +5,8 @@
 # the terms of the GNU General Public License version 2.
 #
 #
-include ~/toolsets/gcc/gcc-app.hsl
 include ~/toolsets/common/utils/lang/c/dependency_scanner.hsl
+include Toolsets.hsl
 include Install.hsl
 include Forgeutils.hsl
 
@@ -17,8 +17,9 @@ var lib type list;
 var ldflags type list;
 var appname type string;
 var deps type string;
+var curr_toolset type string;
 
-project tulip : toolset "gcc-c-app" : dependencies $deps : $src, $inc, $cflags, $lib, $ldflags, $appname ;
+project tulip : toolset $curr_toolset : dependencies $deps : $src, $inc, $cflags, $lib, $ldflags, $appname ;
 
 local function get_app_name() : result type string {
     if (hefesto.sys.os_name() != "windows") {
@@ -113,6 +114,13 @@ local function init_forge() : result type none {
     $src = get_codes();
     $inc = hefesto.sys.get_option("includes");
     $appname = get_app_name();
+}
+
+tulip.preloading() {
+    $curr_toolset = get_toolset();
+    if ($curr_toolset.len() == 0) {
+        hefesto.project.abort(1);
+    }
 }
 
 tulip.prologue() {

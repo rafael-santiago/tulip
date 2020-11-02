@@ -1,3 +1,4 @@
+x (Z) Add support for compiler switching, detection and clang. +Build
 x (A) RELNOTES. +ReleaseStuff
 x (A) Generate Windows v8 pre-built. +ReleaseStuff
 x (A) Generate FreeBSD v8 pre-built. +ReleaseStuff

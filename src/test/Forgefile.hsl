@@ -5,7 +5,7 @@
 # the terms of the GNU General Public License version 2.
 #
 #
-include ~/toolsets/gcc/gcc-app.hsl
+include ../Toolsets.hsl
 include Forgeutils.hsl
 
 var src type list;
@@ -14,8 +14,16 @@ var cflags type list;
 var lib type list;
 var ldflags type list;
 var appname type string;
+var curr_toolset type string;
 
-project tulip-tests : toolset "gcc-c-app" : $src, $inc, $cflags, $lib, $ldflags, $appname ;
+project tulip-tests : toolset $curr_toolset : $src, $inc, $cflags, $lib, $ldflags, $appname ;
+
+tulip-tests.preloading() {
+    $curr_toolset = get_toolset();
+    if ($curr_toolset.len() == 0) {
+        hefesto.project.abort(1);
+    }
+}
 
 tulip-tests.prologue() {
     help();
